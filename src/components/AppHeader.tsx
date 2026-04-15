@@ -1,5 +1,4 @@
 import { useState, useRef } from "react";
-import { Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { Moon, Sun, Upload, Pencil, Check, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -90,28 +89,21 @@ export function AppHeader({ schoolName, logoUrl, isDark, onToggleTheme, onUpdate
           )}
         </div>
 
-        <div className="flex items-center gap-3">
-          <Link to="/register">
-            <Button variant="accent" size="sm">
-              Register New Player
-            </Button>
-          </Link>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={onToggleTheme}
-            className="rounded-full w-10 h-10"
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={onToggleTheme}
+          className="rounded-full w-10 h-10"
+        >
+          <motion.div
+            key={isDark ? "moon" : "sun"}
+            initial={{ rotate: -90, opacity: 0 }}
+            animate={{ rotate: 0, opacity: 1 }}
+            transition={{ duration: 0.3 }}
           >
-            <motion.div
-              key={isDark ? "moon" : "sun"}
-              initial={{ rotate: -90, opacity: 0 }}
-              animate={{ rotate: 0, opacity: 1 }}
-              transition={{ duration: 0.3 }}
-            >
-              {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-            </motion.div>
-          </Button>
-        </div>
+            {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+          </motion.div>
+        </Button>
       </div>
     </motion.header>
   );
