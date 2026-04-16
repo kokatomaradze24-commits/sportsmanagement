@@ -128,6 +128,39 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
     return result;
   }, [players, payments, search, paymentFilter, currentMonth, currentYear]);
 
+  const toggleOne = (id: string) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const visibleSelectedCount = filteredPlayers.filter((p) => selectedIds.has(p.id)).length;
+  const allVisibleSelected = filteredPlayers.length > 0 && visibleSelectedCount === filteredPlayers.length;
+  const someVisibleSelected = visibleSelectedCount > 0 && !allVisibleSelected;
+
+  const toggleAllVisible = () => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (allVisibleSelected) {
+        filteredPlayers.forEach((p) => next.delete(p.id));
+      } else {
+        filteredPlayers.forEach((p) => next.add(p.id));
+      }
+      return next;
+    });
+  };
+
+  const handleBulkDelete = async () => {
+    setBulkDeleting(true);
+    const ids = Array.from(selectedIds);
+    await Promise.all(ids.map((id) => onDelete(id)));
+    setSelectedIds(new Set());
+    setBulkDeleting(false);
+  };
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
