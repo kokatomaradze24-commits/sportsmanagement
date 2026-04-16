@@ -6,12 +6,15 @@ import { PaymentsPanel } from "@/components/PaymentsPanel";
 import { NotificationsBanner } from "@/components/NotificationsBanner";
 import { StatsCards } from "@/components/StatsCards";
 import { SportPicker } from "@/components/SportPicker";
+import { SubscriptionBanner } from "@/components/SubscriptionBanner";
+import { SubscriptionExpired } from "@/components/SubscriptionExpired";
 import { useTheme } from "@/hooks/use-theme";
 import { useAppSettings } from "@/hooks/use-app-settings";
 import { useSport } from "@/hooks/use-sport";
 import { usePlayers } from "@/hooks/use-players";
 import { usePayments } from "@/hooks/use-payments";
 import { useAuth } from "@/hooks/use-auth";
+import { useSubscription } from "@/hooks/use-subscription";
 import type { Database } from "@/integrations/supabase/types";
 
 type Player = Database["public"]["Tables"]["players"]["Row"];
@@ -34,6 +37,7 @@ function Index() {
   const { sport, sportId, setSport } = useSport();
   const { players, loading: playersLoading, addPlayer, updatePlayer, deletePlayer } = usePlayers(sportId);
   const { payments, loading: paymentsLoading, addPayment, updatePayment, deletePayment } = usePayments(sportId);
+  const { isActive: subActive, loading: subLoading } = useSubscription();
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
 
   // Clear selected player when switching sports so we don't show data from a different sport
@@ -55,6 +59,11 @@ function Index() {
   if (!isAuthenticated) {
     navigate({ to: "/login" });
     return null;
+  }
+
+  // Block access if subscription expired
+  if (!subLoading && !subActive) {
+    return <SubscriptionExpired />;
   }
 
   // Show sport picker on first sign-in (after settings load, no sport set)
@@ -81,6 +90,7 @@ function Index() {
       />
 
       <main className="max-w-7xl mx-auto px-6 py-6 space-y-6">
+        <SubscriptionBanner />
         <StatsCards players={players} payments={payments} />
         <NotificationsBanner players={players} payments={payments} />
 
