@@ -130,7 +130,7 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
         <h2 className="text-2xl tracking-wider text-foreground">{sport.members}</h2>
         <Dialog open={addOpen} onOpenChange={setAddOpen}>
           <DialogTrigger asChild>
-            <Button variant="accent" size="sm">
+            <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90 font-semibold shadow-md">
               <Plus className="w-4 h-4" /> Add {sport.member}
             </Button>
           </DialogTrigger>
