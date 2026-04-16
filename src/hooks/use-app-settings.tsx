@@ -61,10 +61,31 @@ export function useAppSettings() {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return "";
 
-    const ext = file.name.split(".").pop();
+    // Server-side-style validation on the client (still useful even though RLS owns auth)
+    const ALLOWED_TYPES: Record<string, string> = {
+      "image/jpeg": "jpg",
+      "image/png": "png",
+      "image/webp": "webp",
+      "image/gif": "gif",
+    };
+    const MAX_SIZE_BYTES = 2 * 1024 * 1024; // 2 MB
+
+    if (!ALLOWED_TYPES[file.type]) {
+      throw new Error("Invalid file type. Please upload a JPG, PNG, WEBP, or GIF image.");
+    }
+    if (file.size > MAX_SIZE_BYTES) {
+      throw new Error("File too large. Maximum size is 2 MB.");
+    }
+
+    // Derive extension from the verified MIME type, NOT from the user-supplied filename.
+    const ext = ALLOWED_TYPES[file.type];
     const path = `${user.id}/logo.${ext}`;
 
-    await supabase.storage.from("logos").upload(path, file, { upsert: true });
+    const { error: uploadError } = await supabase.storage
+      .from("logos")
+      .upload(path, file, { upsert: true, contentType: file.type });
+
+    if (uploadError) throw uploadError;
 
     const { data } = supabase.storage.from("logos").getPublicUrl(path);
     const url = data.publicUrl + "?t=" + Date.now();
