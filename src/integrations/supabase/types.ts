@@ -50,6 +50,7 @@ export type Database = {
           notes: string | null
           payment_date: string | null
           player_id: string
+          sport: string
           status: string
           updated_at: string
           user_id: string | null
@@ -63,6 +64,7 @@ export type Database = {
           notes?: string | null
           payment_date?: string | null
           player_id: string
+          sport?: string
           status?: string
           updated_at?: string
           user_id?: string | null
@@ -76,6 +78,7 @@ export type Database = {
           notes?: string | null
           payment_date?: string | null
           player_id?: string
+          sport?: string
           status?: string
           updated_at?: string
           user_id?: string | null
@@ -101,6 +104,7 @@ export type Database = {
           last_name: string
           notes: string | null
           phone: string | null
+          sport: string
           t_number: number
           updated_at: string
           user_id: string | null
@@ -114,6 +118,7 @@ export type Database = {
           last_name: string
           notes?: string | null
           phone?: string | null
+          sport?: string
           t_number: number
           updated_at?: string
           user_id?: string | null
@@ -127,6 +132,7 @@ export type Database = {
           last_name?: string
           notes?: string | null
           phone?: string | null
+          sport?: string
           t_number?: number
           updated_at?: string
           user_id?: string | null
