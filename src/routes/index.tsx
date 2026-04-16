@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { AppHeader } from "@/components/AppHeader";
 import { PlayersList } from "@/components/PlayersList";
@@ -32,9 +32,14 @@ function Index() {
   const { isDark, toggle } = useTheme();
   const { schoolName, logoUrl, loading: settingsLoading, updateSchoolName, updateLogo } = useAppSettings();
   const { sport, sportId, setSport } = useSport();
-  const { players, loading: playersLoading, addPlayer, updatePlayer, deletePlayer } = usePlayers();
-  const { payments, loading: paymentsLoading, addPayment, updatePayment, deletePayment } = usePayments();
+  const { players, loading: playersLoading, addPlayer, updatePlayer, deletePlayer } = usePlayers(sportId);
+  const { payments, loading: paymentsLoading, addPayment, updatePayment, deletePayment } = usePayments(sportId);
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
+
+  // Clear selected player when switching sports so we don't show data from a different sport
+  useEffect(() => {
+    setSelectedPlayer(null);
+  }, [sportId]);
 
   if (authLoading) {
     return (
