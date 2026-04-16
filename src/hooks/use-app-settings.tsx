@@ -141,8 +141,17 @@ export function AppSettingsProvider({ children }: { children: ReactNode }) {
   );
 }
 
+const defaultAppSettings: AppSettingsContextValue = {
+  schoolName: "My Club",
+  logoUrl: "",
+  sportId: "",
+  loading: true,
+  updateSchoolName: async () => {},
+  updateLogo: async () => "",
+  updateSport: async () => {},
+};
+
 export function useAppSettings() {
   const ctx = useContext(AppSettingsContext);
-  if (!ctx) throw new Error("useAppSettings must be used within AppSettingsProvider");
-  return ctx;
+  return ctx ?? defaultAppSettings;
 }
