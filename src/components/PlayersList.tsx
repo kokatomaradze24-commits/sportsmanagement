@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import type { Database } from "@/integrations/supabase/types";
+import type { SportConfig } from "@/lib/sports";
 
 type Player = Database["public"]["Tables"]["players"]["Row"];
 type Payment = Database["public"]["Tables"]["payments"]["Row"];
@@ -17,6 +18,7 @@ interface PlayersListProps {
   players: Player[];
   payments?: Payment[];
   loading: boolean;
+  sport: SportConfig;
   onAdd: (player: PlayerInsert) => Promise<{ error: unknown }>;
   onUpdate: (id: string, updates: Partial<Player>) => Promise<{ error: unknown }>;
   onDelete: (id: string) => Promise<{ error: unknown }>;
@@ -24,8 +26,9 @@ interface PlayersListProps {
   selectedId?: string;
 }
 
-function PlayerForm({ initial, onSubmit, onCancel }: {
+function PlayerForm({ initial, sport, onSubmit, onCancel }: {
   initial?: Partial<Player>;
+  sport: SportConfig;
   onSubmit: (data: PlayerInsert) => void;
   onCancel: () => void;
 }) {
@@ -60,8 +63,8 @@ function PlayerForm({ initial, onSubmit, onCancel }: {
         </div>
       </div>
       <div>
-        <label className="text-sm text-muted-foreground mb-1 block">T-Shirt Number *</label>
-        <Input type="number" value={tNumber} onChange={(e) => setTNumber(e.target.value)} placeholder="23" required min={0} max={99} />
+        <label className="text-sm text-muted-foreground mb-1 block">{sport.numberLabel} *</label>
+        <Input type="number" value={tNumber} onChange={(e) => setTNumber(e.target.value)} placeholder="23" required min={0} max={999} />
       </div>
       <div>
         <label className="text-sm text-muted-foreground mb-1 block">Phone</label>
@@ -72,14 +75,14 @@ function PlayerForm({ initial, onSubmit, onCancel }: {
         <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="john@example.com" />
       </div>
       <div className="flex gap-2 pt-2">
-        <Button type="submit" className="flex-1">{initial?.id ? "Save Changes" : "Add Player"}</Button>
+        <Button type="submit" className="flex-1">{initial?.id ? "Save Changes" : `Add ${sport.member}`}</Button>
         <Button type="button" variant="outline" onClick={onCancel}>Cancel</Button>
       </div>
     </form>
   );
 }
 
-export function PlayersList({ players, payments = [], loading, onAdd, onUpdate, onDelete, onSelect, selectedId }: PlayersListProps) {
+export function PlayersList({ players, payments = [], loading, sport, onAdd, onUpdate, onDelete, onSelect, selectedId }: PlayersListProps) {
   const [addOpen, setAddOpen] = useState(false);
   const [editPlayer, setEditPlayer] = useState<Player | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
@@ -124,18 +127,19 @@ export function PlayersList({ players, payments = [], loading, onAdd, onUpdate, 
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl tracking-wider text-foreground">Players</h2>
+        <h2 className="text-2xl tracking-wider text-foreground">{sport.members}</h2>
         <Dialog open={addOpen} onOpenChange={setAddOpen}>
           <DialogTrigger asChild>
             <Button variant="accent" size="sm">
-              <Plus className="w-4 h-4" /> Add Player
+              <Plus className="w-4 h-4" /> Add {sport.member}
             </Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle className="text-2xl tracking-wider">New Player</DialogTitle>
+              <DialogTitle className="text-2xl tracking-wider">New {sport.member}</DialogTitle>
             </DialogHeader>
             <PlayerForm
+              sport={sport}
               onSubmit={async (data) => {
                 await onAdd(data);
                 setAddOpen(false);
@@ -183,7 +187,7 @@ export function PlayersList({ players, payments = [], loading, onAdd, onUpdate, 
           className="text-center py-12 text-muted-foreground"
         >
           <User className="w-12 h-12 mx-auto mb-3 opacity-40" />
-          <p>{players.length === 0 ? "No players yet. Add your first player!" : "No players match your filters."}</p>
+          <p>{players.length === 0 ? `No ${sport.members.toLowerCase()} yet. Add your first ${sport.member.toLowerCase()}!` : `No ${sport.members.toLowerCase()} match your filters.`}</p>
         </motion.div>
       ) : (
         <div className="space-y-2">
@@ -233,11 +237,12 @@ export function PlayersList({ players, payments = [], loading, onAdd, onUpdate, 
                       </Button>
                       <DialogContent onClick={(e) => e.stopPropagation()}>
                         <DialogHeader>
-                          <DialogTitle className="text-2xl tracking-wider">Edit Player</DialogTitle>
+                          <DialogTitle className="text-2xl tracking-wider">Edit {sport.member}</DialogTitle>
                         </DialogHeader>
                         {editPlayer && (
                           <PlayerForm
                             initial={editPlayer}
+                            sport={sport}
                             onSubmit={async (data) => {
                               await onUpdate(editPlayer.id, data);
                               setEditPlayer(null);
