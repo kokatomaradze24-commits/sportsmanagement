@@ -1,9 +1,10 @@
 import { useState, useRef } from "react";
 import { motion } from "framer-motion";
-import { Moon, Sun, Upload, Pencil, Check, X, LogOut, Trophy } from "lucide-react";
+import { Moon, Sun, Upload, Pencil, Check, X, LogOut, Trophy, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuLabel, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { getInitials, SPORT_LIST, type SportConfig, type SportId } from "@/lib/sports";
 
 interface AppHeaderProps {
@@ -15,6 +16,7 @@ interface AppHeaderProps {
   onUpdateName: (name: string) => void;
   onUploadLogo: (file: File) => void;
   onChangeSport: (id: SportId) => void;
+  onResetBranding: () => void;
   onSignOut?: () => void;
 }
 
