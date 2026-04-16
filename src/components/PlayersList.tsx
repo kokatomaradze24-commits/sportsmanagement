@@ -293,6 +293,13 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
+                    <div onClick={(e) => e.stopPropagation()}>
+                      <Checkbox
+                        checked={selectedIds.has(player.id)}
+                        onCheckedChange={() => toggleOne(player.id)}
+                        aria-label={`Select ${player.first_name} ${player.last_name}`}
+                      />
+                    </div>
                     <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center font-display text-lg text-primary">
                       #{player.t_number}
                     </div>
