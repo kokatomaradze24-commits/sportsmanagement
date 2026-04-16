@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { AppHeader } from "@/components/AppHeader";
 import { PlayersList } from "@/components/PlayersList";
 import { PaymentsPanel } from "@/components/PaymentsPanel";
@@ -9,6 +9,7 @@ import { useTheme } from "@/hooks/use-theme";
 import { useAppSettings } from "@/hooks/use-app-settings";
 import { usePlayers } from "@/hooks/use-players";
 import { usePayments } from "@/hooks/use-payments";
+import { useAuth } from "@/hooks/use-auth";
 import type { Database } from "@/integrations/supabase/types";
 
 type Player = Database["public"]["Tables"]["players"]["Row"];
@@ -24,11 +25,29 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
+  const navigate = useNavigate();
+  const { isAuthenticated, loading: authLoading, signOut } = useAuth();
   const { isDark, toggle } = useTheme();
   const { schoolName, logoUrl, updateSchoolName, updateLogo } = useAppSettings();
   const { players, loading: playersLoading, addPlayer, updatePlayer, deletePlayer } = usePlayers();
   const { payments, loading: paymentsLoading, addPayment, updatePayment, deletePayment } = usePayments();
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
+
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <span className="text-5xl block mb-4 animate-bounce">🏀</span>
+          <p className="text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    navigate({ to: "/login" });
+    return null;
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -39,6 +58,7 @@ function Index() {
         onToggleTheme={toggle}
         onUpdateName={updateSchoolName}
         onUploadLogo={updateLogo}
+        onSignOut={signOut}
       />
 
       <main className="max-w-7xl mx-auto px-6 py-6 space-y-6">
