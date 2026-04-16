@@ -76,6 +76,7 @@ function Index() {
         onUpdateName={updateSchoolName}
         onUploadLogo={updateLogo}
         onChangeSport={(id) => setSport(id)}
+        onResetBranding={resetBranding}
         onSignOut={signOut}
       />
 
