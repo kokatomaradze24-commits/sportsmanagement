@@ -2,8 +2,9 @@ import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
 export function useAppSettings() {
-  const [schoolName, setSchoolName] = useState("Basketball Academy");
+  const [schoolName, setSchoolName] = useState("My Club");
   const [logoUrl, setLogoUrl] = useState("");
+  const [sportId, setSportId] = useState<string>("");
   const [loading, setLoading] = useState(true);
 
   const fetchSettings = useCallback(async () => {
@@ -11,8 +12,10 @@ export function useAppSettings() {
     if (data) {
       const nameRow = data.find((r) => r.key === "school_name");
       const logoRow = data.find((r) => r.key === "logo_url");
+      const sportRow = data.find((r) => r.key === "sport");
       if (nameRow?.value) setSchoolName(nameRow.value);
       if (logoRow?.value) setLogoUrl(logoRow.value);
+      if (sportRow?.value) setSportId(sportRow.value);
     }
     setLoading(false);
   }, []);
@@ -21,17 +24,24 @@ export function useAppSettings() {
     fetchSettings();
   }, [fetchSettings]);
 
-  const updateSchoolName = useCallback(async (name: string) => {
-    setSchoolName(name);
+  const upsertSetting = useCallback(async (key: string, value: string) => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
-
-    // Upsert: try update first, if no rows affected, insert
-    const { data } = await supabase.from("app_settings").update({ value: name }).eq("key", "school_name").select();
+    const { data } = await supabase.from("app_settings").update({ value }).eq("key", key).select();
     if (!data || data.length === 0) {
-      await supabase.from("app_settings").insert({ key: "school_name", value: name, user_id: user.id });
+      await supabase.from("app_settings").insert({ key, value, user_id: user.id });
     }
   }, []);
+
+  const updateSchoolName = useCallback(async (name: string) => {
+    setSchoolName(name);
+    await upsertSetting("school_name", name);
+  }, [upsertSetting]);
+
+  const updateSport = useCallback(async (id: string) => {
+    setSportId(id);
+    await upsertSetting("sport", id);
+  }, [upsertSetting]);
 
   const updateLogo = useCallback(async (file: File) => {
     const { data: { user } } = await supabase.auth.getUser();
@@ -46,12 +56,9 @@ export function useAppSettings() {
     const url = data.publicUrl + "?t=" + Date.now();
     setLogoUrl(url);
 
-    const { data: existing } = await supabase.from("app_settings").update({ value: url }).eq("key", "logo_url").select();
-    if (!existing || existing.length === 0) {
-      await supabase.from("app_settings").insert({ key: "logo_url", value: url, user_id: user.id });
-    }
+    await upsertSetting("logo_url", url);
     return url;
-  }, []);
+  }, [upsertSetting]);
 
-  return { schoolName, logoUrl, loading, updateSchoolName, updateLogo };
+  return { schoolName, logoUrl, sportId, loading, updateSchoolName, updateLogo, updateSport };
 }
