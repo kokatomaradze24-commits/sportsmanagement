@@ -30,7 +30,7 @@ function Index() {
   const navigate = useNavigate();
   const { isAuthenticated, loading: authLoading, signOut } = useAuth();
   const { isDark, toggle } = useTheme();
-  const { schoolName, logoUrl, loading: settingsLoading, updateSchoolName, updateLogo } = useAppSettings();
+  const { schoolName, logoUrl, loading: settingsLoading, updateSchoolName, updateLogo, resetBranding } = useAppSettings();
   const { sport, sportId, setSport } = useSport();
   const { players, loading: playersLoading, addPlayer, updatePlayer, deletePlayer } = usePlayers(sportId);
   const { payments, loading: paymentsLoading, addPayment, updatePayment, deletePayment } = usePayments(sportId);
