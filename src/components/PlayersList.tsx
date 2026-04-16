@@ -90,6 +90,8 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [paymentFilter, setPaymentFilter] = useState<PaymentFilter>("all");
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [bulkDeleting, setBulkDeleting] = useState(false);
 
   const now = new Date();
   const currentMonth = now.getMonth() + 1;
