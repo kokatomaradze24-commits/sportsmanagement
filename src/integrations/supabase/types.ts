@@ -20,6 +20,7 @@ export type Database = {
           id: string
           key: string
           updated_at: string
+          user_id: string | null
           value: string | null
         }
         Insert: {
@@ -27,6 +28,7 @@ export type Database = {
           id?: string
           key: string
           updated_at?: string
+          user_id?: string | null
           value?: string | null
         }
         Update: {
@@ -34,6 +36,7 @@ export type Database = {
           id?: string
           key?: string
           updated_at?: string
+          user_id?: string | null
           value?: string | null
         }
         Relationships: []
@@ -49,6 +52,7 @@ export type Database = {
           player_id: string
           status: string
           updated_at: string
+          user_id: string | null
           year: number
         }
         Insert: {
@@ -61,6 +65,7 @@ export type Database = {
           player_id: string
           status?: string
           updated_at?: string
+          user_id?: string | null
           year: number
         }
         Update: {
@@ -73,6 +78,7 @@ export type Database = {
           player_id?: string
           status?: string
           updated_at?: string
+          user_id?: string | null
           year?: number
         }
         Relationships: [
@@ -97,6 +103,7 @@ export type Database = {
           phone: string | null
           t_number: number
           updated_at: string
+          user_id: string | null
         }
         Insert: {
           created_at?: string
@@ -109,6 +116,7 @@ export type Database = {
           phone?: string | null
           t_number: number
           updated_at?: string
+          user_id?: string | null
         }
         Update: {
           created_at?: string
@@ -121,6 +129,7 @@ export type Database = {
           phone?: string | null
           t_number?: number
           updated_at?: string
+          user_id?: string | null
         }
         Relationships: []
       }
