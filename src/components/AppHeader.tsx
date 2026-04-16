@@ -1,20 +1,24 @@
 import { useState, useRef } from "react";
 import { motion } from "framer-motion";
-import { Moon, Sun, Upload, Pencil, Check, X, LogOut } from "lucide-react";
+import { Moon, Sun, Upload, Pencil, Check, X, LogOut, Trophy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuLabel, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
+import { getInitials, SPORT_LIST, type SportConfig, type SportId } from "@/lib/sports";
 
 interface AppHeaderProps {
   schoolName: string;
   logoUrl: string;
+  sport: SportConfig;
   isDark: boolean;
   onToggleTheme: () => void;
   onUpdateName: (name: string) => void;
   onUploadLogo: (file: File) => void;
+  onChangeSport: (id: SportId) => void;
   onSignOut?: () => void;
 }
 
-export function AppHeader({ schoolName, logoUrl, isDark, onToggleTheme, onUpdateName, onUploadLogo, onSignOut }: AppHeaderProps) {
+export function AppHeader({ schoolName, logoUrl, sport, isDark, onToggleTheme, onUpdateName, onUploadLogo, onChangeSport, onSignOut }: AppHeaderProps) {
   const [editing, setEditing] = useState(false);
   const [nameValue, setNameValue] = useState(schoolName);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -29,22 +33,24 @@ export function AppHeader({ schoolName, logoUrl, isDark, onToggleTheme, onUpdate
     setEditing(false);
   };
 
+  const initials = getInitials(schoolName);
+
   return (
     <motion.header
       initial={{ y: -20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       className="bg-card border-b border-border px-6 py-4"
     >
-      <div className="max-w-7xl mx-auto flex items-center justify-between">
-        <div className="flex items-center gap-4">
+      <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
+        <div className="flex items-center gap-4 min-w-0">
           <div
-            className="relative w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center overflow-hidden cursor-pointer group"
+            className="relative w-14 h-14 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center overflow-hidden cursor-pointer group flex-shrink-0 ring-1 ring-primary/20"
             onClick={() => fileRef.current?.click()}
           >
             {logoUrl ? (
               <img src={logoUrl} alt="Logo" className="w-full h-full object-cover" />
             ) : (
-              <span className="text-2xl">🏀</span>
+              <span className="font-display tracking-wider text-xl text-primary">{initials}</span>
             )}
             <div className="absolute inset-0 bg-primary/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
               <Upload className="w-5 h-5 text-primary-foreground" />
@@ -62,7 +68,7 @@ export function AppHeader({ schoolName, logoUrl, isDark, onToggleTheme, onUpdate
           </div>
 
           {editing ? (
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 min-w-0">
               <Input
                 value={nameValue}
                 onChange={(e) => setNameValue(e.target.value)}
@@ -81,8 +87,13 @@ export function AppHeader({ schoolName, logoUrl, isDark, onToggleTheme, onUpdate
               </Button>
             </div>
           ) : (
-            <div className="flex items-center gap-2">
-              <h1 className="text-3xl tracking-wider text-foreground">{schoolName}</h1>
+            <div className="flex items-center gap-2 min-w-0">
+              <div className="min-w-0">
+                <h1 className="text-2xl sm:text-3xl tracking-wider text-foreground truncate">{schoolName}</h1>
+                <p className="text-xs text-muted-foreground flex items-center gap-1">
+                  <span>{sport.emoji}</span> {sport.name} Club
+                </p>
+              </div>
               <Button size="icon" variant="ghost" onClick={() => { setNameValue(schoolName); setEditing(true); }}>
                 <Pencil className="w-4 h-4" />
               </Button>
@@ -90,32 +101,56 @@ export function AppHeader({ schoolName, logoUrl, isDark, onToggleTheme, onUpdate
           )}
         </div>
 
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={onToggleTheme}
-          className="rounded-full w-10 h-10"
-        >
-          <motion.div
-            key={isDark ? "moon" : "sun"}
-            initial={{ rotate: -90, opacity: 0 }}
-            animate={{ rotate: 0, opacity: 1 }}
-            transition={{ duration: 0.3 }}
-          >
-            {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-          </motion.div>
-        </Button>
-        {onSignOut && (
+        <div className="flex items-center gap-1 flex-shrink-0">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" className="rounded-full w-10 h-10" title="Change sport">
+                <Trophy className="w-5 h-5" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Sport / Discipline</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              {SPORT_LIST.map((s) => (
+                <DropdownMenuItem
+                  key={s.id}
+                  onClick={() => onChangeSport(s.id)}
+                  className={s.id === sport.id ? "bg-primary/10 font-semibold" : ""}
+                >
+                  <span className="mr-2">{s.emoji}</span>
+                  {s.name}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+
           <Button
             variant="ghost"
             size="icon"
-            onClick={onSignOut}
-            className="rounded-full w-10 h-10 text-muted-foreground hover:text-destructive"
-            title="Sign out"
+            onClick={onToggleTheme}
+            className="rounded-full w-10 h-10"
           >
-            <LogOut className="w-5 h-5" />
+            <motion.div
+              key={isDark ? "moon" : "sun"}
+              initial={{ rotate: -90, opacity: 0 }}
+              animate={{ rotate: 0, opacity: 1 }}
+              transition={{ duration: 0.3 }}
+            >
+              {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+            </motion.div>
           </Button>
-        )}
+          {onSignOut && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={onSignOut}
+              className="rounded-full w-10 h-10 text-muted-foreground hover:text-destructive"
+              title="Sign out"
+            >
+              <LogOut className="w-5 h-5" />
+            </Button>
+          )}
+        </div>
       </div>
     </motion.header>
   );

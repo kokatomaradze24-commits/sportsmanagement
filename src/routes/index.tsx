@@ -5,8 +5,10 @@ import { PlayersList } from "@/components/PlayersList";
 import { PaymentsPanel } from "@/components/PaymentsPanel";
 import { NotificationsBanner } from "@/components/NotificationsBanner";
 import { StatsCards } from "@/components/StatsCards";
+import { SportPicker } from "@/components/SportPicker";
 import { useTheme } from "@/hooks/use-theme";
 import { useAppSettings } from "@/hooks/use-app-settings";
+import { useSport } from "@/hooks/use-sport";
 import { usePlayers } from "@/hooks/use-players";
 import { usePayments } from "@/hooks/use-payments";
 import { useAuth } from "@/hooks/use-auth";
@@ -17,8 +19,8 @@ type Player = Database["public"]["Tables"]["players"]["Row"];
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Basketball Club Manager" },
-      { name: "description", content: "Manage your basketball club players, payments, and registrations" },
+      { title: "Club Manager" },
+      { name: "description", content: "Manage your sports club members, payments, and registrations" },
     ],
   }),
   component: Index,
@@ -28,7 +30,8 @@ function Index() {
   const navigate = useNavigate();
   const { isAuthenticated, loading: authLoading, signOut } = useAuth();
   const { isDark, toggle } = useTheme();
-  const { schoolName, logoUrl, updateSchoolName, updateLogo } = useAppSettings();
+  const { schoolName, logoUrl, loading: settingsLoading, updateSchoolName, updateLogo } = useAppSettings();
+  const { sport, sportId, setSport } = useSport();
   const { players, loading: playersLoading, addPlayer, updatePlayer, deletePlayer } = usePlayers();
   const { payments, loading: paymentsLoading, addPayment, updatePayment, deletePayment } = usePayments();
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
@@ -37,7 +40,7 @@ function Index() {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
-          <span className="text-5xl block mb-4 animate-bounce">🏀</span>
+          <span className="text-5xl block mb-4 animate-bounce">🏆</span>
           <p className="text-muted-foreground">Loading...</p>
         </div>
       </div>
@@ -49,15 +52,25 @@ function Index() {
     return null;
   }
 
+  // Show sport picker on first sign-in (after settings load, no sport set)
+  const showSportPicker = !settingsLoading && !sportId;
+
   return (
     <div className="min-h-screen bg-background">
+      <SportPicker
+        open={showSportPicker}
+        onSelect={(id) => setSport(id)}
+      />
+
       <AppHeader
         schoolName={schoolName}
         logoUrl={logoUrl}
+        sport={sport}
         isDark={isDark}
         onToggleTheme={toggle}
         onUpdateName={updateSchoolName}
         onUploadLogo={updateLogo}
+        onChangeSport={(id) => setSport(id)}
         onSignOut={signOut}
       />
 
@@ -71,6 +84,7 @@ function Index() {
               players={players}
               payments={payments}
               loading={playersLoading}
+              sport={sport}
               onAdd={addPlayer}
               onUpdate={updatePlayer}
               onDelete={deletePlayer}
@@ -92,9 +106,9 @@ function Index() {
             ) : (
               <div className="flex items-center justify-center h-full min-h-[300px] text-muted-foreground">
                 <div className="text-center">
-                  <span className="text-5xl block mb-4">🏀</span>
-                  <p className="text-lg font-display tracking-wider">Select a Player</p>
-                  <p className="text-sm mt-1">Click on a player to view and manage their payments</p>
+                  <span className="text-5xl block mb-4">{sport.emoji}</span>
+                  <p className="text-lg font-display tracking-wider">Select a {sport.member}</p>
+                  <p className="text-sm mt-1">Click on a {sport.member.toLowerCase()} to view and manage their payments</p>
                 </div>
               </div>
             )}
