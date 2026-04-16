@@ -1,4 +1,5 @@
 import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
+import { AppSettingsProvider } from "@/hooks/use-app-settings";
 
 import appCss from "../styles.css?url";
 
@@ -67,5 +68,9 @@ function RootShell({ children }: { children: React.ReactNode }) {
 }
 
 function RootComponent() {
-  return <Outlet />;
+  return (
+    <AppSettingsProvider>
+      <Outlet />
+    </AppSettingsProvider>
+  );
 }
