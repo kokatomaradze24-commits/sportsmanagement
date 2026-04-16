@@ -1,9 +1,10 @@
 import { useState, useRef } from "react";
 import { motion } from "framer-motion";
-import { Moon, Sun, Upload, Pencil, Check, X, LogOut, Trophy } from "lucide-react";
+import { Moon, Sun, Upload, Pencil, Check, X, LogOut, Trophy, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuLabel, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { getInitials, SPORT_LIST, type SportConfig, type SportId } from "@/lib/sports";
 
 interface AppHeaderProps {
@@ -15,10 +16,11 @@ interface AppHeaderProps {
   onUpdateName: (name: string) => void;
   onUploadLogo: (file: File) => void;
   onChangeSport: (id: SportId) => void;
+  onResetBranding: () => void;
   onSignOut?: () => void;
 }
 
-export function AppHeader({ schoolName, logoUrl, sport, isDark, onToggleTheme, onUpdateName, onUploadLogo, onChangeSport, onSignOut }: AppHeaderProps) {
+export function AppHeader({ schoolName, logoUrl, sport, isDark, onToggleTheme, onUpdateName, onUploadLogo, onChangeSport, onResetBranding, onSignOut }: AppHeaderProps) {
   const [editing, setEditing] = useState(false);
   const [nameValue, setNameValue] = useState(schoolName);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -123,6 +125,26 @@ export function AppHeader({ schoolName, logoUrl, sport, isDark, onToggleTheme, o
               ))}
             </DropdownMenuContent>
           </DropdownMenu>
+
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="ghost" size="icon" className="rounded-full w-10 h-10 text-muted-foreground hover:text-foreground" title="Reset club name & logo">
+                <RotateCcw className="w-5 h-5" />
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Reset branding for {sport.name}?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This will restore the club name to "My Club" and remove the uploaded logo for this sport. Players and payments will not be affected.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction onClick={onResetBranding}>Reset</AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
 
           <Button
             variant="ghost"
