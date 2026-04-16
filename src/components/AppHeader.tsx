@@ -1,11 +1,13 @@
 import { useState, useRef } from "react";
 import { motion } from "framer-motion";
-import { Moon, Sun, Upload, Pencil, Check, X, LogOut, Trophy, RotateCcw } from "lucide-react";
+import { Link } from "@tanstack/react-router";
+import { Moon, Sun, Upload, Pencil, Check, X, LogOut, Trophy, RotateCcw, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuLabel, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { getInitials, SPORT_LIST, type SportConfig, type SportId } from "@/lib/sports";
+import { useIsAdmin } from "@/hooks/use-is-admin";
 
 interface AppHeaderProps {
   schoolName: string;
@@ -24,6 +26,7 @@ export function AppHeader({ schoolName, logoUrl, sport, isDark, onToggleTheme, o
   const [editing, setEditing] = useState(false);
   const [nameValue, setNameValue] = useState(schoolName);
   const fileRef = useRef<HTMLInputElement>(null);
+  const { isAdmin } = useIsAdmin();
 
   const handleSave = () => {
     onUpdateName(nameValue);
@@ -145,6 +148,19 @@ export function AppHeader({ schoolName, logoUrl, sport, isDark, onToggleTheme, o
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
+
+          {isAdmin && (
+            <Link to="/admin">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="rounded-full w-10 h-10 text-yellow-600 hover:text-yellow-500"
+                title="Admin Panel"
+              >
+                <Shield className="w-5 h-5" />
+              </Button>
+            </Link>
+          )}
 
           <Button
             variant="ghost"
