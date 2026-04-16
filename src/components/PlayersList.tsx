@@ -3,8 +3,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Plus, Pencil, Trash2, User, Phone, Mail, Search, Filter } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import type { Database } from "@/integrations/supabase/types";
 import type { SportConfig } from "@/lib/sports";
 
@@ -88,6 +90,8 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [paymentFilter, setPaymentFilter] = useState<PaymentFilter>("all");
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [bulkDeleting, setBulkDeleting] = useState(false);
 
   const now = new Date();
   const currentMonth = now.getMonth() + 1;
@@ -123,6 +127,39 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
 
     return result;
   }, [players, payments, search, paymentFilter, currentMonth, currentYear]);
+
+  const toggleOne = (id: string) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const visibleSelectedCount = filteredPlayers.filter((p) => selectedIds.has(p.id)).length;
+  const allVisibleSelected = filteredPlayers.length > 0 && visibleSelectedCount === filteredPlayers.length;
+  const someVisibleSelected = visibleSelectedCount > 0 && !allVisibleSelected;
+
+  const toggleAllVisible = () => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (allVisibleSelected) {
+        filteredPlayers.forEach((p) => next.delete(p.id));
+      } else {
+        filteredPlayers.forEach((p) => next.add(p.id));
+      }
+      return next;
+    });
+  };
+
+  const handleBulkDelete = async () => {
+    setBulkDeleting(true);
+    const ids = Array.from(selectedIds);
+    await Promise.all(ids.map((id) => onDelete(id)));
+    setSelectedIds(new Set());
+    setBulkDeleting(false);
+  };
 
   return (
     <div className="space-y-4">
@@ -174,6 +211,54 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
         </Select>
       </div>
 
+      {filteredPlayers.length > 0 && (
+        <div className="flex items-center justify-between gap-2 px-1">
+          <label className="flex items-center gap-2 text-xs text-muted-foreground cursor-pointer select-none">
+            <Checkbox
+              checked={allVisibleSelected ? true : someVisibleSelected ? "indeterminate" : false}
+              onCheckedChange={toggleAllVisible}
+            />
+            <span>
+              {selectedIds.size > 0
+                ? `${selectedIds.size} selected`
+                : `Select all (${filteredPlayers.length})`}
+            </span>
+          </label>
+          {selectedIds.size > 0 && (
+            <div className="flex items-center gap-2">
+              <Button size="sm" variant="ghost" className="h-7 text-xs" onClick={() => setSelectedIds(new Set())}>
+                Clear
+              </Button>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button size="sm" variant="destructive" className="h-7 text-xs" disabled={bulkDeleting}>
+                    <Trash2 className="w-3.5 h-3.5 mr-1" />
+                    Delete {selectedIds.size}
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Delete {selectedIds.size} {selectedIds.size === 1 ? sport.member.toLowerCase() : sport.members.toLowerCase()}?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This will permanently remove the selected {sport.members.toLowerCase()} and all their payment history. This action cannot be undone.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={handleBulkDelete}
+                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                    >
+                      Delete
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </div>
+          )}
+        </div>
+      )}
+
       {loading ? (
         <div className="space-y-3">
           {[1, 2, 3].map((i) => (
@@ -208,6 +293,13 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
+                    <div onClick={(e) => e.stopPropagation()}>
+                      <Checkbox
+                        checked={selectedIds.has(player.id)}
+                        onCheckedChange={() => toggleOne(player.id)}
+                        aria-label={`Select ${player.first_name} ${player.last_name}`}
+                      />
+                    </div>
                     <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center font-display text-lg text-primary">
                       #{player.t_number}
                     </div>
