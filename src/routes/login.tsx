@@ -1,6 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { Trophy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { lovable } from "@/integrations/lovable/index";
 import { supabase } from "@/integrations/supabase/client";
@@ -8,8 +9,8 @@ import { supabase } from "@/integrations/supabase/client";
 export const Route = createFileRoute("/login")({
   head: () => ({
     meta: [
-      { title: "Sign In — Basketball Club Manager" },
-      { name: "description", content: "Sign in to manage your basketball club" },
+      { title: "Sign In — Club Management" },
+      { name: "description", content: "Sign in to manage your sports club" },
     ],
   }),
   component: LoginPage,
@@ -50,31 +51,139 @@ function LoginPage() {
     }
   };
 
+  // Floating sport emojis for ambient background
+  const sportEmojis = ["🏀", "⚽", "🏉", "🎾", "🥊", "🏊", "💪", "🏆", "🏐", "⚾"];
+
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center px-4">
+    <div className="relative min-h-screen overflow-hidden flex items-center justify-center px-4 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
+      {/* Animated gradient orbs */}
+      <div className="absolute inset-0 overflow-hidden">
+        <motion.div
+          animate={{
+            x: [0, 100, 0],
+            y: [0, 50, 0],
+          }}
+          transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute -top-40 -left-40 w-[500px] h-[500px] rounded-full bg-orange-500/20 blur-[120px]"
+        />
+        <motion.div
+          animate={{
+            x: [0, -80, 0],
+            y: [0, -60, 0],
+          }}
+          transition={{ duration: 25, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute top-1/3 -right-40 w-[600px] h-[600px] rounded-full bg-blue-500/20 blur-[120px]"
+        />
+        <motion.div
+          animate={{
+            x: [0, 60, 0],
+            y: [0, -80, 0],
+          }}
+          transition={{ duration: 22, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute -bottom-40 left-1/3 w-[500px] h-[500px] rounded-full bg-emerald-500/20 blur-[120px]"
+        />
+      </div>
+
+      {/* Stadium-light grid overlay */}
+      <div
+        className="absolute inset-0 opacity-[0.04]"
+        style={{
+          backgroundImage:
+            "linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)",
+          backgroundSize: "60px 60px",
+        }}
+      />
+
+      {/* Floating sport icons */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {sportEmojis.map((emoji, i) => (
+          <motion.div
+            key={i}
+            initial={{
+              x: `${(i * 37) % 100}vw`,
+              y: `${(i * 53) % 100}vh`,
+              opacity: 0,
+            }}
+            animate={{
+              y: [`${(i * 53) % 100}vh`, `${((i * 53) % 100) - 15}vh`, `${(i * 53) % 100}vh`],
+              opacity: [0, 0.08, 0.08, 0],
+              rotate: [0, 360],
+            }}
+            transition={{
+              duration: 12 + (i % 5),
+              repeat: Infinity,
+              delay: i * 0.8,
+              ease: "easeInOut",
+            }}
+            className="absolute text-6xl"
+          >
+            {emoji}
+          </motion.div>
+        ))}
+      </div>
+
+      {/* Main card */}
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-sm"
+        initial={{ opacity: 0, y: 30, scale: 0.95 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
+        className="relative w-full max-w-md z-10"
       >
         <div className="text-center mb-8">
-          <span className="text-6xl block mb-4">🏀</span>
-          <h1 className="text-3xl font-display tracking-wider text-foreground">Basketball Club</h1>
-          <p className="text-muted-foreground mt-2">Sign in to manage your club</p>
+          <motion.div
+            initial={{ scale: 0, rotate: -180 }}
+            animate={{ scale: 1, rotate: 0 }}
+            transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+            className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br from-orange-400 via-amber-500 to-yellow-500 shadow-2xl shadow-orange-500/40 mb-5 ring-1 ring-white/20"
+          >
+            <Trophy className="w-10 h-10 text-white drop-shadow-lg" strokeWidth={2.5} />
+          </motion.div>
+          <motion.h1
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="text-5xl font-display tracking-[0.15em] text-white drop-shadow-lg"
+          >
+            CLUB
+          </motion.h1>
+          <motion.h2
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            className="text-3xl font-display tracking-[0.3em] bg-gradient-to-r from-orange-400 via-amber-300 to-yellow-400 bg-clip-text text-transparent mt-1"
+          >
+            MANAGEMENT
+          </motion.h2>
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5 }}
+            className="text-slate-400 mt-4 text-sm tracking-wide"
+          >
+            Train. Track. Triumph.
+          </motion.p>
         </div>
 
-        <div className="bg-card rounded-2xl border border-border p-6 shadow-sm space-y-4">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+          className="bg-white/[0.04] backdrop-blur-xl rounded-2xl border border-white/10 p-6 shadow-2xl space-y-4"
+        >
           {error && (
-            <div className="text-sm text-destructive bg-destructive/10 rounded-lg p-3 text-center">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="text-sm text-red-300 bg-red-500/10 border border-red-500/20 rounded-lg p-3 text-center"
+            >
               {error}
-            </div>
+            </motion.div>
           )}
 
           <Button
             onClick={handleGoogleSignIn}
             disabled={loading}
-            className="w-full h-12 text-base"
-            variant="outline"
+            className="w-full h-12 text-base bg-white hover:bg-white/90 text-slate-900 font-medium shadow-lg transition-all hover:shadow-xl hover:scale-[1.02] active:scale-[0.98]"
           >
             <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
               <path
@@ -96,7 +205,25 @@ function LoginPage() {
             </svg>
             {loading ? "Signing in..." : "Continue with Google"}
           </Button>
-        </div>
+
+          <p className="text-xs text-center text-slate-500 pt-2">
+            By signing in you agree to manage your club data securely.
+          </p>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.7 }}
+          className="flex items-center justify-center gap-4 mt-6 text-xs text-slate-500"
+        >
+          <span>🏀</span>
+          <span>⚽</span>
+          <span>🥊</span>
+          <span>💃</span>
+          <span>🏊</span>
+          <span>💪</span>
+        </motion.div>
       </motion.div>
     </div>
   );
