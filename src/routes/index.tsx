@@ -49,6 +49,7 @@ function Index() {
           <div className="bg-card rounded-2xl border border-border p-5 shadow-sm">
             <PlayersList
               players={players}
+              payments={payments}
               loading={playersLoading}
               onAdd={addPlayer}
               onUpdate={updatePlayer}

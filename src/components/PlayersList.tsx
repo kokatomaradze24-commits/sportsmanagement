@@ -1,16 +1,21 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, Pencil, Trash2, User, Phone, Mail, Hash } from "lucide-react";
+import { Plus, Pencil, Trash2, User, Phone, Mail, Search, Filter } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import type { Database } from "@/integrations/supabase/types";
 
 type Player = Database["public"]["Tables"]["players"]["Row"];
+type Payment = Database["public"]["Tables"]["payments"]["Row"];
 type PlayerInsert = Database["public"]["Tables"]["players"]["Insert"];
+
+type PaymentFilter = "all" | "paid" | "pending" | "overdue";
 
 interface PlayersListProps {
   players: Player[];
+  payments?: Payment[];
   loading: boolean;
   onAdd: (player: PlayerInsert) => Promise<{ error: unknown }>;
   onUpdate: (id: string, updates: Partial<Player>) => Promise<{ error: unknown }>;
@@ -74,10 +79,47 @@ function PlayerForm({ initial, onSubmit, onCancel }: {
   );
 }
 
-export function PlayersList({ players, loading, onAdd, onUpdate, onDelete, onSelect, selectedId }: PlayersListProps) {
+export function PlayersList({ players, payments = [], loading, onAdd, onUpdate, onDelete, onSelect, selectedId }: PlayersListProps) {
   const [addOpen, setAddOpen] = useState(false);
   const [editPlayer, setEditPlayer] = useState<Player | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
+  const [search, setSearch] = useState("");
+  const [paymentFilter, setPaymentFilter] = useState<PaymentFilter>("all");
+
+  const now = new Date();
+  const currentMonth = now.getMonth() + 1;
+  const currentYear = now.getFullYear();
+
+  const filteredPlayers = useMemo(() => {
+    let result = players;
+
+    // Text search
+    if (search.trim()) {
+      const q = search.trim().toLowerCase();
+      result = result.filter(
+        (p) =>
+          p.first_name.toLowerCase().includes(q) ||
+          p.last_name.toLowerCase().includes(q) ||
+          `${p.first_name} ${p.last_name}`.toLowerCase().includes(q) ||
+          p.t_number.toString().includes(q)
+      );
+    }
+
+    // Payment status filter
+    if (paymentFilter !== "all") {
+      result = result.filter((p) => {
+        const playerPayment = payments.find(
+          (pay) => pay.player_id === p.id && pay.month === currentMonth && pay.year === currentYear
+        );
+        if (paymentFilter === "paid") return playerPayment?.status === "paid";
+        if (paymentFilter === "pending") return playerPayment?.status === "pending";
+        if (paymentFilter === "overdue") return !playerPayment || playerPayment.status === "pending";
+        return true;
+      });
+    }
+
+    return result;
+  }, [players, payments, search, paymentFilter, currentMonth, currentYear]);
 
   return (
     <div className="space-y-4">
@@ -104,25 +146,49 @@ export function PlayersList({ players, loading, onAdd, onUpdate, onDelete, onSel
         </Dialog>
       </div>
 
+      <div className="flex items-center gap-2">
+        <div className="relative flex-1">
+          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+          <Input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search name or number..."
+            className="pl-9 h-8 text-sm"
+          />
+        </div>
+        <Select value={paymentFilter} onValueChange={(v) => setPaymentFilter(v as PaymentFilter)}>
+          <SelectTrigger className="w-[130px] h-8 text-sm">
+            <Filter className="w-3.5 h-3.5 mr-1.5" />
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All</SelectItem>
+            <SelectItem value="paid">Paid</SelectItem>
+            <SelectItem value="pending">Pending</SelectItem>
+            <SelectItem value="overdue">Overdue</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
       {loading ? (
         <div className="space-y-3">
           {[1, 2, 3].map((i) => (
             <div key={i} className="h-20 rounded-xl bg-muted animate-pulse" />
           ))}
         </div>
-      ) : players.length === 0 ? (
+      ) : filteredPlayers.length === 0 ? (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           className="text-center py-12 text-muted-foreground"
         >
           <User className="w-12 h-12 mx-auto mb-3 opacity-40" />
-          <p>No players yet. Add your first player!</p>
+          <p>{players.length === 0 ? "No players yet. Add your first player!" : "No players match your filters."}</p>
         </motion.div>
       ) : (
         <div className="space-y-2">
           <AnimatePresence>
-            {players.map((player, i) => (
+            {filteredPlayers.map((player, i) => (
               <motion.div
                 key={player.id}
                 initial={{ opacity: 0, x: -20 }}
