@@ -79,10 +79,47 @@ function PlayerForm({ initial, onSubmit, onCancel }: {
   );
 }
 
-export function PlayersList({ players, loading, onAdd, onUpdate, onDelete, onSelect, selectedId }: PlayersListProps) {
+export function PlayersList({ players, payments = [], loading, onAdd, onUpdate, onDelete, onSelect, selectedId }: PlayersListProps) {
   const [addOpen, setAddOpen] = useState(false);
   const [editPlayer, setEditPlayer] = useState<Player | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
+  const [search, setSearch] = useState("");
+  const [paymentFilter, setPaymentFilter] = useState<PaymentFilter>("all");
+
+  const now = new Date();
+  const currentMonth = now.getMonth() + 1;
+  const currentYear = now.getFullYear();
+
+  const filteredPlayers = useMemo(() => {
+    let result = players;
+
+    // Text search
+    if (search.trim()) {
+      const q = search.trim().toLowerCase();
+      result = result.filter(
+        (p) =>
+          p.first_name.toLowerCase().includes(q) ||
+          p.last_name.toLowerCase().includes(q) ||
+          `${p.first_name} ${p.last_name}`.toLowerCase().includes(q) ||
+          p.t_number.toString().includes(q)
+      );
+    }
+
+    // Payment status filter
+    if (paymentFilter !== "all") {
+      result = result.filter((p) => {
+        const playerPayment = payments.find(
+          (pay) => pay.player_id === p.id && pay.month === currentMonth && pay.year === currentYear
+        );
+        if (paymentFilter === "paid") return playerPayment?.status === "paid";
+        if (paymentFilter === "pending") return playerPayment?.status === "pending";
+        if (paymentFilter === "overdue") return !playerPayment || playerPayment.status === "pending";
+        return true;
+      });
+    }
+
+    return result;
+  }, [players, payments, search, paymentFilter, currentMonth, currentYear]);
 
   return (
     <div className="space-y-4">
