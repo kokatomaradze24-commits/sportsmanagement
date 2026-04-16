@@ -1,16 +1,21 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, Pencil, Trash2, User, Phone, Mail, Hash } from "lucide-react";
+import { Plus, Pencil, Trash2, User, Phone, Mail, Search, Filter } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import type { Database } from "@/integrations/supabase/types";
 
 type Player = Database["public"]["Tables"]["players"]["Row"];
+type Payment = Database["public"]["Tables"]["payments"]["Row"];
 type PlayerInsert = Database["public"]["Tables"]["players"]["Insert"];
+
+type PaymentFilter = "all" | "paid" | "pending" | "overdue";
 
 interface PlayersListProps {
   players: Player[];
+  payments?: Payment[];
   loading: boolean;
   onAdd: (player: PlayerInsert) => Promise<{ error: unknown }>;
   onUpdate: (id: string, updates: Partial<Player>) => Promise<{ error: unknown }>;
