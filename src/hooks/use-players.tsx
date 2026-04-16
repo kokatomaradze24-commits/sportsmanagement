@@ -5,16 +5,25 @@ import type { Database } from "@/integrations/supabase/types";
 type Player = Database["public"]["Tables"]["players"]["Row"];
 type PlayerInsert = Database["public"]["Tables"]["players"]["Insert"];
 
-export function usePlayers() {
+export function usePlayers(sport: string) {
   const [players, setPlayers] = useState<Player[]>([]);
   const [loading, setLoading] = useState(true);
 
   const fetchPlayers = useCallback(async () => {
+    if (!sport) {
+      setPlayers([]);
+      setLoading(false);
+      return;
+    }
     setLoading(true);
-    const { data } = await supabase.from("players").select("*").order("last_name");
+    const { data } = await supabase
+      .from("players")
+      .select("*")
+      .eq("sport", sport)
+      .order("last_name");
     if (data) setPlayers(data);
     setLoading(false);
-  }, []);
+  }, [sport]);
 
   useEffect(() => {
     fetchPlayers();
@@ -23,10 +32,12 @@ export function usePlayers() {
   const addPlayer = useCallback(async (player: PlayerInsert) => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return { error: new Error("Not authenticated") };
-    const { error } = await supabase.from("players").insert({ ...player, user_id: user.id });
+    const { error } = await supabase
+      .from("players")
+      .insert({ ...player, user_id: user.id, sport });
     if (!error) await fetchPlayers();
     return { error };
-  }, [fetchPlayers]);
+  }, [fetchPlayers, sport]);
 
   const updatePlayer = useCallback(async (id: string, updates: Partial<Player>) => {
     const { error } = await supabase.from("players").update(updates).eq("id", id);

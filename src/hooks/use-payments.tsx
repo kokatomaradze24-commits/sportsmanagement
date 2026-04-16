@@ -5,16 +5,26 @@ import type { Database } from "@/integrations/supabase/types";
 type Payment = Database["public"]["Tables"]["payments"]["Row"];
 type PaymentInsert = Database["public"]["Tables"]["payments"]["Insert"];
 
-export function usePayments() {
+export function usePayments(sport: string) {
   const [payments, setPayments] = useState<Payment[]>([]);
   const [loading, setLoading] = useState(true);
 
   const fetchPayments = useCallback(async () => {
+    if (!sport) {
+      setPayments([]);
+      setLoading(false);
+      return;
+    }
     setLoading(true);
-    const { data } = await supabase.from("payments").select("*").order("year", { ascending: false }).order("month", { ascending: false });
+    const { data } = await supabase
+      .from("payments")
+      .select("*")
+      .eq("sport", sport)
+      .order("year", { ascending: false })
+      .order("month", { ascending: false });
     if (data) setPayments(data);
     setLoading(false);
-  }, []);
+  }, [sport]);
 
   useEffect(() => {
     fetchPayments();
@@ -23,10 +33,12 @@ export function usePayments() {
   const addPayment = useCallback(async (payment: PaymentInsert) => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return { error: new Error("Not authenticated") };
-    const { error } = await supabase.from("payments").insert({ ...payment, user_id: user.id });
+    const { error } = await supabase
+      .from("payments")
+      .insert({ ...payment, user_id: user.id, sport });
     if (!error) await fetchPayments();
     return { error };
-  }, [fetchPayments]);
+  }, [fetchPayments, sport]);
 
   const updatePayment = useCallback(async (id: string, updates: Partial<Payment>) => {
     const { error } = await supabase.from("payments").update(updates).eq("id", id);
