@@ -126,6 +126,26 @@ export function AppHeader({ schoolName, logoUrl, sport, isDark, onToggleTheme, o
             </DropdownMenuContent>
           </DropdownMenu>
 
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="ghost" size="icon" className="rounded-full w-10 h-10 text-muted-foreground hover:text-foreground" title="Reset club name & logo">
+                <RotateCcw className="w-5 h-5" />
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Reset branding for {sport.name}?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This will restore the club name to "My Club" and remove the uploaded logo for this sport. Players and payments will not be affected.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction onClick={onResetBranding}>Reset</AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+
           <Button
             variant="ghost"
             size="icon"
