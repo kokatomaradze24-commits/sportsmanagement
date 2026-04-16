@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import { motion } from "framer-motion";
-import { Moon, Sun, Upload, Pencil, Check, X } from "lucide-react";
+import { Moon, Sun, Upload, Pencil, Check, X, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -11,9 +11,10 @@ interface AppHeaderProps {
   onToggleTheme: () => void;
   onUpdateName: (name: string) => void;
   onUploadLogo: (file: File) => void;
+  onSignOut?: () => void;
 }
 
-export function AppHeader({ schoolName, logoUrl, isDark, onToggleTheme, onUpdateName, onUploadLogo }: AppHeaderProps) {
+export function AppHeader({ schoolName, logoUrl, isDark, onToggleTheme, onUpdateName, onUploadLogo, onSignOut }: AppHeaderProps) {
   const [editing, setEditing] = useState(false);
   const [nameValue, setNameValue] = useState(schoolName);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -104,6 +105,17 @@ export function AppHeader({ schoolName, logoUrl, isDark, onToggleTheme, onUpdate
             {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
           </motion.div>
         </Button>
+        {onSignOut && (
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onSignOut}
+            className="rounded-full w-10 h-10 text-muted-foreground hover:text-destructive"
+            title="Sign out"
+          >
+            <LogOut className="w-5 h-5" />
+          </Button>
+        )}
       </div>
     </motion.header>
   );
