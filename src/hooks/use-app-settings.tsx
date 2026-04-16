@@ -133,9 +133,30 @@ export function AppSettingsProvider({ children }: { children: ReactNode }) {
     return url;
   }, [upsertSetting, sportId]);
 
+  const resetBranding = useCallback(async () => {
+    if (!sportId) return;
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    setSchoolName("My Club");
+    setLogoUrl("");
+
+    await supabase
+      .from("app_settings")
+      .delete()
+      .eq("user_id", user.id)
+      .in("key", [nameKey(sportId), logoKey(sportId)]);
+
+    // Best-effort cleanup of any uploaded logo files for this sport
+    const exts = ["jpg", "png", "webp", "gif"];
+    await supabase.storage
+      .from("logos")
+      .remove(exts.map((ext) => `${user.id}/logo-${sportId}.${ext}`));
+  }, [sportId]);
+
   return (
     <AppSettingsContext.Provider
-      value={{ schoolName, logoUrl, sportId, loading, updateSchoolName, updateLogo, updateSport }}
+      value={{ schoolName, logoUrl, sportId, loading, updateSchoolName, updateLogo, updateSport, resetBranding }}
     >
       {children}
     </AppSettingsContext.Provider>
@@ -150,6 +171,7 @@ const defaultAppSettings: AppSettingsContextValue = {
   updateSchoolName: async () => {},
   updateLogo: async () => "",
   updateSport: async () => {},
+  resetBranding: async () => {},
 };
 
 export function useAppSettings() {
