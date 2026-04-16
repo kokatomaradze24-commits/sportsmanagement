@@ -211,6 +211,54 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
         </Select>
       </div>
 
+      {filteredPlayers.length > 0 && (
+        <div className="flex items-center justify-between gap-2 px-1">
+          <label className="flex items-center gap-2 text-xs text-muted-foreground cursor-pointer select-none">
+            <Checkbox
+              checked={allVisibleSelected ? true : someVisibleSelected ? "indeterminate" : false}
+              onCheckedChange={toggleAllVisible}
+            />
+            <span>
+              {selectedIds.size > 0
+                ? `${selectedIds.size} selected`
+                : `Select all (${filteredPlayers.length})`}
+            </span>
+          </label>
+          {selectedIds.size > 0 && (
+            <div className="flex items-center gap-2">
+              <Button size="sm" variant="ghost" className="h-7 text-xs" onClick={() => setSelectedIds(new Set())}>
+                Clear
+              </Button>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button size="sm" variant="destructive" className="h-7 text-xs" disabled={bulkDeleting}>
+                    <Trash2 className="w-3.5 h-3.5 mr-1" />
+                    Delete {selectedIds.size}
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Delete {selectedIds.size} {selectedIds.size === 1 ? sport.member.toLowerCase() : sport.members.toLowerCase()}?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This will permanently remove the selected {sport.members.toLowerCase()} and all their payment history. This action cannot be undone.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={handleBulkDelete}
+                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                    >
+                      Delete
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </div>
+          )}
+        </div>
+      )}
+
       {loading ? (
         <div className="space-y-3">
           {[1, 2, 3].map((i) => (
