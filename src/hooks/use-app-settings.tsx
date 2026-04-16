@@ -1,33 +1,48 @@
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
+const SPORT_KEY = "sport"; // global — which sport is currently selected
+const nameKey = (sport: string) => `school_name:${sport}`;
+const logoKey = (sport: string) => `logo_url:${sport}`;
+
 export function useAppSettings() {
   const [schoolName, setSchoolName] = useState("My Club");
   const [logoUrl, setLogoUrl] = useState("");
   const [sportId, setSportId] = useState<string>("");
   const [loading, setLoading] = useState(true);
 
-  const fetchSettings = useCallback(async () => {
+  // Fetch the user's selected sport, then load the name/logo for that sport
+  const fetchAll = useCallback(async () => {
+    setLoading(true);
     const { data } = await supabase.from("app_settings").select("*");
-    if (data) {
-      const nameRow = data.find((r) => r.key === "school_name");
-      const logoRow = data.find((r) => r.key === "logo_url");
-      const sportRow = data.find((r) => r.key === "sport");
-      if (nameRow?.value) setSchoolName(nameRow.value);
-      if (logoRow?.value) setLogoUrl(logoRow.value);
-      if (sportRow?.value) setSportId(sportRow.value);
+    if (!data) {
+      setLoading(false);
+      return;
+    }
+
+    const sportRow = data.find((r) => r.key === SPORT_KEY);
+    const currentSport = sportRow?.value || "";
+    setSportId(currentSport);
+
+    if (currentSport) {
+      const nameRow = data.find((r) => r.key === nameKey(currentSport));
+      const logoRow = data.find((r) => r.key === logoKey(currentSport));
+      setSchoolName(nameRow?.value || "My Club");
+      setLogoUrl(logoRow?.value || "");
+    } else {
+      setSchoolName("My Club");
+      setLogoUrl("");
     }
     setLoading(false);
   }, []);
 
   useEffect(() => {
-    fetchSettings();
-  }, [fetchSettings]);
+    fetchAll();
+  }, [fetchAll]);
 
   const upsertSetting = useCallback(async (key: string, value: string) => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
-    // Check if a row already exists for this user + key
     const { data: existing } = await supabase
       .from("app_settings")
       .select("id")
@@ -47,28 +62,46 @@ export function useAppSettings() {
     }
   }, []);
 
+  // Load name + logo for a specific sport (used when switching sports)
+  const loadSportBranding = useCallback(async (sport: string) => {
+    if (!sport) {
+      setSchoolName("My Club");
+      setLogoUrl("");
+      return;
+    }
+    const { data } = await supabase
+      .from("app_settings")
+      .select("*")
+      .in("key", [nameKey(sport), logoKey(sport)]);
+    const nameRow = data?.find((r) => r.key === nameKey(sport));
+    const logoRow = data?.find((r) => r.key === logoKey(sport));
+    setSchoolName(nameRow?.value || "My Club");
+    setLogoUrl(logoRow?.value || "");
+  }, []);
+
   const updateSchoolName = useCallback(async (name: string) => {
+    if (!sportId) return;
     setSchoolName(name);
-    await upsertSetting("school_name", name);
-  }, [upsertSetting]);
+    await upsertSetting(nameKey(sportId), name);
+  }, [upsertSetting, sportId]);
 
   const updateSport = useCallback(async (id: string) => {
     setSportId(id);
-    await upsertSetting("sport", id);
-  }, [upsertSetting]);
+    await upsertSetting(SPORT_KEY, id);
+    await loadSportBranding(id);
+  }, [upsertSetting, loadSportBranding]);
 
   const updateLogo = useCallback(async (file: File) => {
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return "";
+    if (!user || !sportId) return "";
 
-    // Server-side-style validation on the client (still useful even though RLS owns auth)
     const ALLOWED_TYPES: Record<string, string> = {
       "image/jpeg": "jpg",
       "image/png": "png",
       "image/webp": "webp",
       "image/gif": "gif",
     };
-    const MAX_SIZE_BYTES = 2 * 1024 * 1024; // 2 MB
+    const MAX_SIZE_BYTES = 2 * 1024 * 1024;
 
     if (!ALLOWED_TYPES[file.type]) {
       throw new Error("Invalid file type. Please upload a JPG, PNG, WEBP, or GIF image.");
@@ -77,9 +110,9 @@ export function useAppSettings() {
       throw new Error("File too large. Maximum size is 2 MB.");
     }
 
-    // Derive extension from the verified MIME type, NOT from the user-supplied filename.
     const ext = ALLOWED_TYPES[file.type];
-    const path = `${user.id}/logo.${ext}`;
+    // One file per (user, sport) so each sport has its own logo
+    const path = `${user.id}/logo-${sportId}.${ext}`;
 
     const { error: uploadError } = await supabase.storage
       .from("logos")
@@ -91,9 +124,9 @@ export function useAppSettings() {
     const url = data.publicUrl + "?t=" + Date.now();
     setLogoUrl(url);
 
-    await upsertSetting("logo_url", url);
+    await upsertSetting(logoKey(sportId), url);
     return url;
-  }, [upsertSetting]);
+  }, [upsertSetting, sportId]);
 
   return { schoolName, logoUrl, sportId, loading, updateSchoolName, updateLogo, updateSport };
 }
