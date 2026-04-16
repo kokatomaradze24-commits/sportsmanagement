@@ -188,7 +188,7 @@ export function PlayersList({ players, payments = [], loading, onAdd, onUpdate, 
       ) : (
         <div className="space-y-2">
           <AnimatePresence>
-            {players.map((player, i) => (
+            {filteredPlayers.map((player, i) => (
               <motion.div
                 key={player.id}
                 initial={{ opacity: 0, x: -20 }}
