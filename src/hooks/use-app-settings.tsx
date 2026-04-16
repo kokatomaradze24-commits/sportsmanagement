@@ -23,19 +23,33 @@ export function useAppSettings() {
 
   const updateSchoolName = useCallback(async (name: string) => {
     setSchoolName(name);
-    await supabase.from("app_settings").update({ value: name }).eq("key", "school_name");
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    // Upsert: try update first, if no rows affected, insert
+    const { data } = await supabase.from("app_settings").update({ value: name }).eq("key", "school_name").select();
+    if (!data || data.length === 0) {
+      await supabase.from("app_settings").insert({ key: "school_name", value: name, user_id: user.id });
+    }
   }, []);
 
   const updateLogo = useCallback(async (file: File) => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return "";
+
     const ext = file.name.split(".").pop();
-    const path = `logo.${ext}`;
-    
+    const path = `${user.id}/logo.${ext}`;
+
     await supabase.storage.from("logos").upload(path, file, { upsert: true });
-    
+
     const { data } = supabase.storage.from("logos").getPublicUrl(path);
     const url = data.publicUrl + "?t=" + Date.now();
     setLogoUrl(url);
-    await supabase.from("app_settings").update({ value: url }).eq("key", "logo_url");
+
+    const { data: existing } = await supabase.from("app_settings").update({ value: url }).eq("key", "logo_url").select();
+    if (!existing || existing.length === 0) {
+      await supabase.from("app_settings").insert({ key: "logo_url", value: url, user_id: user.id });
+    }
     return url;
   }, []);
 

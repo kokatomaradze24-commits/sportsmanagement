@@ -21,7 +21,9 @@ export function usePayments() {
   }, [fetchPayments]);
 
   const addPayment = useCallback(async (payment: PaymentInsert) => {
-    const { error } = await supabase.from("payments").insert(payment);
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return { error: new Error("Not authenticated") };
+    const { error } = await supabase.from("payments").insert({ ...payment, user_id: user.id });
     if (!error) await fetchPayments();
     return { error };
   }, [fetchPayments]);

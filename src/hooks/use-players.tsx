@@ -21,7 +21,9 @@ export function usePlayers() {
   }, [fetchPlayers]);
 
   const addPlayer = useCallback(async (player: PlayerInsert) => {
-    const { error } = await supabase.from("players").insert(player);
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return { error: new Error("Not authenticated") };
+    const { error } = await supabase.from("players").insert({ ...player, user_id: user.id });
     if (!error) await fetchPlayers();
     return { error };
   }, [fetchPlayers]);
