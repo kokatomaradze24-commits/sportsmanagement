@@ -176,14 +176,14 @@ export function PlayersList({ players, payments = [], loading, onAdd, onUpdate, 
             <div key={i} className="h-20 rounded-xl bg-muted animate-pulse" />
           ))}
         </div>
-      ) : players.length === 0 ? (
+      ) : filteredPlayers.length === 0 ? (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           className="text-center py-12 text-muted-foreground"
         >
           <User className="w-12 h-12 mx-auto mb-3 opacity-40" />
-          <p>No players yet. Add your first player!</p>
+          <p>{players.length === 0 ? "No players yet. Add your first player!" : "No players match your filters."}</p>
         </motion.div>
       ) : (
         <div className="space-y-2">
