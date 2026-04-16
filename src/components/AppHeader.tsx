@@ -20,7 +20,7 @@ interface AppHeaderProps {
   onSignOut?: () => void;
 }
 
-export function AppHeader({ schoolName, logoUrl, sport, isDark, onToggleTheme, onUpdateName, onUploadLogo, onChangeSport, onSignOut }: AppHeaderProps) {
+export function AppHeader({ schoolName, logoUrl, sport, isDark, onToggleTheme, onUpdateName, onUploadLogo, onChangeSport, onResetBranding, onSignOut }: AppHeaderProps) {
   const [editing, setEditing] = useState(false);
   const [nameValue, setNameValue] = useState(schoolName);
   const fileRef = useRef<HTMLInputElement>(null);
