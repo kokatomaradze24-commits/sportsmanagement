@@ -27,9 +27,23 @@ export function useAppSettings() {
   const upsertSetting = useCallback(async (key: string, value: string) => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
-    const { data } = await supabase.from("app_settings").update({ value }).eq("key", key).select();
-    if (!data || data.length === 0) {
-      await supabase.from("app_settings").insert({ key, value, user_id: user.id });
+    // Check if a row already exists for this user + key
+    const { data: existing } = await supabase
+      .from("app_settings")
+      .select("id")
+      .eq("key", key)
+      .eq("user_id", user.id)
+      .maybeSingle();
+
+    if (existing) {
+      await supabase
+        .from("app_settings")
+        .update({ value })
+        .eq("id", existing.id);
+    } else {
+      await supabase
+        .from("app_settings")
+        .insert({ key, value, user_id: user.id });
     }
   }, []);
 
