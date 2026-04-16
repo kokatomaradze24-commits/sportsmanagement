@@ -1,17 +1,28 @@
-import { useState, useEffect, useCallback } from "react";
+import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
 const SPORT_KEY = "sport"; // global — which sport is currently selected
 const nameKey = (sport: string) => `school_name:${sport}`;
 const logoKey = (sport: string) => `logo_url:${sport}`;
 
-export function useAppSettings() {
+interface AppSettingsContextValue {
+  schoolName: string;
+  logoUrl: string;
+  sportId: string;
+  loading: boolean;
+  updateSchoolName: (name: string) => Promise<void>;
+  updateLogo: (file: File) => Promise<string>;
+  updateSport: (id: string) => Promise<void>;
+}
+
+const AppSettingsContext = createContext<AppSettingsContextValue | null>(null);
+
+export function AppSettingsProvider({ children }: { children: ReactNode }) {
   const [schoolName, setSchoolName] = useState("My Club");
   const [logoUrl, setLogoUrl] = useState("");
   const [sportId, setSportId] = useState<string>("");
   const [loading, setLoading] = useState(true);
 
-  // Fetch the user's selected sport, then load the name/logo for that sport
   const fetchAll = useCallback(async () => {
     setLoading(true);
     const { data } = await supabase.from("app_settings").select("*");
@@ -51,18 +62,12 @@ export function useAppSettings() {
       .maybeSingle();
 
     if (existing) {
-      await supabase
-        .from("app_settings")
-        .update({ value })
-        .eq("id", existing.id);
+      await supabase.from("app_settings").update({ value }).eq("id", existing.id);
     } else {
-      await supabase
-        .from("app_settings")
-        .insert({ key, value, user_id: user.id });
+      await supabase.from("app_settings").insert({ key, value, user_id: user.id });
     }
   }, []);
 
-  // Load name + logo for a specific sport (used when switching sports)
   const loadSportBranding = useCallback(async (sport: string) => {
     if (!sport) {
       setSchoolName("My Club");
@@ -111,7 +116,6 @@ export function useAppSettings() {
     }
 
     const ext = ALLOWED_TYPES[file.type];
-    // One file per (user, sport) so each sport has its own logo
     const path = `${user.id}/logo-${sportId}.${ext}`;
 
     const { error: uploadError } = await supabase.storage
@@ -128,5 +132,17 @@ export function useAppSettings() {
     return url;
   }, [upsertSetting, sportId]);
 
-  return { schoolName, logoUrl, sportId, loading, updateSchoolName, updateLogo, updateSport };
+  return (
+    <AppSettingsContext.Provider
+      value={{ schoolName, logoUrl, sportId, loading, updateSchoolName, updateLogo, updateSport }}
+    >
+      {children}
+    </AppSettingsContext.Provider>
+  );
+}
+
+export function useAppSettings() {
+  const ctx = useContext(AppSettingsContext);
+  if (!ctx) throw new Error("useAppSettings must be used within AppSettingsProvider");
+  return ctx;
 }
