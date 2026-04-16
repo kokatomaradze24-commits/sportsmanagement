@@ -13,6 +13,7 @@ interface AppSettingsContextValue {
   updateSchoolName: (name: string) => Promise<void>;
   updateLogo: (file: File) => Promise<string>;
   updateSport: (id: string) => Promise<void>;
+  resetBranding: () => Promise<void>;
 }
 
 const AppSettingsContext = createContext<AppSettingsContextValue | null>(null);
