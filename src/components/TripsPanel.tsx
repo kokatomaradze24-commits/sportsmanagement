@@ -16,8 +16,15 @@ import {
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import type { Database } from "@/integrations/supabase/types";
-import { useI18n } from "@/hooks/use-i18n";
+import { useI18n, CURRENCY_SYMBOLS, type CurrencyCode } from "@/hooks/use-i18n";
 import { useSounds } from "@/hooks/use-sounds";
+
+const CURRENCY_OPTIONS: Array<{ value: CurrencyCode | "auto"; label: string }> = [
+  { value: "auto", label: "Auto" },
+  { value: "GEL", label: "₾ GEL" },
+  { value: "USD", label: "$ USD" },
+  { value: "EUR", label: "€ EUR" },
+];
 
 type Trip = Database["public"]["Tables"]["trips"]["Row"];
 type TripParticipant = Database["public"]["Tables"]["trip_participants"]["Row"];
@@ -30,7 +37,7 @@ interface TripsPanelProps {
   loading: boolean;
   onAddTrip: (trip: {
     name: string; location: string | null; trip_date: string;
-    trip_time: string | null; price: number; notes: string | null;
+    trip_time: string | null; price: number; notes: string | null; currency: string;
   }) => Promise<{ error: unknown; data: Trip | null }>;
   onUpdateTrip: (id: string, updates: Partial<Trip>) => Promise<{ error: unknown }>;
   onDeleteTrip: (id: string) => Promise<{ error: unknown }>;
@@ -45,17 +52,20 @@ function TripForm({
   initial?: Partial<Trip>;
   onSubmit: (data: {
     name: string; location: string | null; trip_date: string;
-    trip_time: string | null; price: number; notes: string | null;
+    trip_time: string | null; price: number; notes: string | null; currency: string;
   }) => void;
   onCancel: () => void;
 }) {
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   const today = new Date().toISOString().slice(0, 10);
   const [name, setName] = useState(initial?.name || "");
   const [location, setLocation] = useState(initial?.location || "");
   const [date, setDate] = useState(initial?.trip_date || today);
   const [time, setTime] = useState(initial?.trip_time || "");
   const [price, setPrice] = useState(initial?.price?.toString() || "0");
+  const [currency, setCurrency] = useState<string>(
+    (initial as { currency?: string } | undefined)?.currency || "auto"
+  );
   const [notes, setNotes] = useState(initial?.notes || "");
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -68,8 +78,16 @@ function TripForm({
       trip_time: time || null,
       price: Number(price) || 0,
       notes: notes.trim() || null,
+      currency,
     });
   };
+
+  const previewSymbol =
+    currency === "auto"
+      ? CURRENCY_SYMBOLS[
+          language === "ka" ? "GEL" : language === "en" ? "USD" : "EUR"
+        ]
+      : CURRENCY_SYMBOLS[currency as CurrencyCode];
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
@@ -103,13 +121,31 @@ function TripForm({
       </div>
       <div>
         <label className="text-sm font-medium block mb-1.5">{t("tripPrice")}</label>
-        <Input
-          type="number"
-          step="0.01"
-          min="0"
-          value={price}
-          onChange={(e) => setPrice(e.target.value)}
-        />
+        <div className="flex gap-2">
+          <div className="relative flex-1">
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm font-semibold text-muted-foreground pointer-events-none">
+              {previewSymbol}
+            </span>
+            <Input
+              type="number"
+              step="0.01"
+              min="0"
+              value={price}
+              onChange={(e) => setPrice(e.target.value)}
+              className="pl-7"
+            />
+          </div>
+          <select
+            value={currency}
+            onChange={(e) => setCurrency(e.target.value)}
+            className="h-9 rounded-md border border-input bg-background px-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-ring"
+            aria-label="Currency"
+          >
+            {CURRENCY_OPTIONS.map((opt) => (
+              <option key={opt.value} value={opt.value}>{opt.label}</option>
+            ))}
+          </select>
+        </div>
       </div>
       <div>
         <label className="text-sm font-medium block mb-1.5">{t("tripNotes")}</label>
@@ -201,15 +237,16 @@ function AddParticipantDialog({
 }
 
 function ParticipantRow({
-  participant, player, tripPrice, onUpdate, onRemove,
+  participant, player, tripPrice, tripCurrency, onUpdate, onRemove,
 }: {
   participant: TripParticipant;
   player: Player | undefined;
   tripPrice: number;
+  tripCurrency: string;
   onUpdate: (updates: Partial<TripParticipant>) => void;
   onRemove: () => void;
 }) {
-  const { t } = useI18n();
+  const { t, formatMoney } = useI18n();
   const { play } = useSounds();
   const [confirmOpen, setConfirmOpen] = useState(false);
 
@@ -292,7 +329,7 @@ function ParticipantRow({
           className="text-xs"
         >
           {depositPaid ? <Check className="h-3.5 w-3.5" /> : <Wallet className="h-3.5 w-3.5" />}
-          {t("deposit")} {depositPaid && participant.deposit_amount ? `(${participant.deposit_amount})` : ""}
+          {t("deposit")} {depositPaid && participant.deposit_amount ? `(${formatMoney(Number(participant.deposit_amount), tripCurrency as CurrencyCode | "auto")})` : ""}
         </Button>
         <Button
           size="sm"
@@ -301,7 +338,7 @@ function ParticipantRow({
           className="text-xs"
         >
           {finalPaid ? <Check className="h-3.5 w-3.5" /> : <DollarSign className="h-3.5 w-3.5" />}
-          {t("finalPayment")} {finalPaid && participant.final_amount ? `(${participant.final_amount})` : ""}
+          {t("finalPayment")} {finalPaid && participant.final_amount ? `(${formatMoney(Number(participant.final_amount), tripCurrency as CurrencyCode | "auto")})` : ""}
         </Button>
       </div>
 
@@ -341,7 +378,12 @@ function TripCard({
   onUpdateParticipant: (id: string, updates: Partial<TripParticipant>) => void;
   onRemoveParticipant: (id: string) => void;
 }) {
-  const { t, monthShort } = useI18n();
+  const { t, monthShort, language } = useI18n();
+  const tripCurrency = ((trip as { currency?: string }).currency || "auto") as CurrencyCode | "auto";
+  const tripCurrencySymbol =
+    tripCurrency === "auto"
+      ? CURRENCY_SYMBOLS[language === "ka" ? "GEL" : language === "en" ? "USD" : "EUR"]
+      : CURRENCY_SYMBOLS[tripCurrency];
   const { play } = useSounds();
   const [expanded, setExpanded] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
@@ -400,7 +442,7 @@ function TripCard({
                 </span>
               )}
               <span className="flex items-center gap-1 font-semibold text-foreground">
-                <DollarSign className="h-3 w-3" /> {trip.price}
+                <span className="font-mono text-sm">{tripCurrencySymbol}</span> {Number(trip.price).toFixed(2)}
               </span>
             </div>
           </div>
@@ -437,7 +479,7 @@ function TripCard({
             {expanded ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
           </button>
           <span className="text-xs text-muted-foreground">
-            {t("totalCollectedTrip", { amount: collected, total: totalPossible })}
+            {t("totalCollectedTrip", { amount: `${tripCurrencySymbol}${collected.toFixed(2)}`, total: `${tripCurrencySymbol}${totalPossible.toFixed(2)}` })}
           </span>
         </div>
       </div>
@@ -468,6 +510,7 @@ function TripCard({
                     participant={part}
                     player={playerById.get(part.player_id)}
                     tripPrice={Number(trip.price)}
+                    tripCurrency={(trip as { currency?: string }).currency || "auto"}
                     onUpdate={(u) => onUpdateParticipant(part.id, u)}
                     onRemove={() => onRemoveParticipant(part.id)}
                   />
