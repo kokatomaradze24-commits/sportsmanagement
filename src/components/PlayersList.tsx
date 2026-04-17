@@ -10,6 +10,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import type { Database } from "@/integrations/supabase/types";
 import type { SportConfig } from "@/lib/sports";
 import { useI18n } from "@/hooks/use-i18n";
+import { useSounds } from "@/hooks/use-sounds";
 
 type Player = Database["public"]["Tables"]["players"]["Row"];
 type Payment = Database["public"]["Tables"]["payments"]["Row"];
@@ -155,6 +156,7 @@ function PlayerForm({ initial, sport, onSubmit, onCancel }: {
 
 export function PlayersList({ players, payments = [], loading, sport, onAdd, onUpdate, onDelete, onSelect, selectedId }: PlayersListProps) {
   const { t } = useI18n();
+  const { play } = useSounds();
   const [addOpen, setAddOpen] = useState(false);
   const [editPlayer, setEditPlayer] = useState<Player | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
