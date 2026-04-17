@@ -55,6 +55,14 @@ export const translations = {
     language: "Language",
     soundOn: "Sound on",
     soundOff: "Sound off",
+    lblSport: "Sport",
+    lblLanguage: "Language",
+    lblSms: "SMS",
+    lblReset: "Reset",
+    lblAdmin: "Admin",
+    lblSound: "Sound",
+    lblTheme: "Theme",
+    lblSignOut: "Sign out",
 
     // Auth
     signInTitle: "Sign In — Club Management",
@@ -242,6 +250,7 @@ export const translations = {
     resetBrandingTitle: "Branding für {sport} zurücksetzen?",
     resetBrandingDesc: "Der Vereinsname wird auf \"My Club\" zurückgesetzt und das Logo für diese Sportart entfernt. Spieler und Zahlungen sind nicht betroffen.",
     reset: "Zurücksetzen", adminPanel: "Admin-Panel", signOut: "Abmelden", language: "Sprache", soundOn: "Ton an", soundOff: "Ton aus",
+    lblSport: "Sport", lblLanguage: "Sprache", lblSms: "SMS", lblReset: "Zurück", lblAdmin: "Admin", lblSound: "Ton", lblTheme: "Theme", lblSignOut: "Abmelden",
 
     signInTitle: "Anmelden — Vereinsverwaltung",
     continueWithGoogle: "Mit Google fortfahren", signingIn: "Anmeldung läuft...",
@@ -371,6 +380,7 @@ export const translations = {
     resetBrandingTitle: "¿Restablecer marca para {sport}?",
     resetBrandingDesc: "Esto restaurará el nombre del club a \"My Club\" y eliminará el logo subido para este deporte. Los jugadores y pagos no se verán afectados.",
     reset: "Restablecer", adminPanel: "Panel de Admin", signOut: "Cerrar sesión", language: "Idioma", soundOn: "Sonido activado", soundOff: "Sonido desactivado",
+    lblSport: "Deporte", lblLanguage: "Idioma", lblSms: "SMS", lblReset: "Resetear", lblAdmin: "Admin", lblSound: "Sonido", lblTheme: "Tema", lblSignOut: "Salir",
 
     signInTitle: "Iniciar sesión — Gestión del Club",
     continueWithGoogle: "Continuar con Google", signingIn: "Iniciando sesión...",
@@ -500,6 +510,7 @@ export const translations = {
     resetBrandingTitle: "Réinitialiser la marque pour {sport} ?",
     resetBrandingDesc: "Cela restaurera le nom du club à \"My Club\" et supprimera le logo téléchargé pour ce sport. Les joueurs et paiements ne seront pas affectés.",
     reset: "Réinitialiser", adminPanel: "Panneau Admin", signOut: "Déconnexion", language: "Langue", soundOn: "Son activé", soundOff: "Son désactivé",
+    lblSport: "Sport", lblLanguage: "Langue", lblSms: "SMS", lblReset: "Reset", lblAdmin: "Admin", lblSound: "Son", lblTheme: "Thème", lblSignOut: "Sortir",
 
     signInTitle: "Connexion — Gestion du Club",
     continueWithGoogle: "Continuer avec Google", signingIn: "Connexion...",
@@ -629,6 +640,7 @@ export const translations = {
     resetBrandingTitle: "გადააყენე ბრენდინგი {sport}-ისთვის?",
     resetBrandingDesc: "კლუბის სახელი დაუბრუნდება \"My Club\"-ს და ამ სპორტისთვის ატვირთული ლოგო წაიშლება. მოთამაშეები და გადახდები არ შეიცვლება.",
     reset: "გადაყენება", adminPanel: "ადმინ პანელი", signOut: "გასვლა", language: "ენა", soundOn: "ხმა ჩართულია", soundOff: "ხმა გამორთულია",
+    lblSport: "სპორტი", lblLanguage: "ენა", lblSms: "SMS", lblReset: "გადაყენება", lblAdmin: "ადმინი", lblSound: "ხმა", lblTheme: "თემა", lblSignOut: "გასვლა",
 
     signInTitle: "შესვლა — კლუბის მართვა",
     continueWithGoogle: "გააგრძელე Google-ით", signingIn: "შესვლა...",
@@ -772,6 +784,7 @@ export const translations = {
     resetBrandingTitle: "Сбросить брендинг для {sport}?",
     resetBrandingDesc: "Название клуба будет восстановлено на \"My Club\", а загруженный логотип для этого вида спорта удалён. Игроки и платежи не пострадают.",
     reset: "Сбросить", adminPanel: "Админ-панель", signOut: "Выйти", language: "Язык", soundOn: "Звук вкл.", soundOff: "Звук выкл.",
+    lblSport: "Спорт", lblLanguage: "Язык", lblSms: "SMS", lblReset: "Сброс", lblAdmin: "Админ", lblSound: "Звук", lblTheme: "Тема", lblSignOut: "Выйти",
 
     signInTitle: "Вход — Управление клубом",
     continueWithGoogle: "Продолжить с Google", signingIn: "Вход...",
