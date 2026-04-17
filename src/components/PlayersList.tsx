@@ -235,7 +235,7 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl tracking-wider text-foreground">{sport.members}</h2>
-        <Dialog open={addOpen} onOpenChange={setAddOpen}>
+        <Dialog open={addOpen} onOpenChange={(o) => { if (o) play("click"); setAddOpen(o); }}>
           <DialogTrigger asChild>
             <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90 font-semibold shadow-md">
               <Plus className="w-4 h-4" /> {t("addMember", { member: sport.member })}
@@ -248,6 +248,7 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
             <PlayerForm
               sport={sport}
               onSubmit={async (data) => {
+                play("success");
                 await onAdd(data);
                 setAddOpen(false);
               }}
