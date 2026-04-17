@@ -157,14 +157,6 @@ function LoginPage() {
           >
             MANAGEMENT
           </motion.h2>
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.5 }}
-            className="text-slate-400 mt-4 text-sm tracking-wide"
-          >
-            Train. Track. Triumph.
-          </motion.p>
         </div>
 
         <motion.div
