@@ -104,6 +104,7 @@ export type Database = {
           last_name: string
           monthly_fee: number
           notes: string | null
+          parent_phone: string | null
           phone: string | null
           sport: string
           start_day: number
@@ -123,6 +124,7 @@ export type Database = {
           last_name: string
           monthly_fee?: number
           notes?: string | null
+          parent_phone?: string | null
           phone?: string | null
           sport?: string
           start_day?: number
@@ -142,6 +144,7 @@ export type Database = {
           last_name?: string
           monthly_fee?: number
           notes?: string | null
+          parent_phone?: string | null
           phone?: string | null
           sport?: string
           start_day?: number
@@ -151,6 +154,48 @@ export type Database = {
           t_number?: number
           updated_at?: string
           user_id?: string | null
+        }
+        Relationships: []
+      }
+      sms_logs: {
+        Row: {
+          created_at: string
+          error: string | null
+          id: string
+          kind: string
+          message: string
+          payment_id: string | null
+          phone: string
+          player_id: string | null
+          provider: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          error?: string | null
+          id?: string
+          kind: string
+          message: string
+          payment_id?: string | null
+          phone: string
+          player_id?: string | null
+          provider: string
+          status: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          error?: string | null
+          id?: string
+          kind?: string
+          message?: string
+          payment_id?: string | null
+          phone?: string
+          player_id?: string | null
+          provider?: string
+          status?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -171,6 +216,57 @@ export type Database = {
           created_at?: string
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_sms_settings: {
+        Row: {
+          created_at: string
+          enabled: boolean
+          id: string
+          magti_api_key: string | null
+          magti_sender: string | null
+          provider: string
+          reminder_days_before: number
+          send_overdue: boolean
+          send_reminder: boolean
+          twilio_account_sid: string | null
+          twilio_auth_token: string | null
+          twilio_from: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          magti_api_key?: string | null
+          magti_sender?: string | null
+          provider?: string
+          reminder_days_before?: number
+          send_overdue?: boolean
+          send_reminder?: boolean
+          twilio_account_sid?: string | null
+          twilio_auth_token?: string | null
+          twilio_from?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          magti_api_key?: string | null
+          magti_sender?: string | null
+          provider?: string
+          reminder_days_before?: number
+          send_overdue?: boolean
+          send_reminder?: boolean
+          twilio_account_sid?: string | null
+          twilio_auth_token?: string | null
+          twilio_from?: string | null
+          updated_at?: string
           user_id?: string
         }
         Relationships: []
