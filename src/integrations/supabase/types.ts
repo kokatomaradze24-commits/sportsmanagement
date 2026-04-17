@@ -102,9 +102,14 @@ export type Database = {
           id: string
           is_active: boolean
           last_name: string
+          monthly_fee: number
           notes: string | null
           phone: string | null
           sport: string
+          start_day: number
+          start_month: number
+          start_year: number
+          subscription_months: number
           t_number: number
           updated_at: string
           user_id: string | null
@@ -116,9 +121,14 @@ export type Database = {
           id?: string
           is_active?: boolean
           last_name: string
+          monthly_fee?: number
           notes?: string | null
           phone?: string | null
           sport?: string
+          start_day?: number
+          start_month?: number
+          start_year?: number
+          subscription_months?: number
           t_number: number
           updated_at?: string
           user_id?: string | null
@@ -130,9 +140,14 @@ export type Database = {
           id?: string
           is_active?: boolean
           last_name?: string
+          monthly_fee?: number
           notes?: string | null
           phone?: string | null
           sport?: string
+          start_day?: number
+          start_month?: number
+          start_year?: number
+          subscription_months?: number
           t_number?: number
           updated_at?: string
           user_id?: string | null
@@ -232,6 +247,10 @@ export type Database = {
         }[]
       }
       admin_toggle_admin: { Args: { _user_id: string }; Returns: undefined }
+      generate_player_payments: {
+        Args: { _player_id: string }
+        Returns: undefined
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -240,6 +259,7 @@ export type Database = {
         Returns: boolean
       }
       is_subscription_active: { Args: { _user_id: string }; Returns: boolean }
+      mark_overdue_payments: { Args: never; Returns: number }
     }
     Enums: {
       app_role: "admin" | "user"
