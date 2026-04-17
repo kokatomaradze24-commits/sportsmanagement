@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Shield, Trash2, ArrowLeft, Crown, User as UserIcon, Mail, Calendar, Users, CreditCard, Clock, Plus, X } from "lucide-react";
+import { Shield, Trash2, ArrowLeft, Crown, User as UserIcon, Mail, Calendar, Users, CreditCard, Clock, Plus, X, Database, HardDrive } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
