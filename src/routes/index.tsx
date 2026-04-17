@@ -5,7 +5,6 @@ import { PlayersList } from "@/components/PlayersList";
 import { PaymentsPanel } from "@/components/PaymentsPanel";
 import { NotificationsBanner } from "@/components/NotificationsBanner";
 import { StatsCards } from "@/components/StatsCards";
-import { SportPicker } from "@/components/SportPicker";
 import { SubscriptionBanner } from "@/components/SubscriptionBanner";
 import { SubscriptionExpired } from "@/components/SubscriptionExpired";
 import { OnboardingTutorial } from "@/components/OnboardingTutorial";
@@ -17,7 +16,6 @@ import { usePayments } from "@/hooks/use-payments";
 import { useAuth } from "@/hooks/use-auth";
 import { useSubscription } from "@/hooks/use-subscription";
 import { useOnboarding } from "@/hooks/use-onboarding";
-import { supabase } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
 
 type Player = Database["public"]["Tables"]["players"]["Row"];
