@@ -136,8 +136,8 @@ function Index() {
               <div className="flex items-center justify-center h-full min-h-[300px] text-muted-foreground">
                 <div className="text-center">
                   <span className="text-5xl block mb-4">{sport.emoji}</span>
-                  <p className="text-lg font-display tracking-wider">Select a {sport.member}</p>
-                  <p className="text-sm mt-1">Click on a {sport.member.toLowerCase()} to view and manage their payments</p>
+                  <p className="text-lg font-display tracking-wider">{t("selectMember", { member: sport.member })}</p>
+                  <p className="text-sm mt-1">{t("selectMemberHint", { member: sport.member.toLowerCase() })}</p>
                 </div>
               </div>
             )}
