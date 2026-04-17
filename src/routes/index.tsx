@@ -44,6 +44,7 @@ function Index() {
   const { t } = useI18n();
   const { payments, loading: paymentsLoading, addPayment, updatePayment, deletePayment, refetch: refetchPayments } = usePayments(sportId);
   const { players, loading: playersLoading, addPlayer, updatePlayer, deletePlayer } = usePlayers(sportId, refetchPayments);
+  const trips = useTrips(sportId);
   const { isActive: subActive, loading: subLoading } = useSubscription();
   const { loading: onboardingLoading, onboarded, tutorialDone, markOnboarded, markTutorialDone } = useOnboarding();
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
