@@ -32,7 +32,7 @@ export function usePlayers(sport: string, onPlayersChanged?: () => void) {
   const addPlayer = useCallback(
     async (
       player: PlayerInsert & { firstMonthPaid?: boolean }
-    ): Promise<{ error: unknown }> => {
+    ): Promise<{ error: unknown; created?: Player }> => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return { error: new Error("Not authenticated") };
 
@@ -63,7 +63,7 @@ export function usePlayers(sport: string, onPlayersChanged?: () => void) {
 
       await fetchPlayers();
       onPlayersChanged?.();
-      return { error: null };
+      return { error: null, created: created ?? undefined };
     },
     [fetchPlayers, sport, onPlayersChanged]
   );
