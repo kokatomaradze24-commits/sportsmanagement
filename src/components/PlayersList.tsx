@@ -456,15 +456,27 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
                       #{player.t_number}
                     </div>
                     <div>
-                      <p className="font-semibold text-card-foreground">
-                        {player.first_name} {player.last_name}
+                      <p className="font-semibold text-card-foreground flex items-center gap-2 flex-wrap">
+                        <span>{player.first_name} {player.last_name}</span>
+                        {player.birth_date ? (
+                          <span className="text-xs font-normal px-1.5 py-0.5 rounded bg-primary/10 text-primary">
+                            {t("yearsOld", { count: calcAge(player.birth_date) })}
+                          </span>
+                        ) : (
+                          <span className="text-xs font-normal text-muted-foreground/60">—</span>
+                        )}
                       </p>
                       <div className="flex items-center gap-3 text-xs text-muted-foreground mt-0.5">
                         {player.phone && (
                           <span className="flex items-center gap-1"><Phone className="w-3 h-3" />{player.phone}</span>
                         )}
                         {player.email && (
-                          <span className="flex items-center gap-1"><Mail className="w-3 h-3" />{player.email}</span>
+                          <span className="flex items-center gap-1">
+                            <Mail className="w-3 h-3" />{player.email}
+                            {player.primary_contact === "parent" && (
+                              <span className="ml-1 text-[10px] uppercase tracking-wide text-primary/70">({t("contactParent")})</span>
+                            )}
+                          </span>
                         )}
                       </div>
                     </div>
