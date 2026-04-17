@@ -1,11 +1,12 @@
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, Pencil, Trash2, User, Phone, Mail, Search, Filter } from "lucide-react";
+import { Plus, Pencil, Trash2, User, Phone, Mail, Search, Filter, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import type { Database } from "@/integrations/supabase/types";
 import type { SportConfig } from "@/lib/sports";
@@ -44,9 +45,14 @@ function PlayerForm({ initial, sport, onSubmit, onCancel }: {
   const [firstName, setFirstName] = useState(initial?.first_name || "");
   const [lastName, setLastName] = useState(initial?.last_name || "");
   const [tNumber, setTNumber] = useState(initial?.t_number?.toString() || "");
+  const [birthDate, setBirthDate] = useState(initial?.birth_date || "");
   const [phone, setPhone] = useState(() => prefillPhone(initial?.phone, language));
   const [parentPhone, setParentPhone] = useState(() => prefillPhone(initial?.parent_phone, language));
   const [email, setEmail] = useState(initial?.email || "");
+  const [primaryContact, setPrimaryContact] = useState<"player" | "parent">(
+    (initial?.primary_contact as "player" | "parent") || "player"
+  );
+  const [emailPickerOpen, setEmailPickerOpen] = useState(false);
 
   // Subscription fields (only used when creating)
   const [monthlyFee, setMonthlyFee] = useState(initial?.monthly_fee?.toString() || "50");
