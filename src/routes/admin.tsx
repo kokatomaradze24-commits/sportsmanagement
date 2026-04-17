@@ -239,16 +239,17 @@ function AdminPage() {
                           <Plus className="h-3.5 w-3.5 mr-1" />
                           30 დღე
                         </Button>
-                        {getSubStatus(u).active && (
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleDeactivate(u)}
-                            title="გათიშე წვდომა"
-                          >
-                            <X className="h-3.5 w-3.5" />
-                          </Button>
-                        )}
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleDeactivate(u)}
+                          disabled={!getSubStatus(u).active}
+                          title="შეაჩერე წვდომა საიტზე"
+                          className="text-red-600 border-red-500/40 hover:bg-red-500/10 hover:text-red-600 disabled:opacity-40"
+                        >
+                          <X className="h-3.5 w-3.5 mr-1" />
+                          შეაჩერე წვდომა
+                        </Button>
                       </>
                     )}
                     <Button
