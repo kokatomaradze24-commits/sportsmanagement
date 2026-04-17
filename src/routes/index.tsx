@@ -11,11 +11,13 @@ import { OnboardingTutorial } from "@/components/OnboardingTutorial";
 import { useTheme } from "@/hooks/use-theme";
 import { useAppSettings } from "@/hooks/use-app-settings";
 import { useSport } from "@/hooks/use-sport";
+import { useSportLabels } from "@/hooks/use-sport-labels";
 import { usePlayers } from "@/hooks/use-players";
 import { usePayments } from "@/hooks/use-payments";
 import { useAuth } from "@/hooks/use-auth";
 import { useSubscription } from "@/hooks/use-subscription";
 import { useOnboarding } from "@/hooks/use-onboarding";
+import { useI18n } from "@/hooks/use-i18n";
 import type { Database } from "@/integrations/supabase/types";
 
 type Player = Database["public"]["Tables"]["players"]["Row"];
