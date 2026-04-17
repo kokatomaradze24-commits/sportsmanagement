@@ -265,7 +265,6 @@ export const translations = {
     markDepositPaid: "Mark deposit paid",
     markFinalPaid: "Mark final paid",
     markUnpaid: "Mark as unpaid",
-    paid: "Paid",
     unpaid: "Unpaid",
     totalCollectedTrip: "Collected: {amount} / {total}",
     removeParticipant: "Remove",
