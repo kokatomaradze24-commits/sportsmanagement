@@ -62,7 +62,7 @@ function PlayerForm({ initial, sport, onSubmit, onCancel }: {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!firstName.trim() || !lastName.trim() || !tNumber.trim()) return;
+    if (!firstName.trim() || !lastName.trim() || !tNumber.trim() || !birthDate) return;
     // If the user kept just the dial-code prefix, treat the field as empty.
     const cleanPhone = phone.trim();
     const cleanParent = parentPhone.trim();
@@ -71,9 +71,11 @@ function PlayerForm({ initial, sport, onSubmit, onCancel }: {
       first_name: firstName.trim(),
       last_name: lastName.trim(),
       t_number: parseInt(tNumber),
+      birth_date: birthDate,
       phone: cleanPhone && !isJustDial(cleanPhone) ? cleanPhone : null,
       parent_phone: cleanParent && !isJustDial(cleanParent) ? cleanParent : null,
       email: email.trim() || null,
+      primary_contact: primaryContact,
     };
     if (!isEdit) {
       base.monthly_fee = parseFloat(monthlyFee) || 0;
@@ -85,6 +87,11 @@ function PlayerForm({ initial, sport, onSubmit, onCancel }: {
     }
     onSubmit(base);
   };
+
+  // Determine which contact email is "primary" — falls back to player's own
+  const primaryEmailDisplay = primaryContact === "parent"
+    ? (initial?.parent_phone ? `${t("contactParent")}` : t("contactParent"))
+    : t("contactPlayer");
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4 max-h-[70vh] overflow-y-auto pr-1">
