@@ -1,9 +1,10 @@
 import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
-const SPORT_KEY = "sport"; // global — which sport is currently selected
-const nameKey = (sport: string) => `school_name:${sport}`;
-const logoKey = (sport: string) => `logo_url:${sport}`;
+const SPORT_KEY = "sport";
+const NAME_KEY = "school_name";
+const LOGO_KEY = "logo_url";
+const DEFAULT_SPORT = "basketball";
 
 interface AppSettingsContextValue {
   schoolName: string;
@@ -21,30 +22,33 @@ const AppSettingsContext = createContext<AppSettingsContextValue | null>(null);
 export function AppSettingsProvider({ children }: { children: ReactNode }) {
   const [schoolName, setSchoolName] = useState("My Club");
   const [logoUrl, setLogoUrl] = useState("");
-  const [sportId, setSportId] = useState<string>("");
+  const [sportId, setSportId] = useState<string>(DEFAULT_SPORT);
   const [loading, setLoading] = useState(true);
 
   const fetchAll = useCallback(async () => {
     setLoading(true);
-    const { data } = await supabase.from("app_settings").select("*");
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      setLoading(false);
+      return;
+    }
+    const { data } = await supabase
+      .from("app_settings")
+      .select("*")
+      .eq("user_id", user.id);
+
     if (!data) {
       setLoading(false);
       return;
     }
 
     const sportRow = data.find((r) => r.key === SPORT_KEY);
-    const currentSport = sportRow?.value || "";
-    setSportId(currentSport);
+    const nameRow = data.find((r) => r.key === NAME_KEY);
+    const logoRow = data.find((r) => r.key === LOGO_KEY);
 
-    if (currentSport) {
-      const nameRow = data.find((r) => r.key === nameKey(currentSport));
-      const logoRow = data.find((r) => r.key === logoKey(currentSport));
-      setSchoolName(nameRow?.value || "My Club");
-      setLogoUrl(logoRow?.value || "");
-    } else {
-      setSchoolName("My Club");
-      setLogoUrl("");
-    }
+    setSportId(sportRow?.value || DEFAULT_SPORT);
+    setSchoolName(nameRow?.value || "My Club");
+    setLogoUrl(logoRow?.value || "");
     setLoading(false);
   }, []);
 
@@ -55,7 +59,7 @@ export function AppSettingsProvider({ children }: { children: ReactNode }) {
   const upsertSetting = useCallback(async (key: string, value: string) => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
-      console.error("[app-settings] upsert failed: not authenticated", { key });
+      console.error("[app-settings] not authenticated", { key });
       throw new Error("Not authenticated");
     }
     const { data: existing, error: selErr } = await supabase
@@ -84,40 +88,19 @@ export function AppSettingsProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  const loadSportBranding = useCallback(async (sport: string) => {
-    if (!sport) {
-      setSchoolName("My Club");
-      setLogoUrl("");
-      return;
-    }
-    const { data } = await supabase
-      .from("app_settings")
-      .select("*")
-      .in("key", [nameKey(sport), logoKey(sport)]);
-    const nameRow = data?.find((r) => r.key === nameKey(sport));
-    const logoRow = data?.find((r) => r.key === logoKey(sport));
-    setSchoolName(nameRow?.value || "My Club");
-    setLogoUrl(logoRow?.value || "");
-  }, []);
-
   const updateSchoolName = useCallback(async (name: string) => {
-    if (!sportId) {
-      console.warn("[app-settings] updateSchoolName: no sport selected");
-      throw new Error("Please select a sport first");
-    }
     setSchoolName(name);
-    await upsertSetting(nameKey(sportId), name);
-  }, [upsertSetting, sportId]);
+    await upsertSetting(NAME_KEY, name);
+  }, [upsertSetting]);
 
   const updateSport = useCallback(async (id: string) => {
     setSportId(id);
     await upsertSetting(SPORT_KEY, id);
-    await loadSportBranding(id);
-  }, [upsertSetting, loadSportBranding]);
+  }, [upsertSetting]);
 
   const updateLogo = useCallback(async (file: File) => {
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user || !sportId) return "";
+    if (!user) throw new Error("Not authenticated");
 
     const ALLOWED_TYPES: Record<string, string> = {
       "image/jpeg": "jpg",
@@ -135,7 +118,7 @@ export function AppSettingsProvider({ children }: { children: ReactNode }) {
     }
 
     const ext = ALLOWED_TYPES[file.type];
-    const path = `${user.id}/logo-${sportId}.${ext}`;
+    const path = `${user.id}/logo.${ext}`;
 
     const { error: uploadError } = await supabase.storage
       .from("logos")
@@ -147,12 +130,11 @@ export function AppSettingsProvider({ children }: { children: ReactNode }) {
     const url = data.publicUrl + "?t=" + Date.now();
     setLogoUrl(url);
 
-    await upsertSetting(logoKey(sportId), url);
+    await upsertSetting(LOGO_KEY, url);
     return url;
-  }, [upsertSetting, sportId]);
+  }, [upsertSetting]);
 
   const resetBranding = useCallback(async () => {
-    if (!sportId) return;
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
 
@@ -163,14 +145,13 @@ export function AppSettingsProvider({ children }: { children: ReactNode }) {
       .from("app_settings")
       .delete()
       .eq("user_id", user.id)
-      .in("key", [nameKey(sportId), logoKey(sportId)]);
+      .in("key", [NAME_KEY, LOGO_KEY]);
 
-    // Best-effort cleanup of any uploaded logo files for this sport
     const exts = ["jpg", "png", "webp", "gif"];
     await supabase.storage
       .from("logos")
-      .remove(exts.map((ext) => `${user.id}/logo-${sportId}.${ext}`));
-  }, [sportId]);
+      .remove(exts.map((ext) => `${user.id}/logo.${ext}`));
+  }, []);
 
   return (
     <AppSettingsContext.Provider
@@ -184,7 +165,7 @@ export function AppSettingsProvider({ children }: { children: ReactNode }) {
 const defaultAppSettings: AppSettingsContextValue = {
   schoolName: "My Club",
   logoUrl: "",
-  sportId: "",
+  sportId: DEFAULT_SPORT,
   loading: true,
   updateSchoolName: async () => {},
   updateLogo: async () => "",

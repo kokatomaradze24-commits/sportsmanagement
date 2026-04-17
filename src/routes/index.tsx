@@ -5,7 +5,6 @@ import { PlayersList } from "@/components/PlayersList";
 import { PaymentsPanel } from "@/components/PaymentsPanel";
 import { NotificationsBanner } from "@/components/NotificationsBanner";
 import { StatsCards } from "@/components/StatsCards";
-import { SportPicker } from "@/components/SportPicker";
 import { SubscriptionBanner } from "@/components/SubscriptionBanner";
 import { SubscriptionExpired } from "@/components/SubscriptionExpired";
 import { OnboardingTutorial } from "@/components/OnboardingTutorial";
@@ -17,7 +16,6 @@ import { usePayments } from "@/hooks/use-payments";
 import { useAuth } from "@/hooks/use-auth";
 import { useSubscription } from "@/hooks/use-subscription";
 import { useOnboarding } from "@/hooks/use-onboarding";
-import { supabase } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
 
 type Player = Database["public"]["Tables"]["players"]["Row"];
@@ -49,16 +47,12 @@ function Index() {
     setSelectedPlayer(null);
   }, [sportId]);
 
-  // Existing users who already have a sport shouldn't see the picker or tutorial.
-  // Silently mark them onboarded + tutorial-completed.
-  // Users without a sport will see the picker until they pick one (regardless of age).
+  // Mark users as onboarded once settings load (default sport = basketball).
+  // Tutorial still shows once for new users.
   useEffect(() => {
     if (settingsLoading || onboardingLoading || !user) return;
-    if (sportId && (!onboarded || !tutorialDone)) {
-      if (!onboarded) markOnboarded();
-      if (!tutorialDone) markTutorialDone();
-    }
-  }, [settingsLoading, onboardingLoading, user, sportId, onboarded, tutorialDone, markOnboarded, markTutorialDone]);
+    if (!onboarded) markOnboarded();
+  }, [settingsLoading, onboardingLoading, user, onboarded, markOnboarded]);
 
   if (authLoading) {
     return (
@@ -81,28 +75,13 @@ function Index() {
     return <SubscriptionExpired />;
   }
 
-  // Sport picker shows whenever the user has no sport selected — they can't use the app without it.
-  const showSportPicker = !settingsLoading && !onboardingLoading && !sportId;
-  // Tutorial: only after the user has picked their sport, and only once
-  const showTutorial = !settingsLoading && !onboardingLoading && !!sportId && !tutorialDone;
+  // Tutorial: shows once for new users
+  const showTutorial = !settingsLoading && !onboardingLoading && !tutorialDone;
 
   return (
     <div className="min-h-screen bg-background">
-      <SportPicker
-        open={showSportPicker}
-        onSelect={async (id) => {
-          await setSport(id);
-          await markOnboarded();
-          // Backfill any orphaned players/payments (created before a sport was picked)
-          if (user) {
-            await supabase.from("players").update({ sport: id }).eq("user_id", user.id).eq("sport", "");
-            await supabase.from("payments").update({ sport: id }).eq("user_id", user.id).eq("sport", "");
-          }
-        }}
-      />
-
       <OnboardingTutorial
-        open={showTutorial && !showSportPicker}
+        open={showTutorial}
         onComplete={markTutorialDone}
       />
 
