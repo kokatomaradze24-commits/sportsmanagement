@@ -11,6 +11,7 @@ import type { Database } from "@/integrations/supabase/types";
 import type { SportConfig } from "@/lib/sports";
 import { useI18n } from "@/hooks/use-i18n";
 import { useSounds } from "@/hooks/use-sounds";
+import { getDialCodeForLanguage, prefillPhone } from "@/lib/phone-codes";
 
 type Player = Database["public"]["Tables"]["players"]["Row"];
 type Payment = Database["public"]["Tables"]["payments"]["Row"];
