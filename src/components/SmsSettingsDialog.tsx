@@ -17,12 +17,14 @@ export function SmsSettingsDialog() {
   const [saving, setSaving] = useState(false);
 
   const [enabled, setEnabled] = useState(false);
-  const [provider, setProvider] = useState<"magti" | "twilio">("magti");
+  const [provider, setProvider] = useState<"magti" | "twilio" | "email">("magti");
   const [magtiKey, setMagtiKey] = useState("");
   const [magtiSender, setMagtiSender] = useState("");
   const [twilioSid, setTwilioSid] = useState("");
   const [twilioToken, setTwilioToken] = useState("");
   const [twilioFrom, setTwilioFrom] = useState("");
+  const [emailFrom, setEmailFrom] = useState("");
+  const [emailFromName, setEmailFromName] = useState("");
   const [reminderDays, setReminderDays] = useState("3");
   const [sendReminder, setSendReminder] = useState(true);
   const [sendOverdue, setSendOverdue] = useState(true);
@@ -30,12 +32,14 @@ export function SmsSettingsDialog() {
   useEffect(() => {
     if (!open) return;
     setEnabled(settings?.enabled ?? false);
-    setProvider((settings?.provider as "magti" | "twilio") ?? "magti");
+    setProvider((settings?.provider as "magti" | "twilio" | "email") ?? "magti");
     setMagtiKey(settings?.magti_api_key ?? "");
     setMagtiSender(settings?.magti_sender ?? "");
     setTwilioSid(settings?.twilio_account_sid ?? "");
     setTwilioToken(settings?.twilio_auth_token ?? "");
     setTwilioFrom(settings?.twilio_from ?? "");
+    setEmailFrom(settings?.email_from ?? "");
+    setEmailFromName(settings?.email_from_name ?? "");
     setReminderDays(String(settings?.reminder_days_before ?? 3));
     setSendReminder(settings?.send_reminder ?? true);
     setSendOverdue(settings?.send_overdue ?? true);
@@ -51,6 +55,8 @@ export function SmsSettingsDialog() {
       twilio_account_sid: twilioSid.trim() || null,
       twilio_auth_token: twilioToken.trim() || null,
       twilio_from: twilioFrom.trim() || null,
+      email_from: emailFrom.trim() || null,
+      email_from_name: emailFromName.trim() || null,
       reminder_days_before: Math.max(0, Math.min(14, parseInt(reminderDays) || 3)),
       send_reminder: sendReminder,
       send_overdue: sendOverdue,
@@ -98,16 +104,17 @@ export function SmsSettingsDialog() {
 
             <div>
               <Label className="mb-1.5 block">{t("smsProvider")}</Label>
-              <Select value={provider} onValueChange={(v) => setProvider(v as "magti" | "twilio")}>
+              <Select value={provider} onValueChange={(v) => setProvider(v as "magti" | "twilio" | "email")}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="magti">🇬🇪 Magti (SMSOffice.ge)</SelectItem>
                   <SelectItem value="twilio">🌍 Twilio</SelectItem>
+                  <SelectItem value="email">✉️ Email</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
-            {provider === "magti" ? (
+            {provider === "magti" && (
               <div className="space-y-3 rounded-xl border border-border p-4 bg-card">
                 <div>
                   <Label className="mb-1.5 block">{t("magtiApiKey")} *</Label>
@@ -131,7 +138,8 @@ export function SmsSettingsDialog() {
                   <p className="text-xs text-muted-foreground mt-1">{t("magtiSenderHelp")}</p>
                 </div>
               </div>
-            ) : (
+            )}
+            {provider === "twilio" && (
               <div className="space-y-3 rounded-xl border border-border p-4 bg-card">
                 <div>
                   <Label className="mb-1.5 block">Account SID *</Label>
@@ -158,6 +166,28 @@ export function SmsSettingsDialog() {
                     value={twilioFrom}
                     onChange={(e) => setTwilioFrom(e.target.value)}
                     placeholder="+15551234567"
+                  />
+                </div>
+              </div>
+            )}
+            {provider === "email" && (
+              <div className="space-y-3 rounded-xl border border-border p-4 bg-card">
+                <div>
+                  <Label className="mb-1.5 block">{t("emailFrom")} *</Label>
+                  <Input
+                    type="email"
+                    value={emailFrom}
+                    onChange={(e) => setEmailFrom(e.target.value)}
+                    placeholder="club@example.com"
+                  />
+                  <p className="text-xs text-muted-foreground mt-1">{t("emailFromHelp")}</p>
+                </div>
+                <div>
+                  <Label className="mb-1.5 block">{t("emailFromName")}</Label>
+                  <Input
+                    value={emailFromName}
+                    onChange={(e) => setEmailFromName(e.target.value)}
+                    placeholder="My Club"
                   />
                 </div>
               </div>
