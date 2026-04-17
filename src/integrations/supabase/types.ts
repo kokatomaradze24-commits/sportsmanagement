@@ -96,6 +96,7 @@ export type Database = {
       }
       players: {
         Row: {
+          birth_date: string | null
           created_at: string
           email: string | null
           first_name: string
@@ -106,6 +107,7 @@ export type Database = {
           notes: string | null
           parent_phone: string | null
           phone: string | null
+          primary_contact: string
           sport: string
           start_day: number
           start_month: number
@@ -116,6 +118,7 @@ export type Database = {
           user_id: string | null
         }
         Insert: {
+          birth_date?: string | null
           created_at?: string
           email?: string | null
           first_name: string
@@ -126,6 +129,7 @@ export type Database = {
           notes?: string | null
           parent_phone?: string | null
           phone?: string | null
+          primary_contact?: string
           sport?: string
           start_day?: number
           start_month?: number
@@ -136,6 +140,7 @@ export type Database = {
           user_id?: string | null
         }
         Update: {
+          birth_date?: string | null
           created_at?: string
           email?: string | null
           first_name?: string
@@ -146,6 +151,7 @@ export type Database = {
           notes?: string | null
           parent_phone?: string | null
           phone?: string | null
+          primary_contact?: string
           sport?: string
           start_day?: number
           start_month?: number
@@ -325,6 +331,8 @@ export type Database = {
       user_sms_settings: {
         Row: {
           created_at: string
+          email_from: string | null
+          email_from_name: string | null
           enabled: boolean
           id: string
           magti_api_key: string | null
@@ -341,6 +349,8 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          email_from?: string | null
+          email_from_name?: string | null
           enabled?: boolean
           id?: string
           magti_api_key?: string | null
@@ -357,6 +367,8 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          email_from?: string | null
+          email_from_name?: string | null
           enabled?: boolean
           id?: string
           magti_api_key?: string | null

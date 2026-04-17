@@ -1,11 +1,12 @@
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, Pencil, Trash2, User, Phone, Mail, Search, Filter } from "lucide-react";
+import { Plus, Pencil, Trash2, User, Phone, Mail, Search, Filter, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import type { Database } from "@/integrations/supabase/types";
 import type { SportConfig } from "@/lib/sports";
@@ -18,6 +19,16 @@ type Payment = Database["public"]["Tables"]["payments"]["Row"];
 type PlayerInsert = Database["public"]["Tables"]["players"]["Insert"] & { firstMonthPaid?: boolean };
 
 type PaymentFilter = "all" | "paid" | "pending" | "overdue";
+
+function calcAge(birthDate: string): number {
+  const b = new Date(birthDate);
+  if (Number.isNaN(b.getTime())) return 0;
+  const now = new Date();
+  let age = now.getFullYear() - b.getFullYear();
+  const m = now.getMonth() - b.getMonth();
+  if (m < 0 || (m === 0 && now.getDate() < b.getDate())) age--;
+  return Math.max(0, age);
+}
 
 interface PlayersListProps {
   players: Player[];
@@ -44,9 +55,14 @@ function PlayerForm({ initial, sport, onSubmit, onCancel }: {
   const [firstName, setFirstName] = useState(initial?.first_name || "");
   const [lastName, setLastName] = useState(initial?.last_name || "");
   const [tNumber, setTNumber] = useState(initial?.t_number?.toString() || "");
+  const [birthDate, setBirthDate] = useState(initial?.birth_date || "");
   const [phone, setPhone] = useState(() => prefillPhone(initial?.phone, language));
   const [parentPhone, setParentPhone] = useState(() => prefillPhone(initial?.parent_phone, language));
   const [email, setEmail] = useState(initial?.email || "");
+  const [primaryContact, setPrimaryContact] = useState<"player" | "parent">(
+    (initial?.primary_contact as "player" | "parent") || "player"
+  );
+  const [emailPickerOpen, setEmailPickerOpen] = useState(false);
 
   // Subscription fields (only used when creating)
   const [monthlyFee, setMonthlyFee] = useState(initial?.monthly_fee?.toString() || "50");
@@ -56,7 +72,7 @@ function PlayerForm({ initial, sport, onSubmit, onCancel }: {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!firstName.trim() || !lastName.trim() || !tNumber.trim()) return;
+    if (!firstName.trim() || !lastName.trim() || !tNumber.trim() || !birthDate) return;
     // If the user kept just the dial-code prefix, treat the field as empty.
     const cleanPhone = phone.trim();
     const cleanParent = parentPhone.trim();
@@ -65,9 +81,11 @@ function PlayerForm({ initial, sport, onSubmit, onCancel }: {
       first_name: firstName.trim(),
       last_name: lastName.trim(),
       t_number: parseInt(tNumber),
+      birth_date: birthDate,
       phone: cleanPhone && !isJustDial(cleanPhone) ? cleanPhone : null,
       parent_phone: cleanParent && !isJustDial(cleanParent) ? cleanParent : null,
       email: email.trim() || null,
+      primary_contact: primaryContact,
     };
     if (!isEdit) {
       base.monthly_fee = parseFloat(monthlyFee) || 0;
@@ -97,6 +115,16 @@ function PlayerForm({ initial, sport, onSubmit, onCancel }: {
         <Input type="number" value={tNumber} onChange={(e) => setTNumber(e.target.value)} placeholder="23" required min={0} max={999} />
       </div>
       <div>
+        <label className="text-sm text-muted-foreground mb-1 block">{t("birthDate")} *</label>
+        <Input
+          type="date"
+          value={birthDate}
+          onChange={(e) => setBirthDate(e.target.value)}
+          max={new Date().toISOString().slice(0, 10)}
+          required
+        />
+      </div>
+      <div>
         <label className="text-sm text-muted-foreground mb-1 block">{t("phone")}</label>
         <Input
           type="tel"
@@ -118,7 +146,45 @@ function PlayerForm({ initial, sport, onSubmit, onCancel }: {
       </div>
       <div>
         <label className="text-sm text-muted-foreground mb-1 block">{t("email")}</label>
-        <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="john@example.com" />
+        <div className="flex gap-2">
+          <Input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="john@example.com"
+            className="flex-1"
+          />
+          <Popover open={emailPickerOpen} onOpenChange={setEmailPickerOpen}>
+            <PopoverTrigger asChild>
+              <Button
+                type="button"
+                variant="outline"
+                className="shrink-0 gap-1.5"
+                title={t("chooseContactEmail")}
+              >
+                {primaryContact === "parent" ? t("contactParent") : t("contactPlayer")}
+                <ChevronDown className="w-3.5 h-3.5 opacity-60" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-64 p-2" align="end">
+              <p className="text-xs text-muted-foreground px-2 py-1.5">{t("chooseContactEmailDesc")}</p>
+              <button
+                type="button"
+                onClick={() => { setPrimaryContact("player"); setEmailPickerOpen(false); }}
+                className={`w-full text-left px-2 py-2 rounded-md text-sm hover:bg-muted ${primaryContact === "player" ? "bg-muted font-medium" : ""}`}
+              >
+                {t("contactPlayer")} <span className="text-xs text-muted-foreground">({t("primaryContact")})</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => { setPrimaryContact("parent"); setEmailPickerOpen(false); }}
+                className={`w-full text-left px-2 py-2 rounded-md text-sm hover:bg-muted ${primaryContact === "parent" ? "bg-muted font-medium" : ""}`}
+              >
+                {t("contactParent")}
+              </button>
+            </PopoverContent>
+          </Popover>
+        </div>
       </div>
 
       {!isEdit && (
@@ -400,15 +466,27 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
                       #{player.t_number}
                     </div>
                     <div>
-                      <p className="font-semibold text-card-foreground">
-                        {player.first_name} {player.last_name}
+                      <p className="font-semibold text-card-foreground flex items-center gap-2 flex-wrap">
+                        <span>{player.first_name} {player.last_name}</span>
+                        {player.birth_date ? (
+                          <span className="text-xs font-normal px-1.5 py-0.5 rounded bg-primary/10 text-primary">
+                            {t("yearsOld", { count: calcAge(player.birth_date) })}
+                          </span>
+                        ) : (
+                          <span className="text-xs font-normal text-muted-foreground/60">—</span>
+                        )}
                       </p>
                       <div className="flex items-center gap-3 text-xs text-muted-foreground mt-0.5">
                         {player.phone && (
                           <span className="flex items-center gap-1"><Phone className="w-3 h-3" />{player.phone}</span>
                         )}
                         {player.email && (
-                          <span className="flex items-center gap-1"><Mail className="w-3 h-3" />{player.email}</span>
+                          <span className="flex items-center gap-1">
+                            <Mail className="w-3 h-3" />{player.email}
+                            {player.primary_contact === "parent" && (
+                              <span className="ml-1 text-[10px] uppercase tracking-wide text-primary/70">({t("contactParent")})</span>
+                            )}
+                          </span>
                         )}
                       </div>
                     </div>
