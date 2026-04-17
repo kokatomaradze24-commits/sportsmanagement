@@ -83,67 +83,85 @@ function Index() {
   const showTutorial = !settingsLoading && !onboardingLoading && !tutorialDone;
 
   return (
-    <div className="min-h-screen bg-background">
-      <OnboardingTutorial
-        open={showTutorial}
-        onComplete={markTutorialDone}
-      />
+    <div className="min-h-screen bg-background relative overflow-hidden">
+      {/* Decorative gradient orbs */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="absolute -top-40 -right-40 w-[500px] h-[500px] rounded-full bg-primary/10 blur-3xl" />
+        <div className="absolute top-1/3 -left-40 w-[400px] h-[400px] rounded-full bg-accent/10 blur-3xl" />
+        <div className="absolute bottom-0 right-1/4 w-[450px] h-[450px] rounded-full bg-success/5 blur-3xl" />
+      </div>
 
-      <AppHeader
-        schoolName={schoolName}
-        logoUrl={logoUrl}
-        sport={sport}
-        isDark={isDark}
-        onToggleTheme={toggle}
-        onUpdateName={updateSchoolName}
-        onUploadLogo={updateLogo}
-        onChangeSport={(id) => setSport(id)}
-        onResetBranding={resetBranding}
-        onSignOut={signOut}
-      />
+      <div className="relative z-10">
+        <OnboardingTutorial
+          open={showTutorial}
+          onComplete={markTutorialDone}
+        />
 
-      <main className="max-w-7xl mx-auto px-6 py-6 space-y-6">
-        <SubscriptionBanner />
-        <StatsCards players={players} payments={payments} />
-        <NotificationsBanner players={players} payments={payments} />
+        <AppHeader
+          schoolName={schoolName}
+          logoUrl={logoUrl}
+          sport={sport}
+          isDark={isDark}
+          onToggleTheme={toggle}
+          onUpdateName={updateSchoolName}
+          onUploadLogo={updateLogo}
+          onChangeSport={(id) => setSport(id)}
+          onResetBranding={resetBranding}
+          onSignOut={signOut}
+        />
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="bg-card rounded-2xl border border-border p-5 shadow-sm">
-            <PlayersList
-              players={players}
-              payments={payments}
-              loading={playersLoading}
-              sport={sport}
-              onAdd={addPlayer}
-              onUpdate={updatePlayer}
-              onDelete={deletePlayer}
-              onSelect={setSelectedPlayer}
-              selectedId={selectedPlayer?.id}
-            />
-          </div>
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6">
+          <SubscriptionBanner />
+          <StatsCards players={players} payments={payments} />
+          <NotificationsBanner players={players} payments={payments} />
 
-          <div className="bg-card rounded-2xl border border-border p-5 shadow-sm">
-            {selectedPlayer ? (
-              <PaymentsPanel
-                player={selectedPlayer}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="bg-card/80 backdrop-blur-sm rounded-2xl border border-border p-5 shadow-sm hover:shadow-md transition-shadow">
+              <PlayersList
+                players={players}
                 payments={payments}
-                loading={paymentsLoading}
-                onAdd={addPayment}
-                onUpdate={updatePayment}
-                onDelete={deletePayment}
+                loading={playersLoading}
+                sport={sport}
+                onAdd={addPlayer}
+                onUpdate={updatePlayer}
+                onDelete={deletePlayer}
+                onSelect={setSelectedPlayer}
+                selectedId={selectedPlayer?.id}
               />
-            ) : (
-              <div className="flex items-center justify-center h-full min-h-[300px] text-muted-foreground">
-                <div className="text-center">
-                  <span className="text-5xl block mb-4">{sport.emoji}</span>
-                  <p className="text-lg font-display tracking-wider">{t("selectMember", { member: sport.member })}</p>
-                  <p className="text-sm mt-1">{t("selectMemberHint", { member: sport.member.toLowerCase() })}</p>
+            </div>
+
+            <div className="bg-card/80 backdrop-blur-sm rounded-2xl border border-border p-5 shadow-sm hover:shadow-md transition-shadow">
+              {selectedPlayer ? (
+                <PaymentsPanel
+                  player={selectedPlayer}
+                  payments={payments}
+                  loading={paymentsLoading}
+                  onAdd={addPayment}
+                  onUpdate={updatePayment}
+                  onDelete={deletePayment}
+                />
+              ) : (
+                <div className="flex items-center justify-center h-full min-h-[300px] text-muted-foreground">
+                  <div className="text-center">
+                    <div className="relative inline-block mb-4">
+                      <span className="text-6xl block animate-bounce" style={{ animationDuration: "2s" }}>
+                        {sport.emoji}
+                      </span>
+                      <div className="absolute inset-0 blur-2xl opacity-30 bg-primary rounded-full -z-10" />
+                    </div>
+                    <p className="text-xl font-display tracking-wider gradient-text">
+                      {t("selectMember", { member: sport.member })}
+                    </p>
+                    <p className="text-sm mt-2 text-muted-foreground/80">
+                      {t("selectMemberHint", { member: sport.member.toLowerCase() })}
+                    </p>
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
-        </div>
-      </main>
+        </main>
+      </div>
     </div>
   );
 }
