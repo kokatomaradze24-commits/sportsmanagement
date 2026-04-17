@@ -8,12 +8,14 @@ import { StatsCards } from "@/components/StatsCards";
 import { SubscriptionBanner } from "@/components/SubscriptionBanner";
 import { SubscriptionExpired } from "@/components/SubscriptionExpired";
 import { OnboardingTutorial } from "@/components/OnboardingTutorial";
+import { TripsPanel } from "@/components/TripsPanel";
 import { useTheme } from "@/hooks/use-theme";
 import { useAppSettings } from "@/hooks/use-app-settings";
 import { useSport } from "@/hooks/use-sport";
 import { useSportLabels } from "@/hooks/use-sport-labels";
 import { usePlayers } from "@/hooks/use-players";
 import { usePayments } from "@/hooks/use-payments";
+import { useTrips } from "@/hooks/use-trips";
 import { useAuth } from "@/hooks/use-auth";
 import { useSubscription } from "@/hooks/use-subscription";
 import { useOnboarding } from "@/hooks/use-onboarding";
@@ -42,6 +44,7 @@ function Index() {
   const { t } = useI18n();
   const { payments, loading: paymentsLoading, addPayment, updatePayment, deletePayment, refetch: refetchPayments } = usePayments(sportId);
   const { players, loading: playersLoading, addPlayer, updatePlayer, deletePlayer } = usePlayers(sportId, refetchPayments);
+  const trips = useTrips(sportId);
   const { isActive: subActive, loading: subLoading } = useSubscription();
   const { loading: onboardingLoading, onboarded, tutorialDone, markOnboarded, markTutorialDone } = useOnboarding();
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
@@ -172,6 +175,19 @@ function Index() {
               )}
             </div>
           </div>
+
+          <TripsPanel
+            trips={trips.trips}
+            participants={trips.participants}
+            players={players}
+            loading={trips.loading}
+            onAddTrip={trips.addTrip}
+            onUpdateTrip={trips.updateTrip}
+            onDeleteTrip={trips.deleteTrip}
+            onAddParticipant={trips.addParticipant}
+            onUpdateParticipant={trips.updateParticipant}
+            onRemoveParticipant={trips.removeParticipant}
+          />
         </main>
       </div>
     </div>
