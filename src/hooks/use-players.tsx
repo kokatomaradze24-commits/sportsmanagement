@@ -5,7 +5,7 @@ import type { Database } from "@/integrations/supabase/types";
 type Player = Database["public"]["Tables"]["players"]["Row"];
 type PlayerInsert = Database["public"]["Tables"]["players"]["Insert"];
 
-export function usePlayers(sport: string) {
+export function usePlayers(sport: string, onPlayersChanged?: () => void) {
   const [players, setPlayers] = useState<Player[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -29,15 +29,44 @@ export function usePlayers(sport: string) {
     fetchPlayers();
   }, [fetchPlayers]);
 
-  const addPlayer = useCallback(async (player: PlayerInsert) => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return { error: new Error("Not authenticated") };
-    const { error } = await supabase
-      .from("players")
-      .insert({ ...player, user_id: user.id, sport });
-    if (!error) await fetchPlayers();
-    return { error };
-  }, [fetchPlayers, sport]);
+  const addPlayer = useCallback(
+    async (
+      player: PlayerInsert & { firstMonthPaid?: boolean }
+    ): Promise<{ error: unknown }> => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return { error: new Error("Not authenticated") };
+
+      const { firstMonthPaid, ...rest } = player;
+
+      const { data: created, error } = await supabase
+        .from("players")
+        .insert({ ...rest, user_id: user.id, sport })
+        .select("*")
+        .single();
+
+      if (error) return { error };
+
+      // If user said the first month is already paid, flip the auto-generated
+      // payment for the start month/year to "paid".
+      if (created && firstMonthPaid) {
+        const today = new Date();
+        await supabase
+          .from("payments")
+          .update({
+            status: "paid",
+            payment_date: today.toISOString().slice(0, 10),
+          })
+          .eq("player_id", created.id)
+          .eq("month", created.start_month)
+          .eq("year", created.start_year);
+      }
+
+      await fetchPlayers();
+      onPlayersChanged?.();
+      return { error: null };
+    },
+    [fetchPlayers, sport, onPlayersChanged]
+  );
 
   const updatePlayer = useCallback(async (id: string, updates: Partial<Player>) => {
     const { error } = await supabase.from("players").update(updates).eq("id", id);
@@ -47,9 +76,12 @@ export function usePlayers(sport: string) {
 
   const deletePlayer = useCallback(async (id: string) => {
     const { error } = await supabase.from("players").delete().eq("id", id);
-    if (!error) await fetchPlayers();
+    if (!error) {
+      await fetchPlayers();
+      onPlayersChanged?.();
+    }
     return { error };
-  }, [fetchPlayers]);
+  }, [fetchPlayers, onPlayersChanged]);
 
   return { players, loading, addPlayer, updatePlayer, deletePlayer, refetch: fetchPlayers };
 }
