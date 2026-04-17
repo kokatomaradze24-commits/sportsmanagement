@@ -10,6 +10,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import type { Database } from "@/integrations/supabase/types";
 import type { SportConfig } from "@/lib/sports";
 import { useI18n } from "@/hooks/use-i18n";
+import { useSounds } from "@/hooks/use-sounds";
 
 type Player = Database["public"]["Tables"]["players"]["Row"];
 type Payment = Database["public"]["Tables"]["payments"]["Row"];
@@ -155,6 +156,7 @@ function PlayerForm({ initial, sport, onSubmit, onCancel }: {
 
 export function PlayersList({ players, payments = [], loading, sport, onAdd, onUpdate, onDelete, onSelect, selectedId }: PlayersListProps) {
   const { t } = useI18n();
+  const { play } = useSounds();
   const [addOpen, setAddOpen] = useState(false);
   const [editPlayer, setEditPlayer] = useState<Player | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
@@ -233,7 +235,7 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl tracking-wider text-foreground">{sport.members}</h2>
-        <Dialog open={addOpen} onOpenChange={setAddOpen}>
+        <Dialog open={addOpen} onOpenChange={(o) => { if (o) play("click"); setAddOpen(o); }}>
           <DialogTrigger asChild>
             <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90 font-semibold shadow-md">
               <Plus className="w-4 h-4" /> {t("addMember", { member: sport.member })}
@@ -246,6 +248,7 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
             <PlayerForm
               sport={sport}
               onSubmit={async (data) => {
+                play("success");
                 await onAdd(data);
                 setAddOpen(false);
               }}
@@ -356,11 +359,13 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
                 transition={{ delay: i * 0.05 }}
-                onClick={() => onSelect(player)}
+                whileHover={{ scale: 1.01 }}
+                whileTap={{ scale: 0.99 }}
+                onClick={() => { play("click"); onSelect(player); }}
                 className={`p-4 rounded-xl border cursor-pointer card-hover ${
                   selectedId === player.id
-                    ? "border-primary bg-primary/5 shadow-md"
-                    : "border-border bg-card hover:border-primary/30"
+                    ? "border-primary bg-primary/5 shadow-md ring-1 ring-primary/30"
+                    : "border-border bg-card hover:border-primary/40 hover:bg-primary/5"
                 }`}
               >
                 <div className="flex items-center justify-between">

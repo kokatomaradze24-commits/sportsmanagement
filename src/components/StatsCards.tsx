@@ -33,10 +33,12 @@ export function StatsCards({ players, payments }: StatsCardsProps) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: i * 0.1 }}
-          className="bg-card rounded-xl border border-border p-4 card-hover"
+          whileHover={{ y: -4, transition: { duration: 0.2 } }}
+          className="group bg-card/80 backdrop-blur-sm rounded-xl border border-border p-4 card-hover relative overflow-hidden"
         >
-          <div className="flex items-center gap-3">
-            <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${stat.color}`}>
+          <div className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 ${stat.color.split(" ")[1] || ""}`} style={{ filter: "blur(40px)" }} />
+          <div className="relative flex items-center gap-3">
+            <div className={`w-10 h-10 rounded-lg flex items-center justify-center transition-transform group-hover:scale-110 group-hover:rotate-3 ${stat.color}`}>
               <stat.icon className="w-5 h-5" />
             </div>
             <div>

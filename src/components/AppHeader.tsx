@@ -1,7 +1,7 @@
 import { useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { Link } from "@tanstack/react-router";
-import { Moon, Sun, Upload, Pencil, Check, X, LogOut, Trophy, RotateCcw, Shield } from "lucide-react";
+import { Moon, Sun, Upload, Pencil, Check, X, LogOut, Trophy, RotateCcw, Shield, Volume2, VolumeX } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuLabel, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
@@ -9,6 +9,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { getInitials, SPORT_LIST, type SportConfig, type SportId } from "@/lib/sports";
 import { useIsAdmin } from "@/hooks/use-is-admin";
 import { useI18n } from "@/hooks/use-i18n";
+import { useSounds } from "@/hooks/use-sounds";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import { SmsSettingsDialog } from "./SmsSettingsDialog";
 
@@ -31,6 +32,7 @@ export function AppHeader({ schoolName, logoUrl, sport, isDark, onToggleTheme, o
   const fileRef = useRef<HTMLInputElement>(null);
   const { isAdmin } = useIsAdmin();
   const { t } = useI18n();
+  const { muted, toggleMuted, play } = useSounds();
 
   const handleSave = () => {
     onUpdateName(nameValue);
@@ -173,7 +175,17 @@ export function AppHeader({ schoolName, logoUrl, sport, isDark, onToggleTheme, o
           <Button
             variant="ghost"
             size="icon"
-            onClick={onToggleTheme}
+            onClick={() => { play("click"); toggleMuted(); }}
+            className="rounded-full w-10 h-10"
+            title={muted ? t("soundOff") : t("soundOn")}
+          >
+            {muted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
+          </Button>
+
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => { play("click"); onToggleTheme(); }}
             className="rounded-full w-10 h-10"
           >
             <motion.div
