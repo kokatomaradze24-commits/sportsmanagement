@@ -33,7 +33,7 @@ export const Route = createFileRoute("/")({
 
 function Index() {
   const navigate = useNavigate();
-  const { isAuthenticated, loading: authLoading, signOut } = useAuth();
+  const { isAuthenticated, loading: authLoading, signOut, user } = useAuth();
   const { isDark, toggle } = useTheme();
   const { schoolName, logoUrl, loading: settingsLoading, updateSchoolName, updateLogo, resetBranding } = useAppSettings();
   const { sport, sportId, setSport } = useSport();
@@ -48,15 +48,18 @@ function Index() {
     setSelectedPlayer(null);
   }, [sportId]);
 
-  // Existing users (already have a sport) shouldn't see the picker or tutorial.
-  // Silently mark them onboarded + tutorial-completed.
+  // Existing users (account older than 2 minutes, or already have a sport) shouldn't
+  // see the picker or tutorial. Silently mark them onboarded + tutorial-completed.
   useEffect(() => {
-    if (settingsLoading || onboardingLoading) return;
-    if (sportId && !onboarded) {
+    if (settingsLoading || onboardingLoading || !user) return;
+    if (onboarded) return;
+    const accountAgeMs = Date.now() - new Date(user.created_at).getTime();
+    const isBrandNew = accountAgeMs < 2 * 60 * 1000;
+    if (sportId || !isBrandNew) {
       markOnboarded();
       if (!tutorialDone) markTutorialDone();
     }
-  }, [settingsLoading, onboardingLoading, sportId, onboarded, tutorialDone, markOnboarded, markTutorialDone]);
+  }, [settingsLoading, onboardingLoading, user, sportId, onboarded, tutorialDone, markOnboarded, markTutorialDone]);
 
   if (authLoading) {
     return (
