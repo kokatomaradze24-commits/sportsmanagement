@@ -221,6 +221,16 @@ export type Database = {
           user_id: string
         }[]
       }
+      admin_storage_stats: {
+        Args: never
+        Returns: {
+          db_bytes: number
+          db_limit_bytes: number
+          storage_bytes: number
+          storage_file_count: number
+          storage_limit_bytes: number
+        }[]
+      }
       admin_toggle_admin: { Args: { _user_id: string }; Returns: undefined }
       has_role: {
         Args: {

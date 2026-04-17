@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Shield, Trash2, ArrowLeft, Crown, User as UserIcon, Mail, Calendar, Users, CreditCard, Clock, Plus, X } from "lucide-react";
+import { Shield, Trash2, ArrowLeft, Crown, User as UserIcon, Mail, Calendar, Users, CreditCard, Clock, Plus, X, Database, HardDrive } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
@@ -37,11 +37,27 @@ interface AdminUser {
   is_trial: boolean;
 }
 
+interface StorageStats {
+  db_bytes: number;
+  db_limit_bytes: number;
+  storage_bytes: number;
+  storage_limit_bytes: number;
+  storage_file_count: number;
+}
+
+function formatBytes(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  if (bytes < 1024 * 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  return `${(bytes / (1024 * 1024 * 1024)).toFixed(2)} GB`;
+}
+
 function AdminPage() {
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
   const { isAdmin, loading: adminLoading } = useIsAdmin();
   const [users, setUsers] = useState<AdminUser[]>([]);
+  const [stats, setStats] = useState<StorageStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [confirmDelete, setConfirmDelete] = useState<AdminUser | null>(null);
 
@@ -56,6 +72,7 @@ function AdminPage() {
       return;
     }
     loadUsers();
+    loadStats();
   }, [user, isAdmin, authLoading, adminLoading, navigate]);
 
   const loadUsers = async () => {
@@ -67,6 +84,13 @@ function AdminPage() {
       setUsers((data as AdminUser[]) || []);
     }
     setLoading(false);
+  };
+
+  const loadStats = async () => {
+    const { data, error } = await supabase.rpc("admin_storage_stats");
+    if (!error && data && Array.isArray(data) && data.length > 0) {
+      setStats(data[0] as StorageStats);
+    }
   };
 
   const handleDelete = async () => {
@@ -157,7 +181,50 @@ function AdminPage() {
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-6 py-6">
+      <main className="max-w-7xl mx-auto px-6 py-6 space-y-6">
+        {stats && (() => {
+          const dbPct = Math.min(100, (stats.db_bytes / stats.db_limit_bytes) * 100);
+          const stPct = Math.min(100, (stats.storage_bytes / stats.storage_limit_bytes) * 100);
+          const barColor = (p: number) => p > 80 ? "bg-red-500" : p > 60 ? "bg-yellow-500" : "bg-green-500";
+          return (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="bg-card border border-border rounded-xl p-5">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <Database className="h-5 w-5 text-primary" />
+                    <h3 className="font-display tracking-wider">მონაცემთა ბაზა</h3>
+                  </div>
+                  <span className="text-xs text-muted-foreground">{dbPct.toFixed(1)}%</span>
+                </div>
+                <div className="text-2xl font-bold">
+                  {formatBytes(stats.db_bytes)}
+                  <span className="text-sm font-normal text-muted-foreground"> / {formatBytes(stats.db_limit_bytes)}</span>
+                </div>
+                <div className="mt-3 h-2 bg-muted rounded-full overflow-hidden">
+                  <div className={`h-full transition-all ${barColor(dbPct)}`} style={{ width: `${dbPct}%` }} />
+                </div>
+              </div>
+              <div className="bg-card border border-border rounded-xl p-5">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <HardDrive className="h-5 w-5 text-primary" />
+                    <h3 className="font-display tracking-wider">ფაილების სტორეჯი</h3>
+                  </div>
+                  <span className="text-xs text-muted-foreground">{stPct.toFixed(1)}%</span>
+                </div>
+                <div className="text-2xl font-bold">
+                  {formatBytes(stats.storage_bytes)}
+                  <span className="text-sm font-normal text-muted-foreground"> / {formatBytes(stats.storage_limit_bytes)}</span>
+                </div>
+                <div className="mt-1 text-xs text-muted-foreground">{stats.storage_file_count} ფაილი</div>
+                <div className="mt-3 h-2 bg-muted rounded-full overflow-hidden">
+                  <div className={`h-full transition-all ${barColor(stPct)}`} style={{ width: `${stPct}%` }} />
+                </div>
+              </div>
+            </div>
+          );
+        })()}
+
         <div className="grid gap-3">
           {users.map((u, i) => (
             <motion.div
