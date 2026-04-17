@@ -199,6 +199,105 @@ export type Database = {
         }
         Relationships: []
       }
+      trip_participants: {
+        Row: {
+          created_at: string
+          deposit_amount: number
+          deposit_paid_at: string | null
+          final_amount: number
+          final_paid_at: string | null
+          id: string
+          notes: string | null
+          player_id: string
+          trip_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          deposit_amount?: number
+          deposit_paid_at?: string | null
+          final_amount?: number
+          final_paid_at?: string | null
+          id?: string
+          notes?: string | null
+          player_id: string
+          trip_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          deposit_amount?: number
+          deposit_paid_at?: string | null
+          final_amount?: number
+          final_paid_at?: string | null
+          id?: string
+          notes?: string | null
+          player_id?: string
+          trip_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trip_participants_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "trip_participants_trip_id_fkey"
+            columns: ["trip_id"]
+            isOneToOne: false
+            referencedRelation: "trips"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      trips: {
+        Row: {
+          created_at: string
+          id: string
+          location: string | null
+          name: string
+          notes: string | null
+          price: number
+          sport: string
+          trip_date: string
+          trip_time: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          location?: string | null
+          name: string
+          notes?: string | null
+          price?: number
+          sport?: string
+          trip_date: string
+          trip_time?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          location?: string | null
+          name?: string
+          notes?: string | null
+          price?: number
+          sport?: string
+          trip_date?: string
+          trip_time?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
