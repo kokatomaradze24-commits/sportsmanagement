@@ -216,6 +216,16 @@ export const translations = {
     janLong: "January", febLong: "February", marLong: "March", aprLong: "April",
     mayLong: "May", junLong: "June", julLong: "July", augLong: "August",
     sepLong: "September", octLong: "October", novLong: "November", decLong: "December",
+
+    // Sport-specific terminology
+    "sport.basketball.name": "Basketball", "sport.basketball.member": "Player", "sport.basketball.members": "Players", "sport.basketball.numberLabel": "Jersey #", "sport.basketball.eventSingular": "Match", "sport.basketball.eventPlural": "Matches",
+    "sport.football.name": "Football", "sport.football.member": "Player", "sport.football.members": "Players", "sport.football.numberLabel": "Jersey #", "sport.football.eventSingular": "Match", "sport.football.eventPlural": "Matches",
+    "sport.rugby.name": "Rugby", "sport.rugby.member": "Player", "sport.rugby.members": "Players", "sport.rugby.numberLabel": "Jersey #", "sport.rugby.eventSingular": "Match", "sport.rugby.eventPlural": "Matches",
+    "sport.tennis.name": "Tennis", "sport.tennis.member": "Player", "sport.tennis.members": "Players", "sport.tennis.numberLabel": "Ranking #", "sport.tennis.eventSingular": "Match", "sport.tennis.eventPlural": "Matches",
+    "sport.dancing.name": "Dancing", "sport.dancing.member": "Dancer", "sport.dancing.members": "Dancers", "sport.dancing.numberLabel": "Recital #", "sport.dancing.eventSingular": "Performance", "sport.dancing.eventPlural": "Performances",
+    "sport.fitness.name": "Fitness", "sport.fitness.member": "Member", "sport.fitness.members": "Members", "sport.fitness.numberLabel": "Member #", "sport.fitness.eventSingular": "Session", "sport.fitness.eventPlural": "Sessions",
+    "sport.swimming.name": "Swimming", "sport.swimming.member": "Athlete", "sport.swimming.members": "Athletes", "sport.swimming.numberLabel": "Lane #", "sport.swimming.eventSingular": "Meet", "sport.swimming.eventPlural": "Meets",
+    "sport.mma.name": "MMA", "sport.mma.member": "Fighter", "sport.mma.members": "Fighters", "sport.mma.numberLabel": "Weight Class", "sport.mma.eventSingular": "Bout", "sport.mma.eventPlural": "Bouts",
   },
 
   de: {
