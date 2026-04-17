@@ -84,11 +84,23 @@ function Index() {
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
-      {/* Decorative gradient orbs */}
-      <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-[500px] h-[500px] rounded-full bg-primary/10 blur-3xl" />
-        <div className="absolute top-1/3 -left-40 w-[400px] h-[400px] rounded-full bg-accent/10 blur-3xl" />
-        <div className="absolute bottom-0 right-1/4 w-[450px] h-[450px] rounded-full bg-success/5 blur-3xl" />
+      {/* Decorative animated mesh background */}
+      <div className="pointer-events-none fixed inset-0 overflow-hidden">
+        {/* Subtle grid pattern */}
+        <div
+          className="absolute inset-0 opacity-[0.025] dark:opacity-[0.04]"
+          style={{
+            backgroundImage:
+              "linear-gradient(to right, hsl(var(--foreground) / 0.5) 1px, transparent 1px), linear-gradient(to bottom, hsl(var(--foreground) / 0.5) 1px, transparent 1px)",
+            backgroundSize: "48px 48px",
+            maskImage: "radial-gradient(ellipse at center, black 30%, transparent 75%)",
+          }}
+        />
+        {/* Animated gradient orbs */}
+        <div className="absolute -top-40 -right-40 w-[600px] h-[600px] rounded-full bg-primary/15 blur-3xl animate-pulse" style={{ animationDuration: "8s" }} />
+        <div className="absolute top-1/3 -left-40 w-[500px] h-[500px] rounded-full bg-accent/15 blur-3xl animate-pulse" style={{ animationDuration: "10s", animationDelay: "1s" }} />
+        <div className="absolute bottom-0 right-1/4 w-[550px] h-[550px] rounded-full bg-success/10 blur-3xl animate-pulse" style={{ animationDuration: "12s", animationDelay: "2s" }} />
+        <div className="absolute top-2/3 left-1/2 w-[400px] h-[400px] rounded-full bg-primary/8 blur-3xl animate-pulse" style={{ animationDuration: "9s", animationDelay: "3s" }} />
       </div>
 
       <div className="relative z-10">
