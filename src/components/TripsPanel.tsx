@@ -378,7 +378,12 @@ function TripCard({
   onUpdateParticipant: (id: string, updates: Partial<TripParticipant>) => void;
   onRemoveParticipant: (id: string) => void;
 }) {
-  const { t, monthShort } = useI18n();
+  const { t, monthShort, language } = useI18n();
+  const tripCurrency = ((trip as { currency?: string }).currency || "auto") as CurrencyCode | "auto";
+  const tripCurrencySymbol =
+    tripCurrency === "auto"
+      ? CURRENCY_SYMBOLS[language === "ka" ? "GEL" : language === "en" ? "USD" : "EUR"]
+      : CURRENCY_SYMBOLS[tripCurrency];
   const { play } = useSounds();
   const [expanded, setExpanded] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
