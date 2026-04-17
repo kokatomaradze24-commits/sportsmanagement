@@ -3,6 +3,7 @@ import { DollarSign, Check, Clock, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { Database } from "@/integrations/supabase/types";
 import { useI18n } from "@/hooks/use-i18n";
+import { useSounds } from "@/hooks/use-sounds";
 
 type Payment = Database["public"]["Tables"]["payments"]["Row"];
 type Player = Database["public"]["Tables"]["players"]["Row"];
@@ -32,6 +33,7 @@ function StatusBadge({ status, t }: { status: string; t: ReturnType<typeof useI1
 
 export function PaymentsPanel({ player, payments, loading, onUpdate }: PaymentsPanelProps) {
   const { t, monthShort } = useI18n();
+  const { play } = useSounds();
 
   // Sort by year then month so the schedule reads top-to-bottom
   const playerPayments = payments
@@ -48,8 +50,11 @@ export function PaymentsPanel({ player, payments, loading, onUpdate }: PaymentsP
 
   const togglePaid = async (payment: Payment) => {
     if (payment.status === "paid") {
+      play("click");
       await onUpdate(payment.id, { status: "pending", payment_date: null });
     } else {
+      // Cash register sound when marking as paid 💰
+      play("cash");
       await onUpdate(payment.id, {
         status: "paid",
         payment_date: new Date().toISOString().slice(0, 10),
