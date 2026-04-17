@@ -11,6 +11,7 @@ import type { Database } from "@/integrations/supabase/types";
 import type { SportConfig } from "@/lib/sports";
 import { useI18n } from "@/hooks/use-i18n";
 import { useSounds } from "@/hooks/use-sounds";
+import { getDialCodeForLanguage, prefillPhone } from "@/lib/phone-codes";
 
 type Player = Database["public"]["Tables"]["players"]["Row"];
 type Payment = Database["public"]["Tables"]["payments"]["Row"];
@@ -36,14 +37,15 @@ function PlayerForm({ initial, sport, onSubmit, onCancel }: {
   onSubmit: (data: PlayerInsert) => void;
   onCancel: () => void;
 }) {
-  const { t, monthShort } = useI18n();
+  const { t, monthShort, language } = useI18n();
+  const dial = getDialCodeForLanguage(language);
   const isEdit = !!initial?.id;
   const now = new Date();
   const [firstName, setFirstName] = useState(initial?.first_name || "");
   const [lastName, setLastName] = useState(initial?.last_name || "");
   const [tNumber, setTNumber] = useState(initial?.t_number?.toString() || "");
-  const [phone, setPhone] = useState(initial?.phone || "");
-  const [parentPhone, setParentPhone] = useState(initial?.parent_phone || "");
+  const [phone, setPhone] = useState(() => prefillPhone(initial?.phone, language));
+  const [parentPhone, setParentPhone] = useState(() => prefillPhone(initial?.parent_phone, language));
   const [email, setEmail] = useState(initial?.email || "");
 
   // Subscription fields (only used when creating)
@@ -55,12 +57,16 @@ function PlayerForm({ initial, sport, onSubmit, onCancel }: {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!firstName.trim() || !lastName.trim() || !tNumber.trim()) return;
+    // If the user kept just the dial-code prefix, treat the field as empty.
+    const cleanPhone = phone.trim();
+    const cleanParent = parentPhone.trim();
+    const isJustDial = (v: string) => v === dial.code || v.replace(/[\s-]/g, "") === dial.code;
     const base: PlayerInsert = {
       first_name: firstName.trim(),
       last_name: lastName.trim(),
       t_number: parseInt(tNumber),
-      phone: phone.trim() || null,
-      parent_phone: parentPhone.trim() || null,
+      phone: cleanPhone && !isJustDial(cleanPhone) ? cleanPhone : null,
+      parent_phone: cleanParent && !isJustDial(cleanParent) ? cleanParent : null,
       email: email.trim() || null,
     };
     if (!isEdit) {
@@ -92,11 +98,23 @@ function PlayerForm({ initial, sport, onSubmit, onCancel }: {
       </div>
       <div>
         <label className="text-sm text-muted-foreground mb-1 block">{t("phone")}</label>
-        <Input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+1 234 567 890" />
+        <Input
+          type="tel"
+          inputMode="tel"
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
+          placeholder={`${dial.flag} ${dial.code} ${dial.sample}`}
+        />
       </div>
       <div>
         <label className="text-sm text-muted-foreground mb-1 block">{t("parentPhone")}</label>
-        <Input value={parentPhone} onChange={(e) => setParentPhone(e.target.value)} placeholder="+995 5xx xxx xxx" />
+        <Input
+          type="tel"
+          inputMode="tel"
+          value={parentPhone}
+          onChange={(e) => setParentPhone(e.target.value)}
+          placeholder={`${dial.flag} ${dial.code} ${dial.sample}`}
+        />
       </div>
       <div>
         <label className="text-sm text-muted-foreground mb-1 block">{t("email")}</label>
