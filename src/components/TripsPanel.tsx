@@ -329,7 +329,7 @@ function ParticipantRow({
           className="text-xs"
         >
           {depositPaid ? <Check className="h-3.5 w-3.5" /> : <Wallet className="h-3.5 w-3.5" />}
-          {t("deposit")} {depositPaid && participant.deposit_amount ? `(${participant.deposit_amount})` : ""}
+          {t("deposit")} {depositPaid && participant.deposit_amount ? `(${formatMoney(Number(participant.deposit_amount), tripCurrency as CurrencyCode | "auto")})` : ""}
         </Button>
         <Button
           size="sm"
@@ -338,7 +338,7 @@ function ParticipantRow({
           className="text-xs"
         >
           {finalPaid ? <Check className="h-3.5 w-3.5" /> : <DollarSign className="h-3.5 w-3.5" />}
-          {t("finalPayment")} {finalPaid && participant.final_amount ? `(${participant.final_amount})` : ""}
+          {t("finalPayment")} {finalPaid && participant.final_amount ? `(${formatMoney(Number(participant.final_amount), tripCurrency as CurrencyCode | "auto")})` : ""}
         </Button>
       </div>
 
@@ -437,7 +437,7 @@ function TripCard({
                 </span>
               )}
               <span className="flex items-center gap-1 font-semibold text-foreground">
-                <DollarSign className="h-3 w-3" /> {trip.price}
+                <span className="font-mono text-sm">{tripCurrencySymbol}</span> {Number(trip.price).toFixed(2)}
               </span>
             </div>
           </div>
@@ -474,7 +474,7 @@ function TripCard({
             {expanded ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
           </button>
           <span className="text-xs text-muted-foreground">
-            {t("totalCollectedTrip", { amount: collected, total: totalPossible })}
+            {t("totalCollectedTrip", { amount: `${tripCurrencySymbol}${collected.toFixed(2)}`, total: `${tripCurrencySymbol}${totalPossible.toFixed(2)}` })}
           </span>
         </div>
       </div>
@@ -505,6 +505,7 @@ function TripCard({
                     participant={part}
                     player={playerById.get(part.player_id)}
                     tripPrice={Number(trip.price)}
+                    tripCurrency={(trip as { currency?: string }).currency || "auto"}
                     onUpdate={(u) => onUpdateParticipant(part.id, u)}
                     onRemove={() => onRemoveParticipant(part.id)}
                   />
