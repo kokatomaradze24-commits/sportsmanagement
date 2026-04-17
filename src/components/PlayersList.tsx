@@ -359,11 +359,13 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
                 transition={{ delay: i * 0.05 }}
-                onClick={() => onSelect(player)}
+                whileHover={{ scale: 1.01 }}
+                whileTap={{ scale: 0.99 }}
+                onClick={() => { play("click"); onSelect(player); }}
                 className={`p-4 rounded-xl border cursor-pointer card-hover ${
                   selectedId === player.id
-                    ? "border-primary bg-primary/5 shadow-md"
-                    : "border-border bg-card hover:border-primary/30"
+                    ? "border-primary bg-primary/5 shadow-md ring-1 ring-primary/30"
+                    : "border-border bg-card hover:border-primary/40 hover:bg-primary/5"
                 }`}
               >
                 <div className="flex items-center justify-between">
