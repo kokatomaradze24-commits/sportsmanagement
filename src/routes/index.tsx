@@ -17,6 +17,7 @@ import { usePayments } from "@/hooks/use-payments";
 import { useAuth } from "@/hooks/use-auth";
 import { useSubscription } from "@/hooks/use-subscription";
 import { useOnboarding } from "@/hooks/use-onboarding";
+import { supabase } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
 
 type Player = Database["public"]["Tables"]["players"]["Row"];
