@@ -20,6 +20,16 @@ type PlayerInsert = Database["public"]["Tables"]["players"]["Insert"] & { firstM
 
 type PaymentFilter = "all" | "paid" | "pending" | "overdue";
 
+function calcAge(birthDate: string): number {
+  const b = new Date(birthDate);
+  if (Number.isNaN(b.getTime())) return 0;
+  const now = new Date();
+  let age = now.getFullYear() - b.getFullYear();
+  const m = now.getMonth() - b.getMonth();
+  if (m < 0 || (m === 0 && now.getDate() < b.getDate())) age--;
+  return Math.max(0, age);
+}
+
 interface PlayersListProps {
   players: Player[];
   payments?: Payment[];
