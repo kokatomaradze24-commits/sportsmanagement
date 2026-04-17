@@ -106,7 +106,7 @@ export function AppHeader({ schoolName, logoUrl, sport, isDark, onToggleTheme, o
           )}
         </div>
 
-        <div className="flex items-center gap-1 flex-wrap justify-end sm:justify-start border-t border-border pt-3">
+        <div className="flex items-center gap-1 flex-wrap justify-center border-t border-border pt-3">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon" className="rounded-full w-10 h-10" title="Change sport">
