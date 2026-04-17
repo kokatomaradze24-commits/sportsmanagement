@@ -12,6 +12,9 @@ import type { Database } from "@/integrations/supabase/types";
 import type { SportConfig } from "@/lib/sports";
 import { useI18n } from "@/hooks/use-i18n";
 import { useSounds } from "@/hooks/use-sounds";
+import { useAppSettings } from "@/hooks/use-app-settings";
+import { useAuth } from "@/hooks/use-auth";
+import { sendEventSms } from "@/lib/notifications";
 import { getDialCodeForLanguage, prefillPhone } from "@/lib/phone-codes";
 
 type Player = Database["public"]["Tables"]["players"]["Row"];
@@ -35,7 +38,7 @@ interface PlayersListProps {
   payments?: Payment[];
   loading: boolean;
   sport: SportConfig;
-  onAdd: (player: PlayerInsert) => Promise<{ error: unknown }>;
+  onAdd: (player: PlayerInsert) => Promise<{ error: unknown; created?: Player }>;
   onUpdate: (id: string, updates: Partial<Player>) => Promise<{ error: unknown }>;
   onDelete: (id: string) => Promise<{ error: unknown }>;
   onSelect: (player: Player) => void;
@@ -239,8 +242,10 @@ function PlayerForm({ initial, sport, onSubmit, onCancel }: {
 }
 
 export function PlayersList({ players, payments = [], loading, sport, onAdd, onUpdate, onDelete, onSelect, selectedId }: PlayersListProps) {
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   const { play } = useSounds();
+  const { schoolName } = useAppSettings();
+  const { user } = useAuth();
   const [addOpen, setAddOpen] = useState(false);
   const [editPlayer, setEditPlayer] = useState<Player | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
@@ -334,7 +339,26 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
               sport={sport}
               onSubmit={async (data) => {
                 play("success");
-                await onAdd(data);
+                const { created } = await onAdd(data);
+                if (created && user) {
+                  // Fire-and-forget: registration + payment schedule SMS
+                  void sendEventSms({
+                    userId: user.id,
+                    playerId: created.id,
+                    kind: "registration",
+                    clubName: schoolName,
+                    sportName: sport.name,
+                    lang: language,
+                  });
+                  void sendEventSms({
+                    userId: user.id,
+                    playerId: created.id,
+                    kind: "schedule",
+                    clubName: schoolName,
+                    sportName: sport.name,
+                    lang: language,
+                  });
+                }
                 setAddOpen(false);
               }}
               onCancel={() => setAddOpen(false)}
