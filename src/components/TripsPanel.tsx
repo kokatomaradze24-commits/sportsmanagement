@@ -237,15 +237,16 @@ function AddParticipantDialog({
 }
 
 function ParticipantRow({
-  participant, player, tripPrice, onUpdate, onRemove,
+  participant, player, tripPrice, tripCurrency, onUpdate, onRemove,
 }: {
   participant: TripParticipant;
   player: Player | undefined;
   tripPrice: number;
+  tripCurrency: string;
   onUpdate: (updates: Partial<TripParticipant>) => void;
   onRemove: () => void;
 }) {
-  const { t } = useI18n();
+  const { t, formatMoney } = useI18n();
   const { play } = useSounds();
   const [confirmOpen, setConfirmOpen] = useState(false);
 
