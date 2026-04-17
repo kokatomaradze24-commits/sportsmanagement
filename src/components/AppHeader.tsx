@@ -47,7 +47,7 @@ export function AppHeader({ schoolName, logoUrl, sport, isDark, onToggleTheme, o
       className="bg-card border-b border-border px-6 py-4"
     >
       <div className="max-w-7xl mx-auto flex flex-col gap-4">
-        <div className="flex items-center gap-4 min-w-0">
+        <div className="flex items-center gap-4 min-w-0 justify-center">
           <div
             className="relative w-14 h-14 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center overflow-hidden cursor-pointer group flex-shrink-0 ring-1 ring-primary/20"
             onClick={() => fileRef.current?.click()}
