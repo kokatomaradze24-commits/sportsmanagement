@@ -46,7 +46,7 @@ export function AppHeader({ schoolName, logoUrl, sport, isDark, onToggleTheme, o
       animate={{ y: 0, opacity: 1 }}
       className="bg-card border-b border-border px-6 py-4"
     >
-      <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
+      <div className="max-w-7xl mx-auto flex flex-col gap-4">
         <div className="flex items-center gap-4 min-w-0">
           <div
             className="relative w-14 h-14 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center overflow-hidden cursor-pointer group flex-shrink-0 ring-1 ring-primary/20"
@@ -106,7 +106,7 @@ export function AppHeader({ schoolName, logoUrl, sport, isDark, onToggleTheme, o
           )}
         </div>
 
-        <div className="flex items-center gap-1 flex-shrink-0">
+        <div className="flex items-center gap-1 flex-wrap justify-end sm:justify-start border-t border-border pt-3">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon" className="rounded-full w-10 h-10" title="Change sport">
