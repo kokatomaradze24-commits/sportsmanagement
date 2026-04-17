@@ -37,14 +37,15 @@ function PlayerForm({ initial, sport, onSubmit, onCancel }: {
   onSubmit: (data: PlayerInsert) => void;
   onCancel: () => void;
 }) {
-  const { t, monthShort } = useI18n();
+  const { t, monthShort, language } = useI18n();
+  const dial = getDialCodeForLanguage(language);
   const isEdit = !!initial?.id;
   const now = new Date();
   const [firstName, setFirstName] = useState(initial?.first_name || "");
   const [lastName, setLastName] = useState(initial?.last_name || "");
   const [tNumber, setTNumber] = useState(initial?.t_number?.toString() || "");
-  const [phone, setPhone] = useState(initial?.phone || "");
-  const [parentPhone, setParentPhone] = useState(initial?.parent_phone || "");
+  const [phone, setPhone] = useState(() => prefillPhone(initial?.phone, language));
+  const [parentPhone, setParentPhone] = useState(() => prefillPhone(initial?.parent_phone, language));
   const [email, setEmail] = useState(initial?.email || "");
 
   // Subscription fields (only used when creating)
