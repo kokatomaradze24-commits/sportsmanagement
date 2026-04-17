@@ -74,7 +74,7 @@ export function PaymentsPanel({ player, payments, loading, onUpdate }: PaymentsP
           paymentId: payment.id,
           kind: "payment_paid",
           clubName: schoolName,
-          sportName: sport?.name,
+          sportName: sport.name,
           lang: language,
         });
       }
