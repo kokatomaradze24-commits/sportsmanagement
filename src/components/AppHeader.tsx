@@ -102,7 +102,7 @@ export function AppHeader({ schoolName, logoUrl, sport, isDark, onToggleTheme, o
               <div className="min-w-0">
                 <h1 className="text-2xl sm:text-3xl tracking-wider text-foreground truncate">{schoolName}</h1>
                 <p className="text-xs text-muted-foreground flex items-center gap-1">
-                  <span>{sport.emoji}</span> {sport.name} {t("sportClub")}
+                  <span>{sport.emoji}</span> {sport.name}
                 </p>
               </div>
               <Button size="icon" variant="ghost" onClick={() => { setNameValue(schoolName); setEditing(true); }}>
