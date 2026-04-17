@@ -346,6 +346,15 @@ export const translations = {
     janLong: "Januar", febLong: "Februar", marLong: "März", aprLong: "April",
     mayLong: "Mai", junLong: "Juni", julLong: "Juli", augLong: "August",
     sepLong: "September", octLong: "Oktober", novLong: "November", decLong: "Dezember",
+
+    "sport.basketball.name": "Basketball", "sport.basketball.member": "Spieler", "sport.basketball.members": "Spieler", "sport.basketball.numberLabel": "Trikotnr.", "sport.basketball.eventSingular": "Spiel", "sport.basketball.eventPlural": "Spiele",
+    "sport.football.name": "Fußball", "sport.football.member": "Spieler", "sport.football.members": "Spieler", "sport.football.numberLabel": "Trikotnr.", "sport.football.eventSingular": "Spiel", "sport.football.eventPlural": "Spiele",
+    "sport.rugby.name": "Rugby", "sport.rugby.member": "Spieler", "sport.rugby.members": "Spieler", "sport.rugby.numberLabel": "Trikotnr.", "sport.rugby.eventSingular": "Spiel", "sport.rugby.eventPlural": "Spiele",
+    "sport.tennis.name": "Tennis", "sport.tennis.member": "Spieler", "sport.tennis.members": "Spieler", "sport.tennis.numberLabel": "Ranglistennr.", "sport.tennis.eventSingular": "Spiel", "sport.tennis.eventPlural": "Spiele",
+    "sport.dancing.name": "Tanzen", "sport.dancing.member": "Tänzer", "sport.dancing.members": "Tänzer", "sport.dancing.numberLabel": "Auftrittsnr.", "sport.dancing.eventSingular": "Auftritt", "sport.dancing.eventPlural": "Auftritte",
+    "sport.fitness.name": "Fitness", "sport.fitness.member": "Mitglied", "sport.fitness.members": "Mitglieder", "sport.fitness.numberLabel": "Mitgliedsnr.", "sport.fitness.eventSingular": "Einheit", "sport.fitness.eventPlural": "Einheiten",
+    "sport.swimming.name": "Schwimmen", "sport.swimming.member": "Athlet", "sport.swimming.members": "Athleten", "sport.swimming.numberLabel": "Bahn-Nr.", "sport.swimming.eventSingular": "Wettkampf", "sport.swimming.eventPlural": "Wettkämpfe",
+    "sport.mma.name": "MMA", "sport.mma.member": "Kämpfer", "sport.mma.members": "Kämpfer", "sport.mma.numberLabel": "Gewichtsklasse", "sport.mma.eventSingular": "Kampf", "sport.mma.eventPlural": "Kämpfe",
   },
 
   es: {
@@ -466,6 +475,15 @@ export const translations = {
     janLong: "Enero", febLong: "Febrero", marLong: "Marzo", aprLong: "Abril",
     mayLong: "Mayo", junLong: "Junio", julLong: "Julio", augLong: "Agosto",
     sepLong: "Septiembre", octLong: "Octubre", novLong: "Noviembre", decLong: "Diciembre",
+
+    "sport.basketball.name": "Baloncesto", "sport.basketball.member": "Jugador", "sport.basketball.members": "Jugadores", "sport.basketball.numberLabel": "Dorsal", "sport.basketball.eventSingular": "Partido", "sport.basketball.eventPlural": "Partidos",
+    "sport.football.name": "Fútbol", "sport.football.member": "Jugador", "sport.football.members": "Jugadores", "sport.football.numberLabel": "Dorsal", "sport.football.eventSingular": "Partido", "sport.football.eventPlural": "Partidos",
+    "sport.rugby.name": "Rugby", "sport.rugby.member": "Jugador", "sport.rugby.members": "Jugadores", "sport.rugby.numberLabel": "Dorsal", "sport.rugby.eventSingular": "Partido", "sport.rugby.eventPlural": "Partidos",
+    "sport.tennis.name": "Tenis", "sport.tennis.member": "Jugador", "sport.tennis.members": "Jugadores", "sport.tennis.numberLabel": "Ranking", "sport.tennis.eventSingular": "Partido", "sport.tennis.eventPlural": "Partidos",
+    "sport.dancing.name": "Baile", "sport.dancing.member": "Bailarín", "sport.dancing.members": "Bailarines", "sport.dancing.numberLabel": "N.º Recital", "sport.dancing.eventSingular": "Actuación", "sport.dancing.eventPlural": "Actuaciones",
+    "sport.fitness.name": "Fitness", "sport.fitness.member": "Miembro", "sport.fitness.members": "Miembros", "sport.fitness.numberLabel": "N.º Miembro", "sport.fitness.eventSingular": "Sesión", "sport.fitness.eventPlural": "Sesiones",
+    "sport.swimming.name": "Natación", "sport.swimming.member": "Atleta", "sport.swimming.members": "Atletas", "sport.swimming.numberLabel": "Carril", "sport.swimming.eventSingular": "Competencia", "sport.swimming.eventPlural": "Competencias",
+    "sport.mma.name": "MMA", "sport.mma.member": "Luchador", "sport.mma.members": "Luchadores", "sport.mma.numberLabel": "Categoría", "sport.mma.eventSingular": "Combate", "sport.mma.eventPlural": "Combates",
   },
 
   fr: {
@@ -586,6 +604,15 @@ export const translations = {
     janLong: "Janvier", febLong: "Février", marLong: "Mars", aprLong: "Avril",
     mayLong: "Mai", junLong: "Juin", julLong: "Juillet", augLong: "Août",
     sepLong: "Septembre", octLong: "Octobre", novLong: "Novembre", decLong: "Décembre",
+
+    "sport.basketball.name": "Basket-ball", "sport.basketball.member": "Joueur", "sport.basketball.members": "Joueurs", "sport.basketball.numberLabel": "N° Maillot", "sport.basketball.eventSingular": "Match", "sport.basketball.eventPlural": "Matchs",
+    "sport.football.name": "Football", "sport.football.member": "Joueur", "sport.football.members": "Joueurs", "sport.football.numberLabel": "N° Maillot", "sport.football.eventSingular": "Match", "sport.football.eventPlural": "Matchs",
+    "sport.rugby.name": "Rugby", "sport.rugby.member": "Joueur", "sport.rugby.members": "Joueurs", "sport.rugby.numberLabel": "N° Maillot", "sport.rugby.eventSingular": "Match", "sport.rugby.eventPlural": "Matchs",
+    "sport.tennis.name": "Tennis", "sport.tennis.member": "Joueur", "sport.tennis.members": "Joueurs", "sport.tennis.numberLabel": "Classement", "sport.tennis.eventSingular": "Match", "sport.tennis.eventPlural": "Matchs",
+    "sport.dancing.name": "Danse", "sport.dancing.member": "Danseur", "sport.dancing.members": "Danseurs", "sport.dancing.numberLabel": "N° Récital", "sport.dancing.eventSingular": "Représentation", "sport.dancing.eventPlural": "Représentations",
+    "sport.fitness.name": "Fitness", "sport.fitness.member": "Membre", "sport.fitness.members": "Membres", "sport.fitness.numberLabel": "N° Membre", "sport.fitness.eventSingular": "Séance", "sport.fitness.eventPlural": "Séances",
+    "sport.swimming.name": "Natation", "sport.swimming.member": "Athlète", "sport.swimming.members": "Athlètes", "sport.swimming.numberLabel": "Couloir", "sport.swimming.eventSingular": "Compétition", "sport.swimming.eventPlural": "Compétitions",
+    "sport.mma.name": "MMA", "sport.mma.member": "Combattant", "sport.mma.members": "Combattants", "sport.mma.numberLabel": "Catégorie", "sport.mma.eventSingular": "Combat", "sport.mma.eventPlural": "Combats",
   },
 
   ka: {
@@ -720,6 +747,15 @@ export const translations = {
     janLong: "იანვარი", febLong: "თებერვალი", marLong: "მარტი", aprLong: "აპრილი",
     mayLong: "მაისი", junLong: "ივნისი", julLong: "ივლისი", augLong: "აგვისტო",
     sepLong: "სექტემბერი", octLong: "ოქტომბერი", novLong: "ნოემბერი", decLong: "დეკემბერი",
+
+    "sport.basketball.name": "კალათბურთი", "sport.basketball.member": "მოთამაშე", "sport.basketball.members": "მოთამაშეები", "sport.basketball.numberLabel": "მაისურის №", "sport.basketball.eventSingular": "მატჩი", "sport.basketball.eventPlural": "მატჩები",
+    "sport.football.name": "ფეხბურთი", "sport.football.member": "მოთამაშე", "sport.football.members": "მოთამაშეები", "sport.football.numberLabel": "მაისურის №", "sport.football.eventSingular": "მატჩი", "sport.football.eventPlural": "მატჩები",
+    "sport.rugby.name": "რაგბი", "sport.rugby.member": "მოთამაშე", "sport.rugby.members": "მოთამაშეები", "sport.rugby.numberLabel": "მაისურის №", "sport.rugby.eventSingular": "მატჩი", "sport.rugby.eventPlural": "მატჩები",
+    "sport.tennis.name": "ჩოგბურთი", "sport.tennis.member": "მოთამაშე", "sport.tennis.members": "მოთამაშეები", "sport.tennis.numberLabel": "რეიტინგი", "sport.tennis.eventSingular": "მატჩი", "sport.tennis.eventPlural": "მატჩები",
+    "sport.dancing.name": "ცეკვა", "sport.dancing.member": "მოცეკვავე", "sport.dancing.members": "მოცეკვავეები", "sport.dancing.numberLabel": "გამოსვლის №", "sport.dancing.eventSingular": "გამოსვლა", "sport.dancing.eventPlural": "გამოსვლები",
+    "sport.fitness.name": "ფიტნესი", "sport.fitness.member": "წევრი", "sport.fitness.members": "წევრები", "sport.fitness.numberLabel": "წევრის №", "sport.fitness.eventSingular": "ვარჯიში", "sport.fitness.eventPlural": "ვარჯიშები",
+    "sport.swimming.name": "ცურვა", "sport.swimming.member": "მოცურავე", "sport.swimming.members": "მოცურავეები", "sport.swimming.numberLabel": "ბილიკი", "sport.swimming.eventSingular": "შეჯიბრი", "sport.swimming.eventPlural": "შეჯიბრები",
+    "sport.mma.name": "MMA", "sport.mma.member": "მებრძოლი", "sport.mma.members": "მებრძოლები", "sport.mma.numberLabel": "წონითი კატ.", "sport.mma.eventSingular": "ბრძოლა", "sport.mma.eventPlural": "ბრძოლები",
   },
 
   ru: {
