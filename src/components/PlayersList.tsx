@@ -88,11 +88,6 @@ function PlayerForm({ initial, sport, onSubmit, onCancel }: {
     onSubmit(base);
   };
 
-  // Determine which contact email is "primary" — falls back to player's own
-  const primaryEmailDisplay = primaryContact === "parent"
-    ? (initial?.parent_phone ? `${t("contactParent")}` : t("contactParent"))
-    : t("contactPlayer");
-
   return (
     <form onSubmit={handleSubmit} className="space-y-4 max-h-[70vh] overflow-y-auto pr-1">
       <div className="grid grid-cols-2 gap-3">
