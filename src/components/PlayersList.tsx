@@ -419,7 +419,8 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
                         size="icon"
                         variant="ghost"
                         className="h-8 w-8"
-                        onClick={(e) => { e.stopPropagation(); setEditPlayer(player); }}
+                        onMouseEnter={() => play("hover")}
+                        onClick={(e) => { e.stopPropagation(); play("click"); setEditPlayer(player); }}
                       >
                         <Pencil className="w-3.5 h-3.5" />
                       </Button>
@@ -432,6 +433,7 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
                             initial={editPlayer}
                             sport={sport}
                             onSubmit={async (data) => {
+                              play("success");
                               await onUpdate(editPlayer.id, data);
                               setEditPlayer(null);
                             }}
@@ -443,10 +445,10 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
 
                     {deleteConfirm === player.id ? (
                       <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
-                        <Button size="sm" variant="destructive" onClick={() => { onDelete(player.id); setDeleteConfirm(null); }}>
+                        <Button size="sm" variant="destructive" onClick={() => { play("success"); onDelete(player.id); setDeleteConfirm(null); }}>
                           {t("delete")}
                         </Button>
-                        <Button size="sm" variant="ghost" onClick={() => setDeleteConfirm(null)}>
+                        <Button size="sm" variant="ghost" onClick={() => { play("click"); setDeleteConfirm(null); }}>
                           {t("no")}
                         </Button>
                       </div>
@@ -455,7 +457,8 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
                         size="icon"
                         variant="ghost"
                         className="h-8 w-8 text-muted-foreground hover:text-destructive"
-                        onClick={(e) => { e.stopPropagation(); setDeleteConfirm(player.id); }}
+                        onMouseEnter={() => play("hover")}
+                        onClick={(e) => { e.stopPropagation(); play("click"); setDeleteConfirm(player.id); }}
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                       </Button>
