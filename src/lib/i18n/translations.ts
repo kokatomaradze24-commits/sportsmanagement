@@ -876,5 +876,14 @@ export const translations = {
     janLong: "Январь", febLong: "Февраль", marLong: "Март", aprLong: "Апрель",
     mayLong: "Май", junLong: "Июнь", julLong: "Июль", augLong: "Август",
     sepLong: "Сентябрь", octLong: "Октябрь", novLong: "Ноябрь", decLong: "Декабрь",
+
+    "sport.basketball.name": "Баскетбол", "sport.basketball.member": "Игрок", "sport.basketball.members": "Игроки", "sport.basketball.numberLabel": "№ майки", "sport.basketball.eventSingular": "Матч", "sport.basketball.eventPlural": "Матчи",
+    "sport.football.name": "Футбол", "sport.football.member": "Игрок", "sport.football.members": "Игроки", "sport.football.numberLabel": "№ майки", "sport.football.eventSingular": "Матч", "sport.football.eventPlural": "Матчи",
+    "sport.rugby.name": "Регби", "sport.rugby.member": "Игрок", "sport.rugby.members": "Игроки", "sport.rugby.numberLabel": "№ майки", "sport.rugby.eventSingular": "Матч", "sport.rugby.eventPlural": "Матчи",
+    "sport.tennis.name": "Теннис", "sport.tennis.member": "Игрок", "sport.tennis.members": "Игроки", "sport.tennis.numberLabel": "Рейтинг", "sport.tennis.eventSingular": "Матч", "sport.tennis.eventPlural": "Матчи",
+    "sport.dancing.name": "Танцы", "sport.dancing.member": "Танцор", "sport.dancing.members": "Танцоры", "sport.dancing.numberLabel": "№ выступления", "sport.dancing.eventSingular": "Выступление", "sport.dancing.eventPlural": "Выступления",
+    "sport.fitness.name": "Фитнес", "sport.fitness.member": "Участник", "sport.fitness.members": "Участники", "sport.fitness.numberLabel": "№ участника", "sport.fitness.eventSingular": "Тренировка", "sport.fitness.eventPlural": "Тренировки",
+    "sport.swimming.name": "Плавание", "sport.swimming.member": "Спортсмен", "sport.swimming.members": "Спортсмены", "sport.swimming.numberLabel": "Дорожка", "sport.swimming.eventSingular": "Заплыв", "sport.swimming.eventPlural": "Заплывы",
+    "sport.mma.name": "MMA", "sport.mma.member": "Боец", "sport.mma.members": "Бойцы", "sport.mma.numberLabel": "Весовая кат.", "sport.mma.eventSingular": "Бой", "sport.mma.eventPlural": "Бои",
   },
 } as const;
