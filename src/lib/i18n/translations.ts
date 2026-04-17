@@ -540,10 +540,7 @@ export const translations = {
     payments: "გადახდები", addPayment: "გადახდის დამატება", newPayment: "ახალი გადახდა",
     editPayment: "გადახდის რედაქტირება",
     amount: "თანხა", month: "თვე", year: "წელი", status: "სტატუსი",
-    paymentDate: "გადახდის თარიღი", notes: "შენიშვნები", optionalNotes: "არასავალდებულო შენიშვნები",
-    noPayments: "გადახდები არ არის. დაამატე პირველი!",
-    selectMember: "აირჩიე {member}",
-    selectMemberHint: "დააჭირე {member}-ს რომ ნახო და მართო მისი გადახდები",
+    paymentDate: "გადახდ
 
     subscriptionExpiredTitle: "წვდომა შეჩერებულია",
     subscriptionExpiredDesc: "თქვენი საბსკრიფშენის ვადა ამოიწურა. საიტით სარგებლობის გასაგრძელებლად გთხოვთ გადაიხადოთ.",
