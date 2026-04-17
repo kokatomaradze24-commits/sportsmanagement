@@ -242,6 +242,7 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
   };
 
   const handleBulkDelete = async () => {
+    play("success");
     setBulkDeleting(true);
     const ids = Array.from(selectedIds);
     await Promise.all(ids.map((id) => onDelete(id)));
