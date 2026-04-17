@@ -175,6 +175,19 @@ function Index() {
               )}
             </div>
           </div>
+
+          <TripsPanel
+            trips={trips.trips}
+            participants={trips.participants}
+            players={players}
+            loading={trips.loading}
+            onAddTrip={trips.addTrip}
+            onUpdateTrip={trips.updateTrip}
+            onDeleteTrip={trips.deleteTrip}
+            onAddParticipant={trips.addParticipant}
+            onUpdateParticipant={trips.updateParticipant}
+            onRemoveParticipant={trips.removeParticipant}
+          />
         </main>
       </div>
     </div>
