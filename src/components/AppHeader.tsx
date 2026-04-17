@@ -12,6 +12,7 @@ import { useI18n } from "@/hooks/use-i18n";
 import { useSounds } from "@/hooks/use-sounds";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import { SmsSettingsDialog } from "./SmsSettingsDialog";
+import { SmsLogDialog } from "./SmsLogDialog";
 
 interface AppHeaderProps {
   schoolName: string;
@@ -146,6 +147,11 @@ export function AppHeader({ schoolName, logoUrl, sport, isDark, onToggleTheme, o
           <div className="flex flex-col items-center gap-1">
             <SmsSettingsDialog />
             <span className="text-[10px] text-muted-foreground leading-none">{t("lblSms")}</span>
+          </div>
+
+          <div className="flex flex-col items-center gap-1">
+            <SmsLogDialog />
+            <span className="text-[10px] text-muted-foreground leading-none">{t("lblNotifLog")}</span>
           </div>
 
           <div className="flex flex-col items-center gap-1">
