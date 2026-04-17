@@ -4,6 +4,10 @@ import { Button } from "@/components/ui/button";
 import type { Database } from "@/integrations/supabase/types";
 import { useI18n } from "@/hooks/use-i18n";
 import { useSounds } from "@/hooks/use-sounds";
+import { useAppSettings } from "@/hooks/use-app-settings";
+import { useAuth } from "@/hooks/use-auth";
+import { useSport } from "@/hooks/use-sport";
+import { sendEventSms } from "@/lib/notifications";
 
 type Payment = Database["public"]["Tables"]["payments"]["Row"];
 type Player = Database["public"]["Tables"]["players"]["Row"];
@@ -32,8 +36,11 @@ function StatusBadge({ status, t }: { status: string; t: ReturnType<typeof useI1
 }
 
 export function PaymentsPanel({ player, payments, loading, onUpdate }: PaymentsPanelProps) {
-  const { t, monthShort, formatMoney } = useI18n();
+  const { t, monthShort, formatMoney, language } = useI18n();
   const { play } = useSounds();
+  const { schoolName } = useAppSettings();
+  const { user } = useAuth();
+  const { sport } = useSport();
 
   // Sort by year then month so the schedule reads top-to-bottom
   const playerPayments = payments
@@ -59,6 +66,18 @@ export function PaymentsPanel({ player, payments, loading, onUpdate }: PaymentsP
         status: "paid",
         payment_date: new Date().toISOString().slice(0, 10),
       });
+      // Fire-and-forget payment confirmation SMS
+      if (user) {
+        void sendEventSms({
+          userId: user.id,
+          playerId: player.id,
+          paymentId: payment.id,
+          kind: "payment_paid",
+          clubName: schoolName,
+          sportName: sport?.name,
+          lang: language,
+        });
+      }
     }
   };
 
