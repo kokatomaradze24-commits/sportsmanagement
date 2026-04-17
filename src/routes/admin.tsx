@@ -17,6 +17,8 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { useIsAdmin } from "@/hooks/use-is-admin";
+import { useI18n } from "@/hooks/use-i18n";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
@@ -56,6 +58,7 @@ function AdminPage() {
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
   const { isAdmin, loading: adminLoading } = useIsAdmin();
+  const { t } = useI18n();
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [stats, setStats] = useState<StorageStats | null>(null);
   const [loading, setLoading] = useState(true);
@@ -79,7 +82,7 @@ function AdminPage() {
     setLoading(true);
     const { data, error } = await supabase.rpc("admin_list_users");
     if (error) {
-      toast.error("ვერ ჩაიტვირთა მომხმარებლები");
+      toast.error(t("failedLoad"));
     } else {
       setUsers((data as AdminUser[]) || []);
     }
@@ -97,9 +100,9 @@ function AdminPage() {
     if (!confirmDelete) return;
     const { error } = await supabase.rpc("admin_delete_user", { _user_id: confirmDelete.user_id });
     if (error) {
-      toast.error(error.message || "წაშლა ვერ მოხერხდა");
+      toast.error(error.message || t("deleteFailed"));
     } else {
-      toast.success(`მომხმარებელი ${confirmDelete.email} წაიშალა`);
+      toast.success(t("userDeleted", { email: confirmDelete.email }));
       loadUsers();
     }
     setConfirmDelete(null);
@@ -108,9 +111,9 @@ function AdminPage() {
   const handleToggleAdmin = async (u: AdminUser) => {
     const { error } = await supabase.rpc("admin_toggle_admin", { _user_id: u.user_id });
     if (error) {
-      toast.error(error.message || "ვერ მოხერხდა");
+      toast.error(error.message || t("failed"));
     } else {
-      toast.success(u.is_admin ? "ადმინ უფლება ჩამორთმეულია" : "ადმინ უფლება მინიჭებულია");
+      toast.success(u.is_admin ? t("adminRevoked") : t("adminGranted"));
       loadUsers();
     }
   };
@@ -121,9 +124,9 @@ function AdminPage() {
       _days: days,
     });
     if (error) {
-      toast.error(error.message || "ვერ მოხერხდა");
+      toast.error(error.message || t("failed"));
     } else {
-      toast.success(`${u.email}-ს დაემატა ${days} დღე`);
+      toast.success(t("daysAdded", { email: u.email, days }));
       loadUsers();
     }
   };
@@ -133,20 +136,20 @@ function AdminPage() {
       _user_id: u.user_id,
     });
     if (error) {
-      toast.error(error.message || "ვერ მოხერხდა");
+      toast.error(error.message || t("failed"));
     } else {
-      toast.success(`${u.email}-ს წვდომა გათიშულია`);
+      toast.success(t("accessSuspended", { email: u.email }));
       loadUsers();
     }
   };
 
   const getSubStatus = (u: AdminUser) => {
-    if (!u.subscription_expires_at) return { label: "არ არის", color: "muted", days: 0, active: false };
+    if (!u.subscription_expires_at) return { label: t("notSet"), color: "muted", days: 0, active: false };
     const exp = new Date(u.subscription_expires_at);
     const days = Math.ceil((exp.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
-    if (days <= 0) return { label: "ვადაგასული", color: "red", days: 0, active: false };
-    if (days <= 5) return { label: `${days} დღე`, color: "red", days, active: true };
-    return { label: `${days} დღე`, color: "green", days, active: true };
+    if (days <= 0) return { label: t("expired"), color: "red", days: 0, active: false };
+    if (days <= 5) return { label: t("daysShort", { days }), color: "red", days, active: true };
+    return { label: t("daysShort", { days }), color: "green", days, active: true };
   };
 
   if (authLoading || adminLoading || loading) {
@@ -154,7 +157,7 @@ function AdminPage() {
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <span className="text-5xl block mb-4 animate-bounce">🛡️</span>
-          <p className="text-muted-foreground">იტვირთება...</p>
+          <p className="text-muted-foreground">{t("loading")}</p>
         </div>
       </div>
     );
@@ -172,11 +175,14 @@ function AdminPage() {
             </Link>
             <div className="flex items-center gap-2">
               <Shield className="h-6 w-6 text-primary" />
-              <h1 className="text-2xl font-display tracking-wider">Admin Panel</h1>
+              <h1 className="text-2xl font-display tracking-wider">{t("adminPanel")}</h1>
             </div>
           </div>
-          <div className="text-sm text-muted-foreground">
-            სულ: <span className="font-bold text-foreground">{users.length}</span> მომხმარებელი
+          <div className="flex items-center gap-3">
+            <LanguageSwitcher variant="floating" />
+            <div className="text-sm text-muted-foreground">
+              {t("totalUsers", { count: users.length })}
+            </div>
           </div>
         </div>
       </header>
@@ -192,7 +198,7 @@ function AdminPage() {
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-2">
                     <Database className="h-5 w-5 text-primary" />
-                    <h3 className="font-display tracking-wider">მონაცემთა ბაზა</h3>
+                    <h3 className="font-display tracking-wider">{t("database")}</h3>
                   </div>
                   <span className="text-xs text-muted-foreground">{dbPct.toFixed(1)}%</span>
                 </div>
@@ -208,7 +214,7 @@ function AdminPage() {
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-2">
                     <HardDrive className="h-5 w-5 text-primary" />
-                    <h3 className="font-display tracking-wider">ფაილების სტორეჯი</h3>
+                    <h3 className="font-display tracking-wider">{t("fileStorage")}</h3>
                   </div>
                   <span className="text-xs text-muted-foreground">{stPct.toFixed(1)}%</span>
                 </div>
@@ -216,7 +222,7 @@ function AdminPage() {
                   {formatBytes(stats.storage_bytes)}
                   <span className="text-sm font-normal text-muted-foreground"> / {formatBytes(stats.storage_limit_bytes)}</span>
                 </div>
-                <div className="mt-1 text-xs text-muted-foreground">{stats.storage_file_count} ფაილი</div>
+                <div className="mt-1 text-xs text-muted-foreground">{t("files", { count: stats.storage_file_count })}</div>
                 <div className="mt-3 h-2 bg-muted rounded-full overflow-hidden">
                   <div className={`h-full transition-all ${barColor(stPct)}`} style={{ width: `${stPct}%` }} />
                 </div>
@@ -251,22 +257,22 @@ function AdminPage() {
                     )}
                     {u.user_id === user?.id && (
                       <span className="text-xs px-2 py-0.5 rounded-full bg-primary/20 text-primary font-medium">
-                        თქვენ
+                        {t("you")}
                       </span>
                     )}
                   </div>
                   <div className="flex items-center gap-4 mt-1 text-xs text-muted-foreground flex-wrap">
                     <span className="flex items-center gap-1">
                       <Calendar className="h-3 w-3" />
-                      რეგისტრაცია: {new Date(u.created_at).toLocaleDateString()}
+                      {t("registered")}: {new Date(u.created_at).toLocaleDateString()}
                     </span>
                     <span className="flex items-center gap-1">
                       <Users className="h-3 w-3" />
-                      {u.player_count} მოთამაშე
+                      {u.player_count} {u.player_count === 1 ? t("member_singular") : t("member_plural")}
                     </span>
                     <span className="flex items-center gap-1">
                       <CreditCard className="h-3 w-3" />
-                      {u.payment_count} გადახდა
+                      {u.payment_count} {u.payment_count === 1 ? t("payment_singular") : t("payment_plural")}
                     </span>
                     {(() => {
                       const s = getSubStatus(u);
@@ -284,7 +290,7 @@ function AdminPage() {
                           <Clock className="h-3 w-3" />
                           {s.label}
                           {u.is_trial && s.active && (
-                            <span className="ml-1 text-[10px] uppercase opacity-70">trial</span>
+                            <span className="ml-1 text-[10px] uppercase opacity-70">{t("trial")}</span>
                           )}
                         </span>
                       );
@@ -301,21 +307,21 @@ function AdminPage() {
                           variant="outline"
                           size="sm"
                           onClick={() => handleExtend(u, 30)}
-                          title="გაახანგრძლივე 30 დღით"
+                          title={t("extendTitle")}
                         >
                           <Plus className="h-3.5 w-3.5 mr-1" />
-                          30 დღე
+                          {t("extend30Days")}
                         </Button>
                         <Button
                           variant="outline"
                           size="sm"
                           onClick={() => handleDeactivate(u)}
                           disabled={!getSubStatus(u).active}
-                          title="შეაჩერე წვდომა საიტზე"
+                          title={t("suspendTitle")}
                           className="text-red-600 border-red-500/40 hover:bg-red-500/10 hover:text-red-600 disabled:opacity-40"
                         >
                           <X className="h-3.5 w-3.5 mr-1" />
-                          შეაჩერე წვდომა
+                          {t("suspendAccess")}
                         </Button>
                       </>
                     )}
@@ -324,7 +330,7 @@ function AdminPage() {
                       size="sm"
                       onClick={() => handleToggleAdmin(u)}
                     >
-                      {u.is_admin ? "ჩამოართვი admin" : "admin"}
+                      {u.is_admin ? t("revokeAdmin") : t("makeAdmin")}
                     </Button>
                     <Button
                       variant="destructive"
@@ -341,22 +347,22 @@ function AdminPage() {
         </div>
 
         {users.length === 0 && (
-          <div className="text-center py-12 text-muted-foreground">მომხმარებლები არ არის</div>
+          <div className="text-center py-12 text-muted-foreground">{t("noUsers")}</div>
         )}
       </main>
 
       <AlertDialog open={!!confirmDelete} onOpenChange={(o) => !o && setConfirmDelete(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>მომხმარებლის წაშლა</AlertDialogTitle>
+            <AlertDialogTitle>{t("deleteUserTitle")}</AlertDialogTitle>
             <AlertDialogDescription>
-              ნამდვილად გსურთ <strong>{confirmDelete?.email}</strong>-ის წაშლა? წაიშლება მისი ყველა მოთამაშე, გადახდა და მონაცემი. ეს მოქმედება შეუქცევადია.
+              {t("deleteUserDesc", { email: confirmDelete?.email ?? "" })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>გაუქმება</AlertDialogCancel>
+            <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
             <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-              წაშლა
+              {t("delete")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
