@@ -80,8 +80,8 @@ function Index() {
     return <SubscriptionExpired />;
   }
 
-  // Sport picker only for brand-new users who haven't onboarded yet AND have no sport
-  const showSportPicker = !settingsLoading && !onboardingLoading && !onboarded && !sportId;
+  // Sport picker shows whenever the user has no sport selected — they can't use the app without it.
+  const showSportPicker = !settingsLoading && !onboardingLoading && !sportId;
   // Tutorial: only after the user has picked their sport, and only once
   const showTutorial = !settingsLoading && !onboardingLoading && !!sportId && !tutorialDone;
 
