@@ -57,12 +57,16 @@ function PlayerForm({ initial, sport, onSubmit, onCancel }: {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!firstName.trim() || !lastName.trim() || !tNumber.trim()) return;
+    // If the user kept just the dial-code prefix, treat the field as empty.
+    const cleanPhone = phone.trim();
+    const cleanParent = parentPhone.trim();
+    const isJustDial = (v: string) => v === dial.code || v.replace(/[\s-]/g, "") === dial.code;
     const base: PlayerInsert = {
       first_name: firstName.trim(),
       last_name: lastName.trim(),
       t_number: parseInt(tNumber),
-      phone: phone.trim() || null,
-      parent_phone: parentPhone.trim() || null,
+      phone: cleanPhone && !isJustDial(cleanPhone) ? cleanPhone : null,
+      parent_phone: cleanParent && !isJustDial(cleanParent) ? cleanParent : null,
       email: email.trim() || null,
     };
     if (!isEdit) {
