@@ -32,7 +32,7 @@ function StatusBadge({ status, t }: { status: string; t: ReturnType<typeof useI1
 }
 
 export function PaymentsPanel({ player, payments, loading, onUpdate }: PaymentsPanelProps) {
-  const { t, monthShort } = useI18n();
+  const { t, monthShort, formatMoney } = useI18n();
   const { play } = useSounds();
 
   // Sort by year then month so the schedule reads top-to-bottom
@@ -69,7 +69,7 @@ export function PaymentsPanel({ player, payments, loading, onUpdate }: PaymentsP
           <h2 className="text-2xl tracking-wider text-foreground">{t("paymentSchedule")}</h2>
           <p className="text-sm text-muted-foreground">
             {player.first_name} {player.last_name} #{player.t_number}
-            {player.monthly_fee > 0 && <> · ${player.monthly_fee.toFixed(2)} / {t("month").toLowerCase()}</>}
+            {player.monthly_fee > 0 && <> · {formatMoney(player.monthly_fee)} / {t("month").toLowerCase()}</>}
           </p>
         </div>
         {overdueCount > 0 && (
@@ -137,7 +137,7 @@ export function PaymentsPanel({ player, payments, loading, onUpdate }: PaymentsP
                         <StatusBadge status={payment.status} t={t} />
                       </div>
                       <p className="text-xs text-muted-foreground truncate">
-                        ${payment.amount.toFixed(2)} ·{" "}
+                        {formatMoney(payment.amount)} ·{" "}
                         {isPaid && payment.payment_date
                           ? t("paidOn", { date: payment.payment_date })
                           : t("dueOn", { date: dueDateFor(payment) })}
