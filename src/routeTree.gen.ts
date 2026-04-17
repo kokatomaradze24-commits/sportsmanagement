@@ -13,7 +13,6 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as HooksSendPaymentSmsRouteImport } from './routes/hooks/send-payment-sms'
-import { Route as HooksSendEventSmsRouteImport } from './routes/hooks/send-event-sms'
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
@@ -35,24 +34,17 @@ const HooksSendPaymentSmsRoute = HooksSendPaymentSmsRouteImport.update({
   path: '/hooks/send-payment-sms',
   getParentRoute: () => rootRouteImport,
 } as any)
-const HooksSendEventSmsRoute = HooksSendEventSmsRouteImport.update({
-  id: '/hooks/send-event-sms',
-  path: '/hooks/send-event-sms',
-  getParentRoute: () => rootRouteImport,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/login': typeof LoginRoute
-  '/hooks/send-event-sms': typeof HooksSendEventSmsRoute
   '/hooks/send-payment-sms': typeof HooksSendPaymentSmsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/login': typeof LoginRoute
-  '/hooks/send-event-sms': typeof HooksSendEventSmsRoute
   '/hooks/send-payment-sms': typeof HooksSendPaymentSmsRoute
 }
 export interface FileRoutesById {
@@ -60,38 +52,20 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/login': typeof LoginRoute
-  '/hooks/send-event-sms': typeof HooksSendEventSmsRoute
   '/hooks/send-payment-sms': typeof HooksSendPaymentSmsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths:
-    | '/'
-    | '/admin'
-    | '/login'
-    | '/hooks/send-event-sms'
-    | '/hooks/send-payment-sms'
+  fullPaths: '/' | '/admin' | '/login' | '/hooks/send-payment-sms'
   fileRoutesByTo: FileRoutesByTo
-  to:
-    | '/'
-    | '/admin'
-    | '/login'
-    | '/hooks/send-event-sms'
-    | '/hooks/send-payment-sms'
-  id:
-    | '__root__'
-    | '/'
-    | '/admin'
-    | '/login'
-    | '/hooks/send-event-sms'
-    | '/hooks/send-payment-sms'
+  to: '/' | '/admin' | '/login' | '/hooks/send-payment-sms'
+  id: '__root__' | '/' | '/admin' | '/login' | '/hooks/send-payment-sms'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRoute
   LoginRoute: typeof LoginRoute
-  HooksSendEventSmsRoute: typeof HooksSendEventSmsRoute
   HooksSendPaymentSmsRoute: typeof HooksSendPaymentSmsRoute
 }
 
@@ -125,13 +99,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HooksSendPaymentSmsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/hooks/send-event-sms': {
-      id: '/hooks/send-event-sms'
-      path: '/hooks/send-event-sms'
-      fullPath: '/hooks/send-event-sms'
-      preLoaderRoute: typeof HooksSendEventSmsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
   }
 }
 
@@ -139,7 +106,6 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRoute,
   LoginRoute: LoginRoute,
-  HooksSendEventSmsRoute: HooksSendEventSmsRoute,
   HooksSendPaymentSmsRoute: HooksSendPaymentSmsRoute,
 }
 export const routeTree = rootRouteImport
