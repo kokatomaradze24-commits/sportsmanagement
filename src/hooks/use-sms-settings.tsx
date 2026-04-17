@@ -13,6 +13,8 @@ const DEFAULTS: Omit<SmsSettings, "id" | "user_id" | "created_at" | "updated_at"
   twilio_account_sid: null,
   twilio_auth_token: null,
   twilio_from: null,
+  email_from: null,
+  email_from_name: null,
   reminder_days_before: 3,
   send_overdue: true,
   send_reminder: true,
