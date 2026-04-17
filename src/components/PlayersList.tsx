@@ -110,6 +110,16 @@ function PlayerForm({ initial, sport, onSubmit, onCancel }: {
         <Input type="number" value={tNumber} onChange={(e) => setTNumber(e.target.value)} placeholder="23" required min={0} max={999} />
       </div>
       <div>
+        <label className="text-sm text-muted-foreground mb-1 block">{t("birthDate")} *</label>
+        <Input
+          type="date"
+          value={birthDate}
+          onChange={(e) => setBirthDate(e.target.value)}
+          max={new Date().toISOString().slice(0, 10)}
+          required
+        />
+      </div>
+      <div>
         <label className="text-sm text-muted-foreground mb-1 block">{t("phone")}</label>
         <Input
           type="tel"
@@ -131,7 +141,45 @@ function PlayerForm({ initial, sport, onSubmit, onCancel }: {
       </div>
       <div>
         <label className="text-sm text-muted-foreground mb-1 block">{t("email")}</label>
-        <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="john@example.com" />
+        <div className="flex gap-2">
+          <Input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="john@example.com"
+            className="flex-1"
+          />
+          <Popover open={emailPickerOpen} onOpenChange={setEmailPickerOpen}>
+            <PopoverTrigger asChild>
+              <Button
+                type="button"
+                variant="outline"
+                className="shrink-0 gap-1.5"
+                title={t("chooseContactEmail")}
+              >
+                {primaryContact === "parent" ? t("contactParent") : t("contactPlayer")}
+                <ChevronDown className="w-3.5 h-3.5 opacity-60" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-64 p-2" align="end">
+              <p className="text-xs text-muted-foreground px-2 py-1.5">{t("chooseContactEmailDesc")}</p>
+              <button
+                type="button"
+                onClick={() => { setPrimaryContact("player"); setEmailPickerOpen(false); }}
+                className={`w-full text-left px-2 py-2 rounded-md text-sm hover:bg-muted ${primaryContact === "player" ? "bg-muted font-medium" : ""}`}
+              >
+                {t("contactPlayer")} <span className="text-xs text-muted-foreground">({t("primaryContact")})</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => { setPrimaryContact("parent"); setEmailPickerOpen(false); }}
+                className={`w-full text-left px-2 py-2 rounded-md text-sm hover:bg-muted ${primaryContact === "parent" ? "bg-muted font-medium" : ""}`}
+              >
+                {t("contactParent")}
+              </button>
+            </PopoverContent>
+          </Popover>
+        </div>
       </div>
 
       {!isEdit && (
