@@ -37,11 +37,27 @@ interface AdminUser {
   is_trial: boolean;
 }
 
+interface StorageStats {
+  db_bytes: number;
+  db_limit_bytes: number;
+  storage_bytes: number;
+  storage_limit_bytes: number;
+  storage_file_count: number;
+}
+
+function formatBytes(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  if (bytes < 1024 * 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  return `${(bytes / (1024 * 1024 * 1024)).toFixed(2)} GB`;
+}
+
 function AdminPage() {
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
   const { isAdmin, loading: adminLoading } = useIsAdmin();
   const [users, setUsers] = useState<AdminUser[]>([]);
+  const [stats, setStats] = useState<StorageStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [confirmDelete, setConfirmDelete] = useState<AdminUser | null>(null);
 
@@ -56,6 +72,7 @@ function AdminPage() {
       return;
     }
     loadUsers();
+    loadStats();
   }, [user, isAdmin, authLoading, adminLoading, navigate]);
 
   const loadUsers = async () => {
@@ -67,6 +84,13 @@ function AdminPage() {
       setUsers((data as AdminUser[]) || []);
     }
     setLoading(false);
+  };
+
+  const loadStats = async () => {
+    const { data, error } = await supabase.rpc("admin_storage_stats");
+    if (!error && data && Array.isArray(data) && data.length > 0) {
+      setStats(data[0] as StorageStats);
+    }
   };
 
   const handleDelete = async () => {
