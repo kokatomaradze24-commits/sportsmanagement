@@ -160,21 +160,64 @@ export type Database = {
         }
         Relationships: []
       }
+      user_subscriptions: {
+        Row: {
+          activated_at: string
+          activated_by: string | null
+          created_at: string
+          expires_at: string
+          id: string
+          is_trial: boolean
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          activated_at?: string
+          activated_by?: string | null
+          created_at?: string
+          expires_at: string
+          id?: string
+          is_trial?: boolean
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          activated_at?: string
+          activated_by?: string | null
+          created_at?: string
+          expires_at?: string
+          id?: string
+          is_trial?: boolean
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      admin_deactivate_subscription: {
+        Args: { _user_id: string }
+        Returns: undefined
+      }
       admin_delete_user: { Args: { _user_id: string }; Returns: undefined }
+      admin_extend_subscription: {
+        Args: { _days: number; _user_id: string }
+        Returns: string
+      }
       admin_list_users: {
         Args: never
         Returns: {
           created_at: string
           email: string
           is_admin: boolean
+          is_trial: boolean
           last_sign_in_at: string
           payment_count: number
           player_count: number
+          subscription_expires_at: string
           user_id: string
         }[]
       }
@@ -186,6 +229,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_subscription_active: { Args: { _user_id: string }; Returns: boolean }
     }
     Enums: {
       app_role: "admin" | "user"

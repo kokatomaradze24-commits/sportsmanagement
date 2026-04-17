@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Shield, Trash2, ArrowLeft, Crown, User as UserIcon, Mail, Calendar, Users, CreditCard } from "lucide-react";
+import { Shield, Trash2, ArrowLeft, Crown, User as UserIcon, Mail, Calendar, Users, CreditCard, Clock, Plus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
@@ -33,6 +33,8 @@ interface AdminUser {
   is_admin: boolean;
   player_count: number;
   payment_count: number;
+  subscription_expires_at: string | null;
+  is_trial: boolean;
 }
 
 function AdminPage() {
@@ -87,6 +89,40 @@ function AdminPage() {
       toast.success(u.is_admin ? "ადმინ უფლება ჩამორთმეულია" : "ადმინ უფლება მინიჭებულია");
       loadUsers();
     }
+  };
+
+  const handleExtend = async (u: AdminUser, days: number) => {
+    const { error } = await supabase.rpc("admin_extend_subscription", {
+      _user_id: u.user_id,
+      _days: days,
+    });
+    if (error) {
+      toast.error(error.message || "ვერ მოხერხდა");
+    } else {
+      toast.success(`${u.email}-ს დაემატა ${days} დღე`);
+      loadUsers();
+    }
+  };
+
+  const handleDeactivate = async (u: AdminUser) => {
+    const { error } = await supabase.rpc("admin_deactivate_subscription", {
+      _user_id: u.user_id,
+    });
+    if (error) {
+      toast.error(error.message || "ვერ მოხერხდა");
+    } else {
+      toast.success(`${u.email}-ს წვდომა გათიშულია`);
+      loadUsers();
+    }
+  };
+
+  const getSubStatus = (u: AdminUser) => {
+    if (!u.subscription_expires_at) return { label: "არ არის", color: "muted", days: 0, active: false };
+    const exp = new Date(u.subscription_expires_at);
+    const days = Math.ceil((exp.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+    if (days <= 0) return { label: "ვადაგასული", color: "red", days: 0, active: false };
+    if (days <= 5) return { label: `${days} დღე`, color: "red", days, active: true };
+    return { label: `${days} დღე`, color: "green", days, active: true };
   };
 
   if (authLoading || adminLoading || loading) {
@@ -165,18 +201,62 @@ function AdminPage() {
                       <CreditCard className="h-3 w-3" />
                       {u.payment_count} გადახდა
                     </span>
+                    {(() => {
+                      const s = getSubStatus(u);
+                      if (u.is_admin) return null;
+                      return (
+                        <span
+                          className={`flex items-center gap-1 font-medium ${
+                            s.color === "red"
+                              ? "text-red-500"
+                              : s.color === "green"
+                              ? "text-green-600 dark:text-green-400"
+                              : "text-muted-foreground"
+                          }`}
+                        >
+                          <Clock className="h-3 w-3" />
+                          {s.label}
+                          {u.is_trial && s.active && (
+                            <span className="ml-1 text-[10px] uppercase opacity-70">trial</span>
+                          )}
+                        </span>
+                      );
+                    })()}
                   </div>
                 </div>
               </div>
-              <div className="flex items-center gap-2 shrink-0">
+              <div className="flex items-center gap-2 shrink-0 flex-wrap justify-end">
                 {u.user_id !== user?.id && (
                   <>
+                    {!u.is_admin && (
+                      <>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleExtend(u, 30)}
+                          title="გაახანგრძლივე 30 დღით"
+                        >
+                          <Plus className="h-3.5 w-3.5 mr-1" />
+                          30 დღე
+                        </Button>
+                        {getSubStatus(u).active && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleDeactivate(u)}
+                            title="გათიშე წვდომა"
+                          >
+                            <X className="h-3.5 w-3.5" />
+                          </Button>
+                        )}
+                      </>
+                    )}
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={() => handleToggleAdmin(u)}
                     >
-                      {u.is_admin ? "ჩამოართვი admin" : "გახადე admin"}
+                      {u.is_admin ? "ჩამოართვი admin" : "admin"}
                     </Button>
                     <Button
                       variant="destructive"
