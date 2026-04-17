@@ -1,7 +1,7 @@
-import { useState } from "react";
 import { motion } from "framer-motion";
 import { Users, DollarSign, AlertTriangle, TrendingUp } from "lucide-react";
 import type { Database } from "@/integrations/supabase/types";
+import { useI18n } from "@/hooks/use-i18n";
 
 type Payment = Database["public"]["Tables"]["payments"]["Row"];
 type Player = Database["public"]["Tables"]["players"]["Row"];
@@ -12,16 +12,17 @@ interface StatsCardsProps {
 }
 
 export function StatsCards({ players, payments }: StatsCardsProps) {
+  const { t } = useI18n();
   const activePlayers = players.filter((p) => p.is_active).length;
   const totalPaid = payments.filter((p) => p.status === "paid").reduce((sum, p) => sum + p.amount, 0);
   const pendingCount = payments.filter((p) => p.status === "pending" || p.status === "overdue").length;
   const overdueCount = payments.filter((p) => p.status === "overdue").length;
 
   const stats = [
-    { label: "Active Players", value: activePlayers, icon: Users, color: "text-primary bg-primary/10" },
-    { label: "Total Collected", value: `$${totalPaid.toFixed(0)}`, icon: TrendingUp, color: "text-success bg-success/10" },
-    { label: "Pending", value: pendingCount, icon: DollarSign, color: "text-warning bg-warning/10" },
-    { label: "Overdue", value: overdueCount, icon: AlertTriangle, color: "text-destructive bg-destructive/10" },
+    { label: t("activePlayers"), value: activePlayers, icon: Users, color: "text-primary bg-primary/10" },
+    { label: t("totalCollected"), value: `$${totalPaid.toFixed(0)}`, icon: TrendingUp, color: "text-success bg-success/10" },
+    { label: t("pending"), value: pendingCount, icon: DollarSign, color: "text-warning bg-warning/10" },
+    { label: t("overdue"), value: overdueCount, icon: AlertTriangle, color: "text-destructive bg-destructive/10" },
   ];
 
   return (

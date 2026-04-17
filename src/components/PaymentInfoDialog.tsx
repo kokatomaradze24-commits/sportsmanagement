@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Copy, Check, CreditCard } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { useI18n } from "@/hooks/use-i18n";
 
 interface PaymentInfoDialogProps {
   open: boolean;
@@ -15,12 +16,13 @@ const ACCOUNTS = [
 ];
 
 export function PaymentInfoDialog({ open, onOpenChange }: PaymentInfoDialogProps) {
+  const { t } = useI18n();
   const [copied, setCopied] = useState<string | null>(null);
 
   const copy = async (iban: string) => {
     await navigator.clipboard.writeText(iban);
     setCopied(iban);
-    toast.success("ანგარიშის ნომერი დაკოპირდა");
+    toast.success(t("accountCopied"));
     setTimeout(() => setCopied(null), 2000);
   };
 
@@ -30,10 +32,10 @@ export function PaymentInfoDialog({ open, onOpenChange }: PaymentInfoDialogProps
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <CreditCard className="h-5 w-5 text-primary" />
-            გადახდის ინსტრუქცია
+            {t("paymentInstructionsTitle")}
           </DialogTitle>
           <DialogDescription>
-            გადარიცხეთ თანხა ერთ-ერთ ანგარიშზე, შემდეგ დაუკავშირდით ადმინისტრატორს წვდომის გასააქტიურებლად.
+            {t("paymentInstructionsDesc")}
           </DialogDescription>
         </DialogHeader>
 
@@ -65,7 +67,7 @@ export function PaymentInfoDialog({ open, onOpenChange }: PaymentInfoDialogProps
           ))}
 
           <div className="text-xs text-muted-foreground bg-muted/50 rounded-lg p-3 mt-4">
-            💡 გადარიცხვის შემდეგ ადმინი 1 თვით გაგიხანგრძლივებთ წვდომას.
+            {t("paymentTip")}
           </div>
         </div>
       </DialogContent>
