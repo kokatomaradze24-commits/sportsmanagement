@@ -181,7 +181,50 @@ function AdminPage() {
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-6 py-6">
+      <main className="max-w-7xl mx-auto px-6 py-6 space-y-6">
+        {stats && (() => {
+          const dbPct = Math.min(100, (stats.db_bytes / stats.db_limit_bytes) * 100);
+          const stPct = Math.min(100, (stats.storage_bytes / stats.storage_limit_bytes) * 100);
+          const barColor = (p: number) => p > 80 ? "bg-red-500" : p > 60 ? "bg-yellow-500" : "bg-green-500";
+          return (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="bg-card border border-border rounded-xl p-5">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <Database className="h-5 w-5 text-primary" />
+                    <h3 className="font-display tracking-wider">მონაცემთა ბაზა</h3>
+                  </div>
+                  <span className="text-xs text-muted-foreground">{dbPct.toFixed(1)}%</span>
+                </div>
+                <div className="text-2xl font-bold">
+                  {formatBytes(stats.db_bytes)}
+                  <span className="text-sm font-normal text-muted-foreground"> / {formatBytes(stats.db_limit_bytes)}</span>
+                </div>
+                <div className="mt-3 h-2 bg-muted rounded-full overflow-hidden">
+                  <div className={`h-full transition-all ${barColor(dbPct)}`} style={{ width: `${dbPct}%` }} />
+                </div>
+              </div>
+              <div className="bg-card border border-border rounded-xl p-5">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <HardDrive className="h-5 w-5 text-primary" />
+                    <h3 className="font-display tracking-wider">ფაილების სტორეჯი</h3>
+                  </div>
+                  <span className="text-xs text-muted-foreground">{stPct.toFixed(1)}%</span>
+                </div>
+                <div className="text-2xl font-bold">
+                  {formatBytes(stats.storage_bytes)}
+                  <span className="text-sm font-normal text-muted-foreground"> / {formatBytes(stats.storage_limit_bytes)}</span>
+                </div>
+                <div className="mt-1 text-xs text-muted-foreground">{stats.storage_file_count} ფაილი</div>
+                <div className="mt-3 h-2 bg-muted rounded-full overflow-hidden">
+                  <div className={`h-full transition-all ${barColor(stPct)}`} style={{ width: `${stPct}%` }} />
+                </div>
+              </div>
+            </div>
+          );
+        })()}
+
         <div className="grid gap-3">
           {users.map((u, i) => (
             <motion.div
