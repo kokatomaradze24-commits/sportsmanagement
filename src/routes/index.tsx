@@ -11,11 +11,13 @@ import { OnboardingTutorial } from "@/components/OnboardingTutorial";
 import { useTheme } from "@/hooks/use-theme";
 import { useAppSettings } from "@/hooks/use-app-settings";
 import { useSport } from "@/hooks/use-sport";
+import { useSportLabels } from "@/hooks/use-sport-labels";
 import { usePlayers } from "@/hooks/use-players";
 import { usePayments } from "@/hooks/use-payments";
 import { useAuth } from "@/hooks/use-auth";
 import { useSubscription } from "@/hooks/use-subscription";
 import { useOnboarding } from "@/hooks/use-onboarding";
+import { useI18n } from "@/hooks/use-i18n";
 import type { Database } from "@/integrations/supabase/types";
 
 type Player = Database["public"]["Tables"]["players"]["Row"];
@@ -35,7 +37,9 @@ function Index() {
   const { isAuthenticated, loading: authLoading, signOut, user } = useAuth();
   const { isDark, toggle } = useTheme();
   const { schoolName, logoUrl, loading: settingsLoading, updateSchoolName, updateLogo, resetBranding } = useAppSettings();
-  const { sport, sportId, setSport } = useSport();
+  const { sport: rawSport, sportId, setSport } = useSport();
+  const sport = useSportLabels(rawSport);
+  const { t } = useI18n();
   const { payments, loading: paymentsLoading, addPayment, updatePayment, deletePayment, refetch: refetchPayments } = usePayments(sportId);
   const { players, loading: playersLoading, addPlayer, updatePlayer, deletePlayer } = usePlayers(sportId, refetchPayments);
   const { isActive: subActive, loading: subLoading } = useSubscription();
@@ -132,8 +136,8 @@ function Index() {
               <div className="flex items-center justify-center h-full min-h-[300px] text-muted-foreground">
                 <div className="text-center">
                   <span className="text-5xl block mb-4">{sport.emoji}</span>
-                  <p className="text-lg font-display tracking-wider">Select a {sport.member}</p>
-                  <p className="text-sm mt-1">Click on a {sport.member.toLowerCase()} to view and manage their payments</p>
+                  <p className="text-lg font-display tracking-wider">{t("selectMember", { member: sport.member })}</p>
+                  <p className="text-sm mt-1">{t("selectMemberHint", { member: sport.member.toLowerCase() })}</p>
                 </div>
               </div>
             )}
