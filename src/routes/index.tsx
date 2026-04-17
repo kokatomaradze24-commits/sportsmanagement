@@ -8,6 +8,7 @@ import { StatsCards } from "@/components/StatsCards";
 import { SportPicker } from "@/components/SportPicker";
 import { SubscriptionBanner } from "@/components/SubscriptionBanner";
 import { SubscriptionExpired } from "@/components/SubscriptionExpired";
+import { OnboardingTutorial } from "@/components/OnboardingTutorial";
 import { useTheme } from "@/hooks/use-theme";
 import { useAppSettings } from "@/hooks/use-app-settings";
 import { useSport } from "@/hooks/use-sport";
@@ -15,6 +16,7 @@ import { usePlayers } from "@/hooks/use-players";
 import { usePayments } from "@/hooks/use-payments";
 import { useAuth } from "@/hooks/use-auth";
 import { useSubscription } from "@/hooks/use-subscription";
+import { useOnboarding } from "@/hooks/use-onboarding";
 import type { Database } from "@/integrations/supabase/types";
 
 type Player = Database["public"]["Tables"]["players"]["Row"];
@@ -38,12 +40,23 @@ function Index() {
   const { players, loading: playersLoading, addPlayer, updatePlayer, deletePlayer } = usePlayers(sportId);
   const { payments, loading: paymentsLoading, addPayment, updatePayment, deletePayment } = usePayments(sportId);
   const { isActive: subActive, loading: subLoading } = useSubscription();
+  const { loading: onboardingLoading, onboarded, tutorialDone, markOnboarded, markTutorialDone } = useOnboarding();
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
 
   // Clear selected player when switching sports so we don't show data from a different sport
   useEffect(() => {
     setSelectedPlayer(null);
   }, [sportId]);
+
+  // Existing users (already have a sport) shouldn't see the picker or tutorial.
+  // Silently mark them onboarded + tutorial-completed.
+  useEffect(() => {
+    if (settingsLoading || onboardingLoading) return;
+    if (sportId && !onboarded) {
+      markOnboarded();
+      if (!tutorialDone) markTutorialDone();
+    }
+  }, [settingsLoading, onboardingLoading, sportId, onboarded, tutorialDone, markOnboarded, markTutorialDone]);
 
   if (authLoading) {
     return (
@@ -66,14 +79,24 @@ function Index() {
     return <SubscriptionExpired />;
   }
 
-  // Show sport picker on first sign-in (after settings load, no sport set)
-  const showSportPicker = !settingsLoading && !sportId;
+  // Sport picker only for brand-new users who haven't onboarded yet AND have no sport
+  const showSportPicker = !settingsLoading && !onboardingLoading && !onboarded && !sportId;
+  // Tutorial: only after the user has picked their sport, and only once
+  const showTutorial = !settingsLoading && !onboardingLoading && !!sportId && !tutorialDone;
 
   return (
     <div className="min-h-screen bg-background">
       <SportPicker
         open={showSportPicker}
-        onSelect={(id) => setSport(id)}
+        onSelect={async (id) => {
+          await setSport(id);
+          await markOnboarded();
+        }}
+      />
+
+      <OnboardingTutorial
+        open={showTutorial && !showSportPicker}
+        onComplete={markTutorialDone}
       />
 
       <AppHeader
