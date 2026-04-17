@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 /**
  * Sound effects via Web Audio API. No external assets, no dependencies.
@@ -7,7 +7,9 @@ import { useCallback, useEffect, useRef, useState } from "react";
  * - hover: very subtle high-pitched tick
  * - success: rising chime
  *
- * Respects a per-user mute toggle persisted in localStorage.
+ * Respects a per-user mute toggle persisted in localStorage and shared across
+ * all components via a tiny pub/sub so toggling in the header instantly
+ * affects PaymentsPanel, PlayersList, etc.
  */
 
 const STORAGE_KEY = "sounds-muted-v1";
@@ -15,6 +17,30 @@ const STORAGE_KEY = "sounds-muted-v1";
 type Ctx = AudioContext;
 
 let sharedCtx: Ctx | null = null;
+let armed = false;
+
+function readMuted(): boolean {
+  if (typeof window === "undefined") return false;
+  try {
+    return localStorage.getItem(STORAGE_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+
+// Global mute state shared across every useSounds() consumer
+let globalMuted = readMuted();
+const listeners = new Set<(v: boolean) => void>();
+
+function setGlobalMuted(v: boolean) {
+  globalMuted = v;
+  try {
+    localStorage.setItem(STORAGE_KEY, v ? "1" : "0");
+  } catch {
+    // ignore
+  }
+  listeners.forEach((fn) => fn(v));
+}
 
 function getCtx(): Ctx | null {
   if (typeof window === "undefined") return null;
@@ -27,6 +53,21 @@ function getCtx(): Ctx | null {
     return null;
   }
   return sharedCtx;
+}
+
+function armOnce() {
+  if (armed || typeof window === "undefined") return;
+  armed = true;
+  const arm = () => {
+    const ctx = getCtx();
+    if (ctx && ctx.state === "suspended") ctx.resume().catch(() => {});
+    window.removeEventListener("pointerdown", arm);
+    window.removeEventListener("keydown", arm);
+    window.removeEventListener("touchstart", arm);
+  };
+  window.addEventListener("pointerdown", arm, { once: true });
+  window.addEventListener("keydown", arm, { once: true });
+  window.addEventListener("touchstart", arm, { once: true });
 }
 
 function envelope(
@@ -66,7 +107,6 @@ function tone(
 
 function playClick(ctx: Ctx, master: GainNode) {
   const t = ctx.currentTime;
-  // Short percussive tick: square + quick decay
   tone(ctx, master, 1800, t, 0.03, "square", 0.18, 0.002);
   tone(ctx, master, 900, t + 0.005, 0.04, "sine", 0.12, 0.002);
 }
@@ -85,17 +125,14 @@ function playSuccess(ctx: Ctx, master: GainNode) {
 
 function playCash(ctx: Ctx, master: GainNode) {
   const t = ctx.currentTime;
-  // Layer 1: bright "ding" of register bell — two harmonically related sines
   tone(ctx, master, 1760, t, 0.35, "sine", 0.22, 0.002);
   tone(ctx, master, 2637, t + 0.005, 0.32, "sine", 0.16, 0.002);
   tone(ctx, master, 3520, t + 0.01, 0.25, "sine", 0.08, 0.002);
 
-  // Layer 2: short noise burst (coin shimmer / drawer click)
   const bufferSize = Math.floor(ctx.sampleRate * 0.25);
   const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
   const data = noiseBuffer.getChannelData(0);
   for (let i = 0; i < bufferSize; i++) {
-    // decaying white noise
     const decay = 1 - i / bufferSize;
     data[i] = (Math.random() * 2 - 1) * decay * decay;
   }
@@ -113,85 +150,70 @@ function playCash(ctx: Ctx, master: GainNode) {
   noise.start(t);
   noise.stop(t + 0.3);
 
-  // Layer 3: low "thunk" of drawer
   tone(ctx, master, 180, t + 0.18, 0.15, "sine", 0.18, 0.005);
-
-  // Layer 4: secondary chime (delayed echo)
   tone(ctx, master, 2093, t + 0.18, 0.4, "sine", 0.1, 0.003);
 }
 
 export type SoundName = "click" | "hover" | "success" | "cash";
 
-function playSound(name: SoundName, muted: boolean) {
-  if (muted) return;
+function playSound(name: SoundName) {
+  if (globalMuted) return;
   const ctx = getCtx();
   if (!ctx) return;
   // Resume on first user gesture (browsers suspend audio until interaction)
   if (ctx.state === "suspended") {
     ctx.resume().catch(() => {});
   }
+  // Schedule slightly in the future so the resume() has time to settle
   const master = ctx.createGain();
   master.gain.value = 0.6;
   master.connect(ctx.destination);
 
-  switch (name) {
-    case "click":
-      playClick(ctx, master);
-      break;
-    case "hover":
-      playHover(ctx, master);
-      break;
-    case "success":
-      playSuccess(ctx, master);
-      break;
-    case "cash":
-      playCash(ctx, master);
-      break;
+  try {
+    switch (name) {
+      case "click":
+        playClick(ctx, master);
+        break;
+      case "hover":
+        playHover(ctx, master);
+        break;
+      case "success":
+        playSuccess(ctx, master);
+        break;
+      case "cash":
+        playCash(ctx, master);
+        break;
+    }
+  } catch {
+    // swallow audio errors silently
   }
 }
 
 export function useSounds() {
-  const [muted, setMutedState] = useState<boolean>(() => {
-    if (typeof window === "undefined") return false;
-    return localStorage.getItem(STORAGE_KEY) === "1";
-  });
+  const [muted, setMutedLocal] = useState<boolean>(() => globalMuted);
 
-  // Resume context on first interaction
-  const armedRef = useRef(false);
   useEffect(() => {
-    if (armedRef.current) return;
-    const arm = () => {
-      armedRef.current = true;
-      const ctx = getCtx();
-      if (ctx && ctx.state === "suspended") ctx.resume().catch(() => {});
-      window.removeEventListener("pointerdown", arm);
-      window.removeEventListener("keydown", arm);
-    };
-    window.addEventListener("pointerdown", arm, { once: true });
-    window.addEventListener("keydown", arm, { once: true });
+    armOnce();
+    const listener = (v: boolean) => setMutedLocal(v);
+    listeners.add(listener);
+    // Sync in case localStorage changed before mount
+    setMutedLocal(globalMuted);
     return () => {
-      window.removeEventListener("pointerdown", arm);
-      window.removeEventListener("keydown", arm);
+      listeners.delete(listener);
     };
   }, []);
 
   const setMuted = useCallback((v: boolean) => {
-    setMutedState(v);
-    try {
-      localStorage.setItem(STORAGE_KEY, v ? "1" : "0");
-    } catch {
-      // ignore
-    }
+    setGlobalMuted(v);
   }, []);
 
-  const toggleMuted = useCallback(() => setMuted(!muted), [muted, setMuted]);
+  const toggleMuted = useCallback(() => {
+    setGlobalMuted(!globalMuted);
+  }, []);
 
-  const play = useCallback(
-    (name: SoundName) => {
-      playSound(name, muted);
-    },
-    [muted],
-  );
+  const play = useCallback((name: SoundName) => {
+    playSound(name);
+  }, []);
 
   return { play, muted, setMuted, toggleMuted };
 }
