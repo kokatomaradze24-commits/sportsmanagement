@@ -37,7 +37,9 @@ function Index() {
   const { isAuthenticated, loading: authLoading, signOut, user } = useAuth();
   const { isDark, toggle } = useTheme();
   const { schoolName, logoUrl, loading: settingsLoading, updateSchoolName, updateLogo, resetBranding } = useAppSettings();
-  const { sport, sportId, setSport } = useSport();
+  const { sport: rawSport, sportId, setSport } = useSport();
+  const sport = useSportLabels(rawSport);
+  const { t } = useI18n();
   const { payments, loading: paymentsLoading, addPayment, updatePayment, deletePayment, refetch: refetchPayments } = usePayments(sportId);
   const { players, loading: playersLoading, addPlayer, updatePlayer, deletePlayer } = usePlayers(sportId, refetchPayments);
   const { isActive: subActive, loading: subLoading } = useSubscription();
