@@ -17,6 +17,7 @@ import { usePayments } from "@/hooks/use-payments";
 import { useAuth } from "@/hooks/use-auth";
 import { useSubscription } from "@/hooks/use-subscription";
 import { useOnboarding } from "@/hooks/use-onboarding";
+import { supabase } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
 
 type Player = Database["public"]["Tables"]["players"]["Row"];
@@ -92,6 +93,11 @@ function Index() {
         onSelect={async (id) => {
           await setSport(id);
           await markOnboarded();
+          // Backfill any orphaned players/payments (created before a sport was picked)
+          if (user) {
+            await supabase.from("players").update({ sport: id }).eq("user_id", user.id).eq("sport", "");
+            await supabase.from("payments").update({ sport: id }).eq("user_id", user.id).eq("sport", "");
+          }
         }}
       />
 
