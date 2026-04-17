@@ -42,6 +42,7 @@ function PlayerForm({ initial, sport, onSubmit, onCancel }: {
   const [lastName, setLastName] = useState(initial?.last_name || "");
   const [tNumber, setTNumber] = useState(initial?.t_number?.toString() || "");
   const [phone, setPhone] = useState(initial?.phone || "");
+  const [parentPhone, setParentPhone] = useState(initial?.parent_phone || "");
   const [email, setEmail] = useState(initial?.email || "");
 
   // Subscription fields (only used when creating)
@@ -58,6 +59,7 @@ function PlayerForm({ initial, sport, onSubmit, onCancel }: {
       last_name: lastName.trim(),
       t_number: parseInt(tNumber),
       phone: phone.trim() || null,
+      parent_phone: parentPhone.trim() || null,
       email: email.trim() || null,
     };
     if (!isEdit) {
@@ -90,6 +92,10 @@ function PlayerForm({ initial, sport, onSubmit, onCancel }: {
       <div>
         <label className="text-sm text-muted-foreground mb-1 block">{t("phone")}</label>
         <Input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+1 234 567 890" />
+      </div>
+      <div>
+        <label className="text-sm text-muted-foreground mb-1 block">{t("parentPhone")}</label>
+        <Input value={parentPhone} onChange={(e) => setParentPhone(e.target.value)} placeholder="+995 5xx xxx xxx" />
       </div>
       <div>
         <label className="text-sm text-muted-foreground mb-1 block">{t("email")}</label>

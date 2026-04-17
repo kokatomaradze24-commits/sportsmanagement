@@ -10,6 +10,7 @@ import { getInitials, SPORT_LIST, type SportConfig, type SportId } from "@/lib/s
 import { useIsAdmin } from "@/hooks/use-is-admin";
 import { useI18n } from "@/hooks/use-i18n";
 import { LanguageSwitcher } from "./LanguageSwitcher";
+import { SmsSettingsDialog } from "./SmsSettingsDialog";
 
 interface AppHeaderProps {
   schoolName: string;
@@ -133,6 +134,8 @@ export function AppHeader({ schoolName, logoUrl, sport, isDark, onToggleTheme, o
           </DropdownMenu>
 
           <LanguageSwitcher />
+
+          <SmsSettingsDialog />
 
           <AlertDialog>
             <AlertDialogTrigger asChild>
