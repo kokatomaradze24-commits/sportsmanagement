@@ -54,18 +54,33 @@ export function AppSettingsProvider({ children }: { children: ReactNode }) {
 
   const upsertSetting = useCallback(async (key: string, value: string) => {
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
-    const { data: existing } = await supabase
+    if (!user) {
+      console.error("[app-settings] upsert failed: not authenticated", { key });
+      throw new Error("Not authenticated");
+    }
+    const { data: existing, error: selErr } = await supabase
       .from("app_settings")
       .select("id")
       .eq("key", key)
       .eq("user_id", user.id)
       .maybeSingle();
+    if (selErr) {
+      console.error("[app-settings] select failed", selErr);
+      throw selErr;
+    }
 
     if (existing) {
-      await supabase.from("app_settings").update({ value }).eq("id", existing.id);
+      const { error } = await supabase.from("app_settings").update({ value }).eq("id", existing.id);
+      if (error) {
+        console.error("[app-settings] update failed", error);
+        throw error;
+      }
     } else {
-      await supabase.from("app_settings").insert({ key, value, user_id: user.id });
+      const { error } = await supabase.from("app_settings").insert({ key, value, user_id: user.id });
+      if (error) {
+        console.error("[app-settings] insert failed", error);
+        throw error;
+      }
     }
   }, []);
 
