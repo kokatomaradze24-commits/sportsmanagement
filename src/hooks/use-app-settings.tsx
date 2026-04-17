@@ -101,7 +101,10 @@ export function AppSettingsProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const updateSchoolName = useCallback(async (name: string) => {
-    if (!sportId) return;
+    if (!sportId) {
+      console.warn("[app-settings] updateSchoolName: no sport selected");
+      throw new Error("Please select a sport first");
+    }
     setSchoolName(name);
     await upsertSetting(nameKey(sportId), name);
   }, [upsertSetting, sportId]);
