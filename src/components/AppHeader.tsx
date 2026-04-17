@@ -112,101 +112,126 @@ export function AppHeader({ schoolName, logoUrl, sport, isDark, onToggleTheme, o
           )}
         </div>
 
-        <div className="flex items-center gap-1 flex-wrap justify-center border-t border-border pt-3">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="rounded-full w-10 h-10" title={t("changeSport")}>
-                <Trophy className="w-5 h-5" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>{t("sportDiscipline")}</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              {SPORT_LIST.map((s) => (
-                <DropdownMenuItem
-                  key={s.id}
-                  onClick={() => onChangeSport(s.id)}
-                  className={s.id === sport.id ? "bg-primary/10 font-semibold" : ""}
-                >
-                  <span className="mr-2">{s.emoji}</span>
-                  {s.name}
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
+        <div className="flex items-start gap-2 flex-wrap justify-center border-t border-border pt-3">
+          <div className="flex flex-col items-center gap-1">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="rounded-full w-10 h-10" title={t("changeSport")}>
+                  <Trophy className="w-5 h-5" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuLabel>{t("sportDiscipline")}</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                {SPORT_LIST.map((s) => (
+                  <DropdownMenuItem
+                    key={s.id}
+                    onClick={() => onChangeSport(s.id)}
+                    className={s.id === sport.id ? "bg-primary/10 font-semibold" : ""}
+                  >
+                    <span className="mr-2">{s.emoji}</span>
+                    {s.name}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <span className="text-[10px] text-muted-foreground leading-none">{t("lblSport")}</span>
+          </div>
 
-          <LanguageSwitcher />
+          <div className="flex flex-col items-center gap-1">
+            <LanguageSwitcher />
+            <span className="text-[10px] text-muted-foreground leading-none">{t("lblLanguage")}</span>
+          </div>
 
-          <SmsSettingsDialog />
+          <div className="flex flex-col items-center gap-1">
+            <SmsSettingsDialog />
+            <span className="text-[10px] text-muted-foreground leading-none">{t("lblSms")}</span>
+          </div>
 
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Button variant="ghost" size="icon" className="rounded-full w-10 h-10 text-muted-foreground hover:text-foreground" title={t("resetBranding")}>
-                <RotateCcw className="w-5 h-5" />
-              </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>{t("resetBrandingTitle", { sport: sport.name })}</AlertDialogTitle>
-                <AlertDialogDescription>
-                  {t("resetBrandingDesc")}
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
-                <AlertDialogAction onClick={onResetBranding}>{t("reset")}</AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
+          <div className="flex flex-col items-center gap-1">
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="ghost" size="icon" className="rounded-full w-10 h-10 text-muted-foreground hover:text-foreground" title={t("resetBranding")}>
+                  <RotateCcw className="w-5 h-5" />
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>{t("resetBrandingTitle", { sport: sport.name })}</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    {t("resetBrandingDesc")}
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
+                  <AlertDialogAction onClick={onResetBranding}>{t("reset")}</AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+            <span className="text-[10px] text-muted-foreground leading-none">{t("lblReset")}</span>
+          </div>
 
           {isAdmin && (
-            <Link to="/admin">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="rounded-full w-10 h-10 text-yellow-600 hover:text-yellow-500"
-                title={t("adminPanel")}
-              >
-                <Shield className="w-5 h-5" />
-              </Button>
-            </Link>
+            <div className="flex flex-col items-center gap-1">
+              <Link to="/admin">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="rounded-full w-10 h-10 text-yellow-600 hover:text-yellow-500"
+                  title={t("adminPanel")}
+                >
+                  <Shield className="w-5 h-5" />
+                </Button>
+              </Link>
+              <span className="text-[10px] text-muted-foreground leading-none">{t("lblAdmin")}</span>
+            </div>
           )}
 
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => { play("click"); toggleMuted(); }}
-            className="rounded-full w-10 h-10"
-            title={muted ? t("soundOff") : t("soundOn")}
-          >
-            {muted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
-          </Button>
-
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => { play("click"); onToggleTheme(); }}
-            className="rounded-full w-10 h-10"
-          >
-            <motion.div
-              key={isDark ? "moon" : "sun"}
-              initial={{ rotate: -90, opacity: 0 }}
-              animate={{ rotate: 0, opacity: 1 }}
-              transition={{ duration: 0.3 }}
-            >
-              {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-            </motion.div>
-          </Button>
-          {onSignOut && (
+          <div className="flex flex-col items-center gap-1">
             <Button
               variant="ghost"
               size="icon"
-              onClick={onSignOut}
-              className="rounded-full w-10 h-10 text-muted-foreground hover:text-destructive"
-              title={t("signOut")}
+              onClick={() => { play("click"); toggleMuted(); }}
+              className="rounded-full w-10 h-10"
+              title={muted ? t("soundOff") : t("soundOn")}
             >
-              <LogOut className="w-5 h-5" />
+              {muted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
             </Button>
+            <span className="text-[10px] text-muted-foreground leading-none">{t("lblSound")}</span>
+          </div>
+
+          <div className="flex flex-col items-center gap-1">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => { play("click"); onToggleTheme(); }}
+              className="rounded-full w-10 h-10"
+            >
+              <motion.div
+                key={isDark ? "moon" : "sun"}
+                initial={{ rotate: -90, opacity: 0 }}
+                animate={{ rotate: 0, opacity: 1 }}
+                transition={{ duration: 0.3 }}
+              >
+                {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+              </motion.div>
+            </Button>
+            <span className="text-[10px] text-muted-foreground leading-none">{t("lblTheme")}</span>
+          </div>
+
+          {onSignOut && (
+            <div className="flex flex-col items-center gap-1">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={onSignOut}
+                className="rounded-full w-10 h-10 text-muted-foreground hover:text-destructive"
+                title={t("signOut")}
+              >
+                <LogOut className="w-5 h-5" />
+              </Button>
+              <span className="text-[10px] text-muted-foreground leading-none">{t("lblSignOut")}</span>
+            </div>
           )}
         </div>
       </div>
