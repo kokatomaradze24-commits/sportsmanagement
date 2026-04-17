@@ -49,14 +49,14 @@ function Index() {
   }, [sportId]);
 
   // Existing users (already have a sport) shouldn't see the picker or tutorial.
-  // Silently mark them onboarded + tutorial-completed once.
+  // Silently mark them onboarded + tutorial-completed.
   useEffect(() => {
     if (settingsLoading || onboardingLoading) return;
-    if (sportId && !onboarded) markOnboarded();
-    if (sportId && !tutorialDone && onboarded) {
-      // only auto-skip tutorial for users who were already onboarded before this feature shipped
+    if (sportId && !onboarded) {
+      markOnboarded();
+      if (!tutorialDone) markTutorialDone();
     }
-  }, [settingsLoading, onboardingLoading, sportId, onboarded, tutorialDone, markOnboarded]);
+  }, [settingsLoading, onboardingLoading, sportId, onboarded, tutorialDone, markOnboarded, markTutorialDone]);
 
   if (authLoading) {
     return (
