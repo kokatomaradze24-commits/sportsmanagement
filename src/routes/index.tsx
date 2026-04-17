@@ -92,6 +92,11 @@ function Index() {
         onSelect={async (id) => {
           await setSport(id);
           await markOnboarded();
+          // Backfill any orphaned players/payments (created before a sport was picked)
+          if (user) {
+            await supabase.from("players").update({ sport: id }).eq("user_id", user.id).eq("sport", "");
+            await supabase.from("payments").update({ sport: id }).eq("user_id", user.id).eq("sport", "");
+          }
         }}
       />
 
