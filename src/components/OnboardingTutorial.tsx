@@ -3,56 +3,27 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Trophy, RotateCcw, Moon, LogOut, Users, CreditCard, Bell, BarChart3 } from "lucide-react";
+import { useI18n } from "@/hooks/use-i18n";
+import type { TranslationKey } from "@/lib/i18n/translations";
 
 interface OnboardingTutorialProps {
   open: boolean;
   onComplete: () => void;
 }
 
-const STEPS = [
-  {
-    icon: Trophy,
-    title: "სპორტის შეცვლა",
-    body: "ამ ღილაკით ნებისმიერ დროს შეგიძლიათ შეცვალოთ არჩეული სპორტი/დისციპლინა. თითოეულ სპორტს აქვს თავისი სახელი, ლოგო და მონაცემები.",
-  },
-  {
-    icon: RotateCcw,
-    title: "ბრენდინგის გადაყენება",
-    body: "მიმდინარე სპორტისთვის კლუბის სახელი და ლოგო დაუბრუნდება საწყის მნიშვნელობებს. სხვა სპორტებზე გავლენას არ ახდენს.",
-  },
-  {
-    icon: Moon,
-    title: "თემა (ბნელი/ნათელი)",
-    body: "გადართეთ ნათელ ან ბნელ რეჟიმს შორის თქვენი კომფორტისთვის.",
-  },
-  {
-    icon: LogOut,
-    title: "გასვლა",
-    body: "ანგარიშიდან გასვლა. შემდგომში ისევ შეგიძლიათ შეხვიდეთ იმავე მეილით.",
-  },
-  {
-    icon: Users,
-    title: "მოთამაშეების სია",
-    body: "მარცხენა პანელში დაამატეთ, რედაქტირება გაუკეთეთ ან წაშალეთ თქვენი კლუბის წევრები. დააჭირეთ წევრს რომ ნახოთ მისი გადახდები.",
-  },
-  {
-    icon: CreditCard,
-    title: "გადახდების მართვა",
-    body: "მოთამაშის არჩევის შემდეგ მარჯვენა პანელში დაინახავთ მის ყოველთვიურ გადახდებს — შეგიძლიათ დაამატოთ, შეცვალოთ ან წაშალოთ.",
-  },
-  {
-    icon: Bell,
-    title: "შეტყობინებები",
-    body: "ზევით გამოჩნდება გაფრთხილებები არასრული ან გადახდების შესახებ, რომ არაფერი გამოგრჩეთ.",
-  },
-  {
-    icon: BarChart3,
-    title: "სტატისტიკა",
-    body: "ერთ შეხედვით ნახეთ აქტიური წევრების რაოდენობა, შემოსავალი და სხვა ძირითადი მაჩვენებლები.",
-  },
+const STEPS: { icon: React.ComponentType<{ className?: string }>; titleKey: TranslationKey; bodyKey: TranslationKey }[] = [
+  { icon: Trophy, titleKey: "tutorialStep1Title", bodyKey: "tutorialStep1Body" },
+  { icon: RotateCcw, titleKey: "tutorialStep2Title", bodyKey: "tutorialStep2Body" },
+  { icon: Moon, titleKey: "tutorialStep3Title", bodyKey: "tutorialStep3Body" },
+  { icon: LogOut, titleKey: "tutorialStep4Title", bodyKey: "tutorialStep4Body" },
+  { icon: Users, titleKey: "tutorialStep5Title", bodyKey: "tutorialStep5Body" },
+  { icon: CreditCard, titleKey: "tutorialStep6Title", bodyKey: "tutorialStep6Body" },
+  { icon: Bell, titleKey: "tutorialStep7Title", bodyKey: "tutorialStep7Body" },
+  { icon: BarChart3, titleKey: "tutorialStep8Title", bodyKey: "tutorialStep8Body" },
 ];
 
 export function OnboardingTutorial({ open, onComplete }: OnboardingTutorialProps) {
+  const { t } = useI18n();
   const [step, setStep] = useState(0);
   const isLast = step === STEPS.length - 1;
   const current = STEPS[step];
@@ -75,10 +46,10 @@ export function OnboardingTutorial({ open, onComplete }: OnboardingTutorialProps
             <span className="text-xs font-mono px-2 py-1 rounded-md bg-primary/10 text-primary">
               {step + 1} / {STEPS.length}
             </span>
-            გაცნობა
+            {t("tutorialTitle")}
           </DialogTitle>
           <DialogDescription>
-            მოკლე ტური აპლიკაციის ძირითად ფუნქციებზე.
+            {t("tutorialIntro")}
           </DialogDescription>
         </DialogHeader>
 
@@ -94,9 +65,9 @@ export function OnboardingTutorial({ open, onComplete }: OnboardingTutorialProps
             <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 ring-1 ring-primary/30 flex items-center justify-center">
               <Icon className="w-8 h-8 text-primary" />
             </div>
-            <h3 className="text-xl font-display tracking-wider">{current.title}</h3>
+            <h3 className="text-xl font-display tracking-wider">{t(current.titleKey)}</h3>
             <p className="text-muted-foreground text-sm leading-relaxed max-w-sm">
-              {current.body}
+              {t(current.bodyKey)}
             </p>
           </motion.div>
         </AnimatePresence>
@@ -114,16 +85,16 @@ export function OnboardingTutorial({ open, onComplete }: OnboardingTutorialProps
 
         <DialogFooter className="flex-row justify-between sm:justify-between gap-2">
           <Button variant="ghost" onClick={onComplete}>
-            გამოტოვება
+            {t("skip")}
           </Button>
           <div className="flex gap-2">
             {step > 0 && (
               <Button variant="outline" onClick={() => setStep((s) => s - 1)}>
-                უკან
+                {t("back")}
               </Button>
             )}
             <Button onClick={handleNext}>
-              {isLast ? "დასრულება" : "შემდეგი"}
+              {isLast ? t("finish") : t("next")}
             </Button>
           </div>
         </DialogFooter>

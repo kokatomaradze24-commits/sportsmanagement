@@ -8,6 +8,8 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { getInitials, SPORT_LIST, type SportConfig, type SportId } from "@/lib/sports";
 import { useIsAdmin } from "@/hooks/use-is-admin";
+import { useI18n } from "@/hooks/use-i18n";
+import { LanguageSwitcher } from "./LanguageSwitcher";
 
 interface AppHeaderProps {
   schoolName: string;
@@ -27,6 +29,7 @@ export function AppHeader({ schoolName, logoUrl, sport, isDark, onToggleTheme, o
   const [nameValue, setNameValue] = useState(schoolName);
   const fileRef = useRef<HTMLInputElement>(null);
   const { isAdmin } = useIsAdmin();
+  const { t } = useI18n();
 
   const handleSave = () => {
     onUpdateName(nameValue);
@@ -96,7 +99,7 @@ export function AppHeader({ schoolName, logoUrl, sport, isDark, onToggleTheme, o
               <div className="min-w-0">
                 <h1 className="text-2xl sm:text-3xl tracking-wider text-foreground truncate">{schoolName}</h1>
                 <p className="text-xs text-muted-foreground flex items-center gap-1">
-                  <span>{sport.emoji}</span> {sport.name} Club
+                  <span>{sport.emoji}</span> {sport.name} {t("sportClub")}
                 </p>
               </div>
               <Button size="icon" variant="ghost" onClick={() => { setNameValue(schoolName); setEditing(true); }}>
@@ -109,12 +112,12 @@ export function AppHeader({ schoolName, logoUrl, sport, isDark, onToggleTheme, o
         <div className="flex items-center gap-1 flex-wrap justify-center border-t border-border pt-3">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="rounded-full w-10 h-10" title="Change sport">
+              <Button variant="ghost" size="icon" className="rounded-full w-10 h-10" title={t("changeSport")}>
                 <Trophy className="w-5 h-5" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Sport / Discipline</DropdownMenuLabel>
+              <DropdownMenuLabel>{t("sportDiscipline")}</DropdownMenuLabel>
               <DropdownMenuSeparator />
               {SPORT_LIST.map((s) => (
                 <DropdownMenuItem
@@ -129,22 +132,24 @@ export function AppHeader({ schoolName, logoUrl, sport, isDark, onToggleTheme, o
             </DropdownMenuContent>
           </DropdownMenu>
 
+          <LanguageSwitcher />
+
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button variant="ghost" size="icon" className="rounded-full w-10 h-10 text-muted-foreground hover:text-foreground" title="Reset club name & logo">
+              <Button variant="ghost" size="icon" className="rounded-full w-10 h-10 text-muted-foreground hover:text-foreground" title={t("resetBranding")}>
                 <RotateCcw className="w-5 h-5" />
               </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
-                <AlertDialogTitle>Reset branding for {sport.name}?</AlertDialogTitle>
+                <AlertDialogTitle>{t("resetBrandingTitle", { sport: sport.name })}</AlertDialogTitle>
                 <AlertDialogDescription>
-                  This will restore the club name to "My Club" and remove the uploaded logo for this sport. Players and payments will not be affected.
+                  {t("resetBrandingDesc")}
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction onClick={onResetBranding}>Reset</AlertDialogAction>
+                <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
+                <AlertDialogAction onClick={onResetBranding}>{t("reset")}</AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
@@ -155,7 +160,7 @@ export function AppHeader({ schoolName, logoUrl, sport, isDark, onToggleTheme, o
                 variant="ghost"
                 size="icon"
                 className="rounded-full w-10 h-10 text-yellow-600 hover:text-yellow-500"
-                title="Admin Panel"
+                title={t("adminPanel")}
               >
                 <Shield className="w-5 h-5" />
               </Button>
@@ -183,7 +188,7 @@ export function AppHeader({ schoolName, logoUrl, sport, isDark, onToggleTheme, o
               size="icon"
               onClick={onSignOut}
               className="rounded-full w-10 h-10 text-muted-foreground hover:text-destructive"
-              title="Sign out"
+              title={t("signOut")}
             >
               <LogOut className="w-5 h-5" />
             </Button>

@@ -5,6 +5,8 @@ import { Trophy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { lovable } from "@/integrations/lovable/index";
 import { supabase } from "@/integrations/supabase/client";
+import { useI18n } from "@/hooks/use-i18n";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 
 export const Route = createFileRoute("/login")({
   head: () => ({
@@ -18,6 +20,7 @@ export const Route = createFileRoute("/login")({
 
 function LoginPage() {
   const navigate = useNavigate();
+  const { t } = useI18n();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -203,13 +206,17 @@ function LoginPage() {
                 fill="#EA4335"
               />
             </svg>
-            {loading ? "Signing in..." : "Continue with Google"}
+            {loading ? t("signingIn") : t("continueWithGoogle")}
           </Button>
 
           <p className="text-xs text-center text-slate-500 pt-2">
-            By signing in you agree to manage your club data securely.
+            {t("bySigningIn")}
           </p>
         </motion.div>
+
+        <div className="mt-4 flex justify-center">
+          <LanguageSwitcher variant="floating" />
+        </div>
 
         <motion.div
           initial={{ opacity: 0 }}

@@ -1,17 +1,16 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, Pencil, Trash2, DollarSign, Calendar, AlertTriangle } from "lucide-react";
+import { Plus, Pencil, Trash2, DollarSign, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import type { Database } from "@/integrations/supabase/types";
+import { useI18n } from "@/hooks/use-i18n";
 
 type Payment = Database["public"]["Tables"]["payments"]["Row"];
 type PaymentInsert = Database["public"]["Tables"]["payments"]["Insert"];
 type Player = Database["public"]["Tables"]["players"]["Row"];
-
-const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 interface PaymentsPanelProps {
   player: Player;
@@ -28,6 +27,7 @@ function PaymentForm({ playerId, initial, onSubmit, onCancel }: {
   onSubmit: (data: PaymentInsert) => void;
   onCancel: () => void;
 }) {
+  const { t, monthShort } = useI18n();
   const now = new Date();
   const [amount, setAmount] = useState(initial?.amount?.toString() || "");
   const [month, setMonth] = useState((initial?.month || now.getMonth() + 1).toString());
@@ -53,67 +53,70 @@ function PaymentForm({ playerId, initial, onSubmit, onCancel }: {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label className="text-sm text-muted-foreground mb-1 block">Amount *</label>
+        <label className="text-sm text-muted-foreground mb-1 block">{t("amount")} *</label>
         <Input type="number" step="0.01" value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="50.00" required />
       </div>
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <label className="text-sm text-muted-foreground mb-1 block">Month</label>
+          <label className="text-sm text-muted-foreground mb-1 block">{t("month")}</label>
           <Select value={month} onValueChange={setMonth}>
             <SelectTrigger><SelectValue /></SelectTrigger>
             <SelectContent>
-              {MONTHS.map((m, i) => (
-                <SelectItem key={i} value={(i + 1).toString()}>{m}</SelectItem>
+              {Array.from({ length: 12 }, (_, i) => (
+                <SelectItem key={i} value={(i + 1).toString()}>{monthShort(i + 1)}</SelectItem>
               ))}
             </SelectContent>
           </Select>
         </div>
         <div>
-          <label className="text-sm text-muted-foreground mb-1 block">Year</label>
+          <label className="text-sm text-muted-foreground mb-1 block">{t("year")}</label>
           <Input type="number" value={year} onChange={(e) => setYear(e.target.value)} min={2020} max={2100} />
         </div>
       </div>
       <div>
-        <label className="text-sm text-muted-foreground mb-1 block">Status</label>
+        <label className="text-sm text-muted-foreground mb-1 block">{t("status")}</label>
         <Select value={status} onValueChange={setStatus}>
           <SelectTrigger><SelectValue /></SelectTrigger>
           <SelectContent>
-            <SelectItem value="paid">Paid</SelectItem>
-            <SelectItem value="pending">Pending</SelectItem>
-            <SelectItem value="overdue">Overdue</SelectItem>
+            <SelectItem value="paid">{t("paid")}</SelectItem>
+            <SelectItem value="pending">{t("pending")}</SelectItem>
+            <SelectItem value="overdue">{t("overdue")}</SelectItem>
           </SelectContent>
         </Select>
       </div>
       <div>
-        <label className="text-sm text-muted-foreground mb-1 block">Payment Date</label>
+        <label className="text-sm text-muted-foreground mb-1 block">{t("paymentDate")}</label>
         <Input type="date" value={paymentDate} onChange={(e) => setPaymentDate(e.target.value)} />
       </div>
       <div>
-        <label className="text-sm text-muted-foreground mb-1 block">Notes</label>
-        <Input value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Optional notes" />
+        <label className="text-sm text-muted-foreground mb-1 block">{t("notes")}</label>
+        <Input value={notes} onChange={(e) => setNotes(e.target.value)} placeholder={t("optionalNotes")} />
       </div>
       <div className="flex gap-2 pt-2">
-        <Button type="submit" className="flex-1">{initial?.id ? "Save Changes" : "Add Payment"}</Button>
-        <Button type="button" variant="outline" onClick={onCancel}>Cancel</Button>
+        <Button type="submit" className="flex-1">{initial?.id ? t("saveChanges") : t("addPayment")}</Button>
+        <Button type="button" variant="outline" onClick={onCancel}>{t("cancel")}</Button>
       </div>
     </form>
   );
 }
 
 function StatusBadge({ status }: { status: string }) {
+  const { t } = useI18n();
   const styles: Record<string, string> = {
     paid: "bg-success/15 text-success",
     pending: "bg-warning/15 text-warning",
     overdue: "bg-destructive/15 text-destructive",
   };
+  const label = status === "paid" ? t("paid") : status === "pending" ? t("pending") : status === "overdue" ? t("overdue") : status;
   return (
-    <span className={`px-2.5 py-0.5 rounded-full text-xs font-semibold capitalize ${styles[status] || styles.pending}`}>
-      {status}
+    <span className={`px-2.5 py-0.5 rounded-full text-xs font-semibold ${styles[status] || styles.pending}`}>
+      {label}
     </span>
   );
 }
 
 export function PaymentsPanel({ player, payments, loading, onAdd, onUpdate, onDelete }: PaymentsPanelProps) {
+  const { t, monthShort } = useI18n();
   const [addOpen, setAddOpen] = useState(false);
   const [editPayment, setEditPayment] = useState<Payment | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
@@ -124,7 +127,7 @@ export function PaymentsPanel({ player, payments, loading, onAdd, onUpdate, onDe
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl tracking-wider text-foreground">Payments</h2>
+          <h2 className="text-2xl tracking-wider text-foreground">{t("payments")}</h2>
           <p className="text-sm text-muted-foreground">
             {player.first_name} {player.last_name} #{player.t_number}
           </p>
@@ -132,12 +135,12 @@ export function PaymentsPanel({ player, payments, loading, onAdd, onUpdate, onDe
         <Dialog open={addOpen} onOpenChange={setAddOpen}>
           <DialogTrigger asChild>
             <Button variant="accent" size="sm">
-              <Plus className="w-4 h-4" /> Add Payment
+              <Plus className="w-4 h-4" /> {t("addPayment")}
             </Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle className="text-2xl tracking-wider">New Payment</DialogTitle>
+              <DialogTitle className="text-2xl tracking-wider">{t("newPayment")}</DialogTitle>
             </DialogHeader>
             <PaymentForm
               playerId={player.id}
@@ -164,7 +167,7 @@ export function PaymentsPanel({ player, payments, loading, onAdd, onUpdate, onDe
           className="text-center py-12 text-muted-foreground"
         >
           <DollarSign className="w-12 h-12 mx-auto mb-3 opacity-40" />
-          <p>No payments recorded. Add the first one!</p>
+          <p>{t("noPayments")}</p>
         </motion.div>
       ) : (
         <div className="space-y-2">
@@ -191,8 +194,8 @@ export function PaymentsPanel({ player, payments, loading, onAdd, onUpdate, onDe
                         <StatusBadge status={payment.status} />
                       </div>
                       <p className="text-xs text-muted-foreground mt-0.5">
-                        {MONTHS[payment.month - 1]} {payment.year}
-                        {payment.payment_date && ` · Paid ${payment.payment_date}`}
+                        {monthShort(payment.month)} {payment.year}
+                        {payment.payment_date && ` · ${t("paid")} ${payment.payment_date}`}
                         {payment.notes && ` · ${payment.notes}`}
                       </p>
                     </div>
@@ -209,7 +212,7 @@ export function PaymentsPanel({ player, payments, loading, onAdd, onUpdate, onDe
                       </Button>
                       <DialogContent>
                         <DialogHeader>
-                          <DialogTitle className="text-2xl tracking-wider">Edit Payment</DialogTitle>
+                          <DialogTitle className="text-2xl tracking-wider">{t("editPayment")}</DialogTitle>
                         </DialogHeader>
                         {editPayment && (
                           <PaymentForm
@@ -227,10 +230,10 @@ export function PaymentsPanel({ player, payments, loading, onAdd, onUpdate, onDe
                     {deleteConfirm === payment.id ? (
                       <div className="flex items-center gap-1">
                         <Button size="sm" variant="destructive" onClick={() => { onDelete(payment.id); setDeleteConfirm(null); }}>
-                          Delete
+                          {t("delete")}
                         </Button>
                         <Button size="sm" variant="ghost" onClick={() => setDeleteConfirm(null)}>
-                          No
+                          {t("no")}
                         </Button>
                       </div>
                     ) : (

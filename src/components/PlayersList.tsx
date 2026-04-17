@@ -9,6 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import type { Database } from "@/integrations/supabase/types";
 import type { SportConfig } from "@/lib/sports";
+import { useI18n } from "@/hooks/use-i18n";
 
 type Player = Database["public"]["Tables"]["players"]["Row"];
 type Payment = Database["public"]["Tables"]["payments"]["Row"];
@@ -34,6 +35,7 @@ function PlayerForm({ initial, sport, onSubmit, onCancel }: {
   onSubmit: (data: PlayerInsert) => void;
   onCancel: () => void;
 }) {
+  const { t } = useI18n();
   const [firstName, setFirstName] = useState(initial?.first_name || "");
   const [lastName, setLastName] = useState(initial?.last_name || "");
   const [tNumber, setTNumber] = useState(initial?.t_number?.toString() || "");
@@ -56,11 +58,11 @@ function PlayerForm({ initial, sport, onSubmit, onCancel }: {
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <label className="text-sm text-muted-foreground mb-1 block">First Name *</label>
+          <label className="text-sm text-muted-foreground mb-1 block">{t("firstName")} *</label>
           <Input value={firstName} onChange={(e) => setFirstName(e.target.value)} placeholder="John" required />
         </div>
         <div>
-          <label className="text-sm text-muted-foreground mb-1 block">Last Name *</label>
+          <label className="text-sm text-muted-foreground mb-1 block">{t("lastName")} *</label>
           <Input value={lastName} onChange={(e) => setLastName(e.target.value)} placeholder="Doe" required />
         </div>
       </div>
@@ -69,22 +71,23 @@ function PlayerForm({ initial, sport, onSubmit, onCancel }: {
         <Input type="number" value={tNumber} onChange={(e) => setTNumber(e.target.value)} placeholder="23" required min={0} max={999} />
       </div>
       <div>
-        <label className="text-sm text-muted-foreground mb-1 block">Phone</label>
+        <label className="text-sm text-muted-foreground mb-1 block">{t("phone")}</label>
         <Input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+1 234 567 890" />
       </div>
       <div>
-        <label className="text-sm text-muted-foreground mb-1 block">Email</label>
+        <label className="text-sm text-muted-foreground mb-1 block">{t("email")}</label>
         <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="john@example.com" />
       </div>
       <div className="flex gap-2 pt-2">
-        <Button type="submit" className="flex-1">{initial?.id ? "Save Changes" : `Add ${sport.member}`}</Button>
-        <Button type="button" variant="outline" onClick={onCancel}>Cancel</Button>
+        <Button type="submit" className="flex-1">{initial?.id ? t("saveChanges") : t("addMember", { member: sport.member })}</Button>
+        <Button type="button" variant="outline" onClick={onCancel}>{t("cancel")}</Button>
       </div>
     </form>
   );
 }
 
 export function PlayersList({ players, payments = [], loading, sport, onAdd, onUpdate, onDelete, onSelect, selectedId }: PlayersListProps) {
+  const { t } = useI18n();
   const [addOpen, setAddOpen] = useState(false);
   const [editPlayer, setEditPlayer] = useState<Player | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
@@ -100,7 +103,6 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
   const filteredPlayers = useMemo(() => {
     let result = players;
 
-    // Text search
     if (search.trim()) {
       const q = search.trim().toLowerCase();
       result = result.filter(
@@ -112,7 +114,6 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
       );
     }
 
-    // Payment status filter
     if (paymentFilter !== "all") {
       result = result.filter((p) => {
         const playerPayment = payments.find(
@@ -168,12 +169,12 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
         <Dialog open={addOpen} onOpenChange={setAddOpen}>
           <DialogTrigger asChild>
             <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90 font-semibold shadow-md">
-              <Plus className="w-4 h-4" /> Add {sport.member}
+              <Plus className="w-4 h-4" /> {t("addMember", { member: sport.member })}
             </Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle className="text-2xl tracking-wider">New {sport.member}</DialogTitle>
+              <DialogTitle className="text-2xl tracking-wider">{t("newMember", { member: sport.member })}</DialogTitle>
             </DialogHeader>
             <PlayerForm
               sport={sport}
@@ -193,7 +194,7 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
           <Input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search name or number..."
+            placeholder={t("searchPlaceholder")}
             className="pl-9 h-8 text-sm"
           />
         </div>
@@ -203,10 +204,10 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All</SelectItem>
-            <SelectItem value="paid">Paid</SelectItem>
-            <SelectItem value="pending">Pending</SelectItem>
-            <SelectItem value="overdue">Overdue</SelectItem>
+            <SelectItem value="all">{t("all")}</SelectItem>
+            <SelectItem value="paid">{t("paid")}</SelectItem>
+            <SelectItem value="pending">{t("pending")}</SelectItem>
+            <SelectItem value="overdue">{t("overdue")}</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -220,36 +221,38 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
             />
             <span>
               {selectedIds.size > 0
-                ? `${selectedIds.size} selected`
-                : `Select all (${filteredPlayers.length})`}
+                ? t("selected", { count: selectedIds.size })
+                : t("selectAll", { count: filteredPlayers.length })}
             </span>
           </label>
           {selectedIds.size > 0 && (
             <div className="flex items-center gap-2">
               <Button size="sm" variant="ghost" className="h-7 text-xs" onClick={() => setSelectedIds(new Set())}>
-                Clear
+                {t("clear")}
               </Button>
               <AlertDialog>
                 <AlertDialogTrigger asChild>
                   <Button size="sm" variant="destructive" className="h-7 text-xs" disabled={bulkDeleting}>
                     <Trash2 className="w-3.5 h-3.5 mr-1" />
-                    Delete {selectedIds.size}
+                    {t("deleteCount", { count: selectedIds.size })}
                   </Button>
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
-                    <AlertDialogTitle>Delete {selectedIds.size} {selectedIds.size === 1 ? sport.member.toLowerCase() : sport.members.toLowerCase()}?</AlertDialogTitle>
+                    <AlertDialogTitle>
+                      {t("deleteMembersTitle", { count: selectedIds.size, label: selectedIds.size === 1 ? sport.member.toLowerCase() : sport.members.toLowerCase() })}
+                    </AlertDialogTitle>
                     <AlertDialogDescription>
-                      This will permanently remove the selected {sport.members.toLowerCase()} and all their payment history. This action cannot be undone.
+                      {t("deleteMembersDesc", { label: sport.members.toLowerCase() })}
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
                     <AlertDialogAction
                       onClick={handleBulkDelete}
                       className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                     >
-                      Delete
+                      {t("delete")}
                     </AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>
@@ -272,7 +275,9 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
           className="text-center py-12 text-muted-foreground"
         >
           <User className="w-12 h-12 mx-auto mb-3 opacity-40" />
-          <p>{players.length === 0 ? `No ${sport.members.toLowerCase()} yet. Add your first ${sport.member.toLowerCase()}!` : `No ${sport.members.toLowerCase()} match your filters.`}</p>
+          <p>{players.length === 0
+            ? t("noMembersYet", { members: sport.members.toLowerCase(), member: sport.member.toLowerCase() })
+            : t("noMembersMatch", { members: sport.members.toLowerCase() })}</p>
         </motion.div>
       ) : (
         <div className="space-y-2">
@@ -329,7 +334,7 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
                       </Button>
                       <DialogContent onClick={(e) => e.stopPropagation()}>
                         <DialogHeader>
-                          <DialogTitle className="text-2xl tracking-wider">Edit {sport.member}</DialogTitle>
+                          <DialogTitle className="text-2xl tracking-wider">{t("editMember", { member: sport.member })}</DialogTitle>
                         </DialogHeader>
                         {editPlayer && (
                           <PlayerForm
@@ -348,10 +353,10 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
                     {deleteConfirm === player.id ? (
                       <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
                         <Button size="sm" variant="destructive" onClick={() => { onDelete(player.id); setDeleteConfirm(null); }}>
-                          Delete
+                          {t("delete")}
                         </Button>
                         <Button size="sm" variant="ghost" onClick={() => setDeleteConfirm(null)}>
-                          No
+                          {t("no")}
                         </Button>
                       </div>
                     ) : (

@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { AlertTriangle } from "lucide-react";
 import type { Database } from "@/integrations/supabase/types";
+import { useI18n } from "@/hooks/use-i18n";
 
 type Payment = Database["public"]["Tables"]["payments"]["Row"];
 type Player = Database["public"]["Tables"]["players"]["Row"];
@@ -11,6 +12,7 @@ interface NotificationsBannerProps {
 }
 
 export function NotificationsBanner({ players, payments }: NotificationsBannerProps) {
+  const { t, monthLong } = useI18n();
   const now = new Date();
   const currentMonth = now.getMonth() + 1;
   const currentYear = now.getFullYear();
@@ -35,7 +37,7 @@ export function NotificationsBanner({ players, payments }: NotificationsBannerPr
         <AlertTriangle className="w-5 h-5 text-warning shrink-0 mt-0.5" />
         <div>
           <p className="font-semibold text-foreground text-sm">
-            Payment Due This Month ({new Date(currentYear, currentMonth - 1).toLocaleString("default", { month: "long" })})
+            {t("paymentDueThisMonth")} ({monthLong(currentMonth)})
           </p>
           <div className="mt-2 flex flex-wrap gap-2">
             {playersNeedingPayment.map((player) => (

@@ -4,11 +4,13 @@ import { Clock, CreditCard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSubscription } from "@/hooks/use-subscription";
 import { useIsAdmin } from "@/hooks/use-is-admin";
+import { useI18n } from "@/hooks/use-i18n";
 import { PaymentInfoDialog } from "./PaymentInfoDialog";
 
 export function SubscriptionBanner() {
   const { daysLeft, isActive, loading, expiresAt } = useSubscription();
   const { isAdmin } = useIsAdmin();
+  const { t } = useI18n();
   const [payOpen, setPayOpen] = useState(false);
 
   if (loading || isAdmin || !expiresAt || !isActive) return null;
@@ -30,10 +32,10 @@ export function SubscriptionBanner() {
           <Clock className={`h-5 w-5 ${isUrgent ? "text-red-500" : "text-primary"}`} />
           <div className="text-sm">
             <span className="font-semibold">
-              {daysLeft === 0 ? "ბოლო დღე" : `დარჩენილია ${daysLeft} დღე`}
+              {daysLeft === 0 ? t("lastDay") : t("daysLeft", { days: daysLeft })}
             </span>
             <span className="text-muted-foreground ml-2 hidden sm:inline">
-              · ვადა: {expiresAt.toLocaleDateString()}
+              · {t("expiresOn", { date: expiresAt.toLocaleDateString() })}
             </span>
           </div>
         </div>
@@ -43,7 +45,7 @@ export function SubscriptionBanner() {
           onClick={() => setPayOpen(true)}
         >
           <CreditCard className="h-4 w-4 mr-1.5" />
-          Pay
+          {t("pay")}
         </Button>
       </motion.div>
       <PaymentInfoDialog open={payOpen} onOpenChange={setPayOpen} />
