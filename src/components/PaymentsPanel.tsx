@@ -1,107 +1,22 @@
-import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, Pencil, Trash2, DollarSign, Calendar } from "lucide-react";
+import { DollarSign, Check, Clock, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import type { Database } from "@/integrations/supabase/types";
 import { useI18n } from "@/hooks/use-i18n";
 
 type Payment = Database["public"]["Tables"]["payments"]["Row"];
-type PaymentInsert = Database["public"]["Tables"]["payments"]["Insert"];
 type Player = Database["public"]["Tables"]["players"]["Row"];
 
 interface PaymentsPanelProps {
   player: Player;
   payments: Payment[];
   loading: boolean;
-  onAdd: (payment: PaymentInsert) => Promise<{ error: unknown }>;
+  onAdd: (payment: Database["public"]["Tables"]["payments"]["Insert"]) => Promise<{ error: unknown }>;
   onUpdate: (id: string, updates: Partial<Payment>) => Promise<{ error: unknown }>;
   onDelete: (id: string) => Promise<{ error: unknown }>;
 }
 
-function PaymentForm({ playerId, initial, onSubmit, onCancel }: {
-  playerId: string;
-  initial?: Partial<Payment>;
-  onSubmit: (data: PaymentInsert) => void;
-  onCancel: () => void;
-}) {
-  const { t, monthShort } = useI18n();
-  const now = new Date();
-  const [amount, setAmount] = useState(initial?.amount?.toString() || "");
-  const [month, setMonth] = useState((initial?.month || now.getMonth() + 1).toString());
-  const [year, setYear] = useState((initial?.year || now.getFullYear()).toString());
-  const [status, setStatus] = useState(initial?.status || "pending");
-  const [paymentDate, setPaymentDate] = useState(initial?.payment_date || "");
-  const [notes, setNotes] = useState(initial?.notes || "");
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!amount.trim()) return;
-    onSubmit({
-      player_id: playerId,
-      amount: parseFloat(amount),
-      month: parseInt(month),
-      year: parseInt(year),
-      status,
-      payment_date: paymentDate || null,
-      notes: notes.trim() || null,
-    });
-  };
-
-  return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <div>
-        <label className="text-sm text-muted-foreground mb-1 block">{t("amount")} *</label>
-        <Input type="number" step="0.01" value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="50.00" required />
-      </div>
-      <div className="grid grid-cols-2 gap-3">
-        <div>
-          <label className="text-sm text-muted-foreground mb-1 block">{t("month")}</label>
-          <Select value={month} onValueChange={setMonth}>
-            <SelectTrigger><SelectValue /></SelectTrigger>
-            <SelectContent>
-              {Array.from({ length: 12 }, (_, i) => (
-                <SelectItem key={i} value={(i + 1).toString()}>{monthShort(i + 1)}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-        <div>
-          <label className="text-sm text-muted-foreground mb-1 block">{t("year")}</label>
-          <Input type="number" value={year} onChange={(e) => setYear(e.target.value)} min={2020} max={2100} />
-        </div>
-      </div>
-      <div>
-        <label className="text-sm text-muted-foreground mb-1 block">{t("status")}</label>
-        <Select value={status} onValueChange={setStatus}>
-          <SelectTrigger><SelectValue /></SelectTrigger>
-          <SelectContent>
-            <SelectItem value="paid">{t("paid")}</SelectItem>
-            <SelectItem value="pending">{t("pending")}</SelectItem>
-            <SelectItem value="overdue">{t("overdue")}</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-      <div>
-        <label className="text-sm text-muted-foreground mb-1 block">{t("paymentDate")}</label>
-        <Input type="date" value={paymentDate} onChange={(e) => setPaymentDate(e.target.value)} />
-      </div>
-      <div>
-        <label className="text-sm text-muted-foreground mb-1 block">{t("notes")}</label>
-        <Input value={notes} onChange={(e) => setNotes(e.target.value)} placeholder={t("optionalNotes")} />
-      </div>
-      <div className="flex gap-2 pt-2">
-        <Button type="submit" className="flex-1">{initial?.id ? t("saveChanges") : t("addPayment")}</Button>
-        <Button type="button" variant="outline" onClick={onCancel}>{t("cancel")}</Button>
-      </div>
-    </form>
-  );
-}
-
-function StatusBadge({ status }: { status: string }) {
-  const { t } = useI18n();
+function StatusBadge({ status, t }: { status: string; t: ReturnType<typeof useI18n>["t"] }) {
   const styles: Record<string, string> = {
     paid: "bg-success/15 text-success",
     pending: "bg-warning/15 text-warning",
@@ -115,49 +30,55 @@ function StatusBadge({ status }: { status: string }) {
   );
 }
 
-export function PaymentsPanel({ player, payments, loading, onAdd, onUpdate, onDelete }: PaymentsPanelProps) {
+export function PaymentsPanel({ player, payments, loading, onUpdate }: PaymentsPanelProps) {
   const { t, monthShort } = useI18n();
-  const [addOpen, setAddOpen] = useState(false);
-  const [editPayment, setEditPayment] = useState<Payment | null>(null);
-  const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
 
-  const playerPayments = payments.filter((p) => p.player_id === player.id);
+  // Sort by year then month so the schedule reads top-to-bottom
+  const playerPayments = payments
+    .filter((p) => p.player_id === player.id)
+    .sort((a, b) => a.year - b.year || a.month - b.month);
+
+  const overdueCount = playerPayments.filter((p) => p.status === "overdue").length;
+
+  const dueDateFor = (payment: Payment) => {
+    const day = Math.min(player.start_day || 1, 28);
+    const d = new Date(payment.year, payment.month - 1, day);
+    return d.toLocaleDateString();
+  };
+
+  const togglePaid = async (payment: Payment) => {
+    if (payment.status === "paid") {
+      await onUpdate(payment.id, { status: "pending", payment_date: null });
+    } else {
+      await onUpdate(payment.id, {
+        status: "paid",
+        payment_date: new Date().toISOString().slice(0, 10),
+      });
+    }
+  };
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
+      <div className="flex items-start justify-between gap-3">
         <div>
-          <h2 className="text-2xl tracking-wider text-foreground">{t("payments")}</h2>
+          <h2 className="text-2xl tracking-wider text-foreground">{t("paymentSchedule")}</h2>
           <p className="text-sm text-muted-foreground">
             {player.first_name} {player.last_name} #{player.t_number}
+            {player.monthly_fee > 0 && <> · ${player.monthly_fee.toFixed(2)} / {t("month").toLowerCase()}</>}
           </p>
         </div>
-        <Dialog open={addOpen} onOpenChange={setAddOpen}>
-          <DialogTrigger asChild>
-            <Button variant="accent" size="sm">
-              <Plus className="w-4 h-4" /> {t("addPayment")}
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle className="text-2xl tracking-wider">{t("newPayment")}</DialogTitle>
-            </DialogHeader>
-            <PaymentForm
-              playerId={player.id}
-              onSubmit={async (data) => {
-                await onAdd(data);
-                setAddOpen(false);
-              }}
-              onCancel={() => setAddOpen(false)}
-            />
-          </DialogContent>
-        </Dialog>
+        {overdueCount > 0 && (
+          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-destructive/10 text-destructive text-xs font-semibold">
+            <AlertTriangle className="w-3.5 h-3.5" />
+            {t("monthsOverdue", { count: overdueCount })}
+          </div>
+        )}
       </div>
 
       {loading ? (
         <div className="space-y-3">
-          {[1, 2].map((i) => (
-            <div key={i} className="h-16 rounded-xl bg-muted animate-pulse" />
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="h-14 rounded-xl bg-muted animate-pulse" />
           ))}
         </div>
       ) : playerPayments.length === 0 ? (
@@ -172,84 +93,62 @@ export function PaymentsPanel({ player, payments, loading, onAdd, onUpdate, onDe
       ) : (
         <div className="space-y-2">
           <AnimatePresence>
-            {playerPayments.map((payment, i) => (
-              <motion.div
-                key={payment.id}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ delay: i * 0.05 }}
-                className="p-4 rounded-xl border border-border bg-card card-hover"
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center">
-                      <Calendar className="w-5 h-5 text-accent" />
+            {playerPayments.map((payment, i) => {
+              const isPaid = payment.status === "paid";
+              const isOverdue = payment.status === "overdue";
+              return (
+                <motion.div
+                  key={payment.id}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ delay: Math.min(i * 0.03, 0.3) }}
+                  className={`flex items-center justify-between gap-3 p-3 rounded-xl border ${
+                    isPaid
+                      ? "border-success/30 bg-success/5"
+                      : isOverdue
+                      ? "border-destructive/30 bg-destructive/5"
+                      : "border-border bg-card"
+                  }`}
+                >
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div
+                      className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${
+                        isPaid
+                          ? "bg-success/15 text-success"
+                          : isOverdue
+                          ? "bg-destructive/15 text-destructive"
+                          : "bg-warning/15 text-warning"
+                      }`}
+                    >
+                      {isPaid ? <Check className="w-4 h-4" /> : isOverdue ? <AlertTriangle className="w-4 h-4" /> : <Clock className="w-4 h-4" />}
                     </div>
-                    <div>
+                    <div className="min-w-0">
                       <div className="flex items-center gap-2">
                         <span className="font-semibold text-card-foreground">
-                          ${payment.amount.toFixed(2)}
+                          {monthShort(payment.month)} {payment.year}
                         </span>
-                        <StatusBadge status={payment.status} />
+                        <StatusBadge status={payment.status} t={t} />
                       </div>
-                      <p className="text-xs text-muted-foreground mt-0.5">
-                        {monthShort(payment.month)} {payment.year}
-                        {payment.payment_date && ` · ${t("paid")} ${payment.payment_date}`}
-                        {payment.notes && ` · ${payment.notes}`}
+                      <p className="text-xs text-muted-foreground truncate">
+                        ${payment.amount.toFixed(2)} ·{" "}
+                        {isPaid && payment.payment_date
+                          ? t("paidOn", { date: payment.payment_date })
+                          : t("dueOn", { date: dueDateFor(payment) })}
                       </p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-1">
-                    <Dialog open={editPayment?.id === payment.id} onOpenChange={(open) => !open && setEditPayment(null)}>
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        className="h-8 w-8"
-                        onClick={() => setEditPayment(payment)}
-                      >
-                        <Pencil className="w-3.5 h-3.5" />
-                      </Button>
-                      <DialogContent>
-                        <DialogHeader>
-                          <DialogTitle className="text-2xl tracking-wider">{t("editPayment")}</DialogTitle>
-                        </DialogHeader>
-                        {editPayment && (
-                          <PaymentForm
-                            playerId={player.id}
-                            initial={editPayment}
-                            onSubmit={async (data) => {
-                              await onUpdate(editPayment.id, data);
-                              setEditPayment(null);
-                            }}
-                            onCancel={() => setEditPayment(null)}
-                          />
-                        )}
-                      </DialogContent>
-                    </Dialog>
-                    {deleteConfirm === payment.id ? (
-                      <div className="flex items-center gap-1">
-                        <Button size="sm" variant="destructive" onClick={() => { onDelete(payment.id); setDeleteConfirm(null); }}>
-                          {t("delete")}
-                        </Button>
-                        <Button size="sm" variant="ghost" onClick={() => setDeleteConfirm(null)}>
-                          {t("no")}
-                        </Button>
-                      </div>
-                    ) : (
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        className="h-8 w-8 text-muted-foreground hover:text-destructive"
-                        onClick={() => setDeleteConfirm(payment.id)}
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </Button>
-                    )}
-                  </div>
-                </div>
-              </motion.div>
-            ))}
+                  <Button
+                    size="sm"
+                    variant={isPaid ? "outline" : "default"}
+                    onClick={() => togglePaid(payment)}
+                    className="shrink-0"
+                  >
+                    {isPaid ? t("markPending") : t("markPaid")}
+                  </Button>
+                </motion.div>
+              );
+            })}
           </AnimatePresence>
         </div>
       )}

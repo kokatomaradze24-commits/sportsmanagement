@@ -13,7 +13,7 @@ import { useI18n } from "@/hooks/use-i18n";
 
 type Player = Database["public"]["Tables"]["players"]["Row"];
 type Payment = Database["public"]["Tables"]["payments"]["Row"];
-type PlayerInsert = Database["public"]["Tables"]["players"]["Insert"];
+type PlayerInsert = Database["public"]["Tables"]["players"]["Insert"] & { firstMonthPaid?: boolean };
 
 type PaymentFilter = "all" | "paid" | "pending" | "overdue";
 
@@ -35,27 +35,44 @@ function PlayerForm({ initial, sport, onSubmit, onCancel }: {
   onSubmit: (data: PlayerInsert) => void;
   onCancel: () => void;
 }) {
-  const { t } = useI18n();
+  const { t, monthShort } = useI18n();
+  const isEdit = !!initial?.id;
+  const now = new Date();
   const [firstName, setFirstName] = useState(initial?.first_name || "");
   const [lastName, setLastName] = useState(initial?.last_name || "");
   const [tNumber, setTNumber] = useState(initial?.t_number?.toString() || "");
   const [phone, setPhone] = useState(initial?.phone || "");
   const [email, setEmail] = useState(initial?.email || "");
 
+  // Subscription fields (only used when creating)
+  const [monthlyFee, setMonthlyFee] = useState(initial?.monthly_fee?.toString() || "50");
+  const [months, setMonths] = useState((initial?.subscription_months || 12).toString());
+  const [startMonth, setStartMonth] = useState((initial?.start_month || now.getMonth() + 1).toString());
+  const [firstMonthPaid, setFirstMonthPaid] = useState(false);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!firstName.trim() || !lastName.trim() || !tNumber.trim()) return;
-    onSubmit({
+    const base: PlayerInsert = {
       first_name: firstName.trim(),
       last_name: lastName.trim(),
       t_number: parseInt(tNumber),
       phone: phone.trim() || null,
       email: email.trim() || null,
-    });
+    };
+    if (!isEdit) {
+      base.monthly_fee = parseFloat(monthlyFee) || 0;
+      base.subscription_months = parseInt(months);
+      base.start_month = parseInt(startMonth);
+      base.start_year = now.getFullYear();
+      base.start_day = now.getDate();
+      base.firstMonthPaid = firstMonthPaid;
+    }
+    onSubmit(base);
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-4 max-h-[70vh] overflow-y-auto pr-1">
       <div className="grid grid-cols-2 gap-3">
         <div>
           <label className="text-sm text-muted-foreground mb-1 block">{t("firstName")} *</label>
@@ -78,8 +95,52 @@ function PlayerForm({ initial, sport, onSubmit, onCancel }: {
         <label className="text-sm text-muted-foreground mb-1 block">{t("email")}</label>
         <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="john@example.com" />
       </div>
+
+      {!isEdit && (
+        <div className="rounded-xl border border-border bg-muted/30 p-4 space-y-3">
+          <div className="text-sm font-semibold text-foreground">{t("subscription")}</div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="text-sm text-muted-foreground mb-1 block">{t("monthlyFee")} *</label>
+              <Input type="number" step="0.01" min={0} value={monthlyFee} onChange={(e) => setMonthlyFee(e.target.value)} placeholder="50.00" required />
+            </div>
+            <div>
+              <label className="text-sm text-muted-foreground mb-1 block">{t("durationMonths")} *</label>
+              <Select value={months} onValueChange={setMonths}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {Array.from({ length: 12 }, (_, i) => {
+                    const n = i + 1;
+                    return (
+                      <SelectItem key={n} value={n.toString()}>
+                        {t(n === 1 ? "monthLabel" : "monthsLabel", { count: n })}
+                      </SelectItem>
+                    );
+                  })}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <div>
+            <label className="text-sm text-muted-foreground mb-1 block">{t("startMonth")}</label>
+            <Select value={startMonth} onValueChange={setStartMonth}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                {Array.from({ length: 12 }, (_, i) => (
+                  <SelectItem key={i} value={(i + 1).toString()}>{monthShort(i + 1)} {now.getFullYear()}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <label className="flex items-center gap-2 cursor-pointer select-none pt-1">
+            <Checkbox checked={firstMonthPaid} onCheckedChange={(v) => setFirstMonthPaid(!!v)} />
+            <span className="text-sm text-foreground">{t("firstMonthPaid")}</span>
+          </label>
+        </div>
+      )}
+
       <div className="flex gap-2 pt-2">
-        <Button type="submit" className="flex-1">{initial?.id ? t("saveChanges") : t("addMember", { member: sport.member })}</Button>
+        <Button type="submit" className="flex-1">{isEdit ? t("saveChanges") : t("addMember", { member: sport.member })}</Button>
         <Button type="button" variant="outline" onClick={onCancel}>{t("cancel")}</Button>
       </div>
     </form>
