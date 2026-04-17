@@ -108,12 +108,13 @@ export function PaymentsPanel({ player, payments, loading, onUpdate }: PaymentsP
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -8 }}
                   transition={{ delay: Math.min(i * 0.03, 0.3) }}
-                  className={`flex items-center justify-between gap-3 p-3 rounded-xl border ${
+                  whileHover={{ scale: 1.015 }}
+                  className={`flex items-center justify-between gap-3 p-3 rounded-xl border transition-colors ${
                     isPaid
-                      ? "border-success/30 bg-success/5"
+                      ? "border-success/30 bg-success/5 hover:bg-success/10"
                       : isOverdue
-                      ? "border-destructive/30 bg-destructive/5"
-                      : "border-border bg-card"
+                      ? "border-destructive/30 bg-destructive/5 hover:bg-destructive/10"
+                      : "border-border bg-card hover:border-primary/30 hover:bg-primary/5"
                   }`}
                 >
                   <div className="flex items-center gap-3 min-w-0">
