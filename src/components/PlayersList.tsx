@@ -98,11 +98,23 @@ function PlayerForm({ initial, sport, onSubmit, onCancel }: {
       </div>
       <div>
         <label className="text-sm text-muted-foreground mb-1 block">{t("phone")}</label>
-        <Input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+1 234 567 890" />
+        <Input
+          type="tel"
+          inputMode="tel"
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
+          placeholder={`${dial.flag} ${dial.code} ${dial.sample}`}
+        />
       </div>
       <div>
         <label className="text-sm text-muted-foreground mb-1 block">{t("parentPhone")}</label>
-        <Input value={parentPhone} onChange={(e) => setParentPhone(e.target.value)} placeholder="+995 5xx xxx xxx" />
+        <Input
+          type="tel"
+          inputMode="tel"
+          value={parentPhone}
+          onChange={(e) => setParentPhone(e.target.value)}
+          placeholder={`${dial.flag} ${dial.code} ${dial.sample}`}
+        />
       </div>
       <div>
         <label className="text-sm text-muted-foreground mb-1 block">{t("email")}</label>
