@@ -48,15 +48,13 @@ function Index() {
     setSelectedPlayer(null);
   }, [sportId]);
 
-  // Existing users (account older than 2 minutes, or already have a sport) shouldn't
-  // see the picker or tutorial. Silently mark them onboarded + tutorial-completed.
+  // Existing users who already have a sport shouldn't see the picker or tutorial.
+  // Silently mark them onboarded + tutorial-completed.
+  // Users without a sport will see the picker until they pick one (regardless of age).
   useEffect(() => {
     if (settingsLoading || onboardingLoading || !user) return;
-    if (onboarded) return;
-    const accountAgeMs = Date.now() - new Date(user.created_at).getTime();
-    const isBrandNew = accountAgeMs < 2 * 60 * 1000;
-    if (sportId || !isBrandNew) {
-      markOnboarded();
+    if (sportId && (!onboarded || !tutorialDone)) {
+      if (!onboarded) markOnboarded();
       if (!tutorialDone) markTutorialDone();
     }
   }, [settingsLoading, onboardingLoading, user, sportId, onboarded, tutorialDone, markOnboarded, markTutorialDone]);
