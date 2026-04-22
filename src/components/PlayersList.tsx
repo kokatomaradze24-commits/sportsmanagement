@@ -16,6 +16,7 @@ import { useAppSettings } from "@/hooks/use-app-settings";
 import { useAuth } from "@/hooks/use-auth";
 import { sendEventSms } from "@/lib/notifications";
 import { getDialCodeForLanguage, prefillPhone } from "@/lib/phone-codes";
+import { PhoneInput } from "@/components/PhoneInput";
 
 type Player = Database["public"]["Tables"]["players"]["Row"];
 type Payment = Database["public"]["Tables"]["payments"]["Row"];
@@ -129,22 +130,18 @@ function PlayerForm({ initial, sport, onSubmit, onCancel }: {
       </div>
       <div>
         <label className="text-sm text-muted-foreground mb-1 block">{t("phone")}</label>
-        <Input
-          type="tel"
-          inputMode="tel"
+        <PhoneInput
           value={phone}
-          onChange={(e) => setPhone(e.target.value)}
-          placeholder={`${dial.flag} ${dial.code} ${dial.sample}`}
+          onChange={setPhone}
+          placeholder={dial.sample}
         />
       </div>
       <div>
         <label className="text-sm text-muted-foreground mb-1 block">{t("parentPhone")}</label>
-        <Input
-          type="tel"
-          inputMode="tel"
+        <PhoneInput
           value={parentPhone}
-          onChange={(e) => setParentPhone(e.target.value)}
-          placeholder={`${dial.flag} ${dial.code} ${dial.sample}`}
+          onChange={setParentPhone}
+          placeholder={dial.sample}
         />
       </div>
       <div>
