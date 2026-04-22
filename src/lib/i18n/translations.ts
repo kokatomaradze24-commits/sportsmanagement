@@ -296,6 +296,29 @@ export const translations = {
     partiallyPaid: "Partially paid",
     notPaid: "Not paid",
     create: "Create",
+
+    // Teams
+    teams: "Teams",
+    addTeam: "Add team",
+    addTeamDesc: "Create a team to group players (e.g. by age).",
+    editTeam: "Edit team",
+    deleteTeamTitle: "Delete this team?",
+    deleteTeamDesc: "The team will be removed. Players themselves are not deleted.",
+    teamName: "Team name",
+    teamNamePlaceholder: "e.g. U-14 Boys",
+    teamAgeGroup: "Age group",
+    teamAgeGroupPlaceholder: "e.g. U-14, 2010-2011",
+    teamNotesPlaceholder: "Coach, schedule, notes…",
+    noTeamsYet: "No teams yet",
+    noTeamsHint: "Create a team to start grouping players.",
+    members: "members",
+    manageRoster: "Manage roster",
+    manageRosterDesc: "Selected: {count}. Tap a player to add or remove.",
+    searchPlayers: "Search players…",
+    noResults: "No results",
+    noPlayersYet: "No players in the database yet",
+    noMembersInTeam: "No players in this team yet",
+    removeFromTeam: "Remove from team",
   },
 
   de: {
@@ -445,6 +468,17 @@ export const translations = {
     "sport.fitness.name": "Fitness", "sport.fitness.member": "Mitglied", "sport.fitness.members": "Mitglieder", "sport.fitness.numberLabel": "Mitgliedsnr.", "sport.fitness.eventSingular": "Einheit", "sport.fitness.eventPlural": "Einheiten",
     "sport.swimming.name": "Schwimmen", "sport.swimming.member": "Athlet", "sport.swimming.members": "Athleten", "sport.swimming.numberLabel": "Bahn-Nr.", "sport.swimming.eventSingular": "Wettkampf", "sport.swimming.eventPlural": "Wettkämpfe",
     "sport.mma.name": "MMA", "sport.mma.member": "Kämpfer", "sport.mma.members": "Kämpfer", "sport.mma.numberLabel": "Gewichtsklasse", "sport.mma.eventSingular": "Kampf", "sport.mma.eventPlural": "Kämpfe",
+
+    teams: "Teams", addTeam: "Team hinzufügen", addTeamDesc: "Erstelle ein Team, um Spieler zu gruppieren (z. B. nach Alter).",
+    editTeam: "Team bearbeiten", deleteTeamTitle: "Team löschen?", deleteTeamDesc: "Das Team wird entfernt. Spieler selbst werden nicht gelöscht.",
+    teamName: "Teamname", teamNamePlaceholder: "z. B. U-14 Jungen", teamAgeGroup: "Altersgruppe",
+    teamAgeGroupPlaceholder: "z. B. U-14, 2010-2011", teamNotesPlaceholder: "Trainer, Zeitplan, Notizen…",
+    noTeamsYet: "Noch keine Teams", noTeamsHint: "Erstelle ein Team, um Spieler zu gruppieren.",
+    members: "Mitglieder", manageRoster: "Kader verwalten",
+    manageRosterDesc: "Ausgewählt: {count}. Tippe einen Spieler an, um ihn hinzuzufügen oder zu entfernen.",
+    searchPlayers: "Spieler suchen…", noResults: "Keine Ergebnisse",
+    noPlayersYet: "Noch keine Spieler in der Datenbank", noMembersInTeam: "Noch keine Spieler in diesem Team",
+    removeFromTeam: "Aus Team entfernen",
   },
 
   es: {
@@ -594,6 +628,17 @@ export const translations = {
     "sport.fitness.name": "Fitness", "sport.fitness.member": "Miembro", "sport.fitness.members": "Miembros", "sport.fitness.numberLabel": "N.º Miembro", "sport.fitness.eventSingular": "Sesión", "sport.fitness.eventPlural": "Sesiones",
     "sport.swimming.name": "Natación", "sport.swimming.member": "Atleta", "sport.swimming.members": "Atletas", "sport.swimming.numberLabel": "Carril", "sport.swimming.eventSingular": "Competencia", "sport.swimming.eventPlural": "Competencias",
     "sport.mma.name": "MMA", "sport.mma.member": "Luchador", "sport.mma.members": "Luchadores", "sport.mma.numberLabel": "Categoría", "sport.mma.eventSingular": "Combate", "sport.mma.eventPlural": "Combates",
+
+    teams: "Equipos", addTeam: "Añadir equipo", addTeamDesc: "Crea un equipo para agrupar jugadores (p. ej. por edad).",
+    editTeam: "Editar equipo", deleteTeamTitle: "¿Eliminar este equipo?", deleteTeamDesc: "Se eliminará el equipo. Los jugadores no se borran.",
+    teamName: "Nombre del equipo", teamNamePlaceholder: "p. ej. Sub-14 Masculino", teamAgeGroup: "Categoría de edad",
+    teamAgeGroupPlaceholder: "p. ej. Sub-14, 2010-2011", teamNotesPlaceholder: "Entrenador, horario, notas…",
+    noTeamsYet: "Aún no hay equipos", noTeamsHint: "Crea un equipo para agrupar jugadores.",
+    members: "miembros", manageRoster: "Gestionar plantilla",
+    manageRosterDesc: "Seleccionados: {count}. Toca un jugador para añadir o quitar.",
+    searchPlayers: "Buscar jugadores…", noResults: "Sin resultados",
+    noPlayersYet: "Aún no hay jugadores en la base de datos", noMembersInTeam: "Aún no hay jugadores en este equipo",
+    removeFromTeam: "Quitar del equipo",
   },
 
   fr: {
@@ -743,6 +788,17 @@ export const translations = {
     "sport.fitness.name": "Fitness", "sport.fitness.member": "Membre", "sport.fitness.members": "Membres", "sport.fitness.numberLabel": "N° Membre", "sport.fitness.eventSingular": "Séance", "sport.fitness.eventPlural": "Séances",
     "sport.swimming.name": "Natation", "sport.swimming.member": "Athlète", "sport.swimming.members": "Athlètes", "sport.swimming.numberLabel": "Couloir", "sport.swimming.eventSingular": "Compétition", "sport.swimming.eventPlural": "Compétitions",
     "sport.mma.name": "MMA", "sport.mma.member": "Combattant", "sport.mma.members": "Combattants", "sport.mma.numberLabel": "Catégorie", "sport.mma.eventSingular": "Combat", "sport.mma.eventPlural": "Combats",
+
+    teams: "Équipes", addTeam: "Ajouter une équipe", addTeamDesc: "Créez une équipe pour regrouper les joueurs (p. ex. par âge).",
+    editTeam: "Modifier l'équipe", deleteTeamTitle: "Supprimer cette équipe ?", deleteTeamDesc: "L'équipe sera supprimée. Les joueurs ne sont pas supprimés.",
+    teamName: "Nom de l'équipe", teamNamePlaceholder: "p. ex. U-14 Garçons", teamAgeGroup: "Catégorie d'âge",
+    teamAgeGroupPlaceholder: "p. ex. U-14, 2010-2011", teamNotesPlaceholder: "Entraîneur, horaire, notes…",
+    noTeamsYet: "Aucune équipe pour l'instant", noTeamsHint: "Créez une équipe pour regrouper les joueurs.",
+    members: "membres", manageRoster: "Gérer l'effectif",
+    manageRosterDesc: "Sélectionnés : {count}. Appuyez sur un joueur pour l'ajouter ou le retirer.",
+    searchPlayers: "Rechercher des joueurs…", noResults: "Aucun résultat",
+    noPlayersYet: "Aucun joueur dans la base", noMembersInTeam: "Aucun joueur dans cette équipe",
+    removeFromTeam: "Retirer de l'équipe",
   },
 
   ka: {
@@ -944,6 +1000,17 @@ export const translations = {
     partiallyPaid: "ნაწილობრივ გადახდილი",
     notPaid: "გადაუხდელი",
     create: "შექმნა",
+
+    teams: "გუნდები", addTeam: "გუნდის დამატება", addTeamDesc: "შექმენი გუნდი მოთამაშეების დასაჯგუფებლად (მაგ. ასაკის მიხედვით).",
+    editTeam: "გუნდის რედაქტირება", deleteTeamTitle: "წაიშალოს გუნდი?", deleteTeamDesc: "გუნდი წაიშლება. თვითონ მოთამაშეები არ წაიშლება.",
+    teamName: "გუნდის სახელი", teamNamePlaceholder: "მაგ: U-14 ბიჭები", teamAgeGroup: "ასაკობრივი ჯგუფი",
+    teamAgeGroupPlaceholder: "მაგ: U-14, 2010-2011", teamNotesPlaceholder: "მწვრთნელი, განრიგი, შენიშვნები…",
+    noTeamsYet: "გუნდები ჯერ არ გაქვს", noTeamsHint: "შექმენი გუნდი მოთამაშეების დასაჯგუფებლად.",
+    members: "მოთამაშე", manageRoster: "შემადგენლობის მართვა",
+    manageRosterDesc: "მონიშნულია: {count}. მოთამაშეზე დაწკაპუნებით დაამატე ან ამოიღე.",
+    searchPlayers: "მოთამაშეების ძიება…", noResults: "შედეგები არ მოიძებნა",
+    noPlayersYet: "ბაზაში მოთამაშე ჯერ არ არის", noMembersInTeam: "ამ გუნდში ჯერ არცერთი მოთამაშე არ არის",
+    removeFromTeam: "გუნდიდან ამოღება",
   },
 
   ru: {
@@ -1093,5 +1160,16 @@ export const translations = {
     "sport.fitness.name": "Фитнес", "sport.fitness.member": "Участник", "sport.fitness.members": "Участники", "sport.fitness.numberLabel": "№ участника", "sport.fitness.eventSingular": "Тренировка", "sport.fitness.eventPlural": "Тренировки",
     "sport.swimming.name": "Плавание", "sport.swimming.member": "Спортсмен", "sport.swimming.members": "Спортсмены", "sport.swimming.numberLabel": "Дорожка", "sport.swimming.eventSingular": "Заплыв", "sport.swimming.eventPlural": "Заплывы",
     "sport.mma.name": "MMA", "sport.mma.member": "Боец", "sport.mma.members": "Бойцы", "sport.mma.numberLabel": "Весовая кат.", "sport.mma.eventSingular": "Бой", "sport.mma.eventPlural": "Бои",
+
+    teams: "Команды", addTeam: "Добавить команду", addTeamDesc: "Создайте команду, чтобы группировать игроков (напр. по возрасту).",
+    editTeam: "Редактировать команду", deleteTeamTitle: "Удалить команду?", deleteTeamDesc: "Команда будет удалена. Сами игроки не удаляются.",
+    teamName: "Название команды", teamNamePlaceholder: "напр. U-14 Юноши", teamAgeGroup: "Возрастная группа",
+    teamAgeGroupPlaceholder: "напр. U-14, 2010-2011", teamNotesPlaceholder: "Тренер, расписание, заметки…",
+    noTeamsYet: "Команд пока нет", noTeamsHint: "Создайте команду, чтобы группировать игроков.",
+    members: "игроков", manageRoster: "Управление составом",
+    manageRosterDesc: "Выбрано: {count}. Нажмите на игрока, чтобы добавить или убрать.",
+    searchPlayers: "Поиск игроков…", noResults: "Ничего не найдено",
+    noPlayersYet: "В базе пока нет игроков", noMembersInTeam: "В этой команде пока нет игроков",
+    removeFromTeam: "Убрать из команды",
   },
 } as const;
