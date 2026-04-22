@@ -468,6 +468,17 @@ export const translations = {
     "sport.fitness.name": "Fitness", "sport.fitness.member": "Mitglied", "sport.fitness.members": "Mitglieder", "sport.fitness.numberLabel": "Mitgliedsnr.", "sport.fitness.eventSingular": "Einheit", "sport.fitness.eventPlural": "Einheiten",
     "sport.swimming.name": "Schwimmen", "sport.swimming.member": "Athlet", "sport.swimming.members": "Athleten", "sport.swimming.numberLabel": "Bahn-Nr.", "sport.swimming.eventSingular": "Wettkampf", "sport.swimming.eventPlural": "Wettkämpfe",
     "sport.mma.name": "MMA", "sport.mma.member": "Kämpfer", "sport.mma.members": "Kämpfer", "sport.mma.numberLabel": "Gewichtsklasse", "sport.mma.eventSingular": "Kampf", "sport.mma.eventPlural": "Kämpfe",
+
+    teams: "Teams", addTeam: "Team hinzufügen", addTeamDesc: "Erstelle ein Team, um Spieler zu gruppieren (z. B. nach Alter).",
+    editTeam: "Team bearbeiten", deleteTeamTitle: "Team löschen?", deleteTeamDesc: "Das Team wird entfernt. Spieler selbst werden nicht gelöscht.",
+    teamName: "Teamname", teamNamePlaceholder: "z. B. U-14 Jungen", teamAgeGroup: "Altersgruppe",
+    teamAgeGroupPlaceholder: "z. B. U-14, 2010-2011", teamNotesPlaceholder: "Trainer, Zeitplan, Notizen…",
+    noTeamsYet: "Noch keine Teams", noTeamsHint: "Erstelle ein Team, um Spieler zu gruppieren.",
+    members: "Mitglieder", manageRoster: "Kader verwalten",
+    manageRosterDesc: "Ausgewählt: {count}. Tippe einen Spieler an, um ihn hinzuzufügen oder zu entfernen.",
+    searchPlayers: "Spieler suchen…", noResults: "Keine Ergebnisse",
+    noPlayersYet: "Noch keine Spieler in der Datenbank", noMembersInTeam: "Noch keine Spieler in diesem Team",
+    removeFromTeam: "Aus Team entfernen",
   },
 
   es: {
