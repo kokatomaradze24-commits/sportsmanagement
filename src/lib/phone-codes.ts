@@ -23,8 +23,34 @@ const DIAL_CODES: Record<LanguageCode, DialCodeInfo> = {
   ru: { code: "+7", flag: "🇷🇺", country: "Russia", sample: "9xx xxx xx xx" },
 };
 
+/**
+ * The full list of countries shown in the phone country picker.
+ * Includes one entry per supported UI language plus the USA.
+ */
+export const PHONE_COUNTRIES: DialCodeInfo[] = [
+  { code: "+995", flag: "🇬🇪", country: "Georgia", sample: "5xx xxx xxx" },
+  { code: "+1", flag: "🇺🇸", country: "United States", sample: "xxx xxx xxxx" },
+  { code: "+44", flag: "🇬🇧", country: "United Kingdom", sample: "7xxx xxx xxx" },
+  { code: "+49", flag: "🇩🇪", country: "Germany", sample: "1xx xxxxxxx" },
+  { code: "+34", flag: "🇪🇸", country: "Spain", sample: "6xx xxx xxx" },
+  { code: "+33", flag: "🇫🇷", country: "France", sample: "6 xx xx xx xx" },
+  { code: "+7", flag: "🇷🇺", country: "Russia", sample: "9xx xxx xx xx" },
+];
+
 export function getDialCodeForLanguage(lang: LanguageCode): DialCodeInfo {
   return DIAL_CODES[lang] ?? DIAL_CODES.en;
+}
+
+/**
+ * Find the country entry that matches a phone number's leading dial code.
+ * Returns null if no known country prefix matches.
+ */
+export function findCountryByPhone(phone: string | null | undefined): DialCodeInfo | null {
+  const v = (phone ?? "").trim().replace(/\s+/g, "");
+  if (!v.startsWith("+")) return null;
+  // Sort longest first so "+995" wins over "+9"
+  const sorted = [...PHONE_COUNTRIES].sort((a, b) => b.code.length - a.code.length);
+  return sorted.find((c) => v.startsWith(c.code)) ?? null;
 }
 
 /**
