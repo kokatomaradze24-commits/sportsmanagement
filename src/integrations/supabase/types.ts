@@ -205,6 +205,78 @@ export type Database = {
         }
         Relationships: []
       }
+      team_members: {
+        Row: {
+          created_at: string
+          id: string
+          player_id: string
+          team_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          player_id: string
+          team_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          player_id?: string
+          team_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "team_members_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "team_members_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      teams: {
+        Row: {
+          age_group: string | null
+          created_at: string
+          id: string
+          name: string
+          notes: string | null
+          sport: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          age_group?: string | null
+          created_at?: string
+          id?: string
+          name: string
+          notes?: string | null
+          sport?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          age_group?: string | null
+          created_at?: string
+          id?: string
+          name?: string
+          notes?: string | null
+          sport?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       trip_participants: {
         Row: {
           created_at: string
