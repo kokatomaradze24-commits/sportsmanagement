@@ -9,6 +9,8 @@ import { SubscriptionBanner } from "@/components/SubscriptionBanner";
 import { SubscriptionExpired } from "@/components/SubscriptionExpired";
 import { OnboardingTutorial } from "@/components/OnboardingTutorial";
 import { TripsPanel } from "@/components/TripsPanel";
+import { TeamsPanel } from "@/components/TeamsPanel";
+import { useTeams } from "@/hooks/use-teams";
 import { useTheme } from "@/hooks/use-theme";
 import { useAppSettings } from "@/hooks/use-app-settings";
 import { useSport } from "@/hooks/use-sport";
@@ -45,6 +47,7 @@ function Index() {
   const { payments, loading: paymentsLoading, addPayment, updatePayment, deletePayment, refetch: refetchPayments } = usePayments(sportId);
   const { players, loading: playersLoading, addPlayer, updatePlayer, deletePlayer } = usePlayers(sportId, refetchPayments);
   const trips = useTrips(sportId);
+  const teamsHook = useTeams(sportId);
   const { isActive: subActive, loading: subLoading } = useSubscription();
   const { loading: onboardingLoading, onboarded, tutorialDone, markOnboarded, markTutorialDone } = useOnboarding();
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
@@ -175,6 +178,17 @@ function Index() {
               )}
             </div>
           </div>
+
+          <TeamsPanel
+            teams={teamsHook.teams}
+            members={teamsHook.members}
+            players={players}
+            loading={teamsHook.loading}
+            onAddTeam={teamsHook.addTeam}
+            onUpdateTeam={teamsHook.updateTeam}
+            onDeleteTeam={teamsHook.deleteTeam}
+            onSetRoster={teamsHook.setTeamRoster}
+          />
 
           <TripsPanel
             trips={trips.trips}
