@@ -170,7 +170,8 @@ export const Route = createFileRoute("/login")({
 
 function LoginPage() {
   const navigate = useNavigate();
-  const { t } = useI18n();
+  const { t, language } = useI18n();
+  const copy = MARKETING[language] ?? MARKETING.en;
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
