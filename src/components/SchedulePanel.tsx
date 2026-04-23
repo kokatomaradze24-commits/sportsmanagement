@@ -79,7 +79,7 @@ export function SchedulePanel({ sportId }: Props) {
                   location={p.location}
                   notes={p.notes}
                   onEdit={() => setEditing({ kind: "practice", row: p })}
-                  onDelete={() => sched.deletePractice(p.id).then(() => toast.success("Deleted"))}
+                  onDelete={async () => { await sched.deletePractice(p.id); toast.success("Deleted"); }}
                 />
               ))}
             </div>
@@ -109,7 +109,7 @@ export function SchedulePanel({ sportId }: Props) {
                   notes={g.notes}
                   extra={g.opponent ? `vs ${g.opponent}` : undefined}
                   onEdit={() => setEditing({ kind: "game", row: g })}
-                  onDelete={() => sched.deleteGame(g.id).then(() => toast.success("Deleted"))}
+                  onDelete={async () => { await sched.deleteGame(g.id); toast.success("Deleted"); }}
                 />
               ))}
             </div>
