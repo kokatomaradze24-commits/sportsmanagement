@@ -10,6 +10,8 @@ import { SubscriptionExpired } from "@/components/SubscriptionExpired";
 import { OnboardingTutorial } from "@/components/OnboardingTutorial";
 import { TripsPanel } from "@/components/TripsPanel";
 import { TeamsPanel } from "@/components/TeamsPanel";
+import { CoachesPanel } from "@/components/CoachesPanel";
+import { SchedulePanel } from "@/components/SchedulePanel";
 import { useTeams } from "@/hooks/use-teams";
 import { useTheme } from "@/hooks/use-theme";
 import { useAppSettings } from "@/hooks/use-app-settings";
@@ -189,6 +191,10 @@ function Index() {
             onDeleteTeam={teamsHook.deleteTeam}
             onSetRoster={teamsHook.setTeamRoster}
           />
+
+          <SchedulePanel sportId={sportId} />
+
+          <CoachesPanel sportId={sportId} clubName={schoolName} />
 
           <TripsPanel
             trips={trips.trips}
