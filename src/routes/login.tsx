@@ -432,7 +432,7 @@ function LoginPage() {
               className="w-full h-12 bg-white/[0.03] border-white/15 text-white hover:bg-white/[0.08] hover:text-white"
             >
               <ShieldCheck className="w-5 h-5 mr-2 text-emerald-300" />
-              Sign in as a coach
+              {copy.coachLink}
             </Button>
           </Link>
 
