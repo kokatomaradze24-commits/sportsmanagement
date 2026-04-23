@@ -13,6 +13,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as HooksSendPaymentSmsRouteImport } from './routes/hooks/send-payment-sms'
+import { Route as ApiCoachScheduleRouteImport } from './routes/api/coach/schedule'
 import { Route as ApiCoachResetPasswordRouteImport } from './routes/api/coach/reset-password'
 import { Route as ApiCoachRegisterRouteImport } from './routes/api/coach/register'
 import { Route as ApiCoachLoginRouteImport } from './routes/api/coach/login'
@@ -35,6 +36,11 @@ const IndexRoute = IndexRouteImport.update({
 const HooksSendPaymentSmsRoute = HooksSendPaymentSmsRouteImport.update({
   id: '/hooks/send-payment-sms',
   path: '/hooks/send-payment-sms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiCoachScheduleRoute = ApiCoachScheduleRouteImport.update({
+  id: '/api/coach/schedule',
+  path: '/api/coach/schedule',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiCoachResetPasswordRoute = ApiCoachResetPasswordRouteImport.update({
@@ -61,6 +67,7 @@ export interface FileRoutesByFullPath {
   '/api/coach/login': typeof ApiCoachLoginRoute
   '/api/coach/register': typeof ApiCoachRegisterRoute
   '/api/coach/reset-password': typeof ApiCoachResetPasswordRoute
+  '/api/coach/schedule': typeof ApiCoachScheduleRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -70,6 +77,7 @@ export interface FileRoutesByTo {
   '/api/coach/login': typeof ApiCoachLoginRoute
   '/api/coach/register': typeof ApiCoachRegisterRoute
   '/api/coach/reset-password': typeof ApiCoachResetPasswordRoute
+  '/api/coach/schedule': typeof ApiCoachScheduleRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -80,6 +88,7 @@ export interface FileRoutesById {
   '/api/coach/login': typeof ApiCoachLoginRoute
   '/api/coach/register': typeof ApiCoachRegisterRoute
   '/api/coach/reset-password': typeof ApiCoachResetPasswordRoute
+  '/api/coach/schedule': typeof ApiCoachScheduleRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -91,6 +100,7 @@ export interface FileRouteTypes {
     | '/api/coach/login'
     | '/api/coach/register'
     | '/api/coach/reset-password'
+    | '/api/coach/schedule'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -100,6 +110,7 @@ export interface FileRouteTypes {
     | '/api/coach/login'
     | '/api/coach/register'
     | '/api/coach/reset-password'
+    | '/api/coach/schedule'
   id:
     | '__root__'
     | '/'
@@ -109,6 +120,7 @@ export interface FileRouteTypes {
     | '/api/coach/login'
     | '/api/coach/register'
     | '/api/coach/reset-password'
+    | '/api/coach/schedule'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -119,6 +131,7 @@ export interface RootRouteChildren {
   ApiCoachLoginRoute: typeof ApiCoachLoginRoute
   ApiCoachRegisterRoute: typeof ApiCoachRegisterRoute
   ApiCoachResetPasswordRoute: typeof ApiCoachResetPasswordRoute
+  ApiCoachScheduleRoute: typeof ApiCoachScheduleRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -149,6 +162,13 @@ declare module '@tanstack/react-router' {
       path: '/hooks/send-payment-sms'
       fullPath: '/hooks/send-payment-sms'
       preLoaderRoute: typeof HooksSendPaymentSmsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/coach/schedule': {
+      id: '/api/coach/schedule'
+      path: '/api/coach/schedule'
+      fullPath: '/api/coach/schedule'
+      preLoaderRoute: typeof ApiCoachScheduleRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/coach/reset-password': {
@@ -183,6 +203,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiCoachLoginRoute: ApiCoachLoginRoute,
   ApiCoachRegisterRoute: ApiCoachRegisterRoute,
   ApiCoachResetPasswordRoute: ApiCoachResetPasswordRoute,
+  ApiCoachScheduleRoute: ApiCoachScheduleRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
