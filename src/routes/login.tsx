@@ -1,7 +1,7 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Trophy } from "lucide-react";
+import { Trophy, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { lovable } from "@/integrations/lovable/index";
 import { supabase } from "@/integrations/supabase/client";
@@ -200,6 +200,26 @@ function LoginPage() {
             </svg>
             {loading ? t("signingIn") : t("continueWithGoogle")}
           </Button>
+
+          <div className="relative my-2">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t border-white/10" />
+            </div>
+            <div className="relative flex justify-center text-xs">
+              <span className="bg-transparent px-2 text-slate-500">or</span>
+            </div>
+          </div>
+
+          <Link to="/coach-login" className="block">
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full h-12 bg-white/[0.03] border-white/15 text-white hover:bg-white/[0.08] hover:text-white"
+            >
+              <ShieldCheck className="w-5 h-5 mr-2 text-emerald-300" />
+              Sign in as a coach
+            </Button>
+          </Link>
 
           <p className="text-xs text-center text-slate-500 pt-2">
             {t("bySigningIn")}
