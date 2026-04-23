@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Whistle } from "lucide-react";
+import { ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -73,7 +73,7 @@ function CoachLoginPage() {
       >
         <div className="text-center mb-6">
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-400 to-teal-600 shadow-lg shadow-emerald-500/30 mb-4">
-            <Whistle className="w-8 h-8 text-white" strokeWidth={2.5} />
+            <ShieldCheck className="w-8 h-8 text-white" strokeWidth={2.5} />
           </div>
           <h1 className="text-3xl font-display tracking-wide text-white">Coach Sign In</h1>
           <p className="text-sm text-slate-400 mt-1">Sign in with the credentials your club gave you</p>
