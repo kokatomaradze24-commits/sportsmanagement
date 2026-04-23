@@ -10,6 +10,8 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as CoachLoginRouteImport } from './routes/coach-login'
+import { Route as CoachRouteImport } from './routes/coach'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as HooksSendPaymentSmsRouteImport } from './routes/hooks/send-payment-sms'
@@ -21,6 +23,16 @@ import { Route as ApiCoachLoginRouteImport } from './routes/api/coach/login'
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CoachLoginRoute = CoachLoginRouteImport.update({
+  id: '/coach-login',
+  path: '/coach-login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CoachRoute = CoachRouteImport.update({
+  id: '/coach',
+  path: '/coach',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminRoute = AdminRouteImport.update({
@@ -62,6 +74,8 @@ const ApiCoachLoginRoute = ApiCoachLoginRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
+  '/coach': typeof CoachRoute
+  '/coach-login': typeof CoachLoginRoute
   '/login': typeof LoginRoute
   '/hooks/send-payment-sms': typeof HooksSendPaymentSmsRoute
   '/api/coach/login': typeof ApiCoachLoginRoute
@@ -72,6 +86,8 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
+  '/coach': typeof CoachRoute
+  '/coach-login': typeof CoachLoginRoute
   '/login': typeof LoginRoute
   '/hooks/send-payment-sms': typeof HooksSendPaymentSmsRoute
   '/api/coach/login': typeof ApiCoachLoginRoute
@@ -83,6 +99,8 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
+  '/coach': typeof CoachRoute
+  '/coach-login': typeof CoachLoginRoute
   '/login': typeof LoginRoute
   '/hooks/send-payment-sms': typeof HooksSendPaymentSmsRoute
   '/api/coach/login': typeof ApiCoachLoginRoute
@@ -95,6 +113,8 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/admin'
+    | '/coach'
+    | '/coach-login'
     | '/login'
     | '/hooks/send-payment-sms'
     | '/api/coach/login'
@@ -105,6 +125,8 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/admin'
+    | '/coach'
+    | '/coach-login'
     | '/login'
     | '/hooks/send-payment-sms'
     | '/api/coach/login'
@@ -115,6 +137,8 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/admin'
+    | '/coach'
+    | '/coach-login'
     | '/login'
     | '/hooks/send-payment-sms'
     | '/api/coach/login'
@@ -126,6 +150,8 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRoute
+  CoachRoute: typeof CoachRoute
+  CoachLoginRoute: typeof CoachLoginRoute
   LoginRoute: typeof LoginRoute
   HooksSendPaymentSmsRoute: typeof HooksSendPaymentSmsRoute
   ApiCoachLoginRoute: typeof ApiCoachLoginRoute
@@ -141,6 +167,20 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/coach-login': {
+      id: '/coach-login'
+      path: '/coach-login'
+      fullPath: '/coach-login'
+      preLoaderRoute: typeof CoachLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/coach': {
+      id: '/coach'
+      path: '/coach'
+      fullPath: '/coach'
+      preLoaderRoute: typeof CoachRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin': {
@@ -198,6 +238,8 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRoute,
+  CoachRoute: CoachRoute,
+  CoachLoginRoute: CoachLoginRoute,
   LoginRoute: LoginRoute,
   HooksSendPaymentSmsRoute: HooksSendPaymentSmsRoute,
   ApiCoachLoginRoute: ApiCoachLoginRoute,
@@ -208,3 +250,12 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}
