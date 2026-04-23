@@ -209,7 +209,7 @@ function LoginPage() {
   const sportEmojis = ["🏀", "⚽", "🏉", "🎾", "🥊", "🏊", "💪", "🏆", "🏐", "⚾"];
 
   return (
-    <div className="relative min-h-screen overflow-hidden flex items-center justify-center px-4 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
+    <div className="relative min-h-screen overflow-hidden flex items-center justify-center px-4 py-10 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
       {/* Animated gradient orbs */}
       <div className="absolute inset-0 overflow-hidden">
         <motion.div
