@@ -41,6 +41,111 @@ export type Database = {
         }
         Relationships: []
       }
+      coaches: {
+        Row: {
+          created_at: string
+          display_name: string
+          generated_password: string | null
+          id: string
+          is_active: boolean
+          password_hash: string
+          sport: string
+          updated_at: string
+          user_id: string
+          username: string
+        }
+        Insert: {
+          created_at?: string
+          display_name: string
+          generated_password?: string | null
+          id?: string
+          is_active?: boolean
+          password_hash: string
+          sport?: string
+          updated_at?: string
+          user_id: string
+          username: string
+        }
+        Update: {
+          created_at?: string
+          display_name?: string
+          generated_password?: string | null
+          id?: string
+          is_active?: boolean
+          password_hash?: string
+          sport?: string
+          updated_at?: string
+          user_id?: string
+          username?: string
+        }
+        Relationships: []
+      }
+      games: {
+        Row: {
+          coach_id: string | null
+          created_at: string
+          end_time: string | null
+          game_date: string
+          id: string
+          location: string | null
+          notes: string | null
+          opponent: string | null
+          sport: string
+          start_time: string | null
+          team_id: string | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          coach_id?: string | null
+          created_at?: string
+          end_time?: string | null
+          game_date: string
+          id?: string
+          location?: string | null
+          notes?: string | null
+          opponent?: string | null
+          sport?: string
+          start_time?: string | null
+          team_id?: string | null
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          coach_id?: string | null
+          created_at?: string
+          end_time?: string | null
+          game_date?: string
+          id?: string
+          location?: string | null
+          notes?: string | null
+          opponent?: string | null
+          sport?: string
+          start_time?: string | null
+          team_id?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "games_coach_id_fkey"
+            columns: ["coach_id"]
+            isOneToOne: false
+            referencedRelation: "coaches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "games_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       payments: {
         Row: {
           amount: number
@@ -162,6 +267,69 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: []
+      }
+      practices: {
+        Row: {
+          coach_id: string | null
+          created_at: string
+          end_time: string | null
+          id: string
+          location: string | null
+          notes: string | null
+          practice_date: string
+          sport: string
+          start_time: string | null
+          team_id: string | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          coach_id?: string | null
+          created_at?: string
+          end_time?: string | null
+          id?: string
+          location?: string | null
+          notes?: string | null
+          practice_date: string
+          sport?: string
+          start_time?: string | null
+          team_id?: string | null
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          coach_id?: string | null
+          created_at?: string
+          end_time?: string | null
+          id?: string
+          location?: string | null
+          notes?: string | null
+          practice_date?: string
+          sport?: string
+          start_time?: string | null
+          team_id?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "practices_coach_id_fkey"
+            columns: ["coach_id"]
+            isOneToOne: false
+            referencedRelation: "coaches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "practices_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       sms_logs: {
         Row: {
