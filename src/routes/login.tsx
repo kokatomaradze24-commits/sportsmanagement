@@ -276,13 +276,72 @@ function LoginPage() {
         ))}
       </div>
 
-      {/* Main card */}
-      <motion.div
-        initial={{ opacity: 0, y: 30, scale: 0.95 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
-        transition={{ duration: 0.5, ease: "easeOut" }}
-        className="relative w-full max-w-md z-10"
-      >
+      {/* Two-column layout: marketing on the left, sign-in on the right */}
+      <div className="relative z-10 w-full max-w-6xl grid grid-cols-1 lg:grid-cols-[1.1fr_minmax(0,420px)] gap-10 lg:gap-16 items-center">
+        {/* Marketing / Features column */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          className="text-white order-2 lg:order-1"
+        >
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-orange-500/10 border border-orange-400/30 text-orange-300 text-xs font-medium mb-5">
+            <span className="w-1.5 h-1.5 rounded-full bg-orange-400 animate-pulse" />
+            {copy.tagline}
+          </div>
+
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight mb-4 bg-gradient-to-br from-white via-white to-slate-300 bg-clip-text text-transparent">
+            {copy.headline}
+          </h2>
+          <p className="text-base sm:text-lg text-slate-300/90 mb-8 max-w-xl leading-relaxed">
+            {copy.subline}
+          </p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-8">
+            {copy.features.map((feature, i) => {
+              const Icon = FEATURE_ICONS[i % FEATURE_ICONS.length];
+              return (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.15 + i * 0.06 }}
+                  className="flex gap-3 items-start p-3.5 rounded-xl bg-white/[0.03] border border-white/10 hover:bg-white/[0.06] hover:border-white/20 transition-all"
+                >
+                  <div className="flex-shrink-0 w-9 h-9 rounded-lg bg-gradient-to-br from-orange-500/20 to-amber-500/10 border border-orange-400/20 flex items-center justify-center">
+                    <Icon className="w-4.5 h-4.5 text-orange-300" strokeWidth={2.2} />
+                  </div>
+                  <div className="min-w-0">
+                    <h3 className="text-sm font-semibold text-white leading-tight">{feature.title}</h3>
+                    <p className="text-xs text-slate-400 mt-0.5 leading-snug">{feature.desc}</p>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
+
+          <div className="flex flex-wrap gap-x-5 gap-y-2 mb-6">
+            {copy.benefits.map((b, i) => (
+              <div key={i} className="flex items-center gap-1.5 text-sm text-slate-300">
+                <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                <span>{b}</span>
+              </div>
+            ))}
+          </div>
+
+          <div className="flex items-center gap-2 text-xs text-slate-500">
+            <BarChart3 className="w-3.5 h-3.5" />
+            <span>{copy.socialProof}</span>
+          </div>
+        </motion.div>
+
+        {/* Main card */}
+        <motion.div
+          initial={{ opacity: 0, y: 30, scale: 0.95 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
+          className="relative w-full max-w-md mx-auto lg:mx-0 order-1 lg:order-2"
+        >
         <div className="text-center mb-8">
           <motion.div
             initial={{ scale: 0, rotate: -180 }}
