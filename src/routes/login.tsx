@@ -375,6 +375,11 @@ function LoginPage() {
           transition={{ delay: 0.5 }}
           className="bg-white/[0.04] backdrop-blur-xl rounded-2xl border border-white/10 p-6 shadow-2xl space-y-4"
         >
+          <div className="text-center pb-2">
+            <h3 className="text-lg font-semibold text-white">{copy.ctaTitle}</h3>
+            <p className="text-xs text-slate-400 mt-1">{copy.ctaSubtitle}</p>
+          </div>
+
           {error && (
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
