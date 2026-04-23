@@ -459,6 +459,7 @@ function LoginPage() {
           <span>💪</span>
         </motion.div>
       </motion.div>
+      </div>
     </div>
   );
 }
