@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Copy, Eye, EyeOff, KeyRound, Link as LinkIcon, Plus, Trash2, UserPlus, Users } from "lucide-react";
+import { Copy, Eye, EyeOff, KeyRound, Plus, Trash2, UserPlus, Users } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -30,17 +30,11 @@ import { generateCoachPassword, slugifyClubName } from "@/lib/coach-session";
 interface Props {
   sportId: string;
   clubName: string;
-  registrationLink?: string;
 }
 
-export function CoachesPanel({ sportId, clubName, registrationLink }: Props) {
+export function CoachesPanel({ sportId, clubName }: Props) {
   const { coaches, loading, addCoach, resetPassword, toggleActive, deleteCoach } = useCoaches(sportId);
   const [openAdd, setOpenAdd] = useState(false);
-  const copyRegistrationLink = () => {
-    if (!registrationLink) return;
-    navigator.clipboard.writeText(registrationLink);
-    toast.success("მოთამაშის სარეგისტრაციო ლინკი დაკოპირდა");
-  };
 
   return (
     <section className="bg-card/80 backdrop-blur-sm rounded-2xl border border-border p-5 shadow-sm">
@@ -59,18 +53,6 @@ export function CoachesPanel({ sportId, clubName, registrationLink }: Props) {
       <p className="text-xs text-muted-foreground mb-3">
         მწვრთნელები შედიან <code className="px-1 py-0.5 rounded bg-muted">/coach-login</code>-ზე საკუთარი username-ით და პაროლით.
       </p>
-
-      {registrationLink && (
-        <div className="mb-4 rounded-xl border border-primary/20 bg-primary/5 p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div className="min-w-0">
-            <p className="text-sm font-semibold text-foreground">მოთამაშეების სარეგისტრაციო ლინკი</p>
-            <p className="text-xs text-muted-foreground truncate">{registrationLink}</p>
-          </div>
-          <Button size="sm" variant="outline" onClick={copyRegistrationLink} className="shrink-0">
-            <LinkIcon className="w-3.5 h-3.5 mr-1" /> ლინკის კოპირება
-          </Button>
-        </div>
-      )}
 
       {loading ? (
         <p className="text-sm text-muted-foreground">Loading...</p>
