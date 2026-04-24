@@ -10,8 +10,8 @@ import { setCoachSession, getCoachSession } from "@/lib/coach-session";
 export const Route = createFileRoute("/coach-login")({
   head: () => ({
     meta: [
-      { title: "Coach Sign In — Club Management" },
-      { name: "description", content: "Coaches: sign in to access your schedule" },
+      { title: "მწვრთნელის შესვლა — Club Management" },
+      { name: "description", content: "მწვრთნელის განრიგზე წვდომა" },
     ],
   }),
   component: CoachLoginPage,
@@ -75,8 +75,8 @@ function CoachLoginPage() {
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-400 to-teal-600 shadow-lg shadow-emerald-500/30 mb-4">
             <ShieldCheck className="w-8 h-8 text-white" strokeWidth={2.5} />
           </div>
-          <h1 className="text-3xl font-display tracking-wide text-white">Coach Sign In</h1>
-          <p className="text-sm text-slate-400 mt-1">Sign in with the credentials your club gave you</p>
+          <h1 className="text-3xl font-display tracking-wide text-white">მწვრთნელის შესვლა</h1>
+          <p className="text-sm text-slate-400 mt-1">შედით კლუბისგან მიღებული username-ით და პაროლით</p>
         </div>
 
         <form
@@ -121,7 +121,7 @@ function CoachLoginPage() {
           <div className="text-center text-xs text-slate-400 pt-2">
             Are you the club admin?{" "}
             <Link to="/login" className="text-emerald-300 hover:underline">
-              Sign in here
+              კლუბის შესვლა
             </Link>
           </div>
         </form>
