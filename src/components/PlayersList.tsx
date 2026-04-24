@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, Pencil, Trash2, User, Phone, Mail, Search, Filter, ChevronDown } from "lucide-react";
+import { Plus, Pencil, Trash2, User, Phone, Mail, Search, Filter, ChevronDown, Link as LinkIcon, ExternalLink } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -14,6 +15,7 @@ import { useI18n } from "@/hooks/use-i18n";
 import { useSounds } from "@/hooks/use-sounds";
 import { useAppSettings } from "@/hooks/use-app-settings";
 import { useAuth } from "@/hooks/use-auth";
+import { usePlayerRegistrationLink } from "@/hooks/use-player-registration-link";
 import { sendEventSms } from "@/lib/notifications";
 import { getDialCodeForLanguage, prefillPhone } from "@/lib/phone-codes";
 import { PhoneInput } from "@/components/PhoneInput";
@@ -243,6 +245,7 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
   const { play } = useSounds();
   const { schoolName } = useAppSettings();
   const { user } = useAuth();
+  const registrationLink = usePlayerRegistrationLink(sport.id);
   const [addOpen, setAddOpen] = useState(false);
   const [editPlayer, setEditPlayer] = useState<Player | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
@@ -318,6 +321,12 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
     setBulkDeleting(false);
   };
 
+  const copyRegistrationLink = () => {
+    if (!registrationLink.registrationUrl) return;
+    navigator.clipboard.writeText(registrationLink.registrationUrl);
+    toast.success("სარეგისტრაციო ლინკი დაკოპირდა");
+  };
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -363,6 +372,25 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
           </DialogContent>
         </Dialog>
       </div>
+
+      {registrationLink.registrationUrl && (
+        <div className="rounded-xl border border-primary/20 bg-primary/5 p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="min-w-0">
+            <p className="text-sm font-semibold text-foreground">მოთამაშეების სარეგისტრაციო ლინკი</p>
+            <p className="text-xs text-muted-foreground truncate">{registrationLink.registrationUrl}</p>
+          </div>
+          <div className="flex gap-2 shrink-0">
+            <Button size="sm" variant="outline" onClick={copyRegistrationLink}>
+              <LinkIcon className="w-3.5 h-3.5 mr-1" /> კოპირება
+            </Button>
+            <Button size="sm" variant="ghost" asChild>
+              <a href={registrationLink.registrationUrl} target="_blank" rel="noreferrer">
+                <ExternalLink className="w-3.5 h-3.5 mr-1" /> ნახვა
+              </a>
+            </Button>
+          </div>
+        </div>
+      )}
 
       <div className="flex items-center gap-2">
         <div className="relative flex-1">

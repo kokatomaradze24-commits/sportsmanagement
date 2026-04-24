@@ -14,7 +14,9 @@ import { Route as CoachLoginRouteImport } from './routes/coach-login'
 import { Route as CoachRouteImport } from './routes/coach'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as RegisterLinkIdRouteImport } from './routes/register.$linkId'
 import { Route as HooksSendPaymentSmsRouteImport } from './routes/hooks/send-payment-sms'
+import { Route as ApiPublicPlayerRegistrationRouteImport } from './routes/api/public/player-registration'
 import { Route as ApiCoachScheduleRouteImport } from './routes/api/coach/schedule'
 import { Route as ApiCoachResetPasswordRouteImport } from './routes/api/coach/reset-password'
 import { Route as ApiCoachRegisterRouteImport } from './routes/api/coach/register'
@@ -45,11 +47,22 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RegisterLinkIdRoute = RegisterLinkIdRouteImport.update({
+  id: '/register/$linkId',
+  path: '/register/$linkId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const HooksSendPaymentSmsRoute = HooksSendPaymentSmsRouteImport.update({
   id: '/hooks/send-payment-sms',
   path: '/hooks/send-payment-sms',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicPlayerRegistrationRoute =
+  ApiPublicPlayerRegistrationRouteImport.update({
+    id: '/api/public/player-registration',
+    path: '/api/public/player-registration',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiCoachScheduleRoute = ApiCoachScheduleRouteImport.update({
   id: '/api/coach/schedule',
   path: '/api/coach/schedule',
@@ -78,10 +91,12 @@ export interface FileRoutesByFullPath {
   '/coach-login': typeof CoachLoginRoute
   '/login': typeof LoginRoute
   '/hooks/send-payment-sms': typeof HooksSendPaymentSmsRoute
+  '/register/$linkId': typeof RegisterLinkIdRoute
   '/api/coach/login': typeof ApiCoachLoginRoute
   '/api/coach/register': typeof ApiCoachRegisterRoute
   '/api/coach/reset-password': typeof ApiCoachResetPasswordRoute
   '/api/coach/schedule': typeof ApiCoachScheduleRoute
+  '/api/public/player-registration': typeof ApiPublicPlayerRegistrationRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -90,10 +105,12 @@ export interface FileRoutesByTo {
   '/coach-login': typeof CoachLoginRoute
   '/login': typeof LoginRoute
   '/hooks/send-payment-sms': typeof HooksSendPaymentSmsRoute
+  '/register/$linkId': typeof RegisterLinkIdRoute
   '/api/coach/login': typeof ApiCoachLoginRoute
   '/api/coach/register': typeof ApiCoachRegisterRoute
   '/api/coach/reset-password': typeof ApiCoachResetPasswordRoute
   '/api/coach/schedule': typeof ApiCoachScheduleRoute
+  '/api/public/player-registration': typeof ApiPublicPlayerRegistrationRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -103,10 +120,12 @@ export interface FileRoutesById {
   '/coach-login': typeof CoachLoginRoute
   '/login': typeof LoginRoute
   '/hooks/send-payment-sms': typeof HooksSendPaymentSmsRoute
+  '/register/$linkId': typeof RegisterLinkIdRoute
   '/api/coach/login': typeof ApiCoachLoginRoute
   '/api/coach/register': typeof ApiCoachRegisterRoute
   '/api/coach/reset-password': typeof ApiCoachResetPasswordRoute
   '/api/coach/schedule': typeof ApiCoachScheduleRoute
+  '/api/public/player-registration': typeof ApiPublicPlayerRegistrationRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -117,10 +136,12 @@ export interface FileRouteTypes {
     | '/coach-login'
     | '/login'
     | '/hooks/send-payment-sms'
+    | '/register/$linkId'
     | '/api/coach/login'
     | '/api/coach/register'
     | '/api/coach/reset-password'
     | '/api/coach/schedule'
+    | '/api/public/player-registration'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -129,10 +150,12 @@ export interface FileRouteTypes {
     | '/coach-login'
     | '/login'
     | '/hooks/send-payment-sms'
+    | '/register/$linkId'
     | '/api/coach/login'
     | '/api/coach/register'
     | '/api/coach/reset-password'
     | '/api/coach/schedule'
+    | '/api/public/player-registration'
   id:
     | '__root__'
     | '/'
@@ -141,10 +164,12 @@ export interface FileRouteTypes {
     | '/coach-login'
     | '/login'
     | '/hooks/send-payment-sms'
+    | '/register/$linkId'
     | '/api/coach/login'
     | '/api/coach/register'
     | '/api/coach/reset-password'
     | '/api/coach/schedule'
+    | '/api/public/player-registration'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -154,10 +179,12 @@ export interface RootRouteChildren {
   CoachLoginRoute: typeof CoachLoginRoute
   LoginRoute: typeof LoginRoute
   HooksSendPaymentSmsRoute: typeof HooksSendPaymentSmsRoute
+  RegisterLinkIdRoute: typeof RegisterLinkIdRoute
   ApiCoachLoginRoute: typeof ApiCoachLoginRoute
   ApiCoachRegisterRoute: typeof ApiCoachRegisterRoute
   ApiCoachResetPasswordRoute: typeof ApiCoachResetPasswordRoute
   ApiCoachScheduleRoute: typeof ApiCoachScheduleRoute
+  ApiPublicPlayerRegistrationRoute: typeof ApiPublicPlayerRegistrationRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -197,11 +224,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/register/$linkId': {
+      id: '/register/$linkId'
+      path: '/register/$linkId'
+      fullPath: '/register/$linkId'
+      preLoaderRoute: typeof RegisterLinkIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/hooks/send-payment-sms': {
       id: '/hooks/send-payment-sms'
       path: '/hooks/send-payment-sms'
       fullPath: '/hooks/send-payment-sms'
       preLoaderRoute: typeof HooksSendPaymentSmsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/player-registration': {
+      id: '/api/public/player-registration'
+      path: '/api/public/player-registration'
+      fullPath: '/api/public/player-registration'
+      preLoaderRoute: typeof ApiPublicPlayerRegistrationRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/coach/schedule': {
@@ -242,11 +283,22 @@ const rootRouteChildren: RootRouteChildren = {
   CoachLoginRoute: CoachLoginRoute,
   LoginRoute: LoginRoute,
   HooksSendPaymentSmsRoute: HooksSendPaymentSmsRoute,
+  RegisterLinkIdRoute: RegisterLinkIdRoute,
   ApiCoachLoginRoute: ApiCoachLoginRoute,
   ApiCoachRegisterRoute: ApiCoachRegisterRoute,
   ApiCoachResetPasswordRoute: ApiCoachResetPasswordRoute,
   ApiCoachScheduleRoute: ApiCoachScheduleRoute,
+  ApiPublicPlayerRegistrationRoute: ApiPublicPlayerRegistrationRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}

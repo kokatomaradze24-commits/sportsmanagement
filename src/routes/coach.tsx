@@ -13,8 +13,8 @@ import { getCoachSession, clearCoachSession, type CoachSession } from "@/lib/coa
 export const Route = createFileRoute("/coach")({
   head: () => ({
     meta: [
-      { title: "Coach Dashboard — Schedule" },
-      { name: "description", content: "Coach schedule of practices and games" },
+      { title: "მწვრთნელის გვერდი — განრიგი" },
+      { name: "description", content: "ვარჯიშებისა და თამაშების განრიგი მწვრთნელისთვის" },
     ],
   }),
   component: CoachDashboard,
@@ -127,7 +127,7 @@ function CoachDashboard() {
             <div>
               <h1 className="font-display text-lg tracking-wide">{clubName || "Club"}</h1>
               <p className="text-xs text-muted-foreground">
-                Coach: <span className="font-medium">{session.displayName}</span>
+                მწვრთნელი: <span className="font-medium">{session.displayName}</span>
               </p>
             </div>
           </div>
