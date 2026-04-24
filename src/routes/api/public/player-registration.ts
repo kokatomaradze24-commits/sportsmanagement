@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { SEASON_DURATION_MONTHS, SEASON_START_MONTH, getSeasonStartYear } from "@/lib/season";
 
 export const Route = createFileRoute("/api/public/player-registration")({
   server: {
@@ -87,10 +88,10 @@ export const Route = createFileRoute("/api/public/player-registration")({
             notes: notes || null,
             primary_contact: parentPhone ? "parent" : "player",
             monthly_fee: 0,
-            subscription_months: 12,
-            start_month: now.getMonth() + 1,
-            start_year: now.getFullYear(),
-            start_day: now.getDate(),
+            subscription_months: SEASON_DURATION_MONTHS,
+            start_month: SEASON_START_MONTH,
+            start_year: getSeasonStartYear(now),
+            start_day: 1,
           })
           .select("id")
           .single();

@@ -18,6 +18,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { usePlayerRegistrationLink } from "@/hooks/use-player-registration-link";
 import { sendEventSms } from "@/lib/notifications";
 import { getDialCodeForLanguage, prefillPhone } from "@/lib/phone-codes";
+import { SEASON_DURATION_MONTHS, SEASON_START_MONTH, getSeasonStartYear } from "@/lib/season";
 import { PhoneInput } from "@/components/PhoneInput";
 
 type Player = Database["public"]["Tables"]["players"]["Row"];
@@ -72,9 +73,10 @@ function PlayerForm({ initial, sport, onSubmit, onCancel }: {
 
   // Subscription fields (only used when creating)
   const [monthlyFee, setMonthlyFee] = useState(initial?.monthly_fee?.toString() || "50");
-  const [months, setMonths] = useState((initial?.subscription_months || 12).toString());
-  const [startMonth, setStartMonth] = useState((initial?.start_month || now.getMonth() + 1).toString());
+  const [months, setMonths] = useState((initial?.subscription_months || SEASON_DURATION_MONTHS).toString());
+  const [startMonth, setStartMonth] = useState((initial?.start_month || SEASON_START_MONTH).toString());
   const [firstMonthPaid, setFirstMonthPaid] = useState(false);
+  const seasonStartYear = getSeasonStartYear(now);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -97,8 +99,8 @@ function PlayerForm({ initial, sport, onSubmit, onCancel }: {
       base.monthly_fee = parseFloat(monthlyFee) || 0;
       base.subscription_months = parseInt(months);
       base.start_month = parseInt(startMonth);
-      base.start_year = now.getFullYear();
-      base.start_day = now.getDate();
+      base.start_year = seasonStartYear;
+      base.start_day = 1;
       base.firstMonthPaid = firstMonthPaid;
     }
     onSubmit(base);
@@ -219,8 +221,8 @@ function PlayerForm({ initial, sport, onSubmit, onCancel }: {
             <Select value={startMonth} onValueChange={setStartMonth}>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
-                {Array.from({ length: 12 }, (_, i) => (
-                  <SelectItem key={i} value={(i + 1).toString()}>{monthShort(i + 1)} {now.getFullYear()}</SelectItem>
+                  {Array.from({ length: 12 }, (_, i) => (
+                    <SelectItem key={i} value={(i + 1).toString()}>{monthShort(i + 1)} {seasonStartYear + (i + 1 < SEASON_START_MONTH ? 1 : 0)}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
