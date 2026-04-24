@@ -18,7 +18,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { usePlayerRegistrationLink } from "@/hooks/use-player-registration-link";
 import { sendEventSms } from "@/lib/notifications";
 import { getDialCodeForLanguage, prefillPhone } from "@/lib/phone-codes";
-import { SEASON_START_MONTH, getSeasonRegistrationDefaults, getSeasonYearForMonth } from "@/lib/season";
+import { SEASON_START_MONTH, getRemainingSeasonMonths, getSeasonRegistrationDefaults, getSeasonYearForMonth } from "@/lib/season";
 import { PhoneInput } from "@/components/PhoneInput";
 
 type Player = Database["public"]["Tables"]["players"]["Row"];
@@ -218,7 +218,10 @@ function PlayerForm({ initial, sport, onSubmit, onCancel }: {
           </div>
           <div>
             <label className="text-sm text-muted-foreground mb-1 block">{t("startMonth")}</label>
-            <Select value={startMonth} onValueChange={setStartMonth}>
+            <Select value={startMonth} onValueChange={(value) => {
+              setStartMonth(value);
+              setMonths(getRemainingSeasonMonths(parseInt(value)).toString());
+            }}>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
                   {Array.from({ length: 12 }, (_, i) => (
