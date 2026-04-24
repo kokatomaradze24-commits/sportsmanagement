@@ -15,6 +15,7 @@ import { Route as CoachRouteImport } from './routes/coach'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as HooksSendPaymentSmsRouteImport } from './routes/hooks/send-payment-sms'
+import { Route as ApiPublicPlayerRegistrationRouteImport } from './routes/api/public/player-registration'
 import { Route as ApiCoachScheduleRouteImport } from './routes/api/coach/schedule'
 import { Route as ApiCoachResetPasswordRouteImport } from './routes/api/coach/reset-password'
 import { Route as ApiCoachRegisterRouteImport } from './routes/api/coach/register'
@@ -50,6 +51,12 @@ const HooksSendPaymentSmsRoute = HooksSendPaymentSmsRouteImport.update({
   path: '/hooks/send-payment-sms',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicPlayerRegistrationRoute =
+  ApiPublicPlayerRegistrationRouteImport.update({
+    id: '/api/public/player-registration',
+    path: '/api/public/player-registration',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiCoachScheduleRoute = ApiCoachScheduleRouteImport.update({
   id: '/api/coach/schedule',
   path: '/api/coach/schedule',
@@ -82,6 +89,7 @@ export interface FileRoutesByFullPath {
   '/api/coach/register': typeof ApiCoachRegisterRoute
   '/api/coach/reset-password': typeof ApiCoachResetPasswordRoute
   '/api/coach/schedule': typeof ApiCoachScheduleRoute
+  '/api/public/player-registration': typeof ApiPublicPlayerRegistrationRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -94,6 +102,7 @@ export interface FileRoutesByTo {
   '/api/coach/register': typeof ApiCoachRegisterRoute
   '/api/coach/reset-password': typeof ApiCoachResetPasswordRoute
   '/api/coach/schedule': typeof ApiCoachScheduleRoute
+  '/api/public/player-registration': typeof ApiPublicPlayerRegistrationRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -107,6 +116,7 @@ export interface FileRoutesById {
   '/api/coach/register': typeof ApiCoachRegisterRoute
   '/api/coach/reset-password': typeof ApiCoachResetPasswordRoute
   '/api/coach/schedule': typeof ApiCoachScheduleRoute
+  '/api/public/player-registration': typeof ApiPublicPlayerRegistrationRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -121,6 +131,7 @@ export interface FileRouteTypes {
     | '/api/coach/register'
     | '/api/coach/reset-password'
     | '/api/coach/schedule'
+    | '/api/public/player-registration'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -133,6 +144,7 @@ export interface FileRouteTypes {
     | '/api/coach/register'
     | '/api/coach/reset-password'
     | '/api/coach/schedule'
+    | '/api/public/player-registration'
   id:
     | '__root__'
     | '/'
@@ -145,6 +157,7 @@ export interface FileRouteTypes {
     | '/api/coach/register'
     | '/api/coach/reset-password'
     | '/api/coach/schedule'
+    | '/api/public/player-registration'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -158,6 +171,7 @@ export interface RootRouteChildren {
   ApiCoachRegisterRoute: typeof ApiCoachRegisterRoute
   ApiCoachResetPasswordRoute: typeof ApiCoachResetPasswordRoute
   ApiCoachScheduleRoute: typeof ApiCoachScheduleRoute
+  ApiPublicPlayerRegistrationRoute: typeof ApiPublicPlayerRegistrationRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -204,6 +218,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HooksSendPaymentSmsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/player-registration': {
+      id: '/api/public/player-registration'
+      path: '/api/public/player-registration'
+      fullPath: '/api/public/player-registration'
+      preLoaderRoute: typeof ApiPublicPlayerRegistrationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/coach/schedule': {
       id: '/api/coach/schedule'
       path: '/api/coach/schedule'
@@ -246,6 +267,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiCoachRegisterRoute: ApiCoachRegisterRoute,
   ApiCoachResetPasswordRoute: ApiCoachResetPasswordRoute,
   ApiCoachScheduleRoute: ApiCoachScheduleRoute,
+  ApiPublicPlayerRegistrationRoute: ApiPublicPlayerRegistrationRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
