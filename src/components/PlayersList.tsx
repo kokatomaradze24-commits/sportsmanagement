@@ -18,7 +18,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { usePlayerRegistrationLink } from "@/hooks/use-player-registration-link";
 import { sendEventSms } from "@/lib/notifications";
 import { getDialCodeForLanguage, prefillPhone } from "@/lib/phone-codes";
-import { SEASON_START_MONTH, getRemainingSeasonMonths, getSeasonRegistrationDefaults, getSeasonYearForMonth } from "@/lib/season";
+import { getRemainingSeasonMonths, getSeasonRegistrationDefaults, getSeasonYearForMonth } from "@/lib/season";
 import { PhoneInput } from "@/components/PhoneInput";
 
 type Player = Database["public"]["Tables"]["players"]["Row"];
