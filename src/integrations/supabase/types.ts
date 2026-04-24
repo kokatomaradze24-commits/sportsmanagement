@@ -199,6 +199,33 @@ export type Database = {
           },
         ]
       }
+      player_registration_links: {
+        Row: {
+          created_at: string
+          id: string
+          is_active: boolean
+          sport: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          sport?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          sport?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       players: {
         Row: {
           birth_date: string | null
