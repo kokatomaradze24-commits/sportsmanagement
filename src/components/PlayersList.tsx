@@ -76,6 +76,7 @@ function PlayerForm({ initial, sport, onSubmit, onCancel }: {
   const [months, setMonths] = useState((initial?.subscription_months || SEASON_DURATION_MONTHS).toString());
   const [startMonth, setStartMonth] = useState((initial?.start_month || SEASON_START_MONTH).toString());
   const [firstMonthPaid, setFirstMonthPaid] = useState(false);
+  const seasonStartYear = getSeasonStartYear(now);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -98,7 +99,7 @@ function PlayerForm({ initial, sport, onSubmit, onCancel }: {
       base.monthly_fee = parseFloat(monthlyFee) || 0;
       base.subscription_months = parseInt(months);
       base.start_month = parseInt(startMonth);
-      base.start_year = getSeasonStartYear(now);
+      base.start_year = seasonStartYear;
       base.start_day = 1;
       base.firstMonthPaid = firstMonthPaid;
     }
@@ -220,8 +221,8 @@ function PlayerForm({ initial, sport, onSubmit, onCancel }: {
             <Select value={startMonth} onValueChange={setStartMonth}>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
-                {Array.from({ length: 12 }, (_, i) => (
-                  <SelectItem key={i} value={(i + 1).toString()}>{monthShort(i + 1)} {now.getFullYear()}</SelectItem>
+                  {Array.from({ length: 12 }, (_, i) => (
+                    <SelectItem key={i} value={(i + 1).toString()}>{monthShort(i + 1)} {seasonStartYear + (i + 1 < SEASON_START_MONTH ? 1 : 0)}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
