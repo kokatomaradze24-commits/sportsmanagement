@@ -215,4 +215,55 @@
   .pulse-primary {
     animation: soft-pulse 2.5s ease-in-out infinite;
   }
+
+  .bg-registration-dark {
+    background:
+      radial-gradient(circle at 18% 18%, oklch(from var(--color-primary) l c h / 0.36), transparent 30%),
+      radial-gradient(circle at 82% 12%, oklch(from var(--color-accent) l c h / 0.22), transparent 28%),
+      linear-gradient(135deg, oklch(0.08 0.035 260), oklch(0.16 0.05 250) 52%, oklch(0.1 0.03 235));
+  }
+
+  .registration-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(oklch(1 0 0 / 0.06) 1px, transparent 1px),
+      linear-gradient(90deg, oklch(1 0 0 / 0.06) 1px, transparent 1px);
+    background-size: 48px 48px;
+    mask-image: radial-gradient(circle at center, black, transparent 72%);
+    animation: registration-grid-drift 18s linear infinite;
+  }
+
+  .registration-beam {
+    position: absolute;
+    width: 42rem;
+    height: 42rem;
+    border-radius: 9999px;
+    filter: blur(70px);
+    opacity: 0.34;
+    animation: registration-float 9s ease-in-out infinite alternate;
+  }
+
+  .registration-beam-one {
+    left: -16rem;
+    top: -10rem;
+    background: oklch(from var(--color-primary) l c h / 0.9);
+  }
+
+  .registration-beam-two {
+    right: -18rem;
+    bottom: -14rem;
+    background: oklch(from var(--color-accent) l c h / 0.75);
+    animation-delay: -3s;
+  }
+
+  @keyframes registration-grid-drift {
+    from { transform: translate3d(0, 0, 0); }
+    to { transform: translate3d(48px, 48px, 0); }
+  }
+
+  @keyframes registration-float {
+    from { transform: translate3d(0, 0, 0) scale(1); }
+    to { transform: translate3d(2rem, -1.5rem, 0) scale(1.08); }
+  }
 }
