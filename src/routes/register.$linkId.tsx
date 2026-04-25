@@ -114,17 +114,17 @@ function PublicPlayerRegistration() {
   const sport = getSport(info?.sport);
 
   return (
-    <main className="min-h-screen bg-background px-4 py-8 flex items-center justify-center">
-      <div className="w-full max-w-xl">
-        <div className="text-center mb-6">
-          <div className="mx-auto mb-4 w-16 h-16 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center overflow-hidden">
-            {info?.logoUrl ? <img src={info.logoUrl} alt={info.clubName} className="w-full h-full object-cover" /> : <Trophy className="w-8 h-8 text-primary" />}
+    <main className="min-h-screen bg-gradient-to-br from-background via-secondary/20 to-primary/10 px-4 py-8 flex items-center justify-center">
+      <div className="w-full max-w-2xl">
+        <div className="text-center mb-7">
+          <div className="mx-auto mb-4 w-20 h-20 rounded-3xl bg-card border border-border shadow-lg flex items-center justify-center overflow-hidden">
+            {info?.logoUrl ? <img src={info.logoUrl} alt={info.clubName} className="w-full h-full object-cover" /> : <Trophy className="w-10 h-10 text-primary" />}
           </div>
-          <h1 className="text-3xl font-display tracking-wide text-foreground">{info?.clubName ?? "Club"}</h1>
-          <p className="text-sm text-muted-foreground mt-1">მოთამაშის რეგისტრაცია · {sport.name}</p>
+          <h1 className="text-4xl font-display tracking-wide text-foreground">{info?.clubName ?? "Club"}</h1>
+          <p className="text-sm text-muted-foreground mt-2">მოთამაშის რეგისტრაცია · {sport.name}</p>
         </div>
 
-        <section className="rounded-2xl border border-border bg-card p-5 shadow-sm">
+        <section className="rounded-3xl border border-border bg-card/95 p-6 shadow-2xl backdrop-blur">
           {loading ? (
             <p className="text-sm text-muted-foreground text-center py-8">Loading...</p>
           ) : done ? (
@@ -139,19 +139,19 @@ function PublicPlayerRegistration() {
               <Button asChild variant="outline"><Link to="/login">მთავარ გვერდზე დაბრუნება</Link></Button>
             </div>
           ) : (
-            <form onSubmit={submit} className="space-y-4">
-              <p className="rounded-lg border border-primary/20 bg-primary/5 p-3 text-sm leading-6 text-card-foreground">
-                მოხარული ვიქნებით, თუ ჩვენს კლუბში გაწევრიანდებით. გთხოვთ, შეავსოთ ქვემოთ მოცემული ველები და ჩვენი მენეჯერი 24 საათის განმავლობაში დაგიკავშირდებათ. გისურვებთ წარმატებებს!
+            <form onSubmit={submit} className="space-y-5">
+              <p className="rounded-2xl border border-primary/20 bg-primary/10 p-4 text-sm leading-6 text-card-foreground shadow-sm">
+                მოხარული ვიქნებით, თუ ჩვენს კლუბს შემოუერთდებით. გთხოვთ, ყურადღებით შეავსოთ ქვემოთ მოცემული ველები და ჩვენი მენეჯერი 24 საათის განმავლობაში დაგიკავშირდებათ. წარმატებებს გისურვებთ!
               </p>
               {error && <div className="rounded-lg border border-destructive/20 bg-destructive/10 p-3 text-sm text-destructive">{error}</div>}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div><label className="text-sm text-muted-foreground mb-1 block">სახელი *</label><Input value={firstName} onChange={(e) => setFirstName(e.target.value)} required /></div>
                 <div><label className="text-sm text-muted-foreground mb-1 block">გვარი *</label><Input value={lastName} onChange={(e) => setLastName(e.target.value)} required /></div>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div><label className="text-sm text-muted-foreground mb-1 block">დაბადების თარიღი *</label><Input type="date" value={birthDate} onChange={(e) => setBirthDate(e.target.value)} max={new Date().toISOString().slice(0, 10)} required /></div>
               </div>
-              <div className="rounded-lg border border-border p-3 space-y-3">
+              <div className="rounded-2xl border border-border bg-secondary/30 p-4 space-y-3">
                 <label className="text-sm text-muted-foreground block">საკონტაქტო ტელეფონი *</label>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
                   <label className="flex items-center gap-2"><input type="radio" name="primaryContact" checked={primaryContact === "player"} onChange={() => setPrimaryContact("player")} /> პირადი ნომერი</label>
@@ -159,7 +159,7 @@ function PublicPlayerRegistration() {
                 </div>
                 {primaryContact === "player" ? <PhoneInput value={phone} onChange={setPhone} placeholder={dial.sample} /> : <PhoneInput value={parentPhone} onChange={setParentPhone} placeholder={dial.sample} />}
               </div>
-              <div className="rounded-lg border border-border p-3 space-y-3">
+              <div className="rounded-2xl border border-border bg-secondary/30 p-4 space-y-3">
                 <label className="text-sm text-muted-foreground block">მოთამაშის გამოცდილება *</label>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
                   <label className="flex items-center gap-2"><input type="radio" name="experience" checked={experienceLevel === "experienced"} onChange={() => setExperienceLevel("experienced")} /> აქვს გამოცდილება</label>
