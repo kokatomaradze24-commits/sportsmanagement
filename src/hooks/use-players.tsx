@@ -70,9 +70,20 @@ export function usePlayers(sport: string, onPlayersChanged?: () => void) {
 
   const updatePlayer = useCallback(async (id: string, updates: Partial<Player>) => {
     const { error } = await supabase.from("players").update(updates).eq("id", id);
-    if (!error) await fetchPlayers();
-    return { error };
-  }, [fetchPlayers]);
+    if (error) return { error };
+
+    if (updates.monthly_fee !== undefined) {
+      const { error: paymentsError } = await supabase
+        .from("payments")
+        .update({ amount: updates.monthly_fee })
+        .eq("player_id", id);
+      if (paymentsError) return { error: paymentsError };
+      onPlayersChanged?.();
+    }
+
+    await fetchPlayers();
+    return { error: null };
+  }, [fetchPlayers, onPlayersChanged]);
 
   const deletePlayer = useCallback(async (id: string) => {
     const { error } = await supabase.from("players").delete().eq("id", id);
