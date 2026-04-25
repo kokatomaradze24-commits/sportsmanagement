@@ -166,7 +166,7 @@ function PublicPlayerRegistration() {
                   <label className="flex items-center gap-2"><input type="radio" name="experience" checked={experienceLevel === "inexperienced"} onChange={() => setExperienceLevel("inexperienced")} /> გამოუცდელი</label>
                 </div>
                 {experienceLevel === "experienced" && (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div><label className="text-sm text-muted-foreground mb-1 block">წინა კლუბი *</label><Input value={previousClub} onChange={(e) => setPreviousClub(e.target.value)} required /></div>
                     <div><label className="text-sm text-muted-foreground mb-1 block">გუნდი *</label><Input value={previousTeam} onChange={(e) => setPreviousTeam(e.target.value)} required /></div>
                     <div><label className="text-sm text-muted-foreground mb-1 block">ლიგა *</label><select value={league} onChange={(e) => setLeague(e.target.value as "A" | "B" | "C" | "")} required className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm"><option value="">აირჩიეთ</option><option value="A">A</option><option value="B">B</option><option value="C">C</option></select></div>
@@ -175,7 +175,7 @@ function PublicPlayerRegistration() {
                 )}
               </div>
               <div><label className="text-sm text-muted-foreground mb-1 block">შენიშვნა</label><Textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={3} /></div>
-              <Button type="submit" disabled={submitting} className="w-full">
+              <Button type="submit" disabled={submitting} size="lg" className="w-full shadow-lg">
                 <Send className="w-4 h-4 mr-2" /> {submitting ? "იგზავნება..." : "რეგისტრაცია"}
               </Button>
             </form>
