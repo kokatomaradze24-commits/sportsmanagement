@@ -56,13 +56,13 @@ export function AppHeader({ schoolName, logoUrl, sport, isDark, onToggleTheme, o
       <div className="max-w-7xl mx-auto flex flex-col gap-4">
         <div className="flex items-center gap-4 min-w-0 justify-center">
           <div
-            className="relative w-14 h-14 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center overflow-hidden cursor-pointer group flex-shrink-0 ring-1 ring-primary/20"
+            className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center overflow-hidden cursor-pointer group flex-shrink-0 ring-1 ring-primary/20"
             onClick={() => fileRef.current?.click()}
           >
             {logoUrl ? (
               <img src={logoUrl} alt="Logo" className="w-full h-full object-cover" />
             ) : (
-              <span className="font-display tracking-wider text-xl text-primary">{initials}</span>
+              <span className="font-display tracking-wider text-2xl sm:text-3xl text-primary">{initials}</span>
             )}
             <div className="absolute inset-0 bg-primary/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
               <Upload className="w-5 h-5 text-primary-foreground" />
