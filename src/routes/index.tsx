@@ -47,7 +47,7 @@ function Index() {
   const sport = useSportLabels(rawSport);
   const { t } = useI18n();
   const { payments, loading: paymentsLoading, addPayment, updatePayment, deletePayment, refetch: refetchPayments } = usePayments(sportId);
-  const { players, loading: playersLoading, addPlayer, updatePlayer, deletePlayer } = usePlayers(sportId, refetchPayments);
+  const { players, loading: playersLoading, addPlayer, updatePlayer, deletePlayer, refetch: refetchPlayers } = usePlayers(sportId, refetchPayments);
   const trips = useTrips(sportId);
   const teamsHook = useTeams(sportId);
   const { isActive: subActive, loading: subLoading } = useSubscription();
@@ -146,6 +146,7 @@ function Index() {
                 onUpdate={updatePlayer}
                 onDelete={deletePlayer}
                 onSelect={setSelectedPlayer}
+                onApprovedRegistration={refetchPlayers}
                 selectedId={selectedPlayer?.id}
               />
             </div>

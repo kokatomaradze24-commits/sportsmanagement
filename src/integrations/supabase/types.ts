@@ -226,6 +226,75 @@ export type Database = {
         }
         Relationships: []
       }
+      player_registration_requests: {
+        Row: {
+          birth_date: string
+          created_at: string
+          experience_level: string
+          first_name: string
+          id: string
+          last_coach: string | null
+          last_name: string
+          league: string | null
+          link_id: string
+          notes: string | null
+          parent_phone: string | null
+          phone: string | null
+          previous_club: string | null
+          previous_team: string | null
+          primary_contact: string
+          reviewed_at: string | null
+          sport: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          birth_date: string
+          created_at?: string
+          experience_level?: string
+          first_name: string
+          id?: string
+          last_coach?: string | null
+          last_name: string
+          league?: string | null
+          link_id: string
+          notes?: string | null
+          parent_phone?: string | null
+          phone?: string | null
+          previous_club?: string | null
+          previous_team?: string | null
+          primary_contact?: string
+          reviewed_at?: string | null
+          sport?: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          birth_date?: string
+          created_at?: string
+          experience_level?: string
+          first_name?: string
+          id?: string
+          last_coach?: string | null
+          last_name?: string
+          league?: string | null
+          link_id?: string
+          notes?: string | null
+          parent_phone?: string | null
+          phone?: string | null
+          previous_club?: string | null
+          previous_team?: string | null
+          primary_contact?: string
+          reviewed_at?: string | null
+          sport?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       players: {
         Row: {
           birth_date: string | null
