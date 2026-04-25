@@ -38,11 +38,9 @@ function PublicPlayerRegistration() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [birthDate, setBirthDate] = useState("");
-  const [tNumber, setTNumber] = useState("");
   const [phone, setPhone] = useState(() => prefillPhone("", language));
   const [parentPhone, setParentPhone] = useState(() => prefillPhone("", language));
   const [primaryContact, setPrimaryContact] = useState<"player" | "parent">("player");
-  const [email, setEmail] = useState("");
   const [experienceLevel, setExperienceLevel] = useState<"experienced" | "inexperienced">("experienced");
   const [previousClub, setPreviousClub] = useState("");
   const [previousTeam, setPreviousTeam] = useState("");
@@ -92,11 +90,9 @@ function PublicPlayerRegistration() {
           firstName,
           lastName,
           birthDate,
-          tNumber: tNumber ? Number(tNumber) : null,
           phone: cleanedPhone,
           parentPhone: cleanedParentPhone,
           primaryContact,
-          email,
           experienceLevel,
           previousClub,
           previousTeam,
@@ -154,7 +150,6 @@ function PublicPlayerRegistration() {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div><label className="text-sm text-muted-foreground mb-1 block">დაბადების თარიღი *</label><Input type="date" value={birthDate} onChange={(e) => setBirthDate(e.target.value)} max={new Date().toISOString().slice(0, 10)} required /></div>
-                <div><label className="text-sm text-muted-foreground mb-1 block">{sport.numberLabel}</label><Input type="number" min={0} max={999} value={tNumber} onChange={(e) => setTNumber(e.target.value)} placeholder="კლუბი მიანიჭებს ნომერს" /></div>
               </div>
               <div className="rounded-lg border border-border p-3 space-y-3">
                 <label className="text-sm text-muted-foreground block">საკონტაქტო ტელეფონი *</label>
@@ -164,7 +159,6 @@ function PublicPlayerRegistration() {
                 </div>
                 {primaryContact === "player" ? <PhoneInput value={phone} onChange={setPhone} placeholder={dial.sample} /> : <PhoneInput value={parentPhone} onChange={setParentPhone} placeholder={dial.sample} />}
               </div>
-              <div><label className="text-sm text-muted-foreground mb-1 block">Email</label><Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} /></div>
               <div className="rounded-lg border border-border p-3 space-y-3">
                 <label className="text-sm text-muted-foreground block">მოთამაშის გამოცდილება *</label>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
