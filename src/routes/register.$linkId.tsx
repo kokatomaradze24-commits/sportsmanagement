@@ -41,7 +41,13 @@ function PublicPlayerRegistration() {
   const [tNumber, setTNumber] = useState("");
   const [phone, setPhone] = useState(() => prefillPhone("", language));
   const [parentPhone, setParentPhone] = useState(() => prefillPhone("", language));
+  const [primaryContact, setPrimaryContact] = useState<"player" | "parent">("player");
   const [email, setEmail] = useState("");
+  const [experienceLevel, setExperienceLevel] = useState<"experienced" | "inexperienced">("experienced");
+  const [previousClub, setPreviousClub] = useState("");
+  const [previousTeam, setPreviousTeam] = useState("");
+  const [league, setLeague] = useState<"A" | "B" | "C" | "">("");
+  const [lastCoach, setLastCoach] = useState("");
   const [notes, setNotes] = useState("");
 
   useEffect(() => {
@@ -69,6 +75,12 @@ function PublicPlayerRegistration() {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const cleanedPhone = cleanPhone(phone);
+    const cleanedParentPhone = cleanPhone(parentPhone);
+    if ((primaryContact === "player" && !cleanedPhone) || (primaryContact === "parent" && !cleanedParentPhone)) {
+      setError("გთხოვთ შეავსოთ არჩეული საკონტაქტო ტელეფონის ნომერი");
+      return;
+    }
     setSubmitting(true);
     setError(null);
     try {
@@ -81,9 +93,15 @@ function PublicPlayerRegistration() {
           lastName,
           birthDate,
           tNumber: tNumber ? Number(tNumber) : null,
-          phone: cleanPhone(phone),
-          parentPhone: cleanPhone(parentPhone),
+          phone: cleanedPhone,
+          parentPhone: cleanedParentPhone,
+          primaryContact,
           email,
+          experienceLevel,
+          previousClub,
+          previousTeam,
+          league,
+          lastCoach,
           notes,
         }),
       });
@@ -116,8 +134,8 @@ function PublicPlayerRegistration() {
           ) : done ? (
             <div className="text-center py-8">
               <CheckCircle2 className="w-14 h-14 mx-auto text-primary mb-3" />
-              <h2 className="text-xl font-semibold text-card-foreground">რეგისტრაცია მიღებულია</h2>
-              <p className="text-sm text-muted-foreground mt-2">თქვენი მონაცემები კლუბის სიაში გამოჩნდა.</p>
+              <h2 className="text-xl font-semibold text-card-foreground">თქვენ წარმატებით დარეგისტრირდით</h2>
+              <p className="text-sm text-muted-foreground mt-2">ჩვენი მენეჯერი 24 საათის განმავლობაში დაგიკავშირდებათ თქვენს მიერ დატოვებულ ტელეფონის ნომერზე. გისურვებთ წარმატებებს.</p>
             </div>
           ) : error && !info ? (
             <div className="text-center py-8 space-y-4">
@@ -126,6 +144,9 @@ function PublicPlayerRegistration() {
             </div>
           ) : (
             <form onSubmit={submit} className="space-y-4">
+              <p className="rounded-lg border border-primary/20 bg-primary/5 p-3 text-sm leading-6 text-card-foreground">
+                მოხარული ვიქნებით, თუ ჩვენს კლუბში გაწევრიანდებით. გთხოვთ, შეავსოთ ქვემოთ მოცემული ველები და ჩვენი მენეჯერი 24 საათის განმავლობაში დაგიკავშირდებათ. გისურვებთ წარმატებებს!
+              </p>
               {error && <div className="rounded-lg border border-destructive/20 bg-destructive/10 p-3 text-sm text-destructive">{error}</div>}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div><label className="text-sm text-muted-foreground mb-1 block">სახელი *</label><Input value={firstName} onChange={(e) => setFirstName(e.target.value)} required /></div>
@@ -133,11 +154,32 @@ function PublicPlayerRegistration() {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div><label className="text-sm text-muted-foreground mb-1 block">დაბადების თარიღი *</label><Input type="date" value={birthDate} onChange={(e) => setBirthDate(e.target.value)} max={new Date().toISOString().slice(0, 10)} required /></div>
-                <div><label className="text-sm text-muted-foreground mb-1 block">{sport.numberLabel}</label><Input type="number" min={0} max={999} value={tNumber} onChange={(e) => setTNumber(e.target.value)} placeholder="ავტომატურად თუ ცარიელია" /></div>
+                <div><label className="text-sm text-muted-foreground mb-1 block">{sport.numberLabel}</label><Input type="number" min={0} max={999} value={tNumber} onChange={(e) => setTNumber(e.target.value)} placeholder="კლუბი მიანიჭებს ნომერს" /></div>
               </div>
-              <div><label className="text-sm text-muted-foreground mb-1 block">მოთამაშის ტელეფონი</label><PhoneInput value={phone} onChange={setPhone} placeholder={dial.sample} /></div>
-              <div><label className="text-sm text-muted-foreground mb-1 block">მშობლის ტელეფონი</label><PhoneInput value={parentPhone} onChange={setParentPhone} placeholder={dial.sample} /></div>
+              <div className="rounded-lg border border-border p-3 space-y-3">
+                <label className="text-sm text-muted-foreground block">საკონტაქტო ტელეფონი *</label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
+                  <label className="flex items-center gap-2"><input type="radio" name="primaryContact" checked={primaryContact === "player"} onChange={() => setPrimaryContact("player")} /> პირადი ნომერი</label>
+                  <label className="flex items-center gap-2"><input type="radio" name="primaryContact" checked={primaryContact === "parent"} onChange={() => setPrimaryContact("parent")} /> მშობლის ნომერი</label>
+                </div>
+                {primaryContact === "player" ? <PhoneInput value={phone} onChange={setPhone} placeholder={dial.sample} /> : <PhoneInput value={parentPhone} onChange={setParentPhone} placeholder={dial.sample} />}
+              </div>
               <div><label className="text-sm text-muted-foreground mb-1 block">Email</label><Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} /></div>
+              <div className="rounded-lg border border-border p-3 space-y-3">
+                <label className="text-sm text-muted-foreground block">მოთამაშის გამოცდილება *</label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
+                  <label className="flex items-center gap-2"><input type="radio" name="experience" checked={experienceLevel === "experienced"} onChange={() => setExperienceLevel("experienced")} /> აქვს გამოცდილება</label>
+                  <label className="flex items-center gap-2"><input type="radio" name="experience" checked={experienceLevel === "inexperienced"} onChange={() => setExperienceLevel("inexperienced")} /> გამოუცდელი</label>
+                </div>
+                {experienceLevel === "experienced" && (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div><label className="text-sm text-muted-foreground mb-1 block">წინა კლუბი *</label><Input value={previousClub} onChange={(e) => setPreviousClub(e.target.value)} required /></div>
+                    <div><label className="text-sm text-muted-foreground mb-1 block">გუნდი *</label><Input value={previousTeam} onChange={(e) => setPreviousTeam(e.target.value)} required /></div>
+                    <div><label className="text-sm text-muted-foreground mb-1 block">ლიგა *</label><select value={league} onChange={(e) => setLeague(e.target.value as "A" | "B" | "C" | "")} required className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm"><option value="">აირჩიეთ</option><option value="A">A</option><option value="B">B</option><option value="C">C</option></select></div>
+                    <div><label className="text-sm text-muted-foreground mb-1 block">ბოლო მწვრთნელი *</label><Input value={lastCoach} onChange={(e) => setLastCoach(e.target.value)} required /></div>
+                  </div>
+                )}
+              </div>
               <div><label className="text-sm text-muted-foreground mb-1 block">შენიშვნა</label><Textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={3} /></div>
               <Button type="submit" disabled={submitting} className="w-full">
                 <Send className="w-4 h-4 mr-2" /> {submitting ? "იგზავნება..." : "რეგისტრაცია"}
