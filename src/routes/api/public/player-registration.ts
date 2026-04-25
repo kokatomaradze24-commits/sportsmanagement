@@ -1,6 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
-import { getSeasonRegistrationDefaults } from "@/lib/season";
 
 export const Route = createFileRoute("/api/public/player-registration")({
   server: {
@@ -39,12 +38,22 @@ export const Route = createFileRoute("/api/public/player-registration")({
         const birthDate = String(body.birthDate ?? "").trim();
         const phone = String(body.phone ?? "").trim();
         const parentPhone = String(body.parentPhone ?? "").trim();
-        const email = String(body.email ?? "").trim();
+        const primaryContact = String(body.primaryContact ?? "player") === "parent" ? "parent" : "player";
+        const experienceLevel = String(body.experienceLevel ?? "experienced") === "inexperienced" ? "inexperienced" : "experienced";
+        const previousClub = String(body.previousClub ?? "").trim();
+        const previousTeam = String(body.previousTeam ?? "").trim();
+        const league = String(body.league ?? "").trim().toUpperCase();
+        const lastCoach = String(body.lastCoach ?? "").trim();
         const notes = String(body.notes ?? "").trim();
-        const preferredNumber = Number(body.tNumber);
 
         if (!linkId || !firstName || !lastName || !birthDate) {
           return Response.json({ error: "Required fields are missing" }, { status: 400 });
+        }
+        if ((primaryContact === "player" && !phone) || (primaryContact === "parent" && !parentPhone)) {
+          return Response.json({ error: "Contact phone is required" }, { status: 400 });
+        }
+        if (experienceLevel === "experienced" && (!previousClub || !previousTeam || !["A", "B", "C"].includes(league) || !lastCoach)) {
+          return Response.json({ error: "Experience details are required" }, { status: 400 });
         }
         if (new Date(birthDate) > new Date()) {
           return Response.json({ error: "Birth date is invalid" }, { status: 400 });
@@ -59,45 +68,30 @@ export const Route = createFileRoute("/api/public/player-registration")({
 
         if (linkError || !link?.is_active) return Response.json({ error: "Registration link is not active" }, { status: 404 });
 
-        let tNumber = Number.isFinite(preferredNumber) && preferredNumber >= 0 ? Math.floor(preferredNumber) : null;
-        if (tNumber === null) {
-          const { data: lastPlayer } = await client
-            .from("players")
-            .select("t_number")
-            .eq("user_id", link.user_id)
-            .eq("sport", link.sport)
-            .order("t_number", { ascending: false })
-            .limit(1)
-            .maybeSingle();
-          tNumber = Number(lastPlayer?.t_number ?? 0) + 1;
-        }
-
-        const seasonDefaults = getSeasonRegistrationDefaults(new Date());
-        const { data: player, error } = await client
-          .from("players")
+        const { data: registration, error } = await client
+          .from("player_registration_requests")
           .insert({
+            link_id: linkId,
             user_id: link.user_id,
             sport: link.sport,
             first_name: firstName,
             last_name: lastName,
-            t_number: tNumber,
             birth_date: birthDate,
             phone: phone || null,
             parent_phone: parentPhone || null,
-            email: email || null,
+            primary_contact: primaryContact,
+            experience_level: experienceLevel,
+            previous_club: experienceLevel === "experienced" ? previousClub : null,
+            previous_team: experienceLevel === "experienced" ? previousTeam : null,
+            league: experienceLevel === "experienced" ? league : null,
+            last_coach: experienceLevel === "experienced" ? lastCoach : null,
             notes: notes || null,
-            primary_contact: parentPhone ? "parent" : "player",
-            monthly_fee: 0,
-            subscription_months: seasonDefaults.subscriptionMonths,
-            start_month: seasonDefaults.startMonth,
-            start_year: seasonDefaults.startYear,
-            start_day: 1,
           })
           .select("id")
           .single();
 
         if (error) return Response.json({ error: error.message }, { status: 500 });
-        return Response.json({ ok: true, playerId: player.id });
+        return Response.json({ ok: true, registrationId: registration.id });
       },
     },
   },
