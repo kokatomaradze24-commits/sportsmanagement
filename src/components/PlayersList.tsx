@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, Pencil, Trash2, User, Phone, Mail, Search, Filter, ChevronDown, Link as LinkIcon, ExternalLink } from "lucide-react";
+import { Plus, Pencil, Trash2, User, Phone, Mail, Search, Filter, ChevronDown, Link as LinkIcon, ExternalLink, Check, Eye } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,6 +16,7 @@ import { useSounds } from "@/hooks/use-sounds";
 import { useAppSettings } from "@/hooks/use-app-settings";
 import { useAuth } from "@/hooks/use-auth";
 import { usePlayerRegistrationLink } from "@/hooks/use-player-registration-link";
+import { usePlayerRegistrationRequests, type PlayerRegistrationRequest } from "@/hooks/use-player-registration-requests";
 import { sendEventSms } from "@/lib/notifications";
 import { getDialCodeForLanguage, prefillPhone } from "@/lib/phone-codes";
 import { getRemainingSeasonMonths, getSeasonRegistrationDefaults, getSeasonYearForMonth } from "@/lib/season";
@@ -46,6 +47,7 @@ interface PlayersListProps {
   onUpdate: (id: string, updates: Partial<Player>) => Promise<{ error: unknown }>;
   onDelete: (id: string) => Promise<{ error: unknown }>;
   onSelect: (player: Player) => void;
+  onApprovedRegistration?: () => void;
   selectedId?: string;
 }
 
@@ -245,14 +247,16 @@ function PlayerForm({ initial, sport, onSubmit, onCancel }: {
   );
 }
 
-export function PlayersList({ players, payments = [], loading, sport, onAdd, onUpdate, onDelete, onSelect, selectedId }: PlayersListProps) {
+export function PlayersList({ players, payments = [], loading, sport, onAdd, onUpdate, onDelete, onSelect, onApprovedRegistration, selectedId }: PlayersListProps) {
   const { t, language } = useI18n();
   const { play } = useSounds();
   const { schoolName } = useAppSettings();
   const { user } = useAuth();
   const registrationLink = usePlayerRegistrationLink(sport.id);
+  const registrationRequests = usePlayerRegistrationRequests(sport.id, onApprovedRegistration);
   const [addOpen, setAddOpen] = useState(false);
   const [editPlayer, setEditPlayer] = useState<Player | null>(null);
+  const [viewRequest, setViewRequest] = useState<PlayerRegistrationRequest | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [paymentFilter, setPaymentFilter] = useState<PaymentFilter>("all");
@@ -330,6 +334,16 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
     if (!registrationLink.registrationUrl) return;
     navigator.clipboard.writeText(registrationLink.registrationUrl);
     toast.success("სარეგისტრაციო ლინკი დაკოპირდა");
+  };
+
+  const approveRegistrationRequest = async (request: PlayerRegistrationRequest) => {
+    play("success");
+    const { error } = await registrationRequests.approveRequest(request);
+    if (error) toast.error("რეგისტრაციის დამტკიცება ვერ მოხერხდა");
+    else {
+      toast.success("მოთამაშე დაემატა სიაში");
+      setViewRequest(null);
+    }
   };
 
   return (
