@@ -411,6 +411,68 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
         </div>
       )}
 
+      {registrationRequests.requests.length > 0 && (
+        <div className="rounded-xl border border-border bg-card p-3 space-y-2">
+          <div className="flex items-center justify-between gap-2">
+            <p className="text-sm font-semibold text-foreground">ახალი დარეგისტრირებულები</p>
+            <span className="text-xs text-muted-foreground">{registrationRequests.requests.length}</span>
+          </div>
+          <div className="space-y-2">
+            {registrationRequests.requests.map((request) => (
+              <div key={request.id} className="flex items-center justify-between gap-3 rounded-lg border border-border bg-muted/30 p-2">
+                <button type="button" onClick={() => setViewRequest(request)} className="min-w-0 text-left flex-1">
+                  <p className="text-sm font-medium text-foreground truncate">{request.first_name} {request.last_name}</p>
+                  <p className="text-xs text-muted-foreground truncate">{request.primary_contact === "parent" ? request.parent_phone : request.phone}</p>
+                </button>
+                <div className="flex items-center gap-1 shrink-0">
+                  <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => setViewRequest(request)} title="სრულად ნახვა">
+                    <Eye className="w-3.5 h-3.5" />
+                  </Button>
+                  <Button size="icon" className="h-8 w-8" onClick={() => approveRegistrationRequest(request)} title="დამტკიცება">
+                    <Check className="w-3.5 h-3.5" />
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <Dialog open={!!viewRequest} onOpenChange={(open) => !open && setViewRequest(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="text-2xl tracking-wider">რეგისტრაციის დეტალები</DialogTitle>
+          </DialogHeader>
+          {viewRequest && (
+            <div className="space-y-3 text-sm">
+              <div className="grid grid-cols-2 gap-3">
+                <div><p className="text-muted-foreground">სახელი</p><p className="font-medium">{viewRequest.first_name}</p></div>
+                <div><p className="text-muted-foreground">გვარი</p><p className="font-medium">{viewRequest.last_name}</p></div>
+                <div><p className="text-muted-foreground">დაბადების თარიღი</p><p className="font-medium">{viewRequest.birth_date}</p></div>
+                <div><p className="text-muted-foreground">საკონტაქტო</p><p className="font-medium">{viewRequest.primary_contact === "parent" ? "მშობელი" : "მოთამაშე"}</p></div>
+                <div><p className="text-muted-foreground">პირადი ტელეფონი</p><p className="font-medium">{viewRequest.phone ?? "—"}</p></div>
+                <div><p className="text-muted-foreground">მშობლის ტელეფონი</p><p className="font-medium">{viewRequest.parent_phone ?? "—"}</p></div>
+              </div>
+              <div className="rounded-lg border border-border p-3 space-y-2">
+                <p className="font-semibold">გამოცდილება: {viewRequest.experience_level === "inexperienced" ? "გამოუცდელი" : "გამოცდილი"}</p>
+                {viewRequest.experience_level === "experienced" && (
+                  <div className="grid grid-cols-2 gap-3">
+                    <div><p className="text-muted-foreground">წინა კლუბი</p><p>{viewRequest.previous_club}</p></div>
+                    <div><p className="text-muted-foreground">გუნდი</p><p>{viewRequest.previous_team}</p></div>
+                    <div><p className="text-muted-foreground">ლიგა</p><p>{viewRequest.league}</p></div>
+                    <div><p className="text-muted-foreground">ბოლო მწვრთნელი</p><p>{viewRequest.last_coach}</p></div>
+                  </div>
+                )}
+              </div>
+              {viewRequest.notes && <div><p className="text-muted-foreground">შენიშვნა</p><p className="whitespace-pre-wrap">{viewRequest.notes}</p></div>}
+              <Button className="w-full" onClick={() => approveRegistrationRequest(viewRequest)}>
+                <Check className="w-4 h-4 mr-2" /> მოთამაშედ დამატება
+              </Button>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
       <div className="flex items-center gap-2">
         <div className="relative flex-1">
           <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
