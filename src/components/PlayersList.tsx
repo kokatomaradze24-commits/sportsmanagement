@@ -74,7 +74,7 @@ function PlayerForm({ initial, sport, onSubmit, onCancel }: {
   );
   const [emailPickerOpen, setEmailPickerOpen] = useState(false);
 
-  // Subscription fields (only used when creating)
+  // Subscription fields
   const [monthlyFee, setMonthlyFee] = useState(initial?.monthly_fee?.toString() || "50");
   const [months, setMonths] = useState((initial?.subscription_months || seasonDefaults.subscriptionMonths).toString());
   const [startMonth, setStartMonth] = useState((initial?.start_month || seasonDefaults.startMonth).toString());
@@ -97,8 +97,8 @@ function PlayerForm({ initial, sport, onSubmit, onCancel }: {
       email: email.trim() || null,
       primary_contact: primaryContact,
     };
+    base.monthly_fee = parseFloat(monthlyFee) || 0;
     if (!isEdit) {
-      base.monthly_fee = parseFloat(monthlyFee) || 0;
       base.subscription_months = parseInt(months);
       base.start_month = parseInt(startMonth);
       base.start_year = getSeasonYearForMonth(parseInt(startMonth), now);
@@ -193,14 +193,14 @@ function PlayerForm({ initial, sport, onSubmit, onCancel }: {
         </div>
       </div>
 
-      {!isEdit && (
-        <div className="rounded-xl border border-border bg-muted/30 p-4 space-y-3">
+      <div className="rounded-xl border border-border bg-muted/30 p-4 space-y-3">
           <div className="text-sm font-semibold text-foreground">{t("subscription")}</div>
-          <div className="grid grid-cols-2 gap-3">
+          <div className={isEdit ? "grid grid-cols-1 gap-3" : "grid grid-cols-2 gap-3"}>
             <div>
               <label className="text-sm text-muted-foreground mb-1 block">{t("monthlyFee")} *</label>
               <Input type="number" step="0.01" min={0} value={monthlyFee} onChange={(e) => setMonthlyFee(e.target.value)} placeholder="50.00" required />
             </div>
+            {!isEdit && (
             <div>
               <label className="text-sm text-muted-foreground mb-1 block">{t("durationMonths")} *</label>
               <Select value={months} onValueChange={setMonths}>
@@ -217,7 +217,10 @@ function PlayerForm({ initial, sport, onSubmit, onCancel }: {
                 </SelectContent>
               </Select>
             </div>
+            )}
           </div>
+          {!isEdit && (
+            <>
           <div>
             <label className="text-sm text-muted-foreground mb-1 block">{t("startMonth")}</label>
             <Select value={startMonth} onValueChange={(value) => {
@@ -236,8 +239,9 @@ function PlayerForm({ initial, sport, onSubmit, onCancel }: {
             <Checkbox checked={firstMonthPaid} onCheckedChange={(v) => setFirstMonthPaid(!!v)} />
             <span className="text-sm text-foreground">{t("firstMonthPaid")}</span>
           </label>
+            </>
+          )}
         </div>
-      )}
 
       <div className="flex gap-2 pt-2">
         <Button type="submit" className="flex-1">{isEdit ? t("saveChanges") : t("addMember", { member: sport.member })}</Button>
