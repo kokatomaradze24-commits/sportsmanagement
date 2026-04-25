@@ -66,7 +66,7 @@ export function usePlayerRegistrationRequests(sport: string, onApproved?: () => 
       .limit(1)
       .maybeSingle();
 
-    const seasonDefaults = getSeasonRegistrationDefaults(new Date());
+    const seasonDefaults = getSeasonRegistrationDefaults(new Date(request.created_at));
     const { error } = await client.from("players").insert({
       user_id: user.id,
       sport: request.sport,
