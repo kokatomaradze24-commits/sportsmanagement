@@ -120,6 +120,7 @@ export async function downloadPlayerPaymentsPdf({
   sportName,
   monthShort,
   formatMoney,
+  language,
 }: {
   player: Player;
   payments: Payment[];
@@ -169,19 +170,24 @@ export async function downloadAllDebtsPdf({
   clubName,
   sportName,
   formatMoney,
+  language,
 }: {
   players: Player[];
   payments: Payment[];
   clubName: string;
   sportName: string;
   formatMoney: MoneyFormatter;
+  language: PdfLanguage;
 }) {
-  const { pdf, regular, bold } = await createDoc();
+  const { pdf, regular, bold, latinRegular, latinBold } = await createDoc();
+  const labels = pdfText[language] ?? pdfText.en;
+  const bodyFont = language === "ka" ? regular : latinRegular;
+  const boldFont = language === "ka" ? bold : latinBold;
   const page = pdf.addPage([PAGE.width, PAGE.height]);
-  header(page, "ყველა დავალიანება", `${clubName} · ${sportName}`, bold, regular);
+  header(page, labels.debts, `${clubName} · ${sportName}`, boldFont, bodyFont);
   let y = PAGE.height - 128;
   const cols = [42, 190, 326, 442];
-  ["სახელი და გვარი", "ტელეფონი", "თვეები", "თანხა"].forEach((label, i) => text(page, label, cols[i], y, bold, 9, muted));
+  [labels.fullName, labels.phone, labels.months, labels.amount].forEach((label, i) => text(page, label, cols[i], y, boldFont, 9, muted));
   y -= 14;
   page.drawLine({ start: { x: 40, y }, end: { x: PAGE.width - 40, y }, thickness: 1, color: line });
   y -= 20;
