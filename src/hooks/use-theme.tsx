@@ -14,7 +14,7 @@ const isAppTheme = (value: string | null): value is AppTheme => APP_THEMES.some(
 
 export function useTheme() {
   const [theme, setThemeState] = useState<AppTheme>(() => {
-    if (typeof window === "undefined") return false;
+    if (typeof window === "undefined") return "classic";
     const saved = localStorage.getItem("theme");
     if (isAppTheme(saved)) return saved;
     return saved === "dark" ? "midnight" : "classic";
