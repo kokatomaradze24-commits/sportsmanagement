@@ -58,12 +58,12 @@ export function AppHeader({ schoolName, logoUrl, sport, isDark, onToggleTheme, o
     <motion.header
       initial={{ y: -20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      className="bg-card border-b border-border px-6 py-4"
+      className="theme-header border-b border-border/60 px-6 py-4"
     >
       <div className="max-w-7xl mx-auto flex flex-col gap-4">
         <div className="flex items-center gap-4 min-w-0 justify-center">
           <div
-            className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center overflow-hidden cursor-pointer group flex-shrink-0 ring-1 ring-primary/20"
+            className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-xl bg-gradient-to-br from-primary-foreground/30 to-primary/10 flex items-center justify-center overflow-hidden cursor-pointer group flex-shrink-0 ring-1 ring-primary-foreground/25 shadow-lg"
             onClick={() => fileRef.current?.click()}
           >
             {logoUrl ? (
@@ -112,8 +112,8 @@ export function AppHeader({ schoolName, logoUrl, sport, isDark, onToggleTheme, o
           ) : (
             <div className="flex items-center gap-2 min-w-0">
               <div className="min-w-0">
-                <h1 className="text-2xl sm:text-3xl tracking-wider text-foreground truncate">{schoolName}</h1>
-                <p className="text-xs text-muted-foreground flex items-center gap-1">
+                <h1 className="text-2xl sm:text-3xl tracking-wider text-current truncate">{schoolName}</h1>
+                <p className="text-xs text-current/75 flex items-center gap-1">
                   <span>{sport.emoji}</span> {sport.name}
                 </p>
               </div>
@@ -124,7 +124,7 @@ export function AppHeader({ schoolName, logoUrl, sport, isDark, onToggleTheme, o
           )}
         </div>
 
-        <div className="flex items-start gap-2 flex-wrap justify-center border-t border-border pt-3">
+        <div className="flex items-start gap-2 flex-wrap justify-center border-t border-primary-foreground/20 pt-3">
           <div className="flex flex-col items-center gap-1">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -194,7 +194,7 @@ export function AppHeader({ schoolName, logoUrl, sport, isDark, onToggleTheme, o
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="rounded-full w-10 h-10 text-yellow-600 hover:text-yellow-500"
+                  className="rounded-full w-10 h-10 text-warning hover:text-warning/80"
                   title={t("adminPanel")}
                 >
                   <Shield className="w-5 h-5" />
@@ -231,7 +231,7 @@ export function AppHeader({ schoolName, logoUrl, sport, isDark, onToggleTheme, o
                 <DropdownMenuSeparator />
                 {themes.length > 0 ? themes.map((themeOption) => (
                   <DropdownMenuItem key={themeOption.id} onClick={() => { play("click"); onSelectTheme?.(themeOption.id); }} className={themeOption.id === currentTheme ? "bg-primary/10 font-semibold" : ""}>
-                    <span className="mr-2 h-4 w-4 rounded-full border border-border bg-primary" />
+                    <span className={`mr-2 h-4 w-4 rounded-full border border-border theme-swatch-${themeOption.id}`} />
                     {themeOption.label}
                   </DropdownMenuItem>
                 )) : (
