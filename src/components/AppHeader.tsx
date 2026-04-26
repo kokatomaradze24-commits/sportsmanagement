@@ -13,6 +13,7 @@ import { useSounds } from "@/hooks/use-sounds";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import { SmsSettingsDialog } from "./SmsSettingsDialog";
 import { SmsLogDialog } from "./SmsLogDialog";
+import { LogoAdjustDialog } from "./LogoAdjustDialog";
 
 interface AppHeaderProps {
   schoolName: string;
@@ -30,6 +31,8 @@ interface AppHeaderProps {
 export function AppHeader({ schoolName, logoUrl, sport, isDark, onToggleTheme, onUpdateName, onUploadLogo, onChangeSport, onResetBranding, onSignOut }: AppHeaderProps) {
   const [editing, setEditing] = useState(false);
   const [nameValue, setNameValue] = useState(schoolName);
+  const [logoFile, setLogoFile] = useState<File | null>(null);
+  const [adjustOpen, setAdjustOpen] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
   const { isAdmin } = useIsAdmin();
   const { t } = useI18n();
@@ -74,7 +77,11 @@ export function AppHeader({ schoolName, logoUrl, sport, isDark, onToggleTheme, o
               className="hidden"
               onChange={(e) => {
                 const file = e.target.files?.[0];
-                if (file) onUploadLogo(file);
+                if (file) {
+                  setLogoFile(file);
+                  setAdjustOpen(true);
+                  e.target.value = "";
+                }
               }}
             />
           </div>
@@ -240,6 +247,12 @@ export function AppHeader({ schoolName, logoUrl, sport, isDark, onToggleTheme, o
             </div>
           )}
         </div>
+        <LogoAdjustDialog
+          file={logoFile}
+          open={adjustOpen}
+          onOpenChange={setAdjustOpen}
+          onConfirm={onUploadLogo}
+        />
       </div>
     </motion.header>
   );
