@@ -353,12 +353,12 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
 
   const handlePlayerPdf = async (player: Player) => {
     play("success");
-    await downloadPlayerPaymentsPdf({ player, payments, clubName: schoolName, sportName: sport.name, monthShort, formatMoney });
+    await downloadPlayerPaymentsPdf({ player, payments, clubName: schoolName, sportName: sport.name, monthShort, formatMoney, language });
   };
 
   const handleAllDebtsPdf = async () => {
     play("success");
-    await downloadAllDebtsPdf({ players, payments, clubName: schoolName, sportName: sport.name, formatMoney });
+    await downloadAllDebtsPdf({ players, payments, clubName: schoolName, sportName: sport.name, formatMoney, language });
   };
 
   return (
