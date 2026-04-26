@@ -198,14 +198,14 @@ export async function downloadAllDebtsPdf({
     if (debts.length === 0) return;
     const amount = debts.reduce((s, p) => s + p.amount, 0);
     total += amount;
-    text(page, fit(`${player.first_name} ${player.last_name}`, regular, 10, 132), cols[0], y, regular, 10);
-    text(page, fit(player.primary_contact === "parent" ? player.parent_phone ?? player.phone ?? "—" : player.phone ?? player.parent_phone ?? "—", regular, 10, 120), cols[1], y, regular, 10);
-    text(page, `${debts.length}`, cols[2], y, bold, 10, danger);
-    text(page, formatMoney(amount), cols[3], y, bold, 10, danger);
+    text(page, fit(`${player.first_name} ${player.last_name}`, bodyFont, 10, 132), cols[0], y, bodyFont, 10);
+    text(page, fit(player.primary_contact === "parent" ? player.parent_phone ?? player.phone ?? "—" : player.phone ?? player.parent_phone ?? "—", bodyFont, 10, 120), cols[1], y, bodyFont, 10);
+    text(page, `${debts.length}`, cols[2], y, boldFont, 10, danger);
+    text(page, formatMoney(amount), cols[3], y, boldFont, 10, danger);
     y -= 22;
   });
 
   page.drawRectangle({ x: 40, y: 48, width: PAGE.width - 80, height: 48, color: rgb(1, 0.96, 0.96), borderColor: rgb(0.95, 0.78, 0.78), borderWidth: 1 });
-  text(page, `სულ დავალიანება: ${formatMoney(total)}`, 58, 66, bold, 12, danger);
+  text(page, `${labels.totalDebt}: ${formatMoney(total)}`, 58, 66, boldFont, 12, danger);
   download(await pdf.save(), "all-overdue-payments.pdf");
 }
