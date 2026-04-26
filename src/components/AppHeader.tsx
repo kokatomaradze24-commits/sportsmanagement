@@ -194,7 +194,7 @@ export function AppHeader({ schoolName, logoUrl, sport, isDark, onToggleTheme, o
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="rounded-full w-10 h-10 text-yellow-600 hover:text-yellow-500"
+                  className="rounded-full w-10 h-10 text-warning hover:text-warning/80"
                   title={t("adminPanel")}
                 >
                   <Shield className="w-5 h-5" />
