@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, Pencil, Trash2, User, Phone, Mail, Search, Filter, ChevronDown, Link as LinkIcon, ExternalLink, Check, Eye } from "lucide-react";
+import { Plus, Pencil, Trash2, User, Phone, Mail, Search, Filter, ChevronDown, Link as LinkIcon, ExternalLink, Check, Eye, FileText } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,6 +21,7 @@ import { sendEventSms } from "@/lib/notifications";
 import { getDialCodeForLanguage, prefillPhone } from "@/lib/phone-codes";
 import { getRemainingSeasonMonths, getSeasonRegistrationDefaults, getSeasonYearForMonth } from "@/lib/season";
 import { PhoneInput } from "@/components/PhoneInput";
+import { downloadAllDebtsPdf, downloadPlayerPaymentsPdf } from "@/lib/payment-pdf";
 
 type Player = Database["public"]["Tables"]["players"]["Row"];
 type Payment = Database["public"]["Tables"]["payments"]["Row"];
@@ -252,7 +253,7 @@ function PlayerForm({ initial, sport, onSubmit, onCancel }: {
 }
 
 export function PlayersList({ players, payments = [], loading, sport, onAdd, onUpdate, onDelete, onSelect, onApprovedRegistration, selectedId }: PlayersListProps) {
-  const { t, language } = useI18n();
+  const { t, language, monthShort, formatMoney } = useI18n();
   const { play } = useSounds();
   const { schoolName } = useAppSettings();
   const { user } = useAuth();
@@ -350,10 +351,24 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
     }
   };
 
+  const handlePlayerPdf = async (player: Player) => {
+    play("success");
+    await downloadPlayerPaymentsPdf({ player, payments, clubName: schoolName, sportName: sport.name, monthShort, formatMoney });
+  };
+
+  const handleAllDebtsPdf = async () => {
+    play("success");
+    await downloadAllDebtsPdf({ players, payments, clubName: schoolName, sportName: sport.name, formatMoney });
+  };
+
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-2">
         <h2 className="text-2xl tracking-wider text-foreground">{sport.members}</h2>
+        <div className="flex items-center gap-2">
+        <Button size="sm" variant="outline" className="shadow-sm hover:shadow-md" onClick={handleAllDebtsPdf} onMouseEnter={() => play("hover")}>
+          <FileText className="w-4 h-4" /> დავალიანებები PDF
+        </Button>
         <Dialog open={addOpen} onOpenChange={(o) => { if (o) play("click"); setAddOpen(o); }}>
           <DialogTrigger asChild>
             <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90 font-semibold shadow-md">
@@ -394,6 +409,7 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
             />
           </DialogContent>
         </Dialog>
+        </div>
       </div>
 
       {registrationLink.registrationUrl && (
@@ -627,6 +643,16 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
                   </div>
                   <div className="flex items-center gap-1">
                     <Dialog open={editPlayer?.id === player.id} onOpenChange={(open) => !open && setEditPlayer(null)}>
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        className="h-8 w-8 text-muted-foreground hover:text-primary"
+                        title="გადახდების PDF"
+                        onMouseEnter={() => play("hover")}
+                        onClick={(e) => { e.stopPropagation(); void handlePlayerPdf(player); }}
+                      >
+                        <FileText className="w-3.5 h-3.5" />
+                      </Button>
                       <Button
                         size="icon"
                         variant="ghost"
