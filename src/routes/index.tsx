@@ -41,7 +41,7 @@ export const Route = createFileRoute("/")({
 function Index() {
   const navigate = useNavigate();
   const { isAuthenticated, loading: authLoading, signOut, user } = useAuth();
-  const { isDark, toggle } = useTheme();
+  const { isDark, theme, themes, setTheme, toggle } = useTheme();
   const { schoolName, logoUrl, loading: settingsLoading, updateSchoolName, updateLogo, resetBranding } = useAppSettings();
   const { sport: rawSport, sportId, setSport } = useSport();
   const sport = useSportLabels(rawSport);
@@ -128,6 +128,9 @@ function Index() {
           onChangeSport={(id) => setSport(id)}
           onResetBranding={resetBranding}
           onSignOut={signOut}
+          currentTheme={theme}
+          themes={themes}
+          onSelectTheme={setTheme}
         />
 
         <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6">
