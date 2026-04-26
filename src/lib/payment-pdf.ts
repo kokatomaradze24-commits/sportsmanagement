@@ -2,6 +2,8 @@ import { PDFDocument, rgb, type PDFFont, type PDFPage } from "pdf-lib";
 import fontkit from "@pdf-lib/fontkit";
 import regularFontUrl from "@fontsource/noto-sans-georgian/files/noto-sans-georgian-georgian-400-normal.woff?url";
 import boldFontUrl from "@fontsource/noto-sans-georgian/files/noto-sans-georgian-georgian-700-normal.woff?url";
+import latinRegularFontUrl from "@fontsource/noto-sans/files/noto-sans-latin-400-normal.woff?url";
+import latinBoldFontUrl from "@fontsource/noto-sans/files/noto-sans-latin-700-normal.woff?url";
 import type { Database } from "@/integrations/supabase/types";
 
 type Player = Database["public"]["Tables"]["players"]["Row"];
@@ -9,6 +11,33 @@ type Payment = Database["public"]["Tables"]["payments"]["Row"];
 
 type MoneyFormatter = (amount: number) => string;
 type MonthFormatter = (month: number) => string;
+type PdfLanguage = "de" | "en" | "es" | "fr" | "ka" | "ru";
+
+const pdfText: Record<PdfLanguage, {
+  payments: string;
+  debts: string;
+  month: string;
+  amount: string;
+  status: string;
+  paidDate: string;
+  note: string;
+  fullName: string;
+  phone: string;
+  months: string;
+  paid: string;
+  remaining: string;
+  totalDebt: string;
+  paidStatus: string;
+  overdueStatus: string;
+  pendingStatus: string;
+}> = {
+  en: { payments: "Payments", debts: "All debts", month: "Month", amount: "Amount", status: "Status", paidDate: "Payment date", note: "Note", fullName: "Full name", phone: "Phone", months: "Months", paid: "Paid", remaining: "Remaining", totalDebt: "Total debt", paidStatus: "Paid", overdueStatus: "Overdue", pendingStatus: "Pending" },
+  ka: { payments: "გადახდები", debts: "ყველა დავალიანება", month: "თვე", amount: "თანხა", status: "სტატუსი", paidDate: "გადახდის თარიღი", note: "შენიშვნა", fullName: "სახელი და გვარი", phone: "ტელეფონი", months: "თვეები", paid: "გადახდილი", remaining: "დარჩენილი", totalDebt: "სულ დავალიანება", paidStatus: "გადახდილი", overdueStatus: "დავალიანება", pendingStatus: "მოლოდინში" },
+  de: { payments: "Zahlungen", debts: "Alle Schulden", month: "Monat", amount: "Betrag", status: "Status", paidDate: "Zahlungsdatum", note: "Notiz", fullName: "Name", phone: "Telefon", months: "Monate", paid: "Bezahlt", remaining: "Offen", totalDebt: "Gesamtschuld", paidStatus: "Bezahlt", overdueStatus: "Überfällig", pendingStatus: "Ausstehend" },
+  es: { payments: "Pagos", debts: "Todas las deudas", month: "Mes", amount: "Importe", status: "Estado", paidDate: "Fecha de pago", note: "Nota", fullName: "Nombre completo", phone: "Teléfono", months: "Meses", paid: "Pagado", remaining: "Pendiente", totalDebt: "Deuda total", paidStatus: "Pagado", overdueStatus: "Vencido", pendingStatus: "Pendiente" },
+  fr: { payments: "Paiements", debts: "Toutes les dettes", month: "Mois", amount: "Montant", status: "Statut", paidDate: "Date de paiement", note: "Note", fullName: "Nom complet", phone: "Téléphone", months: "Mois", paid: "Payé", remaining: "Restant", totalDebt: "Dette totale", paidStatus: "Payé", overdueStatus: "En retard", pendingStatus: "En attente" },
+  ru: { payments: "Платежи", debts: "Все долги", month: "Месяц", amount: "Сумма", status: "Статус", paidDate: "Дата оплаты", note: "Примечание", fullName: "Имя и фамилия", phone: "Телефон", months: "Месяцы", paid: "Оплачено", remaining: "Осталось", totalDebt: "Общий долг", paidStatus: "Оплачено", overdueStatus: "Просрочено", pendingStatus: "Ожидает" },
+};
 
 const PAGE = { width: 595.28, height: 841.89 };
 const ink = rgb(0.13, 0.15, 0.2);
