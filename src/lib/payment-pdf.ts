@@ -55,19 +55,31 @@ async function loadFont(url: string) {
 async function createDoc() {
   const pdf = await PDFDocument.create();
   pdf.registerFontkit(fontkit);
-  const [regularBytes, boldBytes] = await Promise.all([loadFont(regularFontUrl), loadFont(boldFontUrl)]);
+  const [regularBytes, boldBytes, latinRegularBytes, latinBoldBytes] = await Promise.all([
+    loadFont(regularFontUrl),
+    loadFont(boldFontUrl),
+    loadFont(latinRegularFontUrl),
+    loadFont(latinBoldFontUrl),
+  ]);
   return {
     pdf,
     regular: await pdf.embedFont(regularBytes),
     bold: await pdf.embedFont(boldBytes),
+    latinRegular: await pdf.embedFont(latinRegularBytes),
+    latinBold: await pdf.embedFont(latinBoldBytes),
   };
 }
 
+function safePdfText(value: string) {
+  return (value || "—").replace(/₾/g, "GEL ").replace(/€/g, "EUR ").replace(/\$/g, "USD ");
+}
+
 function text(page: PDFPage, value: string, x: number, y: number, font: PDFFont, size = 10, color = ink) {
-  page.drawText(value || "—", { x, y, size, font, color });
+  page.drawText(safePdfText(value), { x, y, size, font, color });
 }
 
 function fit(value: string, font: PDFFont, size: number, maxWidth: number) {
+  value = safePdfText(value);
   if (font.widthOfTextAtSize(value, size) <= maxWidth) return value;
   let out = value;
   while (out.length > 1 && font.widthOfTextAtSize(`${out}…`, size) > maxWidth) out = out.slice(0, -1);
