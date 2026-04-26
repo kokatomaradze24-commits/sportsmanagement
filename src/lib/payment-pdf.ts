@@ -127,34 +127,38 @@ export async function downloadPlayerPaymentsPdf({
   sportName: string;
   monthShort: MonthFormatter;
   formatMoney: MoneyFormatter;
+  language: PdfLanguage;
 }) {
-  const { pdf, regular, bold } = await createDoc();
+  const { pdf, regular, bold, latinRegular, latinBold } = await createDoc();
+  const labels = pdfText[language] ?? pdfText.en;
+  const bodyFont = language === "ka" ? regular : latinRegular;
+  const boldFont = language === "ka" ? bold : latinBold;
   const page = pdf.addPage([PAGE.width, PAGE.height]);
-  header(page, `${player.first_name} ${player.last_name} — გადახდები`, `${clubName} · ${sportName} · #${player.t_number}`, bold, regular);
+  header(page, `${player.first_name} ${player.last_name} — ${labels.payments}`, `${clubName} · ${sportName} · #${player.t_number}`, boldFont, bodyFont);
 
   const rows = payments.filter((p) => p.player_id === player.id).sort((a, b) => a.year - b.year || a.month - b.month);
   let y = PAGE.height - 128;
   const cols = [42, 170, 282, 390, 485];
-  ["თვე", "თანხა", "სტატუსი", "გადახდის თარიღი", "შენიშვნა"].forEach((label, i) => text(page, label, cols[i], y, bold, 9, muted));
+  [labels.month, labels.amount, labels.status, labels.paidDate, labels.note].forEach((label, i) => text(page, label, cols[i], y, boldFont, 9, muted));
   y -= 14;
   page.drawLine({ start: { x: 40, y }, end: { x: PAGE.width - 40, y }, thickness: 1, color: line });
   y -= 20;
 
   rows.forEach((payment) => {
     const statusColor = payment.status === "paid" ? success : payment.status === "overdue" ? danger : muted;
-    text(page, `${monthShort(payment.month)} ${payment.year}`, cols[0], y, regular, 10);
-    text(page, formatMoney(payment.amount), cols[1], y, regular, 10);
-    text(page, payment.status === "paid" ? "გადახდილი" : payment.status === "overdue" ? "დავალიანება" : "მოლოდინში", cols[2], y, bold, 10, statusColor);
-    text(page, payment.payment_date ?? "—", cols[3], y, regular, 10);
-    text(page, fit(payment.notes ?? "—", regular, 10, 68), cols[4], y, regular, 10);
+    text(page, `${monthShort(payment.month)} ${payment.year}`, cols[0], y, bodyFont, 10);
+    text(page, formatMoney(payment.amount), cols[1], y, bodyFont, 10);
+    text(page, payment.status === "paid" ? labels.paidStatus : payment.status === "overdue" ? labels.overdueStatus : labels.pendingStatus, cols[2], y, boldFont, 10, statusColor);
+    text(page, payment.payment_date ?? "—", cols[3], y, bodyFont, 10);
+    text(page, fit(payment.notes ?? "—", bodyFont, 10, 68), cols[4], y, bodyFont, 10);
     y -= 22;
   });
 
   const paid = rows.filter((p) => p.status === "paid").reduce((s, p) => s + p.amount, 0);
   const debt = rows.filter((p) => p.status !== "paid").reduce((s, p) => s + p.amount, 0);
   page.drawRectangle({ x: 40, y: 48, width: PAGE.width - 80, height: 48, color: rgb(0.98, 0.99, 1), borderColor: line, borderWidth: 1 });
-  text(page, `გადახდილი: ${formatMoney(paid)}`, 58, 66, bold, 11, success);
-  text(page, `დარჩენილი: ${formatMoney(debt)}`, 230, 66, bold, 11, danger);
+  text(page, `${labels.paid}: ${formatMoney(paid)}`, 58, 66, boldFont, 11, success);
+  text(page, `${labels.remaining}: ${formatMoney(debt)}`, 230, 66, boldFont, 11, danger);
 
   download(await pdf.save(), `${player.first_name}-${player.last_name}-payments.pdf`);
 }
