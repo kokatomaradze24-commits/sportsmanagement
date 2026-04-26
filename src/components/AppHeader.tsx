@@ -1,7 +1,7 @@
 import { useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { Link } from "@tanstack/react-router";
-import { Moon, Sun, Upload, Pencil, Check, X, LogOut, Trophy, RotateCcw, Shield, Volume2, VolumeX } from "lucide-react";
+import { Moon, Sun, Upload, Pencil, Check, X, LogOut, Trophy, RotateCcw, Shield, Volume2, VolumeX, Palette } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuLabel, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
@@ -14,6 +14,7 @@ import { LanguageSwitcher } from "./LanguageSwitcher";
 import { SmsSettingsDialog } from "./SmsSettingsDialog";
 import { SmsLogDialog } from "./SmsLogDialog";
 import { LogoAdjustDialog } from "./LogoAdjustDialog";
+import type { AppTheme } from "@/hooks/use-theme";
 
 interface AppHeaderProps {
   schoolName: string;
@@ -26,9 +27,12 @@ interface AppHeaderProps {
   onChangeSport: (id: SportId) => void;
   onResetBranding: () => void;
   onSignOut?: () => void;
+  currentTheme?: AppTheme;
+  themes?: { id: AppTheme; label: string }[];
+  onSelectTheme?: (theme: AppTheme) => void;
 }
 
-export function AppHeader({ schoolName, logoUrl, sport, isDark, onToggleTheme, onUpdateName, onUploadLogo, onChangeSport, onResetBranding, onSignOut }: AppHeaderProps) {
+export function AppHeader({ schoolName, logoUrl, sport, isDark, onToggleTheme, onUpdateName, onUploadLogo, onChangeSport, onResetBranding, onSignOut, currentTheme, themes = [], onSelectTheme }: AppHeaderProps) {
   const [editing, setEditing] = useState(false);
   const [nameValue, setNameValue] = useState(schoolName);
   const [logoFile, setLogoFile] = useState<File | null>(null);
@@ -214,21 +218,30 @@ export function AppHeader({ schoolName, logoUrl, sport, isDark, onToggleTheme, o
           </div>
 
           <div className="flex flex-col items-center gap-1">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => { play("click"); onToggleTheme(); }}
-              className="rounded-full w-10 h-10"
-            >
-              <motion.div
-                key={isDark ? "moon" : "sun"}
-                initial={{ rotate: -90, opacity: 0 }}
-                animate={{ rotate: 0, opacity: 1 }}
-                transition={{ duration: 0.3 }}
-              >
-                {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-              </motion.div>
-            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" onClick={() => play("click")} className="rounded-full w-10 h-10" title={t("lblTheme")}>
+                  <motion.div key={currentTheme ?? (isDark ? "moon" : "sun")} initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} transition={{ duration: 0.3 }}>
+                    <Palette className="w-5 h-5" />
+                  </motion.div>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuLabel>{t("lblTheme")}</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                {themes.length > 0 ? themes.map((themeOption) => (
+                  <DropdownMenuItem key={themeOption.id} onClick={() => { play("click"); onSelectTheme?.(themeOption.id); }} className={themeOption.id === currentTheme ? "bg-primary/10 font-semibold" : ""}>
+                    <span className="mr-2 h-4 w-4 rounded-full border border-border bg-primary" />
+                    {themeOption.label}
+                  </DropdownMenuItem>
+                )) : (
+                  <DropdownMenuItem onClick={() => { play("click"); onToggleTheme(); }}>
+                    {isDark ? <Sun className="mr-2 w-4 h-4" /> : <Moon className="mr-2 w-4 h-4" />}
+                    {t("lblTheme")}
+                  </DropdownMenuItem>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
             <span className="text-[10px] text-muted-foreground leading-none">{t("lblTheme")}</span>
           </div>
 
