@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, Pencil, Trash2, User, Phone, Mail, Search, Filter, ChevronDown, Link as LinkIcon, ExternalLink, Check, Eye, FileText, Calendar, CreditCard } from "lucide-react";
+import { Plus, Pencil, Trash2, User, Phone, Search, Filter, ChevronDown, Link as LinkIcon, ExternalLink, Check, Eye, FileText } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -261,7 +261,6 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
   const registrationRequests = usePlayerRegistrationRequests(sport.id, onApprovedRegistration);
   const [addOpen, setAddOpen] = useState(false);
   const [editPlayer, setEditPlayer] = useState<Player | null>(null);
-  const [detailPlayer, setDetailPlayer] = useState<Player | null>(null);
   const [viewRequest, setViewRequest] = useState<PlayerRegistrationRequest | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [search, setSearch] = useState("");
@@ -360,17 +359,6 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
   const handleAllDebtsPdf = async () => {
     play("success");
     await downloadAllDebtsPdf({ players, payments, clubName: schoolName, sportName: sport.name, formatMoney, language });
-  };
-
-  const getPlayerPaymentStats = (playerId: string) => {
-    const playerPayments = payments.filter((payment) => payment.player_id === playerId);
-    const paid = playerPayments.filter((payment) => payment.status === "paid").length;
-    const pending = playerPayments.filter((payment) => payment.status !== "paid");
-    const debt = pending.reduce((sum, payment) => sum + Number(payment.amount || 0), 0);
-    const currentPayment = playerPayments.find(
-      (payment) => payment.month === currentMonth && payment.year === currentYear
-    );
-    return { paid, pendingCount: pending.length, debt, currentPayment, playerPayments };
   };
 
   return (
