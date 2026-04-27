@@ -664,7 +664,7 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
             : t("noMembersMatch", { members: sport.members.toLowerCase() })}</p>
         </motion.div>
       ) : (
-        <div className="space-y-2">
+                <div className="space-y-2 max-h-[62vh] overflow-y-auto pr-1">
           <AnimatePresence>
             {filteredPlayers.map((player, i) => (
               <motion.div
@@ -675,15 +675,15 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
                 transition={{ delay: i * 0.05 }}
                 whileHover={{ scale: 1.01 }}
                 whileTap={{ scale: 0.99 }}
-                onClick={() => { play("click"); onSelect(player); }}
-                className={`p-4 rounded-xl border cursor-pointer card-hover ${
+                        onClick={() => { play("click"); onSelect(player); setDetailPlayer(player); }}
+                        className={`px-3 py-2.5 rounded-xl border cursor-pointer card-hover ${
                   selectedId === player.id
                     ? "border-primary bg-primary/5 shadow-md ring-1 ring-primary/30"
                     : "border-border bg-card hover:border-primary/40 hover:bg-primary/5"
                 }`}
               >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
+                        <div className="flex items-center justify-between gap-3">
+                          <div className="flex items-center gap-3 min-w-0">
                     <div onClick={(e) => e.stopPropagation()}>
                       <Checkbox
                         checked={selectedIds.has(player.id)}
@@ -691,36 +691,38 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
                         aria-label={`Select ${player.first_name} ${player.last_name}`}
                       />
                     </div>
-                    <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center font-display text-lg text-primary">
+                            <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center font-display text-lg text-primary shrink-0">
                       #{player.t_number}
                     </div>
-                    <div>
-                      <p className="font-semibold text-card-foreground flex items-center gap-2 flex-wrap">
-                        <span>{player.first_name} {player.last_name}</span>
+                            <div className="min-w-0">
+                              <p className="font-semibold text-card-foreground flex items-center gap-2">
+                                <span className="truncate">{player.first_name} {player.last_name}</span>
                         {player.birth_date ? (
-                          <span className="text-xs font-normal px-1.5 py-0.5 rounded bg-primary/10 text-primary">
+                                  <span className="text-xs font-normal px-1.5 py-0.5 rounded bg-primary/10 text-primary shrink-0">
                             {t("yearsOld", { count: calcAge(player.birth_date) })}
                           </span>
                         ) : (
                           <span className="text-xs font-normal text-muted-foreground/60">—</span>
                         )}
                       </p>
-                      <div className="flex items-center gap-3 text-xs text-muted-foreground mt-0.5">
+                              <div className="flex items-center gap-3 text-xs text-muted-foreground mt-0.5 min-w-0">
                         {player.phone && (
-                          <span className="flex items-center gap-1"><Phone className="w-3 h-3" />{player.phone}</span>
-                        )}
-                        {player.email && (
-                          <span className="flex items-center gap-1">
-                            <Mail className="w-3 h-3" />{player.email}
-                            {player.primary_contact === "parent" && (
-                              <span className="ml-1 text-[10px] uppercase tracking-wide text-primary/70">({t("contactParent")})</span>
-                            )}
-                          </span>
+                                  <span className="flex items-center gap-1 truncate"><Phone className="w-3 h-3 shrink-0" />{player.phone}</span>
                         )}
                       </div>
                     </div>
                   </div>
                   <div className="flex items-center gap-1">
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              className="h-8 w-8 text-muted-foreground hover:text-primary"
+                              title="სრულად ნახვა"
+                              onMouseEnter={() => play("hover")}
+                              onClick={(e) => { e.stopPropagation(); play("click"); setDetailPlayer(player); onSelect(player); }}
+                            >
+                              <Eye className="w-3.5 h-3.5" />
+                            </Button>
                     <Dialog open={editPlayer?.id === player.id} onOpenChange={(open) => !open && setEditPlayer(null)}>
                       <Button
                         size="icon"
