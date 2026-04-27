@@ -1,4 +1,5 @@
-import { motion } from "framer-motion";
+import { useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { AlertTriangle } from "lucide-react";
 import type { Database } from "@/integrations/supabase/types";
 import { useI18n } from "@/hooks/use-i18n";
@@ -13,6 +14,7 @@ interface NotificationsBannerProps {
 
 export function NotificationsBanner({ players, payments }: NotificationsBannerProps) {
   const { t, monthLong } = useI18n();
+  const [expanded, setExpanded] = useState(false);
   const now = new Date();
   const currentMonth = now.getMonth() + 1;
   const currentYear = now.getFullYear();
@@ -33,13 +35,30 @@ export function NotificationsBanner({ players, payments }: NotificationsBannerPr
       animate={{ opacity: 1, y: 0 }}
       className="bg-warning/10 border border-warning/30 rounded-xl p-4"
     >
-      <div className="flex items-start gap-3">
+      <button
+        type="button"
+        onClick={() => setExpanded((open) => !open)}
+        className="flex w-full items-center gap-3 text-left"
+      >
         <AlertTriangle className="w-5 h-5 text-warning shrink-0 mt-0.5" />
-        <div>
+        <div className="min-w-0 flex-1">
           <p className="font-semibold text-foreground text-sm">
             {t("paymentDueThisMonth")} ({monthLong(currentMonth)})
           </p>
-          <div className="mt-2 flex flex-wrap gap-2">
+        </div>
+        <span className="rounded-lg bg-warning/15 px-3 py-1 text-lg font-bold leading-none text-warning">
+          {playersNeedingPayment.length}
+        </span>
+      </button>
+      <AnimatePresence>
+        {expanded && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            className="overflow-hidden"
+          >
+            <div className="mt-3 flex flex-wrap gap-2 pl-8">
             {playersNeedingPayment.map((player) => (
               <span
                 key={player.id}
@@ -48,9 +67,10 @@ export function NotificationsBanner({ players, payments }: NotificationsBannerPr
                 {player.first_name} {player.last_name} #{player.t_number}
               </span>
             ))}
-          </div>
-        </div>
-      </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 }
