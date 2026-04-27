@@ -596,7 +596,7 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
                 transition={{ delay: i * 0.05 }}
                 whileHover={{ scale: 1.01 }}
                 whileTap={{ scale: 0.99 }}
-                        onClick={() => { play("click"); onSelect(player); setDetailPlayer(player); }}
+                        onClick={() => { play("click"); onSelect(player); }}
                         className={`px-3 py-2.5 rounded-xl border cursor-pointer card-hover ${
                   selectedId === player.id
                     ? "border-primary bg-primary/5 shadow-md ring-1 ring-primary/30"
@@ -634,16 +634,6 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
                     </div>
                   </div>
                   <div className="flex items-center gap-1">
-                            <Button
-                              size="icon"
-                              variant="ghost"
-                              className="h-8 w-8 text-muted-foreground hover:text-primary"
-                              title="სრულად ნახვა"
-                              onMouseEnter={() => play("hover")}
-                              onClick={(e) => { e.stopPropagation(); play("click"); setDetailPlayer(player); onSelect(player); }}
-                            >
-                              <Eye className="w-3.5 h-3.5" />
-                            </Button>
                     <Dialog open={editPlayer?.id === player.id} onOpenChange={(open) => !open && setEditPlayer(null)}>
                       <Button
                         size="icon"
