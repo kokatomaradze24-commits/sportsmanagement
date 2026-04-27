@@ -1,7 +1,7 @@
 import { PDFDocument, rgb, type PDFFont, type PDFPage } from "pdf-lib";
 import fontkit from "@pdf-lib/fontkit";
-import regularFontUrl from "@fontsource/noto-sans-georgian/files/noto-sans-georgian-georgian-400-normal.woff?url";
-import boldFontUrl from "@fontsource/noto-sans-georgian/files/noto-sans-georgian-georgian-700-normal.woff?url";
+import regularFontUrl from "../assets/fonts/NotoSansGeorgian-Regular.ttf?url";
+import boldFontUrl from "../assets/fonts/NotoSansGeorgian-Bold.ttf?url";
 import latinRegularFontUrl from "@fontsource/noto-sans/files/noto-sans-latin-400-normal.woff?url";
 import latinBoldFontUrl from "@fontsource/noto-sans/files/noto-sans-latin-700-normal.woff?url";
 import type { Database } from "@/integrations/supabase/types";
