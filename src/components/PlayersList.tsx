@@ -522,18 +522,18 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
                     <p className="text-2xl font-display text-primary">#{detailPlayer.t_number}</p>
                   </div>
                   <div className="rounded-xl border border-border bg-muted/30 p-3">
-                    <p className="text-xs text-muted-foreground">{t("age")}</p>
+                    <p className="text-xs text-muted-foreground">ასაკი</p>
                     <p className="text-2xl font-display text-foreground">{detailPlayer.birth_date ? calcAge(detailPlayer.birth_date) : "—"}</p>
                   </div>
                   <div className="rounded-xl border border-border bg-muted/30 p-3">
-                    <p className="text-xs text-muted-foreground">{t("debt")}</p>
+                    <p className="text-xs text-muted-foreground">დავალიანება</p>
                     <p className="text-2xl font-display text-destructive">{formatMoney(stats.debt)}</p>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
                   <div className="rounded-xl border border-border p-3 space-y-2">
-                    <p className="font-semibold text-foreground flex items-center gap-2"><User className="w-4 h-4 text-primary" /> {t("personalInfo")}</p>
+                    <p className="font-semibold text-foreground flex items-center gap-2"><User className="w-4 h-4 text-primary" /> პირადი ინფორმაცია</p>
                     <div><p className="text-muted-foreground">{t("birthDate")}</p><p>{detailPlayer.birth_date ?? "—"}</p></div>
                     <div><p className="text-muted-foreground">{t("primaryContact")}</p><p>{detailPlayer.primary_contact === "parent" ? t("contactParent") : t("contactPlayer")}</p></div>
                     <div><p className="text-muted-foreground">{t("phone")}</p><p>{detailPlayer.phone ?? "—"}</p></div>
