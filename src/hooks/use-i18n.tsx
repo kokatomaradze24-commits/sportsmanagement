@@ -1,7 +1,9 @@
 import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from "react";
 import { translations, LANGUAGES, DEFAULT_LANGUAGE, type LanguageCode, type TranslationKey } from "@/lib/i18n/translations";
+import { supabase } from "@/integrations/supabase/client";
 
 const STORAGE_KEY = "app_language";
+const DB_KEY = "ui_language";
 
 export type CurrencyCode = "GEL" | "USD" | "EUR";
 
