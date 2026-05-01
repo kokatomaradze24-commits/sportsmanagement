@@ -11,7 +11,7 @@ export interface LanguageInfo {
 // Alphabetical order by native name
 export const LANGUAGES: LanguageInfo[] = [
   { code: "de", nativeName: "Deutsch", flag: "🇩🇪" },
-  { code: "en", nativeName: "English", flag: "🇬🇧" },
+  { code: "en", nativeName: "English", flag: "🇺🇸" },
   { code: "es", nativeName: "Español", flag: "🇪🇸" },
   { code: "fr", nativeName: "Français", flag: "🇫🇷" },
   { code: "ka", nativeName: "ქართული", flag: "🇬🇪" },
