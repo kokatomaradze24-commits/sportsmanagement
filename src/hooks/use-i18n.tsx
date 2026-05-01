@@ -1,7 +1,9 @@
 import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from "react";
 import { translations, LANGUAGES, DEFAULT_LANGUAGE, type LanguageCode, type TranslationKey } from "@/lib/i18n/translations";
+import { supabase } from "@/integrations/supabase/client";
 
 const STORAGE_KEY = "app_language";
+const DB_KEY = "ui_language";
 
 export type CurrencyCode = "GEL" | "USD" | "EUR";
 
@@ -69,12 +71,33 @@ export function I18nProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
+  const persistToDb = useCallback(async (lang: LanguageCode) => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      const { data: existing } = await supabase
+        .from("app_settings")
+        .select("id")
+        .eq("user_id", user.id)
+        .eq("key", DB_KEY)
+        .maybeSingle();
+      if (existing) {
+        await supabase.from("app_settings").update({ value: lang }).eq("id", existing.id);
+      } else {
+        await supabase.from("app_settings").insert({ user_id: user.id, key: DB_KEY, value: lang });
+      }
+    } catch {
+      // best-effort sync
+    }
+  }, []);
+
   const setLanguage = useCallback((lang: LanguageCode) => {
     setLanguageState(lang);
     if (typeof window !== "undefined") {
       window.localStorage.setItem(STORAGE_KEY, lang);
     }
-  }, []);
+    void persistToDb(lang);
+  }, [persistToDb]);
 
   const t = useCallback(
     (key: TranslationKey, vars?: Record<string, string | number>) => {

@@ -21,13 +21,14 @@ export const Route = createFileRoute("/api/public/player-registration")({
           .from("app_settings")
           .select("key, value")
           .eq("user_id", link.user_id)
-          .in("key", [`school_name:${link.sport}`, `logo_url:${link.sport}`]);
+          .in("key", [`school_name:${link.sport}`, `logo_url:${link.sport}`, "ui_language"]);
 
         return Response.json({
           linkId: link.id,
           sport: link.sport,
           clubName: settings?.find((s: any) => s.key === `school_name:${link.sport}`)?.value ?? "Club",
           logoUrl: settings?.find((s: any) => s.key === `logo_url:${link.sport}`)?.value ?? "",
+          language: settings?.find((s: any) => s.key === "ui_language")?.value ?? "ka",
         });
       },
       POST: async ({ request }) => {
