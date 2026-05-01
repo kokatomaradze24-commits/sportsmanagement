@@ -30,7 +30,6 @@ const DIAL_CODES: Record<LanguageCode, DialCodeInfo> = {
 export const PHONE_COUNTRIES: DialCodeInfo[] = [
   { code: "+995", flag: "🇬🇪", country: "Georgia", sample: "5xx xxx xxx" },
   { code: "+1", flag: "🇺🇸", country: "United States", sample: "xxx xxx xxxx" },
-  { code: "+44", flag: "🇬🇧", country: "United Kingdom", sample: "7xxx xxx xxx" },
   { code: "+49", flag: "🇩🇪", country: "Germany", sample: "1xx xxxxxxx" },
   { code: "+34", flag: "🇪🇸", country: "Spain", sample: "6xx xxx xxx" },
   { code: "+33", flag: "🇫🇷", country: "France", sample: "6 xx xx xx xx" },
