@@ -157,7 +157,23 @@ export function AppHeader({ schoolName, logoUrl, sport, isDark, onToggleTheme, o
           </div>
 
           <div className="flex flex-col items-center gap-1">
-            <SmsSettingsDialog />
+            <AIImageGenerator
+              title={t("aiGenLogoTitle")}
+              defaultPrompt={`A modern minimalist sports club logo for "${schoolName}", ${sport.name} themed, vector style, clean background, professional`}
+              onUseImage={(file) => {
+                setLogoFile(file);
+                setAdjustOpen(true);
+              }}
+              trigger={
+                <Button variant="ghost" size="icon" className="rounded-full w-10 h-10 text-primary" title={t("aiGenButton")}>
+                  <Sparkles className="w-5 h-5" />
+                </Button>
+              }
+            />
+            <span className="text-[10px] text-muted-foreground leading-none">{t("aiGenButton")}</span>
+          </div>
+
+          <div className="flex flex-col items-center gap-1">
             <span className="text-[10px] text-muted-foreground leading-none">{t("lblSms")}</span>
           </div>
 
