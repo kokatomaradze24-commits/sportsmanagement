@@ -1,7 +1,7 @@
 import { useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { Link } from "@tanstack/react-router";
-import { Moon, Sun, Upload, Pencil, Check, X, LogOut, Trophy, RotateCcw, Shield, Volume2, VolumeX, Palette } from "lucide-react";
+import { Moon, Sun, Upload, Pencil, Check, X, LogOut, Trophy, RotateCcw, Shield, Volume2, VolumeX, Palette, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuLabel, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
