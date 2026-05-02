@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { Sparkles, Loader2, Upload, Download, RefreshCw, Image as ImageIcon } from "lucide-react";
+import { Sparkles, Loader2, Upload, Download, RefreshCw, Image as ImageIcon, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
@@ -286,6 +286,3 @@ export function AIImageGenerator({
     </Dialog>
   );
 }
-
-// Local check-mark icon import (lucide)
-import { Check } from "lucide-react";
