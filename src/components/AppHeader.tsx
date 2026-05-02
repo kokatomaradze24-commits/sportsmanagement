@@ -14,6 +14,7 @@ import { LanguageSwitcher } from "./LanguageSwitcher";
 import { SmsSettingsDialog } from "./SmsSettingsDialog";
 import { SmsLogDialog } from "./SmsLogDialog";
 import { LogoAdjustDialog } from "./LogoAdjustDialog";
+import { AIImageGenerator } from "./AIImageGenerator";
 import type { AppTheme } from "@/hooks/use-theme";
 
 interface AppHeaderProps {
