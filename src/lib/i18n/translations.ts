@@ -1229,6 +1229,15 @@ export const translations = {
     aiGenRateLimit: "ლიმიტი ამოიწურა. სცადეთ მოგვიანებით.",
     aiGenNoCredits: "AI კრედიტები ამოიწურა.",
     aiGenLogoTitle: "კლუბის ლოგოს გენერაცია AI-ით",
+    aiGenStudioTitle: "AI სტუდია",
+    aiPresetLogo: "კლუბის ლოგო",
+    aiPresetUniform: "გუნდის ფორმა",
+    aiPresetCustom: "ნებისმიერი ჩემი ლოგოთი",
+    aiPresetLogoPrompt: "თანამედროვე მინიმალისტური სპორტული კლუბის ლოგო \"{name}\"-სთვის, {sport}-ის თემაზე, ვექტორული სტილი, სუფთა ფონი, პროფესიონალური",
+    aiPresetUniformPrompt: "თანამედროვე გუნდის ფორმის დიზაინი \"{name}\" {sport}-ის გუნდისთვის, წინხედი, პროფესიონალური სპორტული ტანსაცმელი, სუფთა ფონი",
+    aiPresetCustomPrompt: "კრეატიული დიზაინი \"{name}\"-სთვის ჩვენი კლუბის ლოგოთი, {sport}-ის თემაზე",
+    lblSettings: "პარამეტრები",
+    lblResetLogo: "ლოგოს რესეტი",
   },
 
   ru: {
