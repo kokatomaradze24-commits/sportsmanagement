@@ -21,6 +21,7 @@ import { Route as ApiCoachScheduleRouteImport } from './routes/api/coach/schedul
 import { Route as ApiCoachResetPasswordRouteImport } from './routes/api/coach/reset-password'
 import { Route as ApiCoachRegisterRouteImport } from './routes/api/coach/register'
 import { Route as ApiCoachLoginRouteImport } from './routes/api/coach/login'
+import { Route as ApiAiGenerateTrainingPlanRouteImport } from './routes/api/ai/generate-training-plan'
 import { Route as ApiAiGenerateImageRouteImport } from './routes/api/ai/generate-image'
 
 const LoginRoute = LoginRouteImport.update({
@@ -84,6 +85,12 @@ const ApiCoachLoginRoute = ApiCoachLoginRouteImport.update({
   path: '/api/coach/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiAiGenerateTrainingPlanRoute =
+  ApiAiGenerateTrainingPlanRouteImport.update({
+    id: '/api/ai/generate-training-plan',
+    path: '/api/ai/generate-training-plan',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiAiGenerateImageRoute = ApiAiGenerateImageRouteImport.update({
   id: '/api/ai/generate-image',
   path: '/api/ai/generate-image',
@@ -99,6 +106,7 @@ export interface FileRoutesByFullPath {
   '/hooks/send-payment-sms': typeof HooksSendPaymentSmsRoute
   '/register/$linkId': typeof RegisterLinkIdRoute
   '/api/ai/generate-image': typeof ApiAiGenerateImageRoute
+  '/api/ai/generate-training-plan': typeof ApiAiGenerateTrainingPlanRoute
   '/api/coach/login': typeof ApiCoachLoginRoute
   '/api/coach/register': typeof ApiCoachRegisterRoute
   '/api/coach/reset-password': typeof ApiCoachResetPasswordRoute
@@ -114,6 +122,7 @@ export interface FileRoutesByTo {
   '/hooks/send-payment-sms': typeof HooksSendPaymentSmsRoute
   '/register/$linkId': typeof RegisterLinkIdRoute
   '/api/ai/generate-image': typeof ApiAiGenerateImageRoute
+  '/api/ai/generate-training-plan': typeof ApiAiGenerateTrainingPlanRoute
   '/api/coach/login': typeof ApiCoachLoginRoute
   '/api/coach/register': typeof ApiCoachRegisterRoute
   '/api/coach/reset-password': typeof ApiCoachResetPasswordRoute
@@ -130,6 +139,7 @@ export interface FileRoutesById {
   '/hooks/send-payment-sms': typeof HooksSendPaymentSmsRoute
   '/register/$linkId': typeof RegisterLinkIdRoute
   '/api/ai/generate-image': typeof ApiAiGenerateImageRoute
+  '/api/ai/generate-training-plan': typeof ApiAiGenerateTrainingPlanRoute
   '/api/coach/login': typeof ApiCoachLoginRoute
   '/api/coach/register': typeof ApiCoachRegisterRoute
   '/api/coach/reset-password': typeof ApiCoachResetPasswordRoute
@@ -147,6 +157,7 @@ export interface FileRouteTypes {
     | '/hooks/send-payment-sms'
     | '/register/$linkId'
     | '/api/ai/generate-image'
+    | '/api/ai/generate-training-plan'
     | '/api/coach/login'
     | '/api/coach/register'
     | '/api/coach/reset-password'
@@ -162,6 +173,7 @@ export interface FileRouteTypes {
     | '/hooks/send-payment-sms'
     | '/register/$linkId'
     | '/api/ai/generate-image'
+    | '/api/ai/generate-training-plan'
     | '/api/coach/login'
     | '/api/coach/register'
     | '/api/coach/reset-password'
@@ -177,6 +189,7 @@ export interface FileRouteTypes {
     | '/hooks/send-payment-sms'
     | '/register/$linkId'
     | '/api/ai/generate-image'
+    | '/api/ai/generate-training-plan'
     | '/api/coach/login'
     | '/api/coach/register'
     | '/api/coach/reset-password'
@@ -193,6 +206,7 @@ export interface RootRouteChildren {
   HooksSendPaymentSmsRoute: typeof HooksSendPaymentSmsRoute
   RegisterLinkIdRoute: typeof RegisterLinkIdRoute
   ApiAiGenerateImageRoute: typeof ApiAiGenerateImageRoute
+  ApiAiGenerateTrainingPlanRoute: typeof ApiAiGenerateTrainingPlanRoute
   ApiCoachLoginRoute: typeof ApiCoachLoginRoute
   ApiCoachRegisterRoute: typeof ApiCoachRegisterRoute
   ApiCoachResetPasswordRoute: typeof ApiCoachResetPasswordRoute
@@ -286,6 +300,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiCoachLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/ai/generate-training-plan': {
+      id: '/api/ai/generate-training-plan'
+      path: '/api/ai/generate-training-plan'
+      fullPath: '/api/ai/generate-training-plan'
+      preLoaderRoute: typeof ApiAiGenerateTrainingPlanRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/ai/generate-image': {
       id: '/api/ai/generate-image'
       path: '/api/ai/generate-image'
@@ -305,6 +326,7 @@ const rootRouteChildren: RootRouteChildren = {
   HooksSendPaymentSmsRoute: HooksSendPaymentSmsRoute,
   RegisterLinkIdRoute: RegisterLinkIdRoute,
   ApiAiGenerateImageRoute: ApiAiGenerateImageRoute,
+  ApiAiGenerateTrainingPlanRoute: ApiAiGenerateTrainingPlanRoute,
   ApiCoachLoginRoute: ApiCoachLoginRoute,
   ApiCoachRegisterRoute: ApiCoachRegisterRoute,
   ApiCoachResetPasswordRoute: ApiCoachResetPasswordRoute,

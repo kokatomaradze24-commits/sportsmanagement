@@ -1,0 +1,155 @@
+import { createFileRoute } from "@tanstack/react-router";
+import { supabaseAdmin } from "@/integrations/supabase/client.server";
+
+const GATEWAY_URL = "https://ai.gateway.lovable.dev/v1/chat/completions";
+
+async function authenticate(request: Request) {
+  const authHeader = request.headers.get("Authorization") ?? "";
+  const token = authHeader.startsWith("Bearer ") ? authHeader.slice(7) : "";
+  if (!token) return null;
+  const { data, error } = await (supabaseAdmin as any).auth.getUser(token);
+  if (error || !data?.user) return null;
+  return data.user;
+}
+
+export const Route = createFileRoute("/api/ai/generate-training-plan")({
+  server: {
+    handlers: {
+      POST: async ({ request }) => {
+        const user = await authenticate(request);
+        if (!user) return Response.json({ error: "Unauthorized" }, { status: 401 });
+
+        const LOVABLE_API_KEY = process.env.LOVABLE_API_KEY;
+        if (!LOVABLE_API_KEY) {
+          return Response.json({ error: "AI gateway is not configured" }, { status: 500 });
+        }
+
+        const body = (await request.json().catch(() => ({}))) as Record<string, unknown>;
+        const sport = String(body.sport ?? "basketball");
+        const ageGroup = String(body.ageGroup ?? "").trim();
+        const period = body.period === "month" ? "month" : "week";
+        const sessionsPerWeek = Math.max(1, Math.min(7, Number(body.sessionsPerWeek ?? 3)));
+        const sessionMinutes = Math.max(30, Math.min(180, Number(body.sessionMinutes ?? 90)));
+        const startDate = String(body.startDate ?? new Date().toISOString().slice(0, 10));
+        const focus = String(body.focus ?? "").trim();
+        const level = String(body.level ?? "intermediate");
+        const language = String(body.language ?? "en");
+        const mode = body.mode === "expert" ? "expert" : "self";
+
+        const totalSessions = period === "week" ? sessionsPerWeek : sessionsPerWeek * 4;
+
+        const expertNote =
+          mode === "expert"
+            ? "Act as a world-class professional club manager and head coach with decades of experience designing periodized training plans. Apply best practices in load management, progression, and skill development."
+            : "Act as a helpful coaching assistant building a clear, simple, self-directed training plan for an independent coach.";
+
+        const systemPrompt = `${expertNote}
+You design ${sport} training plans for the "${ageGroup || "general"}" age group at ${level} level.
+Return a structured plan that fits the period (${period}), with ${sessionsPerWeek} sessions per week, ${sessionMinutes} minutes each, starting on ${startDate}.
+Reply ONLY by calling the provided tool. Write all text fields (title, notes) in language code "${language}".`;
+
+        const userPrompt = `Build a ${period === "week" ? "1-week" : "1-month"} ${sport} training plan.
+- Age group: ${ageGroup || "general"}
+- Level: ${level}
+- Sessions per week: ${sessionsPerWeek}
+- Session length: ${sessionMinutes} minutes
+- Start date: ${startDate}
+- Special focus: ${focus || "balanced development"}
+Generate exactly ${totalSessions} sessions with realistic dates (no more than one per day, spread across the period).
+Each session must have:
+- title: short focus title
+- practice_date: YYYY-MM-DD on or after ${startDate}
+- start_time: HH:MM (24h)
+- end_time: HH:MM (24h, ${sessionMinutes} min after start)
+- notes: detailed plan with warm-up, main block, drills with reps/duration, cool-down. Use bullet points or short lines.`;
+
+        const tools = [
+          {
+            type: "function",
+            function: {
+              name: "submit_training_plan",
+              description: "Submit the generated training plan as a structured list of practice sessions.",
+              parameters: {
+                type: "object",
+                properties: {
+                  summary: { type: "string", description: "Short overview of the plan focus and progression." },
+                  sessions: {
+                    type: "array",
+                    minItems: 1,
+                    maxItems: 40,
+                    items: {
+                      type: "object",
+                      properties: {
+                        title: { type: "string" },
+                        practice_date: { type: "string", description: "YYYY-MM-DD" },
+                        start_time: { type: "string", description: "HH:MM 24h" },
+                        end_time: { type: "string", description: "HH:MM 24h" },
+                        notes: { type: "string" },
+                      },
+                      required: ["title", "practice_date", "start_time", "end_time", "notes"],
+                      additionalProperties: false,
+                    },
+                  },
+                },
+                required: ["summary", "sessions"],
+                additionalProperties: false,
+              },
+            },
+          },
+        ];
+
+        try {
+          const response = await fetch(GATEWAY_URL, {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${LOVABLE_API_KEY}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              model: mode === "expert" ? "google/gemini-2.5-pro" : "google/gemini-2.5-flash",
+              messages: [
+                { role: "system", content: systemPrompt },
+                { role: "user", content: userPrompt },
+              ],
+              tools,
+              tool_choice: { type: "function", function: { name: "submit_training_plan" } },
+            }),
+          });
+
+          if (response.status === 429) {
+            return Response.json({ error: "Rate limit exceeded. Please try again shortly." }, { status: 429 });
+          }
+          if (response.status === 402) {
+            return Response.json({ error: "AI credits exhausted. Please add credits in workspace settings." }, { status: 402 });
+          }
+          if (!response.ok) {
+            const txt = await response.text();
+            console.error("AI gateway error", response.status, txt);
+            return Response.json({ error: "Plan generation failed" }, { status: 500 });
+          }
+
+          const data = await response.json();
+          const toolCall = data?.choices?.[0]?.message?.tool_calls?.[0];
+          const argsStr = toolCall?.function?.arguments;
+          if (!argsStr) {
+            console.error("No tool call in response", JSON.stringify(data).slice(0, 500));
+            return Response.json({ error: "AI returned no plan" }, { status: 500 });
+          }
+          let parsed: any;
+          try {
+            parsed = JSON.parse(argsStr);
+          } catch {
+            return Response.json({ error: "AI returned invalid plan" }, { status: 500 });
+          }
+          return Response.json({
+            summary: parsed.summary ?? "",
+            sessions: Array.isArray(parsed.sessions) ? parsed.sessions : [],
+          });
+        } catch (err) {
+          console.error("generate-training-plan exception", err);
+          return Response.json({ error: "Plan generation failed" }, { status: 500 });
+        }
+      },
+    },
+  },
+});
