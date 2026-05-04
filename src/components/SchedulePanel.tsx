@@ -25,6 +25,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { useSchedule, type Practice, type Game } from "@/hooks/use-schedule";
+import { AITrainingPlanDialog } from "./AITrainingPlanDialog";
 
 interface Props {
   sportId: string;
@@ -58,7 +59,8 @@ export function SchedulePanel({ sportId }: Props) {
         </TabsList>
 
         <TabsContent value="practices">
-          <div className="flex justify-end mb-2">
+          <div className="flex justify-end mb-2 gap-2">
+            <AITrainingPlanDialog sportId={sportId} onAdded={() => sched.refetch()} />
             <Button size="sm" onClick={() => setEditing({ kind: "practice" })}>
               <Plus className="w-4 h-4 mr-1" /> Add practice
             </Button>
