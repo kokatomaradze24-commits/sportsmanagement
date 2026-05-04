@@ -1,18 +1,16 @@
 import { useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { Link } from "@tanstack/react-router";
-import { Moon, Sun, Upload, Pencil, Check, X, LogOut, Trophy, RotateCcw, Shield, Volume2, VolumeX, Palette, Sparkles } from "lucide-react";
+import { Moon, Sun, Upload, Pencil, Check, X, LogOut, Trophy, RotateCcw, Shield, Volume2, VolumeX, Palette, Sparkles, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuLabel, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { getInitials, SPORT_LIST, type SportConfig, type SportId } from "@/lib/sports";
 import { useIsAdmin } from "@/hooks/use-is-admin";
 import { useI18n } from "@/hooks/use-i18n";
 import { useSounds } from "@/hooks/use-sounds";
 import { LanguageSwitcher } from "./LanguageSwitcher";
-import { SmsSettingsDialog } from "./SmsSettingsDialog";
-import { SmsLogDialog } from "./SmsLogDialog";
 import { LogoAdjustDialog } from "./LogoAdjustDialog";
 import { AIImageGenerator } from "./AIImageGenerator";
 import type { AppTheme } from "@/hooks/use-theme";
@@ -38,6 +36,7 @@ export function AppHeader({ schoolName, logoUrl, sport, isDark, onToggleTheme, o
   const [nameValue, setNameValue] = useState(schoolName);
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [adjustOpen, setAdjustOpen] = useState(false);
+  const [resetOpen, setResetOpen] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
   const { isAdmin } = useIsAdmin();
   const { t } = useI18n();
@@ -54,6 +53,12 @@ export function AppHeader({ schoolName, logoUrl, sport, isDark, onToggleTheme, o
   };
 
   const initials = getInitials(schoolName);
+
+  const aiPresets = [
+    { label: t("aiPresetLogo"), prompt: t("aiPresetLogoPrompt", { name: schoolName, sport: sport.name }) },
+    { label: t("aiPresetUniform"), prompt: t("aiPresetUniformPrompt", { name: schoolName, sport: sport.name }) },
+    { label: t("aiPresetCustom"), prompt: t("aiPresetCustomPrompt", { name: schoolName, sport: sport.name }) },
+  ];
 
   return (
     <motion.header
@@ -158,8 +163,9 @@ export function AppHeader({ schoolName, logoUrl, sport, isDark, onToggleTheme, o
 
           <div className="flex flex-col items-center gap-1">
             <AIImageGenerator
-              title={t("aiGenLogoTitle")}
-              defaultPrompt={`A modern minimalist sports club logo for "${schoolName}", ${sport.name} themed, vector style, clean background, professional`}
+              title={t("aiGenStudioTitle")}
+              presetPrompts={aiPresets}
+              defaultPrompt={aiPresets[0].prompt}
               onUseImage={(file) => {
                 setLogoFile(file);
                 setAdjustOpen(true);
@@ -171,67 +177,6 @@ export function AppHeader({ schoolName, logoUrl, sport, isDark, onToggleTheme, o
               }
             />
             <span className="text-[10px] text-muted-foreground leading-none">{t("aiGenButton")}</span>
-          </div>
-
-          <div className="flex flex-col items-center gap-1">
-            <span className="text-[10px] text-muted-foreground leading-none">{t("lblSms")}</span>
-          </div>
-
-          <div className="flex flex-col items-center gap-1">
-            <SmsLogDialog />
-            <span className="text-[10px] text-muted-foreground leading-none">{t("lblNotifLog")}</span>
-          </div>
-
-          <div className="flex flex-col items-center gap-1">
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button variant="ghost" size="icon" className="rounded-full w-10 h-10 text-muted-foreground hover:text-foreground" title={t("resetBranding")}>
-                  <RotateCcw className="w-5 h-5" />
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>{t("resetBrandingTitle", { sport: sport.name })}</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    {t("resetBrandingDesc")}
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
-                  <AlertDialogAction onClick={onResetBranding}>{t("reset")}</AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-            <span className="text-[10px] text-muted-foreground leading-none">{t("lblReset")}</span>
-          </div>
-
-          {isAdmin && (
-            <div className="flex flex-col items-center gap-1">
-              <Link to="/admin">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="rounded-full w-10 h-10 text-warning hover:text-warning/80"
-                  title={t("adminPanel")}
-                >
-                  <Shield className="w-5 h-5" />
-                </Button>
-              </Link>
-              <span className="text-[10px] text-muted-foreground leading-none">{t("lblAdmin")}</span>
-            </div>
-          )}
-
-          <div className="flex flex-col items-center gap-1">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => { play("click"); toggleMuted(); }}
-              className="rounded-full w-10 h-10"
-              title={muted ? t("soundOff") : t("soundOn")}
-            >
-              {muted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
-            </Button>
-            <span className="text-[10px] text-muted-foreground leading-none">{t("lblSound")}</span>
           </div>
 
           <div className="flex flex-col items-center gap-1">
@@ -262,21 +207,60 @@ export function AppHeader({ schoolName, logoUrl, sport, isDark, onToggleTheme, o
             <span className="text-[10px] text-muted-foreground leading-none">{t("lblTheme")}</span>
           </div>
 
-          {onSignOut && (
-            <div className="flex flex-col items-center gap-1">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={onSignOut}
-                className="rounded-full w-10 h-10 text-muted-foreground hover:text-destructive"
-                title={t("signOut")}
-              >
-                <LogOut className="w-5 h-5" />
-              </Button>
-              <span className="text-[10px] text-muted-foreground leading-none">{t("lblSignOut")}</span>
-            </div>
-          )}
+          <div className="flex flex-col items-center gap-1">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="rounded-full w-10 h-10" title={t("lblSettings")}>
+                  <Settings className="w-5 h-5" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuLabel>{t("lblSettings")}</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => setResetOpen(true)}>
+                  <RotateCcw className="mr-2 w-4 h-4" />
+                  {t("lblResetLogo")}
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => { play("click"); toggleMuted(); }}>
+                  {muted ? <VolumeX className="mr-2 w-4 h-4" /> : <Volume2 className="mr-2 w-4 h-4" />}
+                  {muted ? t("soundOff") : t("soundOn")}
+                </DropdownMenuItem>
+                {isAdmin && (
+                  <DropdownMenuItem asChild>
+                    <Link to="/admin">
+                      <Shield className="mr-2 w-4 h-4 text-warning" />
+                      {t("adminPanel")}
+                    </Link>
+                  </DropdownMenuItem>
+                )}
+                {onSignOut && (
+                  <>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={onSignOut} className="text-destructive focus:text-destructive">
+                      <LogOut className="mr-2 w-4 h-4" />
+                      {t("signOut")}
+                    </DropdownMenuItem>
+                  </>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <span className="text-[10px] text-muted-foreground leading-none">{t("lblSettings")}</span>
+          </div>
         </div>
+
+        <AlertDialog open={resetOpen} onOpenChange={setResetOpen}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>{t("resetBrandingTitle", { sport: sport.name })}</AlertDialogTitle>
+              <AlertDialogDescription>{t("resetBrandingDesc")}</AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
+              <AlertDialogAction onClick={onResetBranding}>{t("reset")}</AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+
         <LogoAdjustDialog
           file={logoFile}
           open={adjustOpen}
