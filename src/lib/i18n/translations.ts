@@ -375,6 +375,15 @@ export const translations = {
     aiGenRateLimit: "Rate limit exceeded. Please try again shortly.",
     aiGenNoCredits: "AI credits exhausted. Please add credits in workspace settings.",
     aiGenLogoTitle: "Generate club logo with AI",
+    aiGenStudioTitle: "AI Studio",
+    aiPresetLogo: "Club logo",
+    aiPresetUniform: "Team uniform",
+    aiPresetCustom: "Custom with my logo",
+    aiPresetLogoPrompt: "A modern minimalist sports club logo for \"{name}\", {sport} themed, vector style, clean background, professional",
+    aiPresetUniformPrompt: "A modern team uniform/jersey design for \"{name}\" {sport} team, front view, professional sportswear, clean background",
+    aiPresetCustomPrompt: "A creative design for \"{name}\" featuring our club logo, {sport} themed",
+    lblSettings: "Settings",
+    lblResetLogo: "Logo reset",
   },
 
   de: {
