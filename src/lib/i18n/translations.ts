@@ -568,6 +568,15 @@ export const translations = {
     aiGenRateLimit: "Limit erreicht. Bitte später erneut versuchen.",
     aiGenNoCredits: "KI-Guthaben aufgebraucht.",
     aiGenLogoTitle: "Vereinslogo mit KI generieren",
+    aiGenStudioTitle: "KI-Studio",
+    aiPresetLogo: "Vereinslogo",
+    aiPresetUniform: "Team-Trikot",
+    aiPresetCustom: "Mit meinem Logo",
+    aiPresetLogoPrompt: "Modernes minimalistisches Sportverein-Logo für \"{name}\", {sport}-Thema, Vektorstil, klarer Hintergrund, professionell",
+    aiPresetUniformPrompt: "Modernes Team-Trikot-Design für \"{name}\" {sport}-Team, Vorderansicht, professionelle Sportbekleidung, klarer Hintergrund",
+    aiPresetCustomPrompt: "Kreatives Design für \"{name}\" mit unserem Vereinslogo, {sport}-Thema",
+    lblSettings: "Einstellungen",
+    lblResetLogo: "Logo zurücksetzen",
   },
 
   es: {
