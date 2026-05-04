@@ -761,6 +761,15 @@ export const translations = {
     aiGenRateLimit: "Límite alcanzado. Inténtalo más tarde.",
     aiGenNoCredits: "Créditos de IA agotados.",
     aiGenLogoTitle: "Generar logo del club con IA",
+    aiGenStudioTitle: "Estudio IA",
+    aiPresetLogo: "Logo del club",
+    aiPresetUniform: "Uniforme del equipo",
+    aiPresetCustom: "Personalizado con mi logo",
+    aiPresetLogoPrompt: "Logo minimalista moderno de club deportivo para \"{name}\", temática {sport}, estilo vectorial, fondo limpio, profesional",
+    aiPresetUniformPrompt: "Diseño moderno de uniforme/camiseta para el equipo \"{name}\" de {sport}, vista frontal, ropa deportiva profesional, fondo limpio",
+    aiPresetCustomPrompt: "Diseño creativo para \"{name}\" con nuestro logo, temática {sport}",
+    lblSettings: "Ajustes",
+    lblResetLogo: "Resetear logo",
   },
 
   fr: {
