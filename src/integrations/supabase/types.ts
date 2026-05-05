@@ -366,6 +366,7 @@ export type Database = {
       }
       practices: {
         Row: {
+          age_group: string | null
           coach_id: string | null
           created_at: string
           end_time: string | null
@@ -381,6 +382,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          age_group?: string | null
           coach_id?: string | null
           created_at?: string
           end_time?: string | null
@@ -396,6 +398,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          age_group?: string | null
           coach_id?: string | null
           created_at?: string
           end_time?: string | null
