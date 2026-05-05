@@ -13,6 +13,7 @@ export interface Practice {
   end_time: string | null;
   location: string | null;
   notes: string | null;
+  age_group: string | null;
   created_at: string;
   updated_at: string;
 }
