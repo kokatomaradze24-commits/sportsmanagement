@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
   Dialog,
   DialogContent,
@@ -31,8 +30,11 @@ interface Props {
   sportId: string;
 }
 
+type ListView = "practices" | "games" | null;
+
 export function SchedulePanel({ sportId }: Props) {
   const sched = useSchedule(sportId);
+  const [view, setView] = useState<ListView>(null);
   const [editing, setEditing] = useState<
     | { kind: "practice"; row?: Practice }
     | { kind: "game"; row?: Game }
@@ -46,78 +48,112 @@ export function SchedulePanel({ sportId }: Props) {
         <h2 className="font-display text-xl tracking-wider">Schedule</h2>
       </div>
 
-      <Tabs defaultValue="practices">
-        <TabsList className="mb-3">
-          <TabsTrigger value="practices">
-            <Dumbbell className="w-4 h-4 mr-2" />
-            Practices ({sched.practices.length})
-          </TabsTrigger>
-          <TabsTrigger value="games">
-            <Calendar className="w-4 h-4 mr-2" />
-            Games ({sched.games.length})
-          </TabsTrigger>
-        </TabsList>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <button
+          onClick={() => setView("practices")}
+          className="rounded-xl border border-border bg-background/50 p-4 text-left hover:bg-background transition-colors"
+        >
+          <div className="flex items-center gap-2">
+            <Dumbbell className="w-5 h-5 text-primary" />
+            <span className="font-semibold">Practices</span>
+          </div>
+          <div className="text-sm text-muted-foreground mt-1">
+            {sched.loading ? "..." : `${sched.practices.length} scheduled`}
+          </div>
+        </button>
+        <button
+          onClick={() => setView("games")}
+          className="rounded-xl border border-border bg-background/50 p-4 text-left hover:bg-background transition-colors"
+        >
+          <div className="flex items-center gap-2">
+            <Calendar className="w-5 h-5 text-primary" />
+            <span className="font-semibold">Games</span>
+          </div>
+          <div className="text-sm text-muted-foreground mt-1">
+            {sched.loading ? "..." : `${sched.games.length} scheduled`}
+          </div>
+        </button>
+      </div>
 
-        <TabsContent value="practices">
-          <div className="flex justify-end mb-2 gap-2">
+      <Dialog open={view === "practices"} onOpenChange={(o) => !o && setView(null)}>
+        <DialogContent className="max-w-2xl h-[90vh] flex flex-col p-0 gap-0">
+          <DialogHeader className="p-6 pb-3 border-b shrink-0">
+            <DialogTitle className="flex items-center gap-2">
+              <Dumbbell className="w-5 h-5 text-primary" />
+              Practices ({sched.practices.length})
+            </DialogTitle>
+          </DialogHeader>
+          <div className="flex justify-end gap-2 px-6 pt-3 shrink-0">
             <AITrainingPlanDialog sportId={sportId} onAdded={() => sched.refetch()} />
             <Button size="sm" onClick={() => setEditing({ kind: "practice" })}>
               <Plus className="w-4 h-4 mr-1" /> Add practice
             </Button>
           </div>
-          {sched.loading ? (
-            <p className="text-sm text-muted-foreground">Loading...</p>
-          ) : sched.practices.length === 0 ? (
-            <Empty label="No practices yet" />
-          ) : (
-            <div className="space-y-2">
-              {sched.practices.map((p) => (
-                <Row
-                  key={p.id}
-                  title={p.title}
-                  date={p.practice_date}
-                  start={p.start_time}
-                  end={p.end_time}
-                  location={p.location}
-                  notes={p.notes}
-                  onEdit={() => setEditing({ kind: "practice", row: p })}
-                  onDelete={async () => { await sched.deletePractice(p.id); toast.success("Deleted"); }}
-                />
-              ))}
-            </div>
-          )}
-        </TabsContent>
+          <div className="overflow-y-auto p-6 pt-3 flex-1 min-h-0">
+            {sched.loading ? (
+              <p className="text-sm text-muted-foreground">Loading...</p>
+            ) : sched.practices.length === 0 ? (
+              <Empty label="No practices yet" />
+            ) : (
+              <div className="space-y-2">
+                {sched.practices.map((p) => (
+                  <Row
+                    key={p.id}
+                    title={p.title}
+                    date={p.practice_date}
+                    start={p.start_time}
+                    end={p.end_time}
+                    location={p.location}
+                    notes={p.notes}
+                    onEdit={() => setEditing({ kind: "practice", row: p })}
+                    onDelete={async () => { await sched.deletePractice(p.id); toast.success("Deleted"); }}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
 
-        <TabsContent value="games">
-          <div className="flex justify-end mb-2">
+      <Dialog open={view === "games"} onOpenChange={(o) => !o && setView(null)}>
+        <DialogContent className="max-w-2xl h-[90vh] flex flex-col p-0 gap-0">
+          <DialogHeader className="p-6 pb-3 border-b shrink-0">
+            <DialogTitle className="flex items-center gap-2">
+              <Calendar className="w-5 h-5 text-primary" />
+              Games ({sched.games.length})
+            </DialogTitle>
+          </DialogHeader>
+          <div className="flex justify-end px-6 pt-3 shrink-0">
             <Button size="sm" onClick={() => setEditing({ kind: "game" })}>
               <Plus className="w-4 h-4 mr-1" /> Add game
             </Button>
           </div>
-          {sched.loading ? (
-            <p className="text-sm text-muted-foreground">Loading...</p>
-          ) : sched.games.length === 0 ? (
-            <Empty label="No games yet" />
-          ) : (
-            <div className="space-y-2">
-              {sched.games.map((g) => (
-                <Row
-                  key={g.id}
-                  title={g.title}
-                  date={g.game_date}
-                  start={g.start_time}
-                  end={g.end_time}
-                  location={g.location}
-                  notes={g.notes}
-                  extra={g.opponent ? `vs ${g.opponent}` : undefined}
-                  onEdit={() => setEditing({ kind: "game", row: g })}
-                  onDelete={async () => { await sched.deleteGame(g.id); toast.success("Deleted"); }}
-                />
-              ))}
-            </div>
-          )}
-        </TabsContent>
-      </Tabs>
+          <div className="overflow-y-auto p-6 pt-3 flex-1 min-h-0">
+            {sched.loading ? (
+              <p className="text-sm text-muted-foreground">Loading...</p>
+            ) : sched.games.length === 0 ? (
+              <Empty label="No games yet" />
+            ) : (
+              <div className="space-y-2">
+                {sched.games.map((g) => (
+                  <Row
+                    key={g.id}
+                    title={g.title}
+                    date={g.game_date}
+                    start={g.start_time}
+                    end={g.end_time}
+                    location={g.location}
+                    notes={g.notes}
+                    extra={g.opponent ? `vs ${g.opponent}` : undefined}
+                    onEdit={() => setEditing({ kind: "game", row: g })}
+                    onDelete={async () => { await sched.deleteGame(g.id); toast.success("Deleted"); }}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
 
       <Editor
         editing={editing}
