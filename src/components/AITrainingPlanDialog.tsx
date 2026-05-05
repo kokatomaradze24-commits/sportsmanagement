@@ -170,7 +170,7 @@ export function AITrainingPlanDialog({ sportId, onAdded, trigger }: Props) {
           <DialogDescription>{t("aiPlanDescription")}</DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-4">
+        <div className="space-y-4 overflow-y-auto p-6 flex-1 min-h-0">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <Label>{t("aiPlanMode")}</Label>
