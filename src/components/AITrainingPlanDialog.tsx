@@ -276,7 +276,7 @@ export function AITrainingPlanDialog({ sportId, onAdded, trigger }: Props) {
           )}
         </div>
 
-        <DialogFooter>
+        <DialogFooter className="p-4 border-t shrink-0">
           <Button variant="ghost" onClick={() => setOpen(false)}>{t("close")}</Button>
         </DialogFooter>
       </DialogContent>
