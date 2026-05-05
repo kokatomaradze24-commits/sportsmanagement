@@ -133,6 +133,7 @@ export function AITrainingPlanDialog({ sportId, onAdded, trigger, defaultAgeGrou
         start_time: s.start_time || null,
         end_time: s.end_time || null,
         notes: s.notes || null,
+        age_group: ageGroup || null,
       }));
       const { error } = await supabase.from("practices").insert(rows);
       if (error) throw error;
