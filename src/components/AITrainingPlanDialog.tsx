@@ -36,9 +36,10 @@ interface Props {
   sportId: string;
   onAdded?: () => void;
   trigger?: React.ReactNode;
+  defaultAgeGroup?: string;
 }
 
-export function AITrainingPlanDialog({ sportId, onAdded, trigger }: Props) {
+export function AITrainingPlanDialog({ sportId, onAdded, trigger, defaultAgeGroup }: Props) {
   const { t, language } = useI18n();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -49,7 +50,7 @@ export function AITrainingPlanDialog({ sportId, onAdded, trigger }: Props) {
   // Form state
   const [mode, setMode] = useState<"self" | "expert">("expert");
   const [period, setPeriod] = useState<"week" | "month">("week");
-  const [ageGroup, setAgeGroup] = useState("U14");
+  const [ageGroup, setAgeGroup] = useState(defaultAgeGroup ?? "U14");
   const [level, setLevel] = useState("intermediate");
   const [sessionsPerWeek, setSessionsPerWeek] = useState(3);
   const [sessionMinutes, setSessionMinutes] = useState(90);
