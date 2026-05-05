@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Calendar, Dumbbell, Pencil, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,13 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -32,14 +39,32 @@ interface Props {
 
 type ListView = "practices" | "games" | null;
 
+export const AGE_GROUPS = ["U12", "U14", "U16", "U18", "U22", "PRO"] as const;
+export type AgeGroup = (typeof AGE_GROUPS)[number];
+
 export function SchedulePanel({ sportId }: Props) {
   const sched = useSchedule(sportId);
   const [view, setView] = useState<ListView>(null);
+  const [activeAge, setActiveAge] = useState<AgeGroup>("U12");
   const [editing, setEditing] = useState<
     | { kind: "practice"; row?: Practice }
     | { kind: "game"; row?: Game }
     | null
   >(null);
+
+  const practicesByAge = useMemo(() => {
+    const map: Record<string, Practice[]> = {};
+    for (const ag of AGE_GROUPS) map[ag] = [];
+    map["__none__"] = [];
+    for (const p of sched.practices) {
+      const key = (p.age_group ?? "").toUpperCase();
+      if ((AGE_GROUPS as readonly string[]).includes(key)) map[key].push(p);
+      else map["__none__"].push(p);
+    }
+    return map;
+  }, [sched.practices]);
+
+  const filteredPractices = practicesByAge[activeAge] ?? [];
 
   return (
     <section className="bg-card/80 backdrop-blur-sm rounded-2xl border border-border p-5 shadow-sm">
@@ -76,27 +101,57 @@ export function SchedulePanel({ sportId }: Props) {
       </div>
 
       <Dialog open={view === "practices"} onOpenChange={(o) => !o && setView(null)}>
-        <DialogContent className="max-w-2xl h-[90vh] flex flex-col p-0 gap-0">
+        <DialogContent className="max-w-4xl w-[95vw] h-[95vh] flex flex-col p-0 gap-0">
           <DialogHeader className="p-6 pb-3 border-b shrink-0">
             <DialogTitle className="flex items-center gap-2">
               <Dumbbell className="w-5 h-5 text-primary" />
-              Practices ({sched.practices.length})
+              Practices · {activeAge} ({filteredPractices.length})
             </DialogTitle>
           </DialogHeader>
-          <div className="flex justify-end gap-2 px-6 pt-3 shrink-0">
-            <AITrainingPlanDialog sportId={sportId} onAdded={() => sched.refetch()} />
-            <Button size="sm" onClick={() => setEditing({ kind: "practice" })}>
-              <Plus className="w-4 h-4 mr-1" /> Add practice
-            </Button>
+
+          <div className="px-6 pt-3 shrink-0 space-y-3">
+            <div className="flex flex-wrap gap-2">
+              {AGE_GROUPS.map((ag) => {
+                const count = practicesByAge[ag]?.length ?? 0;
+                const active = activeAge === ag;
+                return (
+                  <button
+                    key={ag}
+                    onClick={() => setActiveAge(ag)}
+                    className={`px-3 py-1.5 rounded-full text-sm font-medium border transition-colors ${
+                      active
+                        ? "bg-primary text-primary-foreground border-primary"
+                        : "bg-background hover:bg-muted border-border"
+                    }`}
+                  >
+                    {ag} <span className="opacity-70">({count})</span>
+                  </button>
+                );
+              })}
+            </div>
+            <div className="flex justify-end gap-2">
+              <AITrainingPlanDialog
+                sportId={sportId}
+                defaultAgeGroup={activeAge}
+                onAdded={() => sched.refetch()}
+              />
+              <Button
+                size="sm"
+                onClick={() => setEditing({ kind: "practice", row: { age_group: activeAge } as Practice })}
+              >
+                <Plus className="w-4 h-4 mr-1" /> Add practice
+              </Button>
+            </div>
           </div>
+
           <div className="overflow-y-auto p-6 pt-3 flex-1 min-h-0">
             {sched.loading ? (
               <p className="text-sm text-muted-foreground">Loading...</p>
-            ) : sched.practices.length === 0 ? (
-              <Empty label="No practices yet" />
+            ) : filteredPractices.length === 0 ? (
+              <Empty label={`No practices for ${activeAge} yet`} />
             ) : (
-              <div className="space-y-2">
-                {sched.practices.map((p) => (
+              <div className="space-y-3">
+                {filteredPractices.map((p) => (
                   <Row
                     key={p.id}
                     title={p.title}
@@ -105,6 +160,7 @@ export function SchedulePanel({ sportId }: Props) {
                     end={p.end_time}
                     location={p.location}
                     notes={p.notes}
+                    extra={p.age_group ?? undefined}
                     onEdit={() => setEditing({ kind: "practice", row: p })}
                     onDelete={async () => { await sched.deletePractice(p.id); toast.success("Deleted"); }}
                   />
@@ -116,7 +172,7 @@ export function SchedulePanel({ sportId }: Props) {
       </Dialog>
 
       <Dialog open={view === "games"} onOpenChange={(o) => !o && setView(null)}>
-        <DialogContent className="max-w-2xl h-[90vh] flex flex-col p-0 gap-0">
+        <DialogContent className="max-w-3xl w-[95vw] h-[95vh] flex flex-col p-0 gap-0">
           <DialogHeader className="p-6 pb-3 border-b shrink-0">
             <DialogTitle className="flex items-center gap-2">
               <Calendar className="w-5 h-5 text-primary" />
@@ -134,7 +190,7 @@ export function SchedulePanel({ sportId }: Props) {
             ) : sched.games.length === 0 ? (
               <Empty label="No games yet" />
             ) : (
-              <div className="space-y-2">
+              <div className="space-y-3">
                 {sched.games.map((g) => (
                   <Row
                     key={g.id}
@@ -191,10 +247,10 @@ function Row({
   onEdit: () => void; onDelete: () => Promise<void>;
 }) {
   return (
-    <div className="rounded-xl border border-border bg-background/50 p-3 flex items-start justify-between gap-3">
+    <div className="rounded-xl border border-border bg-background/50 p-4 flex items-start justify-between gap-3">
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2 flex-wrap">
-          <span className="font-semibold">{title}</span>
+          <span className="font-semibold text-base">{title}</span>
           {extra && <span className="text-xs px-2 py-0.5 rounded-full bg-primary/10 text-primary">{extra}</span>}
         </div>
         <div className="text-xs text-muted-foreground mt-1">
@@ -203,9 +259,13 @@ function Row({
           {end && `–${end.slice(0, 5)}`}
           {location && ` · ${location}`}
         </div>
-        {notes && <p className="text-sm mt-1 text-muted-foreground line-clamp-2">{notes}</p>}
+        {notes && (
+          <p className="text-sm mt-2 text-foreground/90 whitespace-pre-wrap break-words leading-relaxed">
+            {notes}
+          </p>
+        )}
       </div>
-      <div className="flex items-center gap-1">
+      <div className="flex items-center gap-1 shrink-0">
         <Button size="sm" variant="ghost" onClick={onEdit}>
           <Pencil className="w-4 h-4" />
         </Button>
@@ -249,6 +309,7 @@ function Editor({
   const [endTime, setEndTime] = useState("");
   const [location, setLocation] = useState("");
   const [opponent, setOpponent] = useState("");
+  const [ageGroup, setAgeGroup] = useState<string>("U12");
   const [notes, setNotes] = useState("");
 
   const handleOpen = (o: boolean) => {
@@ -260,6 +321,7 @@ function Editor({
       setEndTime((row?.end_time ?? "").slice(0, 5));
       setLocation(row?.location ?? "");
       setOpponent(row?.opponent ?? "");
+      setAgeGroup(row?.age_group ?? "U12");
       setNotes(row?.notes ?? "");
     }
   };
@@ -281,6 +343,7 @@ function Editor({
         payload.opponent = opponent || null;
         await onSaveGame(row?.id, payload);
       } else {
+        payload.age_group = ageGroup || null;
         await onSavePractice(row?.id, payload);
       }
     } catch (err: any) {
@@ -290,15 +353,28 @@ function Editor({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleOpen}>
-      <DialogContent className="max-w-md">
+      <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>{row ? "Edit" : "Add"} {isGame ? "game" : "practice"}</DialogTitle>
+          <DialogTitle>{row?.id ? "Edit" : "Add"} {isGame ? "game" : "practice"}</DialogTitle>
         </DialogHeader>
         <form onSubmit={submit} className="space-y-3">
           <div>
             <Label>Title</Label>
             <Input value={title} onChange={(e) => setTitle(e.target.value)} required />
           </div>
+          {!isGame && (
+            <div>
+              <Label>Age group</Label>
+              <Select value={ageGroup} onValueChange={setAgeGroup}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {AGE_GROUPS.map((ag) => (
+                    <SelectItem key={ag} value={ag}>{ag}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
           <div>
             <Label>Date</Label>
             <Input type="date" value={date} onChange={(e) => setDate(e.target.value)} required />
@@ -325,7 +401,7 @@ function Editor({
           )}
           <div>
             <Label>Notes</Label>
-            <Textarea rows={3} value={notes} onChange={(e) => setNotes(e.target.value)} />
+            <Textarea rows={5} value={notes} onChange={(e) => setNotes(e.target.value)} />
           </div>
           <DialogFooter>
             <Button type="button" variant="outline" onClick={onClose}>Cancel</Button>
