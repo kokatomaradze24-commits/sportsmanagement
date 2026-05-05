@@ -161,8 +161,8 @@ export function AITrainingPlanDialog({ sportId, onAdded, trigger }: Props) {
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
+      <DialogContent className="max-w-3xl h-[95vh] sm:h-[90vh] flex flex-col p-0 gap-0">
+        <DialogHeader className="p-6 pb-3 border-b shrink-0">
           <DialogTitle className="flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-primary" />
             {t("aiPlanTitle")}
@@ -170,7 +170,7 @@ export function AITrainingPlanDialog({ sportId, onAdded, trigger }: Props) {
           <DialogDescription>{t("aiPlanDescription")}</DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-4">
+        <div className="space-y-4 overflow-y-auto p-6 flex-1 min-h-0">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <Label>{t("aiPlanMode")}</Label>
@@ -276,7 +276,7 @@ export function AITrainingPlanDialog({ sportId, onAdded, trigger }: Props) {
           )}
         </div>
 
-        <DialogFooter>
+        <DialogFooter className="p-4 border-t shrink-0">
           <Button variant="ghost" onClick={() => setOpen(false)}>{t("close")}</Button>
         </DialogFooter>
       </DialogContent>
