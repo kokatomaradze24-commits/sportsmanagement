@@ -31,6 +31,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { useSchedule, type Practice, type Game } from "@/hooks/use-schedule";
+import { useAgeDevelopmentPlan } from "@/hooks/use-age-development-plan";
 import { AITrainingPlanDialog } from "./AITrainingPlanDialog";
 import { WeeklyTemplateDialog } from "./WeeklyTemplateDialog";
 import {
