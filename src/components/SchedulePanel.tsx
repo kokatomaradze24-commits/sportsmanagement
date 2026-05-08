@@ -173,7 +173,8 @@ export function SchedulePanel({ sportId }: Props) {
             </div>
           </div>
 
-          <div className="overflow-y-auto p-6 pt-3 flex-1 min-h-0">
+          <div className="overflow-y-auto p-6 pt-3 flex-1 min-h-0 space-y-4">
+            <DevelopmentPlanCard sportId={sportId} ageGroup={activeAge} />
             {sched.loading ? (
               <p className="text-sm text-muted-foreground">Loading...</p>
             ) : filteredPractices.length === 0 ? (
