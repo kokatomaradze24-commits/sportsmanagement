@@ -35,13 +35,31 @@ export const Route = createFileRoute("/api/ai/generate-training-plan")({
         const level = String(body.level ?? "intermediate");
         const language = String(body.language ?? "en");
         const mode = body.mode === "expert" ? "expert" : "self";
+        const schedule = Array.isArray(body.schedule)
+          ? (body.schedule as Array<{ date: string; start_time: string; end_time?: string | null }>)
+          : [];
 
-        const totalSessions = period === "week" ? sessionsPerWeek : sessionsPerWeek * 4;
+        const totalSessions =
+          schedule.length > 0
+            ? schedule.length
+            : period === "week"
+              ? sessionsPerWeek
+              : sessionsPerWeek * 4;
 
         const expertNote =
           mode === "expert"
             ? "Act as a world-class professional club manager and head coach with decades of experience designing periodized training plans. Apply best practices in load management, progression, and skill development."
             : "Act as a helpful coaching assistant building a clear, simple, self-directed training plan for an independent coach.";
+
+        const scheduleNote =
+          schedule.length > 0
+            ? `\nUse EXACTLY these fixed practice slots in order (do not invent other dates or times):\n${schedule
+                .map(
+                  (s, i) =>
+                    `${i + 1}. ${s.date} ${s.start_time}${s.end_time ? `–${s.end_time}` : ""}`,
+                )
+                .join("\n")}`
+            : "";
 
         const systemPrompt = `${expertNote}
 You design ${sport} training plans for the "${ageGroup || "general"}" age group at ${level} level.
@@ -54,13 +72,13 @@ Reply ONLY by calling the provided tool. Write all text fields (title, notes) in
 - Sessions per week: ${sessionsPerWeek}
 - Session length: ${sessionMinutes} minutes
 - Start date: ${startDate}
-- Special focus: ${focus || "balanced development"}
-Generate exactly ${totalSessions} sessions with realistic dates (no more than one per day, spread across the period).
+- Special focus: ${focus || "balanced development"}${scheduleNote}
+Generate exactly ${totalSessions} sessions${schedule.length > 0 ? " matching the fixed slots above (one session per slot, in order)" : " with realistic dates (no more than one per day, spread across the period)"}.
 Each session must have:
 - title: short focus title
-- practice_date: YYYY-MM-DD on or after ${startDate}
-- start_time: HH:MM (24h)
-- end_time: HH:MM (24h, ${sessionMinutes} min after start)
+- practice_date: YYYY-MM-DD${schedule.length > 0 ? " (must match the slot date)" : ` on or after ${startDate}`}
+- start_time: HH:MM (24h)${schedule.length > 0 ? " (must match the slot start)" : ""}
+- end_time: HH:MM (24h${schedule.length > 0 ? ", must match the slot end" : `, ${sessionMinutes} min after start`})
 - notes: detailed plan with warm-up, main block, drills with reps/duration, cool-down. Use bullet points or short lines.`;
 
         const tools = [
@@ -141,9 +159,20 @@ Each session must have:
           } catch {
             return Response.json({ error: "AI returned invalid plan" }, { status: 500 });
           }
+          let sessions = Array.isArray(parsed.sessions) ? parsed.sessions : [];
+          if (schedule.length > 0) {
+            // Force deterministic alignment to user-defined slots.
+            sessions = schedule.map((slot, i) => ({
+              title: sessions[i]?.title ?? `Session ${i + 1}`,
+              practice_date: slot.date,
+              start_time: slot.start_time,
+              end_time: slot.end_time ?? "",
+              notes: sessions[i]?.notes ?? "",
+            }));
+          }
           return Response.json({
             summary: parsed.summary ?? "",
-            sessions: Array.isArray(parsed.sessions) ? parsed.sessions : [],
+            sessions,
           });
         } catch (err) {
           console.error("generate-training-plan exception", err);

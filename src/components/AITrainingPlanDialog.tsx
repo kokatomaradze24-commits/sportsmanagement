@@ -23,6 +23,11 @@ import {
 } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { useI18n } from "@/hooks/use-i18n";
+import {
+  usePracticeTemplates,
+  templatesForAge,
+  nextDateForSlot,
+} from "@/hooks/use-practice-templates";
 
 interface Session {
   title: string;
@@ -41,11 +46,13 @@ interface Props {
 
 export function AITrainingPlanDialog({ sportId, onAdded, trigger, defaultAgeGroup }: Props) {
   const { t, language } = useI18n();
+  const { templates } = usePracticeTemplates(sportId);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [sessions, setSessions] = useState<Session[]>([]);
   const [summary, setSummary] = useState("");
+  const [useTemplate, setUseTemplate] = useState(true);
 
   // Form state
   const [mode, setMode] = useState<"self" | "expert">("expert");
@@ -62,6 +69,27 @@ export function AITrainingPlanDialog({ sportId, onAdded, trigger, defaultAgeGrou
     setSummary("");
   };
 
+  const buildScheduleFromTemplates = () => {
+    const slots = templatesForAge(templates, ageGroup);
+    if (slots.length === 0) return [];
+    const start = new Date(startDate);
+    const weeks = period === "week" ? 1 : 4;
+    const out: { date: string; start_time: string; end_time: string | null }[] = [];
+    for (let w = 0; w < weeks; w++) {
+      const weekStart = new Date(start);
+      weekStart.setDate(weekStart.getDate() + w * 7);
+      for (const slot of slots) {
+        out.push({
+          date: nextDateForSlot(slot, weekStart),
+          start_time: slot.start_time.slice(0, 5),
+          end_time: slot.end_time ? slot.end_time.slice(0, 5) : null,
+        });
+      }
+    }
+    out.sort((a, b) => (a.date + a.start_time).localeCompare(b.date + b.start_time));
+    return out;
+  };
+
   const handleGenerate = async () => {
     setLoading(true);
     reset();
@@ -72,6 +100,7 @@ export function AITrainingPlanDialog({ sportId, onAdded, trigger, defaultAgeGrou
         toast.error(t("aiGenError"));
         return;
       }
+      const schedule = useTemplate ? buildScheduleFromTemplates() : [];
       const res = await fetch("/api/ai/generate-training-plan", {
         method: "POST",
         headers: {
@@ -89,6 +118,7 @@ export function AITrainingPlanDialog({ sportId, onAdded, trigger, defaultAgeGrou
           focus,
           language,
           mode,
+          schedule,
         }),
       });
 
@@ -228,6 +258,22 @@ export function AITrainingPlanDialog({ sportId, onAdded, trigger, defaultAgeGrou
               <Input value={focus} onChange={(e) => setFocus(e.target.value)} placeholder={t("aiPlanFocusPlaceholder")} />
             </div>
           </div>
+
+          {templatesForAge(templates, ageGroup).length > 0 && (
+            <label className="flex items-start gap-2 rounded-lg border bg-secondary/30 p-3 cursor-pointer">
+              <input
+                type="checkbox"
+                className="mt-1"
+                checked={useTemplate}
+                onChange={(e) => setUseTemplate(e.target.checked)}
+              />
+              <span className="text-sm">
+                Use weekly schedule for <b>{ageGroup}</b> ({templatesForAge(templates, ageGroup).length} slot
+                {templatesForAge(templates, ageGroup).length === 1 ? "" : "s"}/week). Sessions will be
+                placed on those exact days and times.
+              </span>
+            </label>
+          )}
 
           <Button onClick={handleGenerate} disabled={loading} className="w-full gap-2" size="lg">
             {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
