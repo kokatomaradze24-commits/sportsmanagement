@@ -69,6 +69,27 @@ export function AITrainingPlanDialog({ sportId, onAdded, trigger, defaultAgeGrou
     setSummary("");
   };
 
+  const buildScheduleFromTemplates = () => {
+    const slots = templatesForAge(templates, ageGroup);
+    if (slots.length === 0) return [];
+    const start = new Date(startDate);
+    const weeks = period === "week" ? 1 : 4;
+    const out: { date: string; start_time: string; end_time: string | null }[] = [];
+    for (let w = 0; w < weeks; w++) {
+      const weekStart = new Date(start);
+      weekStart.setDate(weekStart.getDate() + w * 7);
+      for (const slot of slots) {
+        out.push({
+          date: nextDateForSlot(slot, weekStart),
+          start_time: slot.start_time.slice(0, 5),
+          end_time: slot.end_time ? slot.end_time.slice(0, 5) : null,
+        });
+      }
+    }
+    out.sort((a, b) => (a.date + a.start_time).localeCompare(b.date + b.start_time));
+    return out;
+  };
+
   const handleGenerate = async () => {
     setLoading(true);
     reset();
@@ -79,6 +100,7 @@ export function AITrainingPlanDialog({ sportId, onAdded, trigger, defaultAgeGrou
         toast.error(t("aiGenError"));
         return;
       }
+      const schedule = useTemplate ? buildScheduleFromTemplates() : [];
       const res = await fetch("/api/ai/generate-training-plan", {
         method: "POST",
         headers: {
@@ -96,6 +118,7 @@ export function AITrainingPlanDialog({ sportId, onAdded, trigger, defaultAgeGrou
           focus,
           language,
           mode,
+          schedule,
         }),
       });
 
