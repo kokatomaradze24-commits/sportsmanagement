@@ -32,6 +32,12 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useSchedule, type Practice, type Game } from "@/hooks/use-schedule";
 import { AITrainingPlanDialog } from "./AITrainingPlanDialog";
+import { WeeklyTemplateDialog } from "./WeeklyTemplateDialog";
+import {
+  usePracticeTemplates,
+  nextDateForSlot,
+  templatesForAge,
+} from "@/hooks/use-practice-templates";
 
 interface Props {
   sportId: string;
