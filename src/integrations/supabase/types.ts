@@ -364,6 +364,45 @@ export type Database = {
         }
         Relationships: []
       }
+      practice_templates: {
+        Row: {
+          age_group: string
+          created_at: string
+          day_of_week: number
+          end_time: string | null
+          id: string
+          location: string | null
+          sport: string
+          start_time: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          age_group: string
+          created_at?: string
+          day_of_week: number
+          end_time?: string | null
+          id?: string
+          location?: string | null
+          sport?: string
+          start_time: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          age_group?: string
+          created_at?: string
+          day_of_week?: number
+          end_time?: string | null
+          id?: string
+          location?: string | null
+          sport?: string
+          start_time?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       practices: {
         Row: {
           age_group: string | null
