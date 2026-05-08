@@ -267,7 +267,7 @@ function DevelopmentPlanCard({ sportId, ageGroup }: { sportId: string; ageGroup:
   const [editing, setEditingMode] = useState(false);
 
   // Sync when plan loads or age changes
-  useMemo(() => { setDraft(plan); setEditingMode(false); }, [plan, ageGroup]);
+  useEffect(() => { setDraft(plan); setEditingMode(false); }, [plan, ageGroup]);
 
   return (
     <div className="rounded-xl border border-border bg-primary/5 p-4">
