@@ -23,6 +23,11 @@ import {
 } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { useI18n } from "@/hooks/use-i18n";
+import {
+  usePracticeTemplates,
+  templatesForAge,
+  nextDateForSlot,
+} from "@/hooks/use-practice-templates";
 
 interface Session {
   title: string;
