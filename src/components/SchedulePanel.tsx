@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Calendar, Dumbbell, Pencil, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -31,6 +31,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { useSchedule, type Practice, type Game } from "@/hooks/use-schedule";
+import { useAgeDevelopmentPlan } from "@/hooks/use-age-development-plan";
 import { AITrainingPlanDialog } from "./AITrainingPlanDialog";
 import { WeeklyTemplateDialog } from "./WeeklyTemplateDialog";
 import {
@@ -172,7 +173,8 @@ export function SchedulePanel({ sportId }: Props) {
             </div>
           </div>
 
-          <div className="overflow-y-auto p-6 pt-3 flex-1 min-h-0">
+          <div className="overflow-y-auto p-6 pt-3 flex-1 min-h-0 space-y-4">
+            <DevelopmentPlanCard sportId={sportId} ageGroup={activeAge} />
             {sched.loading ? (
               <p className="text-sm text-muted-foreground">Loading...</p>
             ) : filteredPractices.length === 0 ? (
@@ -256,6 +258,57 @@ export function SchedulePanel({ sportId }: Props) {
         }}
       />
     </section>
+  );
+}
+
+function DevelopmentPlanCard({ sportId, ageGroup }: { sportId: string; ageGroup: AgeGroup }) {
+  const { plan, loading, saving, save } = useAgeDevelopmentPlan(sportId, ageGroup);
+  const [draft, setDraft] = useState("");
+  const [editing, setEditingMode] = useState(false);
+
+  // Sync when plan loads or age changes
+  useEffect(() => { setDraft(plan); setEditingMode(false); }, [plan, ageGroup]);
+
+  return (
+    <div className="rounded-xl border border-border bg-primary/5 p-4">
+      <div className="flex items-center justify-between gap-2 mb-2">
+        <div>
+          <h3 className="font-semibold text-sm">Development plan · {ageGroup}</h3>
+          <p className="text-xs text-muted-foreground">What to focus on for this age group</p>
+        </div>
+        {!editing ? (
+          <Button size="sm" variant="outline" onClick={() => { setDraft(plan); setEditingMode(true); }}>
+            <Pencil className="w-4 h-4 mr-1" /> Edit
+          </Button>
+        ) : (
+          <div className="flex gap-2">
+            <Button size="sm" variant="ghost" onClick={() => { setDraft(plan); setEditingMode(false); }}>
+              Cancel
+            </Button>
+            <Button size="sm" disabled={saving} onClick={async () => {
+              try { await save(draft); toast.success("Saved"); setEditingMode(false); }
+              catch (e: any) { toast.error(e?.message ?? "Save failed"); }
+            }}>
+              {saving ? "Saving..." : "Save"}
+            </Button>
+          </div>
+        )}
+      </div>
+      {editing ? (
+        <Textarea
+          rows={6}
+          value={draft}
+          onChange={(e) => setDraft(e.target.value)}
+          placeholder={`Focus areas, goals, and priorities for ${ageGroup}...`}
+        />
+      ) : loading ? (
+        <p className="text-xs text-muted-foreground">Loading...</p>
+      ) : plan ? (
+        <p className="text-sm whitespace-pre-wrap break-words leading-relaxed">{plan}</p>
+      ) : (
+        <p className="text-sm text-muted-foreground italic">No development plan yet for {ageGroup}.</p>
+      )}
+    </div>
   );
 }
 

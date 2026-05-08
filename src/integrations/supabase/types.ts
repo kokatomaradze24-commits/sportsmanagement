@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      age_development_plans: {
+        Row: {
+          age_group: string
+          created_at: string
+          id: string
+          plan: string
+          sport: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          age_group: string
+          created_at?: string
+          id?: string
+          plan?: string
+          sport?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          age_group?: string
+          created_at?: string
+          id?: string
+          plan?: string
+          sport?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       app_settings: {
         Row: {
           created_at: string
