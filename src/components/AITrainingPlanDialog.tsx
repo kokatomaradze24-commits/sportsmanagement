@@ -46,11 +46,13 @@ interface Props {
 
 export function AITrainingPlanDialog({ sportId, onAdded, trigger, defaultAgeGroup }: Props) {
   const { t, language } = useI18n();
+  const { templates } = usePracticeTemplates(sportId);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [sessions, setSessions] = useState<Session[]>([]);
   const [summary, setSummary] = useState("");
+  const [useTemplate, setUseTemplate] = useState(true);
 
   // Form state
   const [mode, setMode] = useState<"self" | "expert">("expert");
