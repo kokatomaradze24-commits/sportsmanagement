@@ -159,16 +159,14 @@ export function SchedulePanel({ sportId }: Props) {
                 );
               })}
             </div>
-            <div className="flex justify-end gap-2">
+            <div className="flex flex-wrap justify-end gap-2">
+              <WeeklyTemplateDialog sportId={sportId} defaultAgeGroup={activeAge} />
               <AITrainingPlanDialog
                 sportId={sportId}
                 defaultAgeGroup={activeAge}
                 onAdded={() => sched.refetch()}
               />
-              <Button
-                size="sm"
-                onClick={() => setEditing({ kind: "practice", row: { age_group: activeAge } as Practice })}
-              >
+              <Button size="sm" onClick={handleAddPractice}>
                 <Plus className="w-4 h-4 mr-1" /> Add practice
               </Button>
             </div>
