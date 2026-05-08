@@ -159,9 +159,20 @@ Each session must have:
           } catch {
             return Response.json({ error: "AI returned invalid plan" }, { status: 500 });
           }
+          let sessions = Array.isArray(parsed.sessions) ? parsed.sessions : [];
+          if (schedule.length > 0) {
+            // Force deterministic alignment to user-defined slots.
+            sessions = schedule.map((slot, i) => ({
+              title: sessions[i]?.title ?? `Session ${i + 1}`,
+              practice_date: slot.date,
+              start_time: slot.start_time,
+              end_time: slot.end_time ?? "",
+              notes: sessions[i]?.notes ?? "",
+            }));
+          }
           return Response.json({
             summary: parsed.summary ?? "",
-            sessions: Array.isArray(parsed.sessions) ? parsed.sessions : [],
+            sessions,
           });
         } catch (err) {
           console.error("generate-training-plan exception", err);
