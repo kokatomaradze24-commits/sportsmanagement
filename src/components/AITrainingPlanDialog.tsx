@@ -259,6 +259,22 @@ export function AITrainingPlanDialog({ sportId, onAdded, trigger, defaultAgeGrou
             </div>
           </div>
 
+          {templatesForAge(templates, ageGroup).length > 0 && (
+            <label className="flex items-start gap-2 rounded-lg border bg-secondary/30 p-3 cursor-pointer">
+              <input
+                type="checkbox"
+                className="mt-1"
+                checked={useTemplate}
+                onChange={(e) => setUseTemplate(e.target.checked)}
+              />
+              <span className="text-sm">
+                Use weekly schedule for <b>{ageGroup}</b> ({templatesForAge(templates, ageGroup).length} slot
+                {templatesForAge(templates, ageGroup).length === 1 ? "" : "s"}/week). Sessions will be
+                placed on those exact days and times.
+              </span>
+            </label>
+          )}
+
           <Button onClick={handleGenerate} disabled={loading} className="w-full gap-2" size="lg">
             {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
             {loading ? t("aiGenGenerating") : t("aiPlanGenerate")}
