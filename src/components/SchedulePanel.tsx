@@ -50,6 +50,7 @@ export type AgeGroup = (typeof AGE_GROUPS)[number];
 
 export function SchedulePanel({ sportId }: Props) {
   const sched = useSchedule(sportId);
+  const tpl = usePracticeTemplates(sportId);
   const [view, setView] = useState<ListView>(null);
   const [activeAge, setActiveAge] = useState<AgeGroup>("U12");
   const [editing, setEditing] = useState<
@@ -57,6 +58,29 @@ export function SchedulePanel({ sportId }: Props) {
     | { kind: "game"; row?: Game }
     | null
   >(null);
+
+  const handleAddPractice = () => {
+    const slots = templatesForAge(tpl.templates, activeAge);
+    let row: Partial<Practice> = { age_group: activeAge };
+    if (slots.length > 0) {
+      // Pick the slot whose next occurrence is soonest from today.
+      const today = new Date();
+      const withDates = slots.map((s) => ({
+        slot: s,
+        date: nextDateForSlot(s, today),
+      }));
+      withDates.sort((a, b) => a.date.localeCompare(b.date));
+      const pick = withDates[0];
+      row = {
+        age_group: activeAge,
+        practice_date: pick.date,
+        start_time: pick.slot.start_time,
+        end_time: pick.slot.end_time,
+        location: pick.slot.location,
+      };
+    }
+    setEditing({ kind: "practice", row: row as Practice });
+  };
 
   const practicesByAge = useMemo(() => {
     const map: Record<string, Practice[]> = {};
