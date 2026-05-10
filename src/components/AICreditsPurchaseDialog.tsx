@@ -3,9 +3,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Button } from "@/components/ui/button";
 import { Sparkles, Check, Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { useI18n } from "@/hooks/use-i18n";
 import { useAuth } from "@/hooks/use-auth";
-import { supabase } from "@/integrations/supabase/client";
 import { AI_CREDIT_PACKAGES, type AICreditPackage } from "@/lib/ai-credit-packages";
 import { loadPaypalSdk } from "@/lib/paypal-sdk";
 
