@@ -14,7 +14,7 @@ interface Props {
 }
 
 export function AICreditsPurchaseDialog({ open, onOpenChange, onSuccess }: Props) {
-  const { t } = useI18n();
+  
   const { session } = useAuth();
   const [selected, setSelected] = useState<AICreditPackage>(AI_CREDIT_PACKAGES[1]);
   const [sdkReady, setSdkReady] = useState(false);
