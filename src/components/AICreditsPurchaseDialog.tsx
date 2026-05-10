@@ -110,7 +110,7 @@ export function AICreditsPurchaseDialog({ open, onOpenChange, onSuccess }: Props
         button.render(wrap).catch(onError);
       }
     });
-  }, [sdkReady, selected, session, open, onOpenChange, onSuccess, t]);
+  }, [sdkReady, selected, session, open, onOpenChange, onSuccess]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
