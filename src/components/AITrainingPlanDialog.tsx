@@ -54,6 +54,7 @@ export function AITrainingPlanDialog({ sportId, onAdded, trigger, defaultAgeGrou
   const [sessions, setSessions] = useState<Session[]>([]);
   const [summary, setSummary] = useState("");
   const [useTemplate, setUseTemplate] = useState(true);
+  const [showBuyCredits, setShowBuyCredits] = useState(false);
 
   // Form state
   const [mode, setMode] = useState<"self" | "expert">("expert");
