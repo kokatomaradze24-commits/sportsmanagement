@@ -28,6 +28,7 @@ import {
   templatesForAge,
   nextDateForSlot,
 } from "@/hooks/use-practice-templates";
+import { AICreditsPurchaseDialog } from "@/components/AICreditsPurchaseDialog";
 
 interface Session {
   title: string;
@@ -128,6 +129,7 @@ export function AITrainingPlanDialog({ sportId, onAdded, trigger, defaultAgeGrou
       }
       if (res.status === 402) {
         toast.error(t("aiGenNoCredits"));
+        setShowBuyCredits(true);
         return;
       }
       if (!res.ok) {
