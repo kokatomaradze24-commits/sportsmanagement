@@ -73,7 +73,7 @@ export function AICreditsPurchaseDialog({ open, onOpenChange, onSuccess }: Props
         });
         const json = await res.json();
         if (!res.ok) throw new Error(json.error || "Capture failed");
-        toast.success(t("creditsAdded", { credits: selected.credits }));
+        toast.success(`დაემატა ${selected.credits} AI კრედიტი`);
         onSuccess?.(json.credits);
         onOpenChange(false);
       } catch (e) {
@@ -85,7 +85,7 @@ export function AICreditsPurchaseDialog({ open, onOpenChange, onSuccess }: Props
 
     const onError = (err: unknown) => {
       console.error("PayPal error", err);
-      toast.error(t("paymentFailed"));
+      toast.error("გადახდა ვერ მოხერხდა");
     };
 
     const fundingSources = [
@@ -118,9 +118,9 @@ export function AICreditsPurchaseDialog({ open, onOpenChange, onSuccess }: Props
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-primary" />
-            {t("buyAICredits")}
+            AI კრედიტების შეძენა
           </DialogTitle>
-          <DialogDescription>{t("buyAICreditsDesc")}</DialogDescription>
+          <DialogDescription>აირჩიე პაკეტი და გადაიხადე ბარათით, Apple Pay ან Google Pay-ით — PayPal ანგარიში არ გჭირდება</DialogDescription>
         </DialogHeader>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 my-4">
@@ -141,13 +141,13 @@ export function AICreditsPurchaseDialog({ open, onOpenChange, onSuccess }: Props
                   <Check className="absolute top-2 right-2 h-4 w-4 text-primary" />
                 )}
                 <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                  {t(pkg.nameKey)}
+                  {pkg.id === "week" ? "1 კვირა" : pkg.id === "month" ? "1 თვე" : "1 წელი"}
                 </div>
                 <div className="mt-1 text-2xl font-bold">
                   ${pkg.amount}
                 </div>
                 <div className="text-xs text-muted-foreground">
-                  {pkg.credits} {t("credits")}
+                  {pkg.credits} კრედიტი
                 </div>
               </button>
             );
@@ -169,11 +169,11 @@ export function AICreditsPurchaseDialog({ open, onOpenChange, onSuccess }: Props
         </div>
 
         <p className="text-[11px] text-muted-foreground text-center mt-2">
-          {t("paypalGuestNote")}
+          🔒 უსაფრთხო გადახდა PayPal-ით. მომხმარებლის ანგარიში არ არის სავალდებულო.
         </p>
 
         <Button variant="ghost" onClick={() => onOpenChange(false)} className="mt-1">
-          {t("cancel")}
+          გაუქმება
         </Button>
       </DialogContent>
     </Dialog>
