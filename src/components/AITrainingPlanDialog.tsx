@@ -28,6 +28,7 @@ import {
   templatesForAge,
   nextDateForSlot,
 } from "@/hooks/use-practice-templates";
+import { AICreditsPurchaseDialog } from "@/components/AICreditsPurchaseDialog";
 
 interface Session {
   title: string;
@@ -53,6 +54,7 @@ export function AITrainingPlanDialog({ sportId, onAdded, trigger, defaultAgeGrou
   const [sessions, setSessions] = useState<Session[]>([]);
   const [summary, setSummary] = useState("");
   const [useTemplate, setUseTemplate] = useState(true);
+  const [showBuyCredits, setShowBuyCredits] = useState(false);
 
   // Form state
   const [mode, setMode] = useState<"self" | "expert">("expert");
@@ -128,6 +130,7 @@ export function AITrainingPlanDialog({ sportId, onAdded, trigger, defaultAgeGrou
       }
       if (res.status === 402) {
         toast.error(t("aiGenNoCredits"));
+        setShowBuyCredits(true);
         return;
       }
       if (!res.ok) {
@@ -328,6 +331,7 @@ export function AITrainingPlanDialog({ sportId, onAdded, trigger, defaultAgeGrou
           <Button variant="ghost" onClick={() => setOpen(false)}>{t("close")}</Button>
         </DialogFooter>
       </DialogContent>
+      <AICreditsPurchaseDialog open={showBuyCredits} onOpenChange={setShowBuyCredits} />
     </Dialog>
   );
 }

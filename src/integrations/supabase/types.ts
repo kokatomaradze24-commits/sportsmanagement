@@ -44,6 +44,51 @@ export type Database = {
         }
         Relationships: []
       }
+      ai_credit_purchases: {
+        Row: {
+          amount: number
+          created_at: string
+          credits: number
+          currency: string
+          id: string
+          package_id: string
+          provider: string
+          provider_capture_id: string | null
+          provider_order_id: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          credits: number
+          currency?: string
+          id?: string
+          package_id: string
+          provider?: string
+          provider_capture_id?: string | null
+          provider_order_id?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          credits?: number
+          currency?: string
+          id?: string
+          package_id?: string
+          provider?: string
+          provider_capture_id?: string | null
+          provider_order_id?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       app_settings: {
         Row: {
           created_at: string
@@ -710,6 +755,24 @@ export type Database = {
           sport?: string
           trip_date?: string
           trip_time?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_ai_credits: {
+        Row: {
+          credits: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          credits?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          credits?: number
           updated_at?: string
           user_id?: string
         }
