@@ -331,6 +331,7 @@ export function AITrainingPlanDialog({ sportId, onAdded, trigger, defaultAgeGrou
           <Button variant="ghost" onClick={() => setOpen(false)}>{t("close")}</Button>
         </DialogFooter>
       </DialogContent>
+      <AICreditsPurchaseDialog open={showBuyCredits} onOpenChange={setShowBuyCredits} />
     </Dialog>
   );
 }
