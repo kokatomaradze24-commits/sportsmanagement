@@ -17,6 +17,9 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as RegisterLinkIdRouteImport } from './routes/register.$linkId'
 import { Route as HooksSendPaymentSmsRouteImport } from './routes/hooks/send-payment-sms'
 import { Route as ApiPublicPlayerRegistrationRouteImport } from './routes/api/public/player-registration'
+import { Route as ApiPaypalCreateOrderRouteImport } from './routes/api/paypal/create-order'
+import { Route as ApiPaypalConfigRouteImport } from './routes/api/paypal/config'
+import { Route as ApiPaypalCaptureOrderRouteImport } from './routes/api/paypal/capture-order'
 import { Route as ApiCoachScheduleRouteImport } from './routes/api/coach/schedule'
 import { Route as ApiCoachResetPasswordRouteImport } from './routes/api/coach/reset-password'
 import { Route as ApiCoachRegisterRouteImport } from './routes/api/coach/register'
@@ -65,6 +68,21 @@ const ApiPublicPlayerRegistrationRoute =
     path: '/api/public/player-registration',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPaypalCreateOrderRoute = ApiPaypalCreateOrderRouteImport.update({
+  id: '/api/paypal/create-order',
+  path: '/api/paypal/create-order',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPaypalConfigRoute = ApiPaypalConfigRouteImport.update({
+  id: '/api/paypal/config',
+  path: '/api/paypal/config',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPaypalCaptureOrderRoute = ApiPaypalCaptureOrderRouteImport.update({
+  id: '/api/paypal/capture-order',
+  path: '/api/paypal/capture-order',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiCoachScheduleRoute = ApiCoachScheduleRouteImport.update({
   id: '/api/coach/schedule',
   path: '/api/coach/schedule',
@@ -111,6 +129,9 @@ export interface FileRoutesByFullPath {
   '/api/coach/register': typeof ApiCoachRegisterRoute
   '/api/coach/reset-password': typeof ApiCoachResetPasswordRoute
   '/api/coach/schedule': typeof ApiCoachScheduleRoute
+  '/api/paypal/capture-order': typeof ApiPaypalCaptureOrderRoute
+  '/api/paypal/config': typeof ApiPaypalConfigRoute
+  '/api/paypal/create-order': typeof ApiPaypalCreateOrderRoute
   '/api/public/player-registration': typeof ApiPublicPlayerRegistrationRoute
 }
 export interface FileRoutesByTo {
@@ -127,6 +148,9 @@ export interface FileRoutesByTo {
   '/api/coach/register': typeof ApiCoachRegisterRoute
   '/api/coach/reset-password': typeof ApiCoachResetPasswordRoute
   '/api/coach/schedule': typeof ApiCoachScheduleRoute
+  '/api/paypal/capture-order': typeof ApiPaypalCaptureOrderRoute
+  '/api/paypal/config': typeof ApiPaypalConfigRoute
+  '/api/paypal/create-order': typeof ApiPaypalCreateOrderRoute
   '/api/public/player-registration': typeof ApiPublicPlayerRegistrationRoute
 }
 export interface FileRoutesById {
@@ -144,6 +168,9 @@ export interface FileRoutesById {
   '/api/coach/register': typeof ApiCoachRegisterRoute
   '/api/coach/reset-password': typeof ApiCoachResetPasswordRoute
   '/api/coach/schedule': typeof ApiCoachScheduleRoute
+  '/api/paypal/capture-order': typeof ApiPaypalCaptureOrderRoute
+  '/api/paypal/config': typeof ApiPaypalConfigRoute
+  '/api/paypal/create-order': typeof ApiPaypalCreateOrderRoute
   '/api/public/player-registration': typeof ApiPublicPlayerRegistrationRoute
 }
 export interface FileRouteTypes {
@@ -162,6 +189,9 @@ export interface FileRouteTypes {
     | '/api/coach/register'
     | '/api/coach/reset-password'
     | '/api/coach/schedule'
+    | '/api/paypal/capture-order'
+    | '/api/paypal/config'
+    | '/api/paypal/create-order'
     | '/api/public/player-registration'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -178,6 +208,9 @@ export interface FileRouteTypes {
     | '/api/coach/register'
     | '/api/coach/reset-password'
     | '/api/coach/schedule'
+    | '/api/paypal/capture-order'
+    | '/api/paypal/config'
+    | '/api/paypal/create-order'
     | '/api/public/player-registration'
   id:
     | '__root__'
@@ -194,6 +227,9 @@ export interface FileRouteTypes {
     | '/api/coach/register'
     | '/api/coach/reset-password'
     | '/api/coach/schedule'
+    | '/api/paypal/capture-order'
+    | '/api/paypal/config'
+    | '/api/paypal/create-order'
     | '/api/public/player-registration'
   fileRoutesById: FileRoutesById
 }
@@ -211,6 +247,9 @@ export interface RootRouteChildren {
   ApiCoachRegisterRoute: typeof ApiCoachRegisterRoute
   ApiCoachResetPasswordRoute: typeof ApiCoachResetPasswordRoute
   ApiCoachScheduleRoute: typeof ApiCoachScheduleRoute
+  ApiPaypalCaptureOrderRoute: typeof ApiPaypalCaptureOrderRoute
+  ApiPaypalConfigRoute: typeof ApiPaypalConfigRoute
+  ApiPaypalCreateOrderRoute: typeof ApiPaypalCreateOrderRoute
   ApiPublicPlayerRegistrationRoute: typeof ApiPublicPlayerRegistrationRoute
 }
 
@@ -272,6 +311,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicPlayerRegistrationRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/paypal/create-order': {
+      id: '/api/paypal/create-order'
+      path: '/api/paypal/create-order'
+      fullPath: '/api/paypal/create-order'
+      preLoaderRoute: typeof ApiPaypalCreateOrderRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/paypal/config': {
+      id: '/api/paypal/config'
+      path: '/api/paypal/config'
+      fullPath: '/api/paypal/config'
+      preLoaderRoute: typeof ApiPaypalConfigRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/paypal/capture-order': {
+      id: '/api/paypal/capture-order'
+      path: '/api/paypal/capture-order'
+      fullPath: '/api/paypal/capture-order'
+      preLoaderRoute: typeof ApiPaypalCaptureOrderRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/coach/schedule': {
       id: '/api/coach/schedule'
       path: '/api/coach/schedule'
@@ -331,8 +391,20 @@ const rootRouteChildren: RootRouteChildren = {
   ApiCoachRegisterRoute: ApiCoachRegisterRoute,
   ApiCoachResetPasswordRoute: ApiCoachResetPasswordRoute,
   ApiCoachScheduleRoute: ApiCoachScheduleRoute,
+  ApiPaypalCaptureOrderRoute: ApiPaypalCaptureOrderRoute,
+  ApiPaypalConfigRoute: ApiPaypalConfigRoute,
+  ApiPaypalCreateOrderRoute: ApiPaypalCreateOrderRoute,
   ApiPublicPlayerRegistrationRoute: ApiPublicPlayerRegistrationRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}
