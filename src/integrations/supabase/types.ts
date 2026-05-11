@@ -274,6 +274,39 @@ export type Database = {
           },
         ]
       }
+      paypal_plans: {
+        Row: {
+          amount: number
+          created_at: string
+          currency: string
+          env: string
+          plan_id: string
+          product_id: string
+          trial_days: number
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          currency?: string
+          env: string
+          plan_id: string
+          product_id: string
+          trial_days?: number
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          currency?: string
+          env?: string
+          plan_id?: string
+          product_id?: string
+          trial_days?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       player_registration_links: {
         Row: {
           created_at: string
@@ -864,6 +897,10 @@ export type Database = {
           expires_at: string
           id: string
           is_trial: boolean
+          last_synced_at: string | null
+          paypal_status: string | null
+          paypal_subscription_id: string | null
+          plan: string | null
           updated_at: string
           user_id: string
         }
@@ -874,6 +911,10 @@ export type Database = {
           expires_at: string
           id?: string
           is_trial?: boolean
+          last_synced_at?: string | null
+          paypal_status?: string | null
+          paypal_subscription_id?: string | null
+          plan?: string | null
           updated_at?: string
           user_id: string
         }
@@ -884,6 +925,10 @@ export type Database = {
           expires_at?: string
           id?: string
           is_trial?: boolean
+          last_synced_at?: string | null
+          paypal_status?: string | null
+          paypal_subscription_id?: string | null
+          plan?: string | null
           updated_at?: string
           user_id?: string
         }
