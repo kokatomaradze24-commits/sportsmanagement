@@ -13,6 +13,7 @@ import { useSounds } from "@/hooks/use-sounds";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import { LogoAdjustDialog } from "./LogoAdjustDialog";
 import { AIImageGenerator } from "./AIImageGenerator";
+import { AICreditsBadge } from "./AICreditsBadge";
 import type { AppTheme } from "@/hooks/use-theme";
 
 interface AppHeaderProps {
@@ -159,6 +160,11 @@ export function AppHeader({ schoolName, logoUrl, sport, isDark, onToggleTheme, o
           <div className="flex flex-col items-center gap-1">
             <LanguageSwitcher />
             <span className="text-[10px] text-muted-foreground leading-none">{t("lblLanguage")}</span>
+          </div>
+
+          <div className="flex flex-col items-center gap-1">
+            <AICreditsBadge />
+            <span className="text-[10px] text-muted-foreground leading-none">AI კრედიტი</span>
           </div>
 
           <div className="flex flex-col items-center gap-1">
