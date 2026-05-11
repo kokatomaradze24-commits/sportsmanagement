@@ -5,10 +5,10 @@ import { Button } from "@/components/ui/button";
 import { useSubscription } from "@/hooks/use-subscription";
 import { useIsAdmin } from "@/hooks/use-is-admin";
 import { useI18n } from "@/hooks/use-i18n";
-import { PaymentInfoDialog } from "./PaymentInfoDialog";
+import { SubscriptionPaymentDialog } from "./SubscriptionPaymentDialog";
 
 export function SubscriptionBanner() {
-  const { daysLeft, isActive, loading, expiresAt } = useSubscription();
+  const { daysLeft, isActive, loading, expiresAt, refresh } = useSubscription();
   const { isAdmin } = useIsAdmin();
   const { t } = useI18n();
   const [payOpen, setPayOpen] = useState(false);
@@ -48,7 +48,7 @@ export function SubscriptionBanner() {
           {t("pay")}
         </Button>
       </motion.div>
-      <PaymentInfoDialog open={payOpen} onOpenChange={setPayOpen} />
+      <SubscriptionPaymentDialog open={payOpen} onOpenChange={setPayOpen} onSuccess={refresh} />
     </>
   );
 }

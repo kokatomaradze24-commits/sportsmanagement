@@ -2,15 +2,17 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Lock, CreditCard, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { PaymentInfoDialog } from "./PaymentInfoDialog";
+import { SubscriptionPaymentDialog } from "./SubscriptionPaymentDialog";
 import { useAuth } from "@/hooks/use-auth";
 import { useI18n } from "@/hooks/use-i18n";
+import { useSubscription } from "@/hooks/use-subscription";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 
 export function SubscriptionExpired() {
   const [open, setOpen] = useState(false);
   const { signOut } = useAuth();
   const { t } = useI18n();
+  const { refresh } = useSubscription();
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-6 relative">
@@ -32,7 +34,7 @@ export function SubscriptionExpired() {
         <div className="flex flex-col gap-2">
           <Button size="lg" onClick={() => setOpen(true)}>
             <CreditCard className="h-4 w-4 mr-2" />
-            {t("paymentInstructions")}
+            გამოწერა — $50/თვე (7 დღე უფასო)
           </Button>
           <Button size="lg" variant="ghost" onClick={signOut}>
             <LogOut className="h-4 w-4 mr-2" />
@@ -40,7 +42,7 @@ export function SubscriptionExpired() {
           </Button>
         </div>
       </motion.div>
-      <PaymentInfoDialog open={open} onOpenChange={setOpen} />
+      <SubscriptionPaymentDialog open={open} onOpenChange={setOpen} onSuccess={refresh} />
     </div>
   );
 }
