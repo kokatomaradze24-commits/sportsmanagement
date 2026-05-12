@@ -151,7 +151,7 @@ export function AICreditsPurchaseDialog({ open, onOpenChange, onSuccess }: Props
 
     return () => {
       cancelled = true;
-      if (renderIdRef.current === renderId) renderIdRef.current++;
+      renderIdRef.current = renderId + 1;
       paypalButtonRef.current?.close?.();
       paypalButtonRef.current = null;
       container.replaceChildren();
