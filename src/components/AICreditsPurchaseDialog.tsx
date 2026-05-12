@@ -1,5 +1,11 @@
 import { useEffect, useRef, useState } from "react";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Sparkles, Check, Loader2 } from "lucide-react";
 import { toast } from "sonner";
@@ -13,8 +19,18 @@ interface Props {
   onSuccess?: (newBalance: number) => void;
 }
 
+type PaypalButton = {
+  isEligible: () => boolean;
+  render: (element: HTMLElement) => Promise<void>;
+  close?: () => void;
+};
+
+type PaypalApi = {
+  FUNDING: Record<string, string | undefined>;
+  Buttons: (options: Record<string, unknown>) => PaypalButton;
+};
+
 export function AICreditsPurchaseDialog({ open, onOpenChange, onSuccess }: Props) {
-  
   const { session } = useAuth();
   const [selected, setSelected] = useState<AICreditPackage>(AI_CREDIT_PACKAGES[1]);
   const [sdkReady, setSdkReady] = useState(false);
@@ -38,7 +54,9 @@ export function AICreditsPurchaseDialog({ open, onOpenChange, onSuccess }: Props
         toast.error(e instanceof Error ? e.message : "PayPal load error");
       }
     })();
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [open, selected.currency]);
 
   // Render PayPal buttons whenever selection or readiness changes
