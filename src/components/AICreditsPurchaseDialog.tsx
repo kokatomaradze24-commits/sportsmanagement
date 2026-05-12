@@ -20,6 +20,8 @@ export function AICreditsPurchaseDialog({ open, onOpenChange, onSuccess }: Props
   const [sdkReady, setSdkReady] = useState(false);
   const [processing, setProcessing] = useState(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const paypalButtonRef = useRef<{ close?: () => void } | null>(null);
+  const renderIdRef = useRef(0);
 
   // Load PayPal SDK when dialog opens
   useEffect(() => {
@@ -44,7 +46,10 @@ export function AICreditsPurchaseDialog({ open, onOpenChange, onSuccess }: Props
     if (!open || !sdkReady || !containerRef.current || !window.paypal || !session) return;
 
     const container = containerRef.current;
-    container.innerHTML = "";
+    const renderId = ++renderIdRef.current;
+    paypalButtonRef.current?.close?.();
+    paypalButtonRef.current = null;
+    container.replaceChildren();
     let cancelled = false;
 
     const createOrder = async () => {
@@ -89,32 +94,48 @@ export function AICreditsPurchaseDialog({ open, onOpenChange, onSuccess }: Props
       toast.error("გადახდა ვერ მოხერხდა");
     };
 
-    const fundingSources = [
-      window.paypal.FUNDING.PAYPAL,
-      window.paypal.FUNDING.CARD,
+    const buttonOptions = {
+      style: { layout: "vertical", shape: "rect", height: 44 },
+      createOrder,
+      onApprove,
+      onError,
+    };
+
+    const fundingPriority = [
       window.paypal.FUNDING.APPLEPAY,
       window.paypal.FUNDING.GOOGLEPAY,
-    ];
+      window.paypal.FUNDING.PAYPAL,
+      window.paypal.FUNDING.CARD,
+    ].filter(Boolean);
 
-    fundingSources.forEach((fundingSource: string) => {
-      const button = window.paypal.Buttons({
-        fundingSource,
-        style: { layout: "vertical", shape: "rect", height: 44 },
-        createOrder,
-        onApprove,
-        onError,
-      });
-      if (button.isEligible()) {
-        const wrap = document.createElement("div");
-        wrap.style.marginBottom = "8px";
-        container.appendChild(wrap);
-        button.render(wrap).catch(onError);
+    let button: any = null;
+    for (const fundingSource of fundingPriority) {
+      const candidate = window.paypal.Buttons({ ...buttonOptions, fundingSource });
+      if (candidate.isEligible()) {
+        button = candidate;
+        break;
       }
+      candidate.close?.();
+    }
+
+    if (!button) {
+      toast.error("გადახდის მეთოდი ხელმისაწვდომი არ არის");
+      return;
+    }
+
+    paypalButtonRef.current = button;
+    const wrap = document.createElement("div");
+    container.appendChild(wrap);
+    button.render(wrap).catch((err: unknown) => {
+      if (!cancelled && renderId === renderIdRef.current) onError(err);
     });
 
     return () => {
       cancelled = true;
-      container.innerHTML = "";
+      renderIdRef.current++;
+      paypalButtonRef.current?.close?.();
+      paypalButtonRef.current = null;
+      container.replaceChildren();
     };
   }, [sdkReady, selected, session, open, onOpenChange, onSuccess]);
 
@@ -126,7 +147,7 @@ export function AICreditsPurchaseDialog({ open, onOpenChange, onSuccess }: Props
             <Sparkles className="h-5 w-5 text-primary" />
             AI კრედიტების შეძენა
           </DialogTitle>
-          <DialogDescription>აირჩიე პაკეტი და გადაიხადე ბარათით, Apple Pay ან Google Pay-ით — PayPal ანგარიში არ გჭირდება</DialogDescription>
+          <DialogDescription>აირჩიე პაკეტი და გადაიხადე ერთი უსაფრთხო გადახდის ღილაკით</DialogDescription>
         </DialogHeader>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 my-4">
@@ -175,7 +196,7 @@ export function AICreditsPurchaseDialog({ open, onOpenChange, onSuccess }: Props
         </div>
 
         <p className="text-[11px] text-muted-foreground text-center mt-2">
-          🔒 უსაფრთხო გადახდა PayPal-ით. მომხმარებლის ანგარიში არ არის სავალდებულო.
+          🔒 უსაფრთხო გადახდა PayPal-ით. ეკრანზე გამოჩნდება მხოლოდ ერთი გადახდის ღილაკი.
         </p>
 
         <Button variant="ghost" onClick={() => onOpenChange(false)} className="mt-1">
