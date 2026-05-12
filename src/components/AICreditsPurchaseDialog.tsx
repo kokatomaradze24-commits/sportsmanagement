@@ -63,6 +63,7 @@ export function AICreditsPurchaseDialog({ open, onOpenChange, onSuccess }: Props
   useEffect(() => {
     if (!open || !sdkReady || !containerRef.current || !window.paypal || !session) return;
 
+    const paypal = window.paypal as PaypalApi;
     const container = containerRef.current;
     const renderId = ++renderIdRef.current;
     paypalButtonRef.current?.close?.();
@@ -120,15 +121,15 @@ export function AICreditsPurchaseDialog({ open, onOpenChange, onSuccess }: Props
     };
 
     const fundingPriority = [
-      window.paypal.FUNDING.APPLEPAY,
-      window.paypal.FUNDING.GOOGLEPAY,
-      window.paypal.FUNDING.PAYPAL,
-      window.paypal.FUNDING.CARD,
+      paypal.FUNDING.APPLEPAY,
+      paypal.FUNDING.GOOGLEPAY,
+      paypal.FUNDING.PAYPAL,
+      paypal.FUNDING.CARD,
     ].filter(Boolean);
 
-    let button: any = null;
+    let button: PaypalButton | null = null;
     for (const fundingSource of fundingPriority) {
-      const candidate = window.paypal.Buttons({ ...buttonOptions, fundingSource });
+      const candidate = paypal.Buttons({ ...buttonOptions, fundingSource });
       if (candidate.isEligible()) {
         button = candidate;
         break;
@@ -150,7 +151,7 @@ export function AICreditsPurchaseDialog({ open, onOpenChange, onSuccess }: Props
 
     return () => {
       cancelled = true;
-      renderIdRef.current++;
+      if (renderIdRef.current === renderId) renderIdRef.current++;
       paypalButtonRef.current?.close?.();
       paypalButtonRef.current = null;
       container.replaceChildren();
