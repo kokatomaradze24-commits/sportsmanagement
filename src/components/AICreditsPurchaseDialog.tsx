@@ -166,7 +166,9 @@ export function AICreditsPurchaseDialog({ open, onOpenChange, onSuccess }: Props
             <Sparkles className="h-5 w-5 text-primary" />
             AI კრედიტების შეძენა
           </DialogTitle>
-          <DialogDescription>აირჩიე პაკეტი და გადაიხადე ერთი უსაფრთხო გადახდის ღილაკით</DialogDescription>
+          <DialogDescription>
+            აირჩიე პაკეტი და გადაიხადე ერთი უსაფრთხო გადახდის ღილაკით
+          </DialogDescription>
         </DialogHeader>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 my-4">
@@ -183,18 +185,12 @@ export function AICreditsPurchaseDialog({ open, onOpenChange, onSuccess }: Props
                     : "border-border hover:border-primary/50"
                 }`}
               >
-                {active && (
-                  <Check className="absolute top-2 right-2 h-4 w-4 text-primary" />
-                )}
+                {active && <Check className="absolute top-2 right-2 h-4 w-4 text-primary" />}
                 <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                   {pkg.id === "week" ? "1 კვირა" : pkg.id === "month" ? "1 თვე" : "1 წელი"}
                 </div>
-                <div className="mt-1 text-2xl font-bold">
-                  ${pkg.amount}
-                </div>
-                <div className="text-xs text-muted-foreground">
-                  {pkg.credits} კრედიტი
-                </div>
+                <div className="mt-1 text-2xl font-bold">${pkg.amount}</div>
+                <div className="text-xs text-muted-foreground">{pkg.credits} კრედიტი</div>
               </button>
             );
           })}
