@@ -62,7 +62,7 @@ export function SubscriptionPaymentDialog({ open, onOpenChange, onSuccess }: Pro
     let cancelled = false;
 
     const buttonOptions = {
-      style: { layout: "vertical", shape: "rect", height: 45, label: "subscribe" },
+      style: { layout: "vertical", shape: "rect", height: 44 },
       createSubscription: (_data: unknown, actions: any) => {
         return actions.subscription.create({
           plan_id: config.planId,
@@ -103,10 +103,10 @@ export function SubscriptionPaymentDialog({ open, onOpenChange, onSuccess }: Pro
     };
 
     const fundingSources = [
+      paypal.FUNDING.PAYPAL,
       paypal.FUNDING.CARD,
       paypal.FUNDING.APPLEPAY,
       paypal.FUNDING.GOOGLEPAY,
-      paypal.FUNDING.PAYPAL,
     ].filter(Boolean);
 
     let rendered = 0;
