@@ -31,7 +31,9 @@ export function loadPaypalSdk(clientId: string, currency: string, mode: PaypalMo
     if (mode === "subscription") {
       params.set("intent", "subscription");
       params.set("vault", "true");
-      params.set("components", "buttons");
+      params.set("components", "buttons,applepay,googlepay");
+      params.set("enable-funding", "card");
+      params.set("disable-funding", "credit,paylater");
     } else {
       params.set("intent", "capture");
       params.set("components", "buttons,applepay,googlepay,card-fields");

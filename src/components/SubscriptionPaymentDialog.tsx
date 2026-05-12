@@ -28,7 +28,7 @@ export function SubscriptionPaymentDialog({ open, onOpenChange, onSuccess }: Pro
   const [processing, setProcessing] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const buttonRef = useRef<any>(null);
+  const buttonsRef = useRef<Array<{ close?: () => void }>>([]);
   const renderIdRef = useRef(0);
 
   useEffect(() => {
@@ -53,14 +53,16 @@ export function SubscriptionPaymentDialog({ open, onOpenChange, onSuccess }: Pro
 
   useEffect(() => {
     if (!open || !sdkReady || !containerRef.current || !window.paypal || !session || !config) return;
+    const paypal = window.paypal as any;
     const container = containerRef.current;
     const renderId = ++renderIdRef.current;
-    try { buttonRef.current?.close?.(); } catch { /* ignore */ }
-    buttonRef.current = null;
-    container.innerHTML = "";
+    for (const b of buttonsRef.current) { try { b.close?.(); } catch { /* ignore */ } }
+    buttonsRef.current = [];
+    container.replaceChildren();
+    let cancelled = false;
 
-    const button = window.paypal.Buttons({
-      style: { layout: "vertical", shape: "rect", color: "gold", label: "subscribe", height: 45 },
+    const buttonOptions = {
+      style: { layout: "vertical", shape: "rect", height: 45, label: "subscribe" },
       createSubscription: (_data: unknown, actions: any) => {
         return actions.subscription.create({
           plan_id: config.planId,
@@ -98,20 +100,46 @@ export function SubscriptionPaymentDialog({ open, onOpenChange, onSuccess }: Pro
         console.error("PayPal subscription error", err);
         toast.error("გადახდა ვერ მოხერხდა");
       },
-    });
+    };
 
-    if (renderIdRef.current !== renderId) {
-      try { button.close?.(); } catch { /* ignore */ }
-      return;
+    const fundingSources = [
+      paypal.FUNDING.PAYPAL,
+      paypal.FUNDING.CARD,
+      paypal.FUNDING.APPLEPAY,
+      paypal.FUNDING.GOOGLEPAY,
+    ].filter(Boolean);
+
+    let rendered = 0;
+    for (const fundingSource of fundingSources) {
+      const candidate = paypal.Buttons({ ...buttonOptions, fundingSource });
+      if (!candidate.isEligible()) {
+        try { candidate.close?.(); } catch { /* ignore */ }
+        continue;
+      }
+      if (renderIdRef.current !== renderId) {
+        try { candidate.close?.(); } catch { /* ignore */ }
+        break;
+      }
+      buttonsRef.current.push(candidate);
+      const wrap = document.createElement("div");
+      wrap.style.marginBottom = "8px";
+      container.appendChild(wrap);
+      candidate.render(wrap).catch((e: unknown) => {
+        if (!cancelled && renderId === renderIdRef.current) console.error(e);
+      });
+      rendered++;
     }
-    buttonRef.current = button;
-    button.render(container).catch((e: unknown) => console.error(e));
+
+    if (rendered === 0) {
+      setErrorMsg("გადახდის მეთოდი ხელმისაწვდომი არ არის");
+    }
 
     return () => {
+      cancelled = true;
       renderIdRef.current = renderId + 1;
-      try { button.close?.(); } catch { /* ignore */ }
-      if (buttonRef.current === button) buttonRef.current = null;
-      container.innerHTML = "";
+      for (const b of buttonsRef.current) { try { b.close?.(); } catch { /* ignore */ } }
+      buttonsRef.current = [];
+      container.replaceChildren();
     };
   }, [sdkReady, session, open, config, onOpenChange, onSuccess]);
 
