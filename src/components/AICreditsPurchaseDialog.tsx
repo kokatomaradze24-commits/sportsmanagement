@@ -1,5 +1,11 @@
 import { useEffect, useRef, useState } from "react";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Sparkles, Check, Loader2 } from "lucide-react";
 import { toast } from "sonner";
@@ -13,13 +19,25 @@ interface Props {
   onSuccess?: (newBalance: number) => void;
 }
 
+type PaypalButton = {
+  isEligible: () => boolean;
+  render: (element: HTMLElement) => Promise<void>;
+  close?: () => void;
+};
+
+type PaypalApi = {
+  FUNDING: Record<string, string | undefined>;
+  Buttons: (options: Record<string, unknown>) => PaypalButton;
+};
+
 export function AICreditsPurchaseDialog({ open, onOpenChange, onSuccess }: Props) {
-  
   const { session } = useAuth();
   const [selected, setSelected] = useState<AICreditPackage>(AI_CREDIT_PACKAGES[1]);
   const [sdkReady, setSdkReady] = useState(false);
   const [processing, setProcessing] = useState(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const paypalButtonRef = useRef<{ close?: () => void } | null>(null);
+  const renderIdRef = useRef(0);
 
   // Load PayPal SDK when dialog opens
   useEffect(() => {
@@ -36,15 +54,21 @@ export function AICreditsPurchaseDialog({ open, onOpenChange, onSuccess }: Props
         toast.error(e instanceof Error ? e.message : "PayPal load error");
       }
     })();
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [open, selected.currency]);
 
   // Render PayPal buttons whenever selection or readiness changes
   useEffect(() => {
     if (!open || !sdkReady || !containerRef.current || !window.paypal || !session) return;
 
+    const paypal = window.paypal as PaypalApi;
     const container = containerRef.current;
-    container.innerHTML = "";
+    const renderId = ++renderIdRef.current;
+    paypalButtonRef.current?.close?.();
+    paypalButtonRef.current = null;
+    container.replaceChildren();
     let cancelled = false;
 
     const createOrder = async () => {
@@ -89,32 +113,48 @@ export function AICreditsPurchaseDialog({ open, onOpenChange, onSuccess }: Props
       toast.error("გადახდა ვერ მოხერხდა");
     };
 
-    const fundingSources = [
-      window.paypal.FUNDING.PAYPAL,
-      window.paypal.FUNDING.CARD,
-      window.paypal.FUNDING.APPLEPAY,
-      window.paypal.FUNDING.GOOGLEPAY,
-    ];
+    const buttonOptions = {
+      style: { layout: "vertical", shape: "rect", height: 44 },
+      createOrder,
+      onApprove,
+      onError,
+    };
 
-    fundingSources.forEach((fundingSource: string) => {
-      const button = window.paypal.Buttons({
-        fundingSource,
-        style: { layout: "vertical", shape: "rect", height: 44 },
-        createOrder,
-        onApprove,
-        onError,
-      });
-      if (button.isEligible()) {
-        const wrap = document.createElement("div");
-        wrap.style.marginBottom = "8px";
-        container.appendChild(wrap);
-        button.render(wrap).catch(onError);
+    const fundingPriority = [
+      paypal.FUNDING.APPLEPAY,
+      paypal.FUNDING.GOOGLEPAY,
+      paypal.FUNDING.PAYPAL,
+      paypal.FUNDING.CARD,
+    ].filter(Boolean);
+
+    let button: PaypalButton | null = null;
+    for (const fundingSource of fundingPriority) {
+      const candidate = paypal.Buttons({ ...buttonOptions, fundingSource });
+      if (candidate.isEligible()) {
+        button = candidate;
+        break;
       }
+      candidate.close?.();
+    }
+
+    if (!button) {
+      toast.error("გადახდის მეთოდი ხელმისაწვდომი არ არის");
+      return;
+    }
+
+    paypalButtonRef.current = button;
+    const wrap = document.createElement("div");
+    container.appendChild(wrap);
+    button.render(wrap).catch((err: unknown) => {
+      if (!cancelled && renderId === renderIdRef.current) onError(err);
     });
 
     return () => {
       cancelled = true;
-      container.innerHTML = "";
+      renderIdRef.current = renderId + 1;
+      paypalButtonRef.current?.close?.();
+      paypalButtonRef.current = null;
+      container.replaceChildren();
     };
   }, [sdkReady, selected, session, open, onOpenChange, onSuccess]);
 
@@ -126,7 +166,9 @@ export function AICreditsPurchaseDialog({ open, onOpenChange, onSuccess }: Props
             <Sparkles className="h-5 w-5 text-primary" />
             AI კრედიტების შეძენა
           </DialogTitle>
-          <DialogDescription>აირჩიე პაკეტი და გადაიხადე ბარათით, Apple Pay ან Google Pay-ით — PayPal ანგარიში არ გჭირდება</DialogDescription>
+          <DialogDescription>
+            აირჩიე პაკეტი და გადაიხადე ერთი უსაფრთხო გადახდის ღილაკით
+          </DialogDescription>
         </DialogHeader>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 my-4">
@@ -143,18 +185,12 @@ export function AICreditsPurchaseDialog({ open, onOpenChange, onSuccess }: Props
                     : "border-border hover:border-primary/50"
                 }`}
               >
-                {active && (
-                  <Check className="absolute top-2 right-2 h-4 w-4 text-primary" />
-                )}
+                {active && <Check className="absolute top-2 right-2 h-4 w-4 text-primary" />}
                 <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                   {pkg.id === "week" ? "1 კვირა" : pkg.id === "month" ? "1 თვე" : "1 წელი"}
                 </div>
-                <div className="mt-1 text-2xl font-bold">
-                  ${pkg.amount}
-                </div>
-                <div className="text-xs text-muted-foreground">
-                  {pkg.credits} კრედიტი
-                </div>
+                <div className="mt-1 text-2xl font-bold">${pkg.amount}</div>
+                <div className="text-xs text-muted-foreground">{pkg.credits} კრედიტი</div>
               </button>
             );
           })}
@@ -175,7 +211,7 @@ export function AICreditsPurchaseDialog({ open, onOpenChange, onSuccess }: Props
         </div>
 
         <p className="text-[11px] text-muted-foreground text-center mt-2">
-          🔒 უსაფრთხო გადახდა PayPal-ით. მომხმარებლის ანგარიში არ არის სავალდებულო.
+          🔒 უსაფრთხო გადახდა PayPal-ით. ეკრანზე გამოჩნდება მხოლოდ ერთი გადახდის ღილაკი.
         </p>
 
         <Button variant="ghost" onClick={() => onOpenChange(false)} className="mt-1">
