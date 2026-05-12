@@ -408,20 +408,6 @@ function LoginPage() {
           <div className="mt-4 flex justify-center">
             <LanguageSwitcher variant="floating" />
           </div>
-
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.7 }}
-            className="flex items-center justify-center gap-4 mt-6 text-xs text-slate-500"
-          >
-            <span>🏀</span>
-            <span>⚽</span>
-            <span>🥊</span>
-            <span>💃</span>
-            <span>🏊</span>
-            <span>💪</span>
-          </motion.div>
         </motion.div>
       </div>
     </div>
