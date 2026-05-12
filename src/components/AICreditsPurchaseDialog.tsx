@@ -214,7 +214,7 @@ export function AICreditsPurchaseDialog({ open, onOpenChange, onSuccess }: Props
         </div>
 
         <p className="text-[11px] text-muted-foreground text-center mt-2">
-          🔒 უსაფრთხო გადახდა PayPal-ით. ეკრანზე გამოჩნდება მხოლოდ ერთი გადახდის ღილაკი.
+          🔒 უსაფრთხო გადახდა PayPal-ით — PayPal, ბარათი, Apple Pay და Google Pay (თუ ხელმისაწვდომია).
         </p>
 
         <Button variant="ghost" onClick={() => onOpenChange(false)} className="mt-1">
