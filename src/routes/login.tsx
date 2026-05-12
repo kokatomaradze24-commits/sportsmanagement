@@ -150,7 +150,7 @@ const MARKETING: Record<LanguageCode, MarketingCopy> = {
   },
 };
 
-const FEATURE_ICONS = [Users, Wallet, CalendarDays, Trophy, Bell, Globe2];
+const FEATURE_ICONS = [Users, Wallet, CalendarDays, Sparkles, UserCog, Link2, Bell, Globe2];
 
 export const Route = createFileRoute("/login")({
   head: () => ({
