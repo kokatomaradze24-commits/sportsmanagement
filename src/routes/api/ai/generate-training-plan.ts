@@ -116,6 +116,25 @@ Each session must have:
           },
         ];
 
+
+        const PLAN_COST = mode === "expert" ? 3 : 1;
+        const admin = supabaseAdmin as any;
+        const { data: deductOk, error: deductErr } = await admin.rpc("deduct_ai_credits", {
+          _user_id: user.id,
+          _amount: PLAN_COST,
+        });
+        if (deductErr) {
+          console.error("deduct_ai_credits failed", deductErr);
+          return Response.json({ error: "Credit check failed" }, { status: 500 });
+        }
+        if (!deductOk) {
+          return Response.json({ error: "Insufficient AI credits. Please purchase more." }, { status: 402 });
+        }
+
+        const refund = async () => {
+          try { await admin.rpc("refund_ai_credits", { _user_id: user.id, _amount: PLAN_COST }); } catch { /* ignore */ }
+        };
+
         try {
           const response = await fetch(GATEWAY_URL, {
             method: "POST",
@@ -135,12 +154,15 @@ Each session must have:
           });
 
           if (response.status === 429) {
+            await refund();
             return Response.json({ error: "Rate limit exceeded. Please try again shortly." }, { status: 429 });
           }
           if (response.status === 402) {
-            return Response.json({ error: "AI credits exhausted. Please add credits in workspace settings." }, { status: 402 });
+            await refund();
+            return Response.json({ error: "AI service temporarily unavailable. Please try again later." }, { status: 503 });
           }
           if (!response.ok) {
+            await refund();
             const txt = await response.text();
             console.error("AI gateway error", response.status, txt);
             return Response.json({ error: "Plan generation failed" }, { status: 500 });
@@ -150,6 +172,7 @@ Each session must have:
           const toolCall = data?.choices?.[0]?.message?.tool_calls?.[0];
           const argsStr = toolCall?.function?.arguments;
           if (!argsStr) {
+            await refund();
             console.error("No tool call in response", JSON.stringify(data).slice(0, 500));
             return Response.json({ error: "AI returned no plan" }, { status: 500 });
           }
@@ -157,11 +180,11 @@ Each session must have:
           try {
             parsed = JSON.parse(argsStr);
           } catch {
+            await refund();
             return Response.json({ error: "AI returned invalid plan" }, { status: 500 });
           }
           let sessions = Array.isArray(parsed.sessions) ? parsed.sessions : [];
           if (schedule.length > 0) {
-            // Force deterministic alignment to user-defined slots.
             sessions = schedule.map((slot, i) => ({
               title: sessions[i]?.title ?? `Session ${i + 1}`,
               practice_date: slot.date,
@@ -175,6 +198,7 @@ Each session must have:
             sessions,
           });
         } catch (err) {
+          await refund();
           console.error("generate-training-plan exception", err);
           return Response.json({ error: "Plan generation failed" }, { status: 500 });
         }
