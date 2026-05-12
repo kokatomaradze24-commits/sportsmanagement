@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Trophy, ShieldCheck, Users, CalendarDays, Wallet, Bell, BarChart3, Globe2, CheckCircle2 } from "lucide-react";
+import { Trophy, Users, CalendarDays, Wallet, Bell, BarChart3, Globe2, CheckCircle2, Sparkles, UserCog, Link2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { lovable } from "@/integrations/lovable/index";
 import { supabase } from "@/integrations/supabase/client";
@@ -24,117 +24,133 @@ type MarketingCopy = {
 const MARKETING: Record<LanguageCode, MarketingCopy> = {
   ka: {
     tagline: "სპორტული კლუბის მართვის #1 პლატფორმა",
-    headline: "მართე შენი კლუბი ერთ ადგილას",
+    headline: "მართე მთელი კლუბი ერთ ჭკვიან სისტემაში",
     subline:
-      "მოთამაშეები, გადახდები, ვარჯიშის განრიგი, გუნდები და მწვრთნელები — ყველაფერი ერთ პროფესიონალურ სისტემაში. დაზოგე საათები ყოველ კვირას.",
-    ctaTitle: "დაიწყე უფასოდ დღესვე",
+      "მოთამაშეები, გადახდები, ვარჯიშები, თამაშები, გუნდები, მწვრთნელები, ექსკურსიები და AI ასისტენტი — ყველაფერი ერთ თანამედროვე პლატფორმაზე. 8 სპორტი, 6 ენა.",
+    ctaTitle: "დაიწყე 7-დღიანი უფასო ცდა",
     ctaSubtitle: "რეგისტრაცია 30 წამში — საკრედიტო ბარათის გარეშე",
     features: [
-      { title: "მოთამაშეთა ბაზა", desc: "სრული რეესტრი, მშობლის ნომერი, ასაკი და სტატუსი" },
-      { title: "გადახდების კონტროლი", desc: "ვინ გადაიხადა, ვის აქვს ვადაგასული — ერთი შეხედვით" },
-      { title: "ვარჯიშისა და თამაშების კალენდარი", desc: "მწვრთნელებს თავად შეუძლიათ რედაქტირება" },
-      { title: "ასაკობრივი გუნდები", desc: "შექმენი გუნდები და გაანაწილე მოთამაშეები" },
-      { title: "ავტომატური SMS შეტყობინებები", desc: "გადახდის შეხსენება მშობლებისთვის" },
-      { title: "მრავალენოვანი + მრავალვალუტიანი", desc: "6 ენა, GEL / USD / EUR" },
+      { title: "მოთამაშეთა და გუნდების ბაზა", desc: "სრული პროფილი, მშობლის კონტაქტი, ასაკობრივი ჯგუფები" },
+      { title: "გადახდები და ფინანსები", desc: "ავტომატური განრიგი, ვადაგასული, PDF ქვითრები" },
+      { title: "ვარჯიშები, თამაშები, ექსკურსიები", desc: "კალენდარი, კვირეული შაბლონები, მონაწილეები" },
+      { title: "AI ვარჯიშის გეგმა და სურათები", desc: "ასაკის მიხედვით პერსონალური გეგმები ერთი კლიკით" },
+      { title: "მწვრთნელის ცალკე წვდომა", desc: "თითოეულ მწვრთნელს თავისი განრიგი და მოთამაშეები" },
+      { title: "ონლაინ რეგისტრაციის ლინკი", desc: "მშობლები პირდაპირ ავსებენ ანკეტას" },
+      { title: "ავტომატური SMS / Email", desc: "გადახდის შეხსენება, დადასტურება, ვადის გასვლა" },
+      { title: "მრავალენოვანი და მრავალვალუტიანი", desc: "6 ენა • GEL / USD / EUR • 8 სპორტი" },
     ],
-    benefits: ["უსაფრთხო ღრუბლოვანი მონაცემები", "ცალკე შესვლა მწვრთნელებისთვის", "მუშაობს ტელეფონზე და კომპიუტერზე"],
+    benefits: ["უსაფრთხო ღრუბლოვანი მონაცემები", "მუშაობს ტელეფონზე და კომპიუტერზე", "PayPal გადახდები"],
     socialProof: "ენდობათ კლუბები საქართველოსა და მსოფლიოში",
     coachLink: "მწვრთნელად შესვლა",
   },
   en: {
     tagline: "The #1 platform for sports club management",
-    headline: "Run your entire club in one place",
+    headline: "Run your entire club from one smart system",
     subline:
-      "Players, payments, practice schedules, teams and coaches — all in one professional system. Save hours every week.",
-    ctaTitle: "Get started for free today",
+      "Players, payments, practices, games, teams, coaches, trips and an AI assistant — all in one modern platform. 8 sports, 6 languages.",
+    ctaTitle: "Start your 7-day free trial",
     ctaSubtitle: "Sign up in 30 seconds — no credit card required",
     features: [
-      { title: "Player database", desc: "Full registry with parent contacts, age and status" },
-      { title: "Payment tracking", desc: "See who paid and who's overdue at a glance" },
-      { title: "Practice & game calendar", desc: "Coaches can edit their own schedule" },
-      { title: "Age-based teams", desc: "Create teams and assign players visually" },
-      { title: "Automatic SMS reminders", desc: "Payment reminders sent to parents" },
-      { title: "Multi-language & currency", desc: "6 languages, GEL / USD / EUR" },
+      { title: "Players & teams database", desc: "Full profiles, parent contacts, age groups" },
+      { title: "Payments & finances", desc: "Auto schedule, overdue tracking, PDF receipts" },
+      { title: "Practices, games, trips", desc: "Calendar, weekly templates, participants" },
+      { title: "AI training plans & images", desc: "Age-based personalized plans in one click" },
+      { title: "Dedicated coach access", desc: "Each coach manages their own schedule & players" },
+      { title: "Online registration link", desc: "Parents fill the form directly from a shared link" },
+      { title: "Automatic SMS / Email", desc: "Payment reminders, confirmations, overdue alerts" },
+      { title: "Multi-language & currency", desc: "6 languages • GEL / USD / EUR • 8 sports" },
     ],
-    benefits: ["Secure cloud-hosted data", "Separate login for coaches", "Works on phone and desktop"],
+    benefits: ["Secure cloud-hosted data", "Works on phone and desktop", "PayPal subscriptions"],
     socialProof: "Trusted by clubs in Georgia and worldwide",
     coachLink: "Sign in as a coach",
   },
   ru: {
     tagline: "Платформа №1 для управления спортклубом",
-    headline: "Управляйте клубом в одном месте",
-    subline: "Игроки, платежи, расписание тренировок, команды и тренеры — всё в одной профессиональной системе.",
-    ctaTitle: "Начните бесплатно сегодня",
+    headline: "Управляйте всем клубом в одной умной системе",
+    subline:
+      "Игроки, платежи, тренировки, игры, команды, тренеры, поездки и AI-ассистент — всё на одной современной платформе. 8 видов спорта, 6 языков.",
+    ctaTitle: "Начните 7-дневный бесплатный пробный период",
     ctaSubtitle: "Регистрация за 30 секунд — без банковской карты",
     features: [
-      { title: "База игроков", desc: "Полный реестр с контактами родителей" },
-      { title: "Контроль платежей", desc: "Кто оплатил, у кого задолженность — с одного взгляда" },
-      { title: "Календарь тренировок и игр", desc: "Тренеры могут редактировать сами" },
-      { title: "Команды по возрасту", desc: "Создавайте команды и распределяйте игроков" },
-      { title: "Автоматические SMS", desc: "Напоминания о платежах родителям" },
-      { title: "Много языков и валют", desc: "6 языков, GEL / USD / EUR" },
+      { title: "База игроков и команд", desc: "Полные профили, контакты родителей, возрастные группы" },
+      { title: "Платежи и финансы", desc: "Авто-график, контроль задолженностей, PDF-квитанции" },
+      { title: "Тренировки, игры, поездки", desc: "Календарь, шаблоны недели, участники" },
+      { title: "AI-планы и изображения", desc: "Персональные планы по возрасту в один клик" },
+      { title: "Отдельный доступ для тренеров", desc: "У каждого тренера свой график и игроки" },
+      { title: "Ссылка для онлайн-регистрации", desc: "Родители сами заполняют анкету" },
+      { title: "Авто SMS / Email", desc: "Напоминания, подтверждения, уведомления о просрочке" },
+      { title: "Много языков и валют", desc: "6 языков • GEL / USD / EUR • 8 видов спорта" },
     ],
-    benefits: ["Безопасное облачное хранение", "Отдельный вход для тренеров", "Работает на телефоне и ПК"],
+    benefits: ["Безопасное облако", "Работает на телефоне и ПК", "Оплата через PayPal"],
     socialProof: "Нам доверяют клубы по всему миру",
     coachLink: "Войти как тренер",
   },
   de: {
     tagline: "Die #1 Plattform für Sportvereinsverwaltung",
-    headline: "Verwalte deinen Verein an einem Ort",
-    subline: "Spieler, Zahlungen, Trainingspläne, Teams und Trainer — alles in einem professionellen System.",
-    ctaTitle: "Starte heute kostenlos",
+    headline: "Führe deinen ganzen Verein in einem smarten System",
+    subline:
+      "Spieler, Zahlungen, Trainings, Spiele, Teams, Trainer, Reisen und ein KI-Assistent — alles in einer modernen Plattform. 8 Sportarten, 6 Sprachen.",
+    ctaTitle: "Starte deine 7-tägige kostenlose Testphase",
     ctaSubtitle: "In 30 Sekunden registriert — ohne Kreditkarte",
     features: [
-      { title: "Spielerdatenbank", desc: "Vollständiges Register mit Elternkontakten" },
-      { title: "Zahlungsverwaltung", desc: "Wer hat bezahlt, wer ist überfällig" },
-      { title: "Trainings- & Spielkalender", desc: "Trainer können selbst bearbeiten" },
-      { title: "Altersgruppen-Teams", desc: "Teams erstellen und Spieler zuordnen" },
-      { title: "Automatische SMS", desc: "Zahlungserinnerungen an Eltern" },
-      { title: "Mehrsprachig & Multiwährung", desc: "6 Sprachen, GEL / USD / EUR" },
+      { title: "Spieler- & Team-Datenbank", desc: "Profile, Elternkontakte, Altersgruppen" },
+      { title: "Zahlungen & Finanzen", desc: "Auto-Plan, Mahnungen, PDF-Quittungen" },
+      { title: "Trainings, Spiele, Reisen", desc: "Kalender, Wochenvorlagen, Teilnehmer" },
+      { title: "KI-Trainingspläne & Bilder", desc: "Altersgerechte Pläne mit einem Klick" },
+      { title: "Eigener Trainer-Zugang", desc: "Jeder Trainer verwaltet seinen Plan & Spieler" },
+      { title: "Online-Anmeldelink", desc: "Eltern füllen das Formular selbst aus" },
+      { title: "Automatische SMS / E-Mail", desc: "Erinnerungen, Bestätigungen, Mahnungen" },
+      { title: "Mehrsprachig & Multiwährung", desc: "6 Sprachen • GEL / USD / EUR • 8 Sportarten" },
     ],
-    benefits: ["Sichere Cloud-Daten", "Separater Trainer-Login", "Funktioniert mobil & Desktop"],
+    benefits: ["Sichere Cloud-Daten", "Mobil & Desktop", "PayPal-Abonnements"],
     socialProof: "Vertraut von Vereinen weltweit",
     coachLink: "Als Trainer anmelden",
   },
   es: {
     tagline: "La plataforma #1 para gestión de clubes deportivos",
-    headline: "Gestiona todo tu club en un solo lugar",
-    subline: "Jugadores, pagos, horarios de entrenamiento, equipos y entrenadores — todo en un sistema profesional.",
-    ctaTitle: "Empieza gratis hoy",
+    headline: "Gestiona todo tu club desde un sistema inteligente",
+    subline:
+      "Jugadores, pagos, entrenamientos, partidos, equipos, entrenadores, viajes y asistente IA — todo en una plataforma moderna. 8 deportes, 6 idiomas.",
+    ctaTitle: "Comienza tu prueba gratuita de 7 días",
     ctaSubtitle: "Regístrate en 30 segundos — sin tarjeta de crédito",
     features: [
-      { title: "Base de jugadores", desc: "Registro completo con contactos de padres" },
-      { title: "Control de pagos", desc: "Quién pagó y quién debe, de un vistazo" },
-      { title: "Calendario de entrenamientos", desc: "Los entrenadores pueden editarlo" },
-      { title: "Equipos por edad", desc: "Crea equipos y asigna jugadores" },
-      { title: "SMS automáticos", desc: "Recordatorios de pago a los padres" },
-      { title: "Multiidioma y multimoneda", desc: "6 idiomas, GEL / USD / EUR" },
+      { title: "Base de jugadores y equipos", desc: "Perfiles, contactos de padres, grupos por edad" },
+      { title: "Pagos y finanzas", desc: "Calendario automático, vencidos, recibos PDF" },
+      { title: "Entrenamientos, partidos, viajes", desc: "Calendario, plantillas semanales, participantes" },
+      { title: "Planes IA e imágenes", desc: "Planes personalizados por edad con un clic" },
+      { title: "Acceso para entrenadores", desc: "Cada entrenador con su propio plan y jugadores" },
+      { title: "Enlace de inscripción online", desc: "Los padres rellenan el formulario directamente" },
+      { title: "SMS / Email automáticos", desc: "Recordatorios, confirmaciones, alertas de mora" },
+      { title: "Multiidioma y multimoneda", desc: "6 idiomas • GEL / USD / EUR • 8 deportes" },
     ],
-    benefits: ["Datos seguros en la nube", "Acceso separado para entrenadores", "Funciona en móvil y PC"],
+    benefits: ["Datos seguros en la nube", "Móvil y escritorio", "Suscripciones PayPal"],
     socialProof: "Clubes de todo el mundo confían en nosotros",
     coachLink: "Entrar como entrenador",
   },
   fr: {
     tagline: "La plateforme #1 de gestion de club sportif",
-    headline: "Gérez tout votre club au même endroit",
-    subline: "Joueurs, paiements, planning d'entraînement, équipes et coachs — tout dans un système professionnel.",
-    ctaTitle: "Commencez gratuitement aujourd'hui",
+    headline: "Gérez tout votre club depuis un système intelligent",
+    subline:
+      "Joueurs, paiements, entraînements, matchs, équipes, coachs, voyages et assistant IA — tout dans une plateforme moderne. 8 sports, 6 langues.",
+    ctaTitle: "Commencez votre essai gratuit de 7 jours",
     ctaSubtitle: "Inscription en 30 secondes — sans carte bancaire",
     features: [
-      { title: "Base de joueurs", desc: "Registre complet avec contacts parents" },
-      { title: "Suivi des paiements", desc: "Qui a payé, qui est en retard" },
-      { title: "Calendrier d'entraînements", desc: "Les coachs peuvent l'éditer eux-mêmes" },
-      { title: "Équipes par âge", desc: "Créez des équipes et assignez les joueurs" },
-      { title: "SMS automatiques", desc: "Rappels de paiement aux parents" },
-      { title: "Multilingue & multidevise", desc: "6 langues, GEL / USD / EUR" },
+      { title: "Base joueurs & équipes", desc: "Profils, contacts parents, groupes d'âge" },
+      { title: "Paiements & finances", desc: "Planning auto, retards, reçus PDF" },
+      { title: "Entraînements, matchs, voyages", desc: "Calendrier, modèles hebdo, participants" },
+      { title: "Plans IA & images", desc: "Plans personnalisés par âge en un clic" },
+      { title: "Accès dédié aux coachs", desc: "Chaque coach gère son planning & ses joueurs" },
+      { title: "Lien d'inscription en ligne", desc: "Les parents remplissent le formulaire directement" },
+      { title: "SMS / Email automatiques", desc: "Rappels, confirmations, alertes de retard" },
+      { title: "Multilingue & multidevise", desc: "6 langues • GEL / USD / EUR • 8 sports" },
     ],
-    benefits: ["Données sécurisées dans le cloud", "Connexion séparée pour les coachs", "Fonctionne mobile & PC"],
+    benefits: ["Données sécurisées dans le cloud", "Mobile & bureau", "Abonnements PayPal"],
     socialProof: "Adopté par des clubs dans le monde entier",
     coachLink: "Se connecter en tant que coach",
   },
 };
 
-const FEATURE_ICONS = [Users, Wallet, CalendarDays, Trophy, Bell, Globe2];
+const FEATURE_ICONS = [Users, Wallet, CalendarDays, Sparkles, UserCog, Link2, Bell, Globe2];
 
 export const Route = createFileRoute("/login")({
   head: () => ({
@@ -182,9 +198,6 @@ function LoginPage() {
     }
   };
 
-  // Floating sport emojis for ambient background
-  const sportEmojis = ["🏀", "⚽", "🏉", "🎾", "🥊", "🏊", "💪", "🏆", "🏐", "⚾"];
-
   return (
     <div className="relative min-h-screen overflow-hidden flex items-center justify-center px-4 py-10 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
       {/* Animated gradient orbs */}
@@ -224,34 +237,6 @@ function LoginPage() {
           backgroundSize: "60px 60px",
         }}
       />
-
-      {/* Floating sport icons */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {sportEmojis.map((emoji, i) => (
-          <motion.div
-            key={i}
-            initial={{
-              x: `${(i * 37) % 100}vw`,
-              y: `${(i * 53) % 100}vh`,
-              opacity: 0,
-            }}
-            animate={{
-              y: [`${(i * 53) % 100}vh`, `${((i * 53) % 100) - 15}vh`, `${(i * 53) % 100}vh`],
-              opacity: [0, 0.08, 0.08, 0],
-              rotate: [0, 360],
-            }}
-            transition={{
-              duration: 12 + (i % 5),
-              repeat: Infinity,
-              delay: i * 0.8,
-              ease: "easeInOut",
-            }}
-            className="absolute text-6xl"
-          >
-            {emoji}
-          </motion.div>
-        ))}
-      </div>
 
       {/* Two-column layout: marketing on the left, sign-in on the right */}
       <div className="relative z-10 w-full max-w-6xl grid grid-cols-1 lg:grid-cols-[1.1fr_minmax(0,420px)] gap-10 lg:gap-16 items-center">
@@ -406,7 +391,7 @@ function LoginPage() {
                 variant="outline"
                 className="w-full h-12 bg-white/[0.03] border-white/15 text-white hover:bg-white/[0.08] hover:text-white"
               >
-                <ShieldCheck className="w-5 h-5 mr-2 text-emerald-300" />
+                <UserCog className="w-5 h-5 mr-2 text-emerald-300" />
                 {copy.coachLink}
               </Button>
             </Link>
