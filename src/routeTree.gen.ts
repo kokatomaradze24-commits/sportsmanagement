@@ -19,8 +19,10 @@ import { Route as HooksSendPaymentSmsRouteImport } from './routes/hooks/send-pay
 import { Route as ApiPublicPlayerRegistrationRouteImport } from './routes/api/public/player-registration'
 import { Route as ApiPaypalSubscriptionConfigRouteImport } from './routes/api/paypal/subscription-config'
 import { Route as ApiPaypalCreateOrderRouteImport } from './routes/api/paypal/create-order'
+import { Route as ApiPaypalCreateAccessOrderRouteImport } from './routes/api/paypal/create-access-order'
 import { Route as ApiPaypalConfigRouteImport } from './routes/api/paypal/config'
 import { Route as ApiPaypalCaptureOrderRouteImport } from './routes/api/paypal/capture-order'
+import { Route as ApiPaypalCaptureAccessOrderRouteImport } from './routes/api/paypal/capture-access-order'
 import { Route as ApiPaypalActivateSubscriptionRouteImport } from './routes/api/paypal/activate-subscription'
 import { Route as ApiCoachScheduleRouteImport } from './routes/api/coach/schedule'
 import { Route as ApiCoachResetPasswordRouteImport } from './routes/api/coach/reset-password'
@@ -81,6 +83,12 @@ const ApiPaypalCreateOrderRoute = ApiPaypalCreateOrderRouteImport.update({
   path: '/api/paypal/create-order',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPaypalCreateAccessOrderRoute =
+  ApiPaypalCreateAccessOrderRouteImport.update({
+    id: '/api/paypal/create-access-order',
+    path: '/api/paypal/create-access-order',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPaypalConfigRoute = ApiPaypalConfigRouteImport.update({
   id: '/api/paypal/config',
   path: '/api/paypal/config',
@@ -91,6 +99,12 @@ const ApiPaypalCaptureOrderRoute = ApiPaypalCaptureOrderRouteImport.update({
   path: '/api/paypal/capture-order',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPaypalCaptureAccessOrderRoute =
+  ApiPaypalCaptureAccessOrderRouteImport.update({
+    id: '/api/paypal/capture-access-order',
+    path: '/api/paypal/capture-access-order',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPaypalActivateSubscriptionRoute =
   ApiPaypalActivateSubscriptionRouteImport.update({
     id: '/api/paypal/activate-subscription',
@@ -144,8 +158,10 @@ export interface FileRoutesByFullPath {
   '/api/coach/reset-password': typeof ApiCoachResetPasswordRoute
   '/api/coach/schedule': typeof ApiCoachScheduleRoute
   '/api/paypal/activate-subscription': typeof ApiPaypalActivateSubscriptionRoute
+  '/api/paypal/capture-access-order': typeof ApiPaypalCaptureAccessOrderRoute
   '/api/paypal/capture-order': typeof ApiPaypalCaptureOrderRoute
   '/api/paypal/config': typeof ApiPaypalConfigRoute
+  '/api/paypal/create-access-order': typeof ApiPaypalCreateAccessOrderRoute
   '/api/paypal/create-order': typeof ApiPaypalCreateOrderRoute
   '/api/paypal/subscription-config': typeof ApiPaypalSubscriptionConfigRoute
   '/api/public/player-registration': typeof ApiPublicPlayerRegistrationRoute
@@ -165,8 +181,10 @@ export interface FileRoutesByTo {
   '/api/coach/reset-password': typeof ApiCoachResetPasswordRoute
   '/api/coach/schedule': typeof ApiCoachScheduleRoute
   '/api/paypal/activate-subscription': typeof ApiPaypalActivateSubscriptionRoute
+  '/api/paypal/capture-access-order': typeof ApiPaypalCaptureAccessOrderRoute
   '/api/paypal/capture-order': typeof ApiPaypalCaptureOrderRoute
   '/api/paypal/config': typeof ApiPaypalConfigRoute
+  '/api/paypal/create-access-order': typeof ApiPaypalCreateAccessOrderRoute
   '/api/paypal/create-order': typeof ApiPaypalCreateOrderRoute
   '/api/paypal/subscription-config': typeof ApiPaypalSubscriptionConfigRoute
   '/api/public/player-registration': typeof ApiPublicPlayerRegistrationRoute
@@ -187,8 +205,10 @@ export interface FileRoutesById {
   '/api/coach/reset-password': typeof ApiCoachResetPasswordRoute
   '/api/coach/schedule': typeof ApiCoachScheduleRoute
   '/api/paypal/activate-subscription': typeof ApiPaypalActivateSubscriptionRoute
+  '/api/paypal/capture-access-order': typeof ApiPaypalCaptureAccessOrderRoute
   '/api/paypal/capture-order': typeof ApiPaypalCaptureOrderRoute
   '/api/paypal/config': typeof ApiPaypalConfigRoute
+  '/api/paypal/create-access-order': typeof ApiPaypalCreateAccessOrderRoute
   '/api/paypal/create-order': typeof ApiPaypalCreateOrderRoute
   '/api/paypal/subscription-config': typeof ApiPaypalSubscriptionConfigRoute
   '/api/public/player-registration': typeof ApiPublicPlayerRegistrationRoute
@@ -210,8 +230,10 @@ export interface FileRouteTypes {
     | '/api/coach/reset-password'
     | '/api/coach/schedule'
     | '/api/paypal/activate-subscription'
+    | '/api/paypal/capture-access-order'
     | '/api/paypal/capture-order'
     | '/api/paypal/config'
+    | '/api/paypal/create-access-order'
     | '/api/paypal/create-order'
     | '/api/paypal/subscription-config'
     | '/api/public/player-registration'
@@ -231,8 +253,10 @@ export interface FileRouteTypes {
     | '/api/coach/reset-password'
     | '/api/coach/schedule'
     | '/api/paypal/activate-subscription'
+    | '/api/paypal/capture-access-order'
     | '/api/paypal/capture-order'
     | '/api/paypal/config'
+    | '/api/paypal/create-access-order'
     | '/api/paypal/create-order'
     | '/api/paypal/subscription-config'
     | '/api/public/player-registration'
@@ -252,8 +276,10 @@ export interface FileRouteTypes {
     | '/api/coach/reset-password'
     | '/api/coach/schedule'
     | '/api/paypal/activate-subscription'
+    | '/api/paypal/capture-access-order'
     | '/api/paypal/capture-order'
     | '/api/paypal/config'
+    | '/api/paypal/create-access-order'
     | '/api/paypal/create-order'
     | '/api/paypal/subscription-config'
     | '/api/public/player-registration'
@@ -274,8 +300,10 @@ export interface RootRouteChildren {
   ApiCoachResetPasswordRoute: typeof ApiCoachResetPasswordRoute
   ApiCoachScheduleRoute: typeof ApiCoachScheduleRoute
   ApiPaypalActivateSubscriptionRoute: typeof ApiPaypalActivateSubscriptionRoute
+  ApiPaypalCaptureAccessOrderRoute: typeof ApiPaypalCaptureAccessOrderRoute
   ApiPaypalCaptureOrderRoute: typeof ApiPaypalCaptureOrderRoute
   ApiPaypalConfigRoute: typeof ApiPaypalConfigRoute
+  ApiPaypalCreateAccessOrderRoute: typeof ApiPaypalCreateAccessOrderRoute
   ApiPaypalCreateOrderRoute: typeof ApiPaypalCreateOrderRoute
   ApiPaypalSubscriptionConfigRoute: typeof ApiPaypalSubscriptionConfigRoute
   ApiPublicPlayerRegistrationRoute: typeof ApiPublicPlayerRegistrationRoute
@@ -353,6 +381,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPaypalCreateOrderRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/paypal/create-access-order': {
+      id: '/api/paypal/create-access-order'
+      path: '/api/paypal/create-access-order'
+      fullPath: '/api/paypal/create-access-order'
+      preLoaderRoute: typeof ApiPaypalCreateAccessOrderRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/paypal/config': {
       id: '/api/paypal/config'
       path: '/api/paypal/config'
@@ -365,6 +400,13 @@ declare module '@tanstack/react-router' {
       path: '/api/paypal/capture-order'
       fullPath: '/api/paypal/capture-order'
       preLoaderRoute: typeof ApiPaypalCaptureOrderRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/paypal/capture-access-order': {
+      id: '/api/paypal/capture-access-order'
+      path: '/api/paypal/capture-access-order'
+      fullPath: '/api/paypal/capture-access-order'
+      preLoaderRoute: typeof ApiPaypalCaptureAccessOrderRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/paypal/activate-subscription': {
@@ -434,8 +476,10 @@ const rootRouteChildren: RootRouteChildren = {
   ApiCoachResetPasswordRoute: ApiCoachResetPasswordRoute,
   ApiCoachScheduleRoute: ApiCoachScheduleRoute,
   ApiPaypalActivateSubscriptionRoute: ApiPaypalActivateSubscriptionRoute,
+  ApiPaypalCaptureAccessOrderRoute: ApiPaypalCaptureAccessOrderRoute,
   ApiPaypalCaptureOrderRoute: ApiPaypalCaptureOrderRoute,
   ApiPaypalConfigRoute: ApiPaypalConfigRoute,
+  ApiPaypalCreateAccessOrderRoute: ApiPaypalCreateAccessOrderRoute,
   ApiPaypalCreateOrderRoute: ApiPaypalCreateOrderRoute,
   ApiPaypalSubscriptionConfigRoute: ApiPaypalSubscriptionConfigRoute,
   ApiPublicPlayerRegistrationRoute: ApiPublicPlayerRegistrationRoute,

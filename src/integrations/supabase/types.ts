@@ -898,6 +898,7 @@ export type Database = {
           id: string
           is_trial: boolean
           last_synced_at: string | null
+          paypal_order_id: string | null
           paypal_status: string | null
           paypal_subscription_id: string | null
           plan: string | null
@@ -912,6 +913,7 @@ export type Database = {
           id?: string
           is_trial?: boolean
           last_synced_at?: string | null
+          paypal_order_id?: string | null
           paypal_status?: string | null
           paypal_subscription_id?: string | null
           plan?: string | null
@@ -926,6 +928,7 @@ export type Database = {
           id?: string
           is_trial?: boolean
           last_synced_at?: string | null
+          paypal_order_id?: string | null
           paypal_status?: string | null
           paypal_subscription_id?: string | null
           plan?: string | null

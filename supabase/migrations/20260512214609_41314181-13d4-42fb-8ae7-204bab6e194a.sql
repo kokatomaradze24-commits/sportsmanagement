@@ -1,0 +1,2 @@
+ALTER TABLE public.user_subscriptions ADD COLUMN IF NOT EXISTS paypal_order_id text;
+CREATE UNIQUE INDEX IF NOT EXISTS user_subscriptions_paypal_order_idx ON public.user_subscriptions (paypal_order_id) WHERE paypal_order_id IS NOT NULL;
