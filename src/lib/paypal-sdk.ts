@@ -35,7 +35,8 @@ export function loadPaypalSdk(clientId: string, currency: string, mode: PaypalMo
     } else {
       params.set("intent", "capture");
       params.set("components", "buttons,applepay,googlepay,card-fields");
-      params.set("enable-funding", "applepay,googlepay,card");
+      params.set("enable-funding", "card");
+      params.set("disable-funding", "credit,paylater");
     }
 
     const s = document.createElement("script");
@@ -46,7 +47,7 @@ export function loadPaypalSdk(clientId: string, currency: string, mode: PaypalMo
       if (window.paypal) resolve(window.paypal);
       else reject(new Error("PayPal SDK loaded but window.paypal missing"));
     };
-    s.onerror = () => reject(new Error("Failed to load PayPal SDK"));
+    s.onerror = (e) => { console.error("PayPal SDK load failed", s.src, e); reject(new Error("Failed to load PayPal SDK")); };
     document.head.appendChild(s);
   });
 
