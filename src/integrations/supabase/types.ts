@@ -976,6 +976,10 @@ export type Database = {
         }[]
       }
       admin_toggle_admin: { Args: { _user_id: string }; Returns: undefined }
+      deduct_ai_credits: {
+        Args: { _amount: number; _user_id: string }
+        Returns: boolean
+      }
       generate_player_payments: {
         Args: { _player_id: string }
         Returns: undefined
@@ -989,6 +993,10 @@ export type Database = {
       }
       is_subscription_active: { Args: { _user_id: string }; Returns: boolean }
       mark_overdue_payments: { Args: never; Returns: number }
+      refund_ai_credits: {
+        Args: { _amount: number; _user_id: string }
+        Returns: undefined
+      }
     }
     Enums: {
       app_role: "admin" | "user"
