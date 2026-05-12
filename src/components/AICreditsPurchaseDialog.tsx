@@ -45,6 +45,7 @@ export function AICreditsPurchaseDialog({ open, onOpenChange, onSuccess }: Props
 
     const container = containerRef.current;
     container.innerHTML = "";
+    let cancelled = false;
 
     const createOrder = async () => {
       const res = await fetch("/api/paypal/create-order", {
