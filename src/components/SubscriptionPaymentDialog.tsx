@@ -54,6 +54,9 @@ export function SubscriptionPaymentDialog({ open, onOpenChange, onSuccess }: Pro
   useEffect(() => {
     if (!open || !sdkReady || !containerRef.current || !window.paypal || !session || !config) return;
     const container = containerRef.current;
+    const renderId = ++renderIdRef.current;
+    try { buttonRef.current?.close?.(); } catch { /* ignore */ }
+    buttonRef.current = null;
     container.innerHTML = "";
 
     const button = window.paypal.Buttons({
@@ -96,7 +99,20 @@ export function SubscriptionPaymentDialog({ open, onOpenChange, onSuccess }: Pro
         toast.error("გადახდა ვერ მოხერხდა");
       },
     });
+
+    if (renderIdRef.current !== renderId) {
+      try { button.close?.(); } catch { /* ignore */ }
+      return;
+    }
+    buttonRef.current = button;
     button.render(container).catch((e: unknown) => console.error(e));
+
+    return () => {
+      renderIdRef.current = renderId + 1;
+      try { button.close?.(); } catch { /* ignore */ }
+      if (buttonRef.current === button) buttonRef.current = null;
+      container.innerHTML = "";
+    };
   }, [sdkReady, session, open, config, onOpenChange, onSuccess]);
 
   return (
