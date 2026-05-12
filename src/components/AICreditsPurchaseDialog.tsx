@@ -111,6 +111,11 @@ export function AICreditsPurchaseDialog({ open, onOpenChange, onSuccess }: Props
         button.render(wrap).catch(onError);
       }
     });
+
+    return () => {
+      cancelled = true;
+      container.innerHTML = "";
+    };
   }, [sdkReady, selected, session, open, onOpenChange, onSuccess]);
 
   return (
