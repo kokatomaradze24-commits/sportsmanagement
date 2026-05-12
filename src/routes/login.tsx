@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Trophy, ShieldCheck, Users, CalendarDays, Wallet, Bell, BarChart3, Globe2, CheckCircle2 } from "lucide-react";
+import { Trophy, Users, CalendarDays, Wallet, Bell, BarChart3, Globe2, CheckCircle2, Sparkles, UserCog, Link2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { lovable } from "@/integrations/lovable/index";
 import { supabase } from "@/integrations/supabase/client";
