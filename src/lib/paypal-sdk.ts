@@ -35,7 +35,7 @@ export function loadPaypalSdk(clientId: string, currency: string, mode: PaypalMo
     } else {
       params.set("intent", "capture");
       params.set("components", "buttons,applepay,googlepay,card-fields");
-      params.set("enable-funding", "venmo,paylater");
+      params.set("enable-funding", "applepay,googlepay,card");
     }
 
     const s = document.createElement("script");
