@@ -103,10 +103,10 @@ export function SubscriptionPaymentDialog({ open, onOpenChange, onSuccess }: Pro
     };
 
     const fundingSources = [
-      paypal.FUNDING.PAYPAL,
       paypal.FUNDING.CARD,
       paypal.FUNDING.APPLEPAY,
       paypal.FUNDING.GOOGLEPAY,
+      paypal.FUNDING.PAYPAL,
     ].filter(Boolean);
 
     let rendered = 0;
