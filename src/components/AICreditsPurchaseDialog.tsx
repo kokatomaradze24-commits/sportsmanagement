@@ -36,7 +36,7 @@ export function AICreditsPurchaseDialog({ open, onOpenChange, onSuccess }: Props
   const [sdkReady, setSdkReady] = useState(false);
   const [processing, setProcessing] = useState(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const paypalButtonRef = useRef<{ close?: () => void } | null>(null);
+  const paypalButtonsRef = useRef<Array<{ close?: () => void }>>([]);
   const renderIdRef = useRef(0);
 
   // Load PayPal SDK when dialog opens
