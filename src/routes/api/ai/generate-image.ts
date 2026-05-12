@@ -30,6 +30,20 @@ export const Route = createFileRoute("/api/ai/generate-image")({
         if (!prompt) return Response.json({ error: "Prompt is required" }, { status: 400 });
         if (prompt.length > 2000) return Response.json({ error: "Prompt is too long" }, { status: 400 });
 
+        const IMAGE_COST = 5;
+        const admin = supabaseAdmin as any;
+        const { data: deductOk, error: deductErr } = await admin.rpc("deduct_ai_credits", {
+          _user_id: user.id,
+          _amount: IMAGE_COST,
+        });
+        if (deductErr) {
+          console.error("deduct_ai_credits failed", deductErr);
+          return Response.json({ error: "Credit check failed" }, { status: 500 });
+        }
+        if (!deductOk) {
+          return Response.json({ error: "Insufficient AI credits. Please purchase more." }, { status: 402 });
+        }
+
         const userContent: any[] = [{ type: "text", text: prompt }];
         if (referenceImage && referenceImage.startsWith("data:image/")) {
           userContent.push({ type: "image_url", image_url: { url: referenceImage } });
