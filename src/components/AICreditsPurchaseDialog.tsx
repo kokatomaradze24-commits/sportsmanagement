@@ -45,6 +45,7 @@ export function AICreditsPurchaseDialog({ open, onOpenChange, onSuccess }: Props
 
     const container = containerRef.current;
     container.innerHTML = "";
+    let cancelled = false;
 
     const createOrder = async () => {
       const res = await fetch("/api/paypal/create-order", {
@@ -110,6 +111,11 @@ export function AICreditsPurchaseDialog({ open, onOpenChange, onSuccess }: Props
         button.render(wrap).catch(onError);
       }
     });
+
+    return () => {
+      cancelled = true;
+      container.innerHTML = "";
+    };
   }, [sdkReady, selected, session, open, onOpenChange, onSuccess]);
 
   return (
