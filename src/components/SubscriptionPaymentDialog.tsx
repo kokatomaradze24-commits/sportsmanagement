@@ -83,6 +83,7 @@ export function SubscriptionPaymentDialog({ open, onOpenChange, onSuccess }: Pro
           toast.success("წვდომა გააქტიურდა 30 დღით");
           onSuccess?.();
           onOpenChange(false);
+          setTimeout(() => window.location.reload(), 800);
         } catch (e) {
           toast.error(e instanceof Error ? e.message : "გადახდა ვერ მოხერხდა");
         } finally {
