@@ -47,7 +47,7 @@ export function loadPaypalSdk(clientId: string, currency: string, mode: PaypalMo
       if (window.paypal) resolve(window.paypal);
       else reject(new Error("PayPal SDK loaded but window.paypal missing"));
     };
-    s.onerror = () => reject(new Error("Failed to load PayPal SDK"));
+    s.onerror = (e) => { console.error("PayPal SDK load failed", s.src, e); reject(new Error("Failed to load PayPal SDK")); };
     document.head.appendChild(s);
   });
 
