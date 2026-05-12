@@ -66,8 +66,8 @@ export function AICreditsPurchaseDialog({ open, onOpenChange, onSuccess }: Props
     const paypal = window.paypal as PaypalApi;
     const container = containerRef.current;
     const renderId = ++renderIdRef.current;
-    paypalButtonRef.current?.close?.();
-    paypalButtonRef.current = null;
+    for (const b of paypalButtonsRef.current) { try { b.close?.(); } catch { /* ignore */ } }
+    paypalButtonsRef.current = [];
     container.replaceChildren();
     let cancelled = false;
 
@@ -120,40 +120,43 @@ export function AICreditsPurchaseDialog({ open, onOpenChange, onSuccess }: Props
       onError,
     };
 
-    const fundingPriority = [
-      paypal.FUNDING.APPLEPAY,
-      paypal.FUNDING.GOOGLEPAY,
+    const fundingSources = [
       paypal.FUNDING.PAYPAL,
       paypal.FUNDING.CARD,
+      paypal.FUNDING.APPLEPAY,
+      paypal.FUNDING.GOOGLEPAY,
     ].filter(Boolean);
 
-    let button: PaypalButton | null = null;
-    for (const fundingSource of fundingPriority) {
+    let rendered = 0;
+    for (const fundingSource of fundingSources) {
       const candidate = paypal.Buttons({ ...buttonOptions, fundingSource });
-      if (candidate.isEligible()) {
-        button = candidate;
+      if (!candidate.isEligible()) {
+        try { candidate.close?.(); } catch { /* ignore */ }
+        continue;
+      }
+      if (renderIdRef.current !== renderId) {
+        try { candidate.close?.(); } catch { /* ignore */ }
         break;
       }
-      candidate.close?.();
+      paypalButtonsRef.current.push(candidate);
+      const wrap = document.createElement("div");
+      wrap.style.marginBottom = "8px";
+      container.appendChild(wrap);
+      candidate.render(wrap).catch((err: unknown) => {
+        if (!cancelled && renderId === renderIdRef.current) onError(err);
+      });
+      rendered++;
     }
 
-    if (!button) {
+    if (rendered === 0) {
       toast.error("გადახდის მეთოდი ხელმისაწვდომი არ არის");
-      return;
     }
-
-    paypalButtonRef.current = button;
-    const wrap = document.createElement("div");
-    container.appendChild(wrap);
-    button.render(wrap).catch((err: unknown) => {
-      if (!cancelled && renderId === renderIdRef.current) onError(err);
-    });
 
     return () => {
       cancelled = true;
       renderIdRef.current = renderId + 1;
-      paypalButtonRef.current?.close?.();
-      paypalButtonRef.current = null;
+      for (const b of paypalButtonsRef.current) { try { b.close?.(); } catch { /* ignore */ } }
+      paypalButtonsRef.current = [];
       container.replaceChildren();
     };
   }, [sdkReady, selected, session, open, onOpenChange, onSuccess]);
