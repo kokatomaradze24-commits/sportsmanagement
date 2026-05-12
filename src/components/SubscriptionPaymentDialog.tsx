@@ -28,6 +28,8 @@ export function SubscriptionPaymentDialog({ open, onOpenChange, onSuccess }: Pro
   const [processing, setProcessing] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const buttonRef = useRef<any>(null);
+  const renderIdRef = useRef(0);
 
   useEffect(() => {
     if (!open) return;
