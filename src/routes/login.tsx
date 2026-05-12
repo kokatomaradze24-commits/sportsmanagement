@@ -198,9 +198,6 @@ function LoginPage() {
     }
   };
 
-  // Floating sport emojis for ambient background
-  const sportEmojis = ["🏀", "⚽", "🏉", "🎾", "🥊", "🏊", "💪", "🏆", "🏐", "⚾"];
-
   return (
     <div className="relative min-h-screen overflow-hidden flex items-center justify-center px-4 py-10 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
       {/* Animated gradient orbs */}
@@ -240,34 +237,6 @@ function LoginPage() {
           backgroundSize: "60px 60px",
         }}
       />
-
-      {/* Floating sport icons */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {sportEmojis.map((emoji, i) => (
-          <motion.div
-            key={i}
-            initial={{
-              x: `${(i * 37) % 100}vw`,
-              y: `${(i * 53) % 100}vh`,
-              opacity: 0,
-            }}
-            animate={{
-              y: [`${(i * 53) % 100}vh`, `${((i * 53) % 100) - 15}vh`, `${(i * 53) % 100}vh`],
-              opacity: [0, 0.08, 0.08, 0],
-              rotate: [0, 360],
-            }}
-            transition={{
-              duration: 12 + (i % 5),
-              repeat: Infinity,
-              delay: i * 0.8,
-              ease: "easeInOut",
-            }}
-            className="absolute text-6xl"
-          >
-            {emoji}
-          </motion.div>
-        ))}
-      </div>
 
       {/* Two-column layout: marketing on the left, sign-in on the right */}
       <div className="relative z-10 w-full max-w-6xl grid grid-cols-1 lg:grid-cols-[1.1fr_minmax(0,420px)] gap-10 lg:gap-16 items-center">
