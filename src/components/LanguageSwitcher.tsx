@@ -5,10 +5,11 @@ import { LANGUAGES } from "@/lib/i18n/translations";
 import { useI18n } from "@/hooks/use-i18n";
 
 interface LanguageSwitcherProps {
-  variant?: "header" | "floating";
+  variant?: "header" | "floating" | "topbar";
+  className?: string;
 }
 
-export function LanguageSwitcher({ variant = "header" }: LanguageSwitcherProps) {
+export function LanguageSwitcher({ variant = "header", className }: LanguageSwitcherProps) {
   const { language, setLanguage, t } = useI18n();
   const current = LANGUAGES.find((l) => l.code === language);
 
@@ -16,18 +17,26 @@ export function LanguageSwitcher({ variant = "header" }: LanguageSwitcherProps) 
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button
-          variant={variant === "floating" ? "outline" : "ghost"}
-          size={variant === "floating" ? "sm" : "icon"}
-          className={variant === "floating" ? "gap-1.5" : "rounded-full w-10 h-10"}
+          variant={variant === "header" ? "ghost" : "outline"}
+          size={variant === "header" ? "icon" : "sm"}
+          className={
+            (variant === "header"
+              ? "rounded-full w-10 h-10 "
+              : variant === "topbar"
+                ? "gap-2 bg-white/[0.06] border-white/15 text-white hover:bg-white/[0.12] hover:text-white backdrop-blur-md "
+                : "gap-1.5 ") + (className ?? "")
+          }
           title={t("language")}
         >
-          {variant === "floating" ? (
+          {variant === "header" ? (
+            <Languages className="w-5 h-5" />
+          ) : (
             <>
               <span className="text-base leading-none">{current?.flag}</span>
-              <span className="text-xs font-medium">{current?.nativeName}</span>
+              <span className="text-xs font-medium">
+                {variant === "topbar" ? t("language") : current?.nativeName}
+              </span>
             </>
-          ) : (
-            <Languages className="w-5 h-5" />
           )}
         </Button>
       </DropdownMenuTrigger>

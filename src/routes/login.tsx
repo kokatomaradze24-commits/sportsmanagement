@@ -238,8 +238,14 @@ function LoginPage() {
         }}
       />
 
+      {/* Top-right language switcher */}
+      <div className="absolute top-4 right-4 z-20">
+        <LanguageSwitcher variant="topbar" />
+      </div>
+
       {/* Two-column layout: marketing on the left, sign-in on the right */}
       <div className="relative z-10 w-full max-w-6xl grid grid-cols-1 lg:grid-cols-[1.1fr_minmax(0,420px)] gap-10 lg:gap-16 items-center">
+
         {/* Marketing / Features column */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -402,20 +408,6 @@ function LoginPage() {
           <div className="mt-4 flex justify-center">
             <LanguageSwitcher variant="floating" />
           </div>
-
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.7 }}
-            className="flex items-center justify-center gap-4 mt-6 text-xs text-slate-500"
-          >
-            <span>🏀</span>
-            <span>⚽</span>
-            <span>🥊</span>
-            <span>💃</span>
-            <span>🏊</span>
-            <span>💪</span>
-          </motion.div>
         </motion.div>
       </div>
     </div>
