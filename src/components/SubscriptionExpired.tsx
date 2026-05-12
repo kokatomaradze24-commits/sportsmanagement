@@ -34,7 +34,7 @@ export function SubscriptionExpired() {
         <div className="flex flex-col gap-2">
           <Button size="lg" onClick={() => setOpen(true)}>
             <CreditCard className="h-4 w-4 mr-2" />
-            გამოწერა — $50/თვე (7 დღე უფასო)
+            გადახდა — $9.99 / 30 დღე
           </Button>
           <Button size="lg" variant="ghost" onClick={signOut}>
             <LogOut className="h-4 w-4 mr-2" />
