@@ -951,6 +951,22 @@ export type Database = {
         Args: { _days: number; _user_id: string }
         Returns: string
       }
+      admin_list_ai_purchases: {
+        Args: never
+        Returns: {
+          amount: number
+          created_at: string
+          credits: number
+          currency: string
+          email: string
+          id: string
+          package_id: string
+          provider: string
+          provider_order_id: string
+          status: string
+          user_id: string
+        }[]
+      }
       admin_list_users: {
         Args: never
         Returns: {
