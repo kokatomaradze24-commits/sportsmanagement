@@ -47,6 +47,7 @@ export function AIImageGenerator({
   const [referenceImage, setReferenceImage] = useState<string>("");
   const [generatedImage, setGeneratedImage] = useState<string>("");
   const [loading, setLoading] = useState(false);
+  const [showBuyCredits, setShowBuyCredits] = useState(false);
   const refInputRef = useRef<HTMLInputElement>(null);
 
   const dialogTitle = title ?? t("aiGenTitle");
