@@ -286,6 +286,7 @@ export function AIImageGenerator({
           </Button>
         </DialogFooter>
       </DialogContent>
+      <AICreditsPurchaseDialog open={showBuyCredits} onOpenChange={setShowBuyCredits} />
     </Dialog>
   );
 }
