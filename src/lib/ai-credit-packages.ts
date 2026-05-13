@@ -7,12 +7,18 @@ export interface AICreditPackage {
   durationLabelKey: string;
 }
 
-// Adjust amounts to match what you want to charge (PayPal does not support GEL).
+// Pricing rule: my worst-case cost (all credits used as images) + 20% margin.
+// 1 month: 1000 credits → max 200 images × $0.04 = $8 cost → +20% = $9.60 → $9.99
 export const AI_CREDIT_PACKAGES: AICreditPackage[] = [
-  { id: "week",  nameKey: "pkgWeek",  credits: 50,   amount: 5.5,   currency: "USD", durationLabelKey: "pkgWeekLabel" },
-  { id: "month", nameKey: "pkgMonth", credits: 250,  amount: 14.99, currency: "USD", durationLabelKey: "pkgMonthLabel" },
-  { id: "year",  nameKey: "pkgYear",  credits: 3500, amount: 129,   currency: "USD", durationLabelKey: "pkgYearLabel" },
+  { id: "month", nameKey: "pkgMonth", credits: 1000, amount: 9.99, currency: "USD", durationLabelKey: "pkgMonthLabel" },
 ];
+
+// Cost per AI action (in credits). Keep in sync with server endpoints.
+export const CREDIT_COSTS = {
+  image: 5,
+  expertPlan: 1,
+  selfPlan: 3,
+} as const;
 
 export function getPackage(id: string) {
   return AI_CREDIT_PACKAGES.find((p) => p.id === id);
