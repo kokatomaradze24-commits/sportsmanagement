@@ -247,12 +247,7 @@ function LoginPage() {
       <div className="relative z-10 w-full max-w-6xl grid grid-cols-1 lg:grid-cols-[1.1fr_minmax(0,420px)] gap-10 lg:gap-16 items-center">
 
         {/* Marketing / Features column */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
-          className="text-white order-2 lg:order-1"
-        >
+        <div className="text-white order-2 lg:order-1">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-orange-500/10 border border-orange-400/30 text-orange-300 text-xs font-medium mb-5">
             <span className="w-1.5 h-1.5 rounded-full bg-orange-400 animate-pulse" />
             {copy.tagline}
@@ -318,7 +313,7 @@ function LoginPage() {
             <BarChart3 className="w-3.5 h-3.5" />
             <span>{copy.socialProof}</span>
           </div>
-        </motion.div>
+        </div>
 
         {/* Main card */}
         <motion.div
