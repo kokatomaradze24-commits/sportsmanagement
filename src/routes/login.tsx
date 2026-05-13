@@ -165,6 +165,23 @@ function LoginPage() {
   const copy = MARKETING[language] ?? MARKETING.en;
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showVideo, setShowVideo] = useState(false);
+
+  useEffect(() => {
+    // Defer mounting the autoplaying tutorial video so it doesn't block
+    // initial paint / hydration. Keeps autoplay UX after the page settles.
+    const w = window as Window & {
+      requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number;
+      cancelIdleCallback?: (id: number) => void;
+    };
+    const id: number = w.requestIdleCallback
+      ? w.requestIdleCallback(() => setShowVideo(true), { timeout: 3000 })
+      : window.setTimeout(() => setShowVideo(true), 1500);
+    return () => {
+      if (w.cancelIdleCallback) w.cancelIdleCallback(id);
+      else window.clearTimeout(id);
+    };
+  }, []);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -265,15 +282,19 @@ function LoginPage() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="relative mb-8 rounded-2xl overflow-hidden border border-white/10 shadow-2xl shadow-orange-500/10 bg-slate-950"
           >
-            <video
-              src="/my-club-tutorial.mp4"
-              autoPlay
-              loop
-              muted
-              playsInline
-              preload="metadata"
-              className="w-full h-auto block"
-            />
+            {showVideo ? (
+              <video
+                src="/my-club-tutorial.mp4"
+                autoPlay
+                loop
+                muted
+                playsInline
+                preload="metadata"
+                className="w-full h-auto block"
+              />
+            ) : (
+              <div className="w-full aspect-video" aria-hidden="true" />
+            )}
             <div className="pointer-events-none absolute inset-0 ring-1 ring-inset ring-white/10 rounded-2xl" />
           </motion.div>
 
