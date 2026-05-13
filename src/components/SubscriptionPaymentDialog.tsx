@@ -141,10 +141,10 @@ export function SubscriptionPaymentDialog({ open, onOpenChange, onSuccess }: Pro
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-primary" />
-            Pro წვდომა — 30 დღე
+            ულიმიტო წვდომა საიტზე!
           </DialogTitle>
           <DialogDescription>
-            ერთჯერადი გადახდა — ავტომატურად არ განახლდება. ვადის ამოწურვის შემდეგ თავიდან გადაიხდი.
+            მართე შენი კლუბი შეზღუდვების გარეშე!
           </DialogDescription>
         </DialogHeader>
 
