@@ -10,9 +10,13 @@ import { setCoachSession, getCoachSession } from "@/lib/coach-session";
 export const Route = createFileRoute("/coach-login")({
   head: () => ({
     meta: [
-      { title: "მწვრთნელის შესვლა — Club Management" },
-      { name: "description", content: "მწვრთნელის განრიგზე წვდომა" },
+      { title: "Coach Sign In — My Club" },
+      { name: "description", content: "Coach sign-in to My Club to view your training schedule, players and assignments." },
+      { property: "og:title", content: "Coach Sign In — My Club" },
+      { property: "og:description", content: "Coach sign-in to My Club to view your training schedule, players and assignments." },
+      { property: "og:url", content: "https://my-club.live/coach-login" },
     ],
+    links: [{ rel: "canonical", href: "https://my-club.live/coach-login" }],
   }),
   component: CoachLoginPage,
 });
