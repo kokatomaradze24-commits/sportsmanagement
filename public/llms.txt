@@ -1,0 +1,11 @@
+# My Club
+
+> All-in-one sports club management platform for players, payments, schedules, teams, coaches and AI training plans. 8 sports, 6 languages.
+
+My Club helps sports academies and clubs run their entire operation from a single platform: player and team databases, automatic payments and PDF receipts, practice and game scheduling, dedicated coach access, online registration links, automatic SMS/email reminders, and AI-generated training plans and images.
+
+## Pages
+
+- [Home](/): Landing page with product overview, features and social proof.
+- [Sign in](/login): Sign in to manage your sports club.
+- [Coach sign in](/coach-login): Sign in as a coach to view your schedule and players.

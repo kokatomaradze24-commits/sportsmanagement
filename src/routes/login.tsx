@@ -154,7 +154,14 @@ const FEATURE_ICONS = [Users, Wallet, CalendarDays, Sparkles, UserCog, Link2, Be
 
 export const Route = createFileRoute("/login")({
   head: () => ({
-    meta: [{ title: "Sign In — My Club" }, { name: "description", content: "Sign in to manage your sports club" }],
+    meta: [
+      { title: "Sign In — My Club" },
+      { name: "description", content: "Sign in to My Club to manage your sports club: players, payments, practices, teams and coaches." },
+      { property: "og:title", content: "Sign In — My Club" },
+      { property: "og:description", content: "Sign in to My Club to manage your sports club: players, payments, practices, teams and coaches." },
+      { property: "og:url", content: "https://my-club.live/login" },
+    ],
+    links: [{ rel: "canonical", href: "https://my-club.live/login" }],
   }),
   component: LoginPage,
 });

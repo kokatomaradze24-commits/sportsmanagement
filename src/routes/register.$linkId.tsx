@@ -12,10 +12,14 @@ import { getSport } from "@/lib/sports";
 import { LANGUAGES, type LanguageCode } from "@/lib/i18n/translations";
 
 export const Route = createFileRoute("/register/$linkId")({
-  head: () => ({
+  head: ({ params }) => ({
     meta: [
-      { title: "Player Registration" },
-      { name: "description", content: "Register as a player for a sports club" },
+      { title: "Player Registration — My Club" },
+      { name: "description", content: "Register as a player with your sports club through My Club's secure online registration form." },
+      { property: "og:title", content: "Player Registration — My Club" },
+      { property: "og:description", content: "Register as a player with your sports club through My Club's secure online registration form." },
+      { property: "og:url", content: `https://my-club.live/register/${params.linkId}` },
+      { name: "robots", content: "noindex, nofollow" },
     ],
   }),
   component: PublicPlayerRegistration,

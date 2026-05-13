@@ -23,7 +23,11 @@ import { AICreditsSalesPanel } from "@/components/AICreditsSalesPanel";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
-    meta: [{ title: "Admin Panel" }, { name: "description", content: "Manage all users" }],
+    meta: [
+      { title: "Admin Panel — My Club" },
+      { name: "description", content: "My Club admin panel for managing users and workspace settings." },
+      { name: "robots", content: "noindex, nofollow" },
+    ],
   }),
   component: AdminPage,
 });

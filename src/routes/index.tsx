@@ -31,9 +31,13 @@ type Player = Database["public"]["Tables"]["players"]["Row"];
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Club Manager" },
-      { name: "description", content: "Manage your sports club members, payments, and registrations" },
+      { title: "My Club — Sports Club Management Platform" },
+      { name: "description", content: "Manage your sports club: players, payments, practices, games, teams, coaches and AI training plans — all in one platform." },
+      { property: "og:title", content: "My Club — Sports Club Management Platform" },
+      { property: "og:description", content: "Manage your sports club: players, payments, practices, games, teams, coaches and AI training plans — all in one platform." },
+      { property: "og:url", content: "https://my-club.live/" },
     ],
+    links: [{ rel: "canonical", href: "https://my-club.live/" }],
   }),
   component: Index,
 });

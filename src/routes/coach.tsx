@@ -13,8 +13,9 @@ import { getCoachSession, clearCoachSession, type CoachSession } from "@/lib/coa
 export const Route = createFileRoute("/coach")({
   head: () => ({
     meta: [
-      { title: "მწვრთნელის გვერდი — განრიგი" },
-      { name: "description", content: "ვარჯიშებისა და თამაშების განრიგი მწვრთნელისთვის" },
+      { title: "Coach Dashboard — My Club" },
+      { name: "description", content: "My Club coach dashboard: practice and game schedule, assigned players and team activity." },
+      { name: "robots", content: "noindex, nofollow" },
     ],
   }),
   component: CoachDashboard,
