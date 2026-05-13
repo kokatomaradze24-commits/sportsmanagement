@@ -101,6 +101,7 @@ export function AIImageGenerator({
       }
       if (res.status === 402) {
         toast.error(t("aiGenNoCredits"));
+        setShowBuyCredits(true);
         return;
       }
       if (!res.ok) {
