@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Sparkles, Check, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/use-auth";
-import { AI_CREDIT_PACKAGES, type AICreditPackage } from "@/lib/ai-credit-packages";
+import { AI_CREDIT_PACKAGES, CREDIT_COSTS, type AICreditPackage } from "@/lib/ai-credit-packages";
 import { loadPaypalSdk } from "@/lib/paypal-sdk";
 
 interface Props {
