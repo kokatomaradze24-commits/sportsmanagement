@@ -76,7 +76,7 @@ export const Route = createRootRoute({
               applicationCategory: "BusinessApplication",
               operatingSystem: "Web",
               url: "https://my-club.live/",
-              description: "Sports club management platform for players, payments, schedules, teams, coaches and AI training plans.",
+              description: "Sports club management software for players, payments, schedules, teams, coaches and AI training plans.",
               offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
             },
           ],
