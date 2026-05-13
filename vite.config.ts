@@ -6,4 +6,12 @@
 // You can pass additional config via defineConfig({ vite: { ... } }) if needed.
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
-export default defineConfig();
+// Target modern browsers to skip legacy polyfills/transforms (regenerator, Object.is, etc.)
+// and reduce bundle size — addresses Lighthouse "Legacy JavaScript" audit.
+export default defineConfig({
+  vite: {
+    build: {
+      target: "es2020",
+    },
+  },
+});
