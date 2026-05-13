@@ -122,8 +122,8 @@ export function AICreditsPurchaseDialog({ open, onOpenChange, onSuccess }: Props
     };
 
     const fundingSources = [
-      paypal.FUNDING.PAYPAL,
       paypal.FUNDING.CARD,
+      paypal.FUNDING.PAYPAL,
       paypal.FUNDING.APPLEPAY,
       paypal.FUNDING.GOOGLEPAY,
     ].filter(Boolean);
