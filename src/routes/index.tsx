@@ -31,10 +31,10 @@ type Player = Database["public"]["Tables"]["players"]["Row"];
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "My Club — Sports Club Management Platform" },
-      { name: "description", content: "Manage your sports club: players, payments, practices, games, teams, coaches and AI training plans — all in one platform." },
-      { property: "og:title", content: "My Club — Sports Club Management Platform" },
-      { property: "og:description", content: "Manage your sports club: players, payments, practices, games, teams, coaches and AI training plans — all in one platform." },
+      { title: "Club Management Software for Sports Academies — My Club" },
+      { name: "description", content: "Sports club management software to run players, teams, payments, schedules, coaches and AI training plans — all in one place. 8 sports, 6 languages." },
+      { property: "og:title", content: "Club Management Software for Sports Academies — My Club" },
+      { property: "og:description", content: "Sports club management software to run players, teams, payments, schedules, coaches and AI training plans — all in one place." },
       { property: "og:url", content: "https://my-club.live/" },
     ],
     links: [{ rel: "canonical", href: "https://my-club.live/" }],
