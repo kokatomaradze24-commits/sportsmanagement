@@ -261,7 +261,26 @@ function LoginPage() {
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight mb-4 bg-gradient-to-br from-white via-white to-slate-300 bg-clip-text text-transparent">
             {copy.headline}
           </h2>
-          <p className="text-base sm:text-lg text-slate-300/90 mb-8 max-w-xl leading-relaxed">{copy.subline}</p>
+          <p className="text-base sm:text-lg text-slate-300/90 mb-6 max-w-xl leading-relaxed">{copy.subline}</p>
+
+          {/* App tutorial video */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="relative mb-8 rounded-2xl overflow-hidden border border-white/10 shadow-2xl shadow-orange-500/10 bg-slate-950"
+          >
+            <video
+              src="/my-club-tutorial.mp4"
+              autoPlay
+              loop
+              muted
+              playsInline
+              preload="metadata"
+              className="w-full h-auto block"
+            />
+            <div className="pointer-events-none absolute inset-0 ring-1 ring-inset ring-white/10 rounded-2xl" />
+          </motion.div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-8">
             {copy.features.map((feature, i) => {
