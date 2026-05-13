@@ -175,29 +175,77 @@ export function AICreditsPurchaseDialog({ open, onOpenChange, onSuccess }: Props
           </DialogDescription>
         </DialogHeader>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 my-4">
-          {AI_CREDIT_PACKAGES.map((pkg) => {
-            const active = selected.id === pkg.id;
+        {/* Single package card */}
+        <div className="my-4 rounded-xl border-2 border-primary bg-primary/5 p-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <div className="text-xs font-semibold text-primary uppercase tracking-wider">
+                1 თვიანი პაკეტი
+              </div>
+              <div className="mt-1 flex items-baseline gap-2">
+                <span className="text-3xl font-bold">${selected.amount}</span>
+                <span className="text-sm text-muted-foreground">/ {selected.credits} კრედიტი</span>
+              </div>
+            </div>
+            <Sparkles className="h-8 w-8 text-primary opacity-60" />
+          </div>
+          <div className="mt-3 grid grid-cols-3 gap-2 text-center">
+            <div className="rounded-lg bg-background/60 p-2">
+              <div className="text-lg font-bold">{Math.floor(selected.credits / CREDIT_COSTS.image)}</div>
+              <div className="text-[10px] text-muted-foreground uppercase">სურათი</div>
+            </div>
+            <div className="rounded-lg bg-background/60 p-2">
+              <div className="text-lg font-bold">{Math.floor(selected.credits / CREDIT_COSTS.expertPlan)}</div>
+              <div className="text-[10px] text-muted-foreground uppercase">Expert plan</div>
+            </div>
+            <div className="rounded-lg bg-background/60 p-2">
+              <div className="text-lg font-bold">{Math.floor(selected.credits / CREDIT_COSTS.selfPlan)}</div>
+              <div className="text-[10px] text-muted-foreground uppercase">Self plan</div>
+            </div>
+          </div>
+        </div>
+
+        {/* Calculator */}
+        <div className="mb-4 rounded-xl border border-border p-3 bg-muted/20">
+          <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
+            🧮 კალკულატორი — რას მიიღებ თანხაში
+          </div>
+          <div className="flex items-center gap-2 mb-3">
+            <span className="text-sm">$</span>
+            <input
+              type="number"
+              min={1}
+              step={1}
+              value={calcAmount}
+              onChange={(e) => setCalcAmount(Math.max(0, Number(e.target.value) || 0))}
+              className="w-24 rounded-md border border-border bg-background px-2 py-1 text-sm tabular-nums"
+            />
+            <span className="text-xs text-muted-foreground">
+              ({((calcAmount / selected.amount) * selected.credits).toFixed(0)} კრედიტი)
+            </span>
+          </div>
+          {(() => {
+            const credits = (calcAmount / selected.amount) * selected.credits;
             return (
-              <button
-                key={pkg.id}
-                type="button"
-                onClick={() => setSelected(pkg)}
-                className={`relative text-left rounded-xl border p-3 transition-all ${
-                  active
-                    ? "border-primary bg-primary/5 ring-2 ring-primary"
-                    : "border-border hover:border-primary/50"
-                }`}
-              >
-                {active && <Check className="absolute top-2 right-2 h-4 w-4 text-primary" />}
-                <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                  {pkg.id === "week" ? "1 კვირა" : pkg.id === "month" ? "1 თვე" : "1 წელი"}
+              <div className="grid grid-cols-3 gap-2 text-center">
+                <div className="rounded-lg bg-background p-2 border border-border/50">
+                  <div className="text-base font-bold">{Math.floor(credits / CREDIT_COSTS.image)}</div>
+                  <div className="text-[10px] text-muted-foreground">სურათი</div>
                 </div>
-                <div className="mt-1 text-2xl font-bold">${pkg.amount}</div>
-                <div className="text-xs text-muted-foreground">{pkg.credits} კრედიტი</div>
-              </button>
+                <div className="rounded-lg bg-background p-2 border border-border/50">
+                  <div className="text-base font-bold">{Math.floor(credits / CREDIT_COSTS.expertPlan)}</div>
+                  <div className="text-[10px] text-muted-foreground">Expert plan</div>
+                </div>
+                <div className="rounded-lg bg-background p-2 border border-border/50">
+                  <div className="text-base font-bold">{Math.floor(credits / CREDIT_COSTS.selfPlan)}</div>
+                  <div className="text-[10px] text-muted-foreground">Self plan</div>
+                </div>
+              </div>
             );
-          })}
+          })()}
+          <div className="mt-2 text-[10px] text-muted-foreground">
+            1 სურათი = {CREDIT_COSTS.image} კრედიტი · 1 expert plan = {CREDIT_COSTS.expertPlan} · 1 self plan = {CREDIT_COSTS.selfPlan}
+          </div>
         </div>
 
         <div className="rounded-xl border border-border p-3 bg-muted/30 min-h-[160px] relative">
