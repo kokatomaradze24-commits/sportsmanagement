@@ -170,12 +170,16 @@ function LoginPage() {
   useEffect(() => {
     // Defer mounting the autoplaying tutorial video so it doesn't block
     // initial paint / hydration. Keeps autoplay UX after the page settles.
-    const w = window as Window & { requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number };
-    const schedule = w.requestIdleCallback ?? ((cb: () => void) => window.setTimeout(cb, 1500));
-    const id = schedule(() => setShowVideo(true), { timeout: 3000 });
+    const w = window as Window & {
+      requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number;
+      cancelIdleCallback?: (id: number) => void;
+    };
+    const id: number = w.requestIdleCallback
+      ? w.requestIdleCallback(() => setShowVideo(true), { timeout: 3000 })
+      : window.setTimeout(() => setShowVideo(true), 1500);
     return () => {
-      if (w.requestIdleCallback) (window as unknown as { cancelIdleCallback: (id: number) => void }).cancelIdleCallback(id as number);
-      else window.clearTimeout(id as number);
+      if (w.cancelIdleCallback) w.cancelIdleCallback(id);
+      else window.clearTimeout(id);
     };
   }, []);
 
