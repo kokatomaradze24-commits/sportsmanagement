@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as SharePreviewRouteImport } from './routes/share-preview'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as CoachLoginRouteImport } from './routes/coach-login'
 import { Route as CoachRouteImport } from './routes/coach'
@@ -17,6 +18,7 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as RegisterLinkIdRouteImport } from './routes/register.$linkId'
 import { Route as HooksSendPaymentSmsRouteImport } from './routes/hooks/send-payment-sms'
+import { Route as ApiOgPreviewRouteImport } from './routes/api/og-preview'
 import { Route as ApiPublicPlayerRegistrationRouteImport } from './routes/api/public/player-registration'
 import { Route as ApiPaypalSubscriptionConfigRouteImport } from './routes/api/paypal/subscription-config'
 import { Route as ApiPaypalCreateOrderRouteImport } from './routes/api/paypal/create-order'
@@ -35,6 +37,11 @@ import { Route as ApiAiGenerateImageRouteImport } from './routes/api/ai/generate
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SharePreviewRoute = SharePreviewRouteImport.update({
+  id: '/share-preview',
+  path: '/share-preview',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -70,6 +77,11 @@ const RegisterLinkIdRoute = RegisterLinkIdRouteImport.update({
 const HooksSendPaymentSmsRoute = HooksSendPaymentSmsRouteImport.update({
   id: '/hooks/send-payment-sms',
   path: '/hooks/send-payment-sms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiOgPreviewRoute = ApiOgPreviewRouteImport.update({
+  id: '/api/og-preview',
+  path: '/api/og-preview',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPublicPlayerRegistrationRoute =
@@ -155,7 +167,9 @@ export interface FileRoutesByFullPath {
   '/coach': typeof CoachRoute
   '/coach-login': typeof CoachLoginRoute
   '/login': typeof LoginRoute
+  '/share-preview': typeof SharePreviewRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/api/og-preview': typeof ApiOgPreviewRoute
   '/hooks/send-payment-sms': typeof HooksSendPaymentSmsRoute
   '/register/$linkId': typeof RegisterLinkIdRoute
   '/api/ai/generate-image': typeof ApiAiGenerateImageRoute
@@ -179,7 +193,9 @@ export interface FileRoutesByTo {
   '/coach': typeof CoachRoute
   '/coach-login': typeof CoachLoginRoute
   '/login': typeof LoginRoute
+  '/share-preview': typeof SharePreviewRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/api/og-preview': typeof ApiOgPreviewRoute
   '/hooks/send-payment-sms': typeof HooksSendPaymentSmsRoute
   '/register/$linkId': typeof RegisterLinkIdRoute
   '/api/ai/generate-image': typeof ApiAiGenerateImageRoute
@@ -204,7 +220,9 @@ export interface FileRoutesById {
   '/coach': typeof CoachRoute
   '/coach-login': typeof CoachLoginRoute
   '/login': typeof LoginRoute
+  '/share-preview': typeof SharePreviewRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/api/og-preview': typeof ApiOgPreviewRoute
   '/hooks/send-payment-sms': typeof HooksSendPaymentSmsRoute
   '/register/$linkId': typeof RegisterLinkIdRoute
   '/api/ai/generate-image': typeof ApiAiGenerateImageRoute
@@ -230,7 +248,9 @@ export interface FileRouteTypes {
     | '/coach'
     | '/coach-login'
     | '/login'
+    | '/share-preview'
     | '/sitemap.xml'
+    | '/api/og-preview'
     | '/hooks/send-payment-sms'
     | '/register/$linkId'
     | '/api/ai/generate-image'
@@ -254,7 +274,9 @@ export interface FileRouteTypes {
     | '/coach'
     | '/coach-login'
     | '/login'
+    | '/share-preview'
     | '/sitemap.xml'
+    | '/api/og-preview'
     | '/hooks/send-payment-sms'
     | '/register/$linkId'
     | '/api/ai/generate-image'
@@ -278,7 +300,9 @@ export interface FileRouteTypes {
     | '/coach'
     | '/coach-login'
     | '/login'
+    | '/share-preview'
     | '/sitemap.xml'
+    | '/api/og-preview'
     | '/hooks/send-payment-sms'
     | '/register/$linkId'
     | '/api/ai/generate-image'
@@ -303,7 +327,9 @@ export interface RootRouteChildren {
   CoachRoute: typeof CoachRoute
   CoachLoginRoute: typeof CoachLoginRoute
   LoginRoute: typeof LoginRoute
+  SharePreviewRoute: typeof SharePreviewRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  ApiOgPreviewRoute: typeof ApiOgPreviewRoute
   HooksSendPaymentSmsRoute: typeof HooksSendPaymentSmsRoute
   RegisterLinkIdRoute: typeof RegisterLinkIdRoute
   ApiAiGenerateImageRoute: typeof ApiAiGenerateImageRoute
@@ -329,6 +355,13 @@ declare module '@tanstack/react-router' {
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/share-preview': {
+      id: '/share-preview'
+      path: '/share-preview'
+      fullPath: '/share-preview'
+      preLoaderRoute: typeof SharePreviewRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -378,6 +411,13 @@ declare module '@tanstack/react-router' {
       path: '/hooks/send-payment-sms'
       fullPath: '/hooks/send-payment-sms'
       preLoaderRoute: typeof HooksSendPaymentSmsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/og-preview': {
+      id: '/api/og-preview'
+      path: '/api/og-preview'
+      fullPath: '/api/og-preview'
+      preLoaderRoute: typeof ApiOgPreviewRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/player-registration': {
@@ -487,7 +527,9 @@ const rootRouteChildren: RootRouteChildren = {
   CoachRoute: CoachRoute,
   CoachLoginRoute: CoachLoginRoute,
   LoginRoute: LoginRoute,
+  SharePreviewRoute: SharePreviewRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  ApiOgPreviewRoute: ApiOgPreviewRoute,
   HooksSendPaymentSmsRoute: HooksSendPaymentSmsRoute,
   RegisterLinkIdRoute: RegisterLinkIdRoute,
   ApiAiGenerateImageRoute: ApiAiGenerateImageRoute,
