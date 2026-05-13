@@ -158,10 +158,8 @@ export function SubscriptionPaymentDialog({ open, onOpenChange, onSuccess }: Pro
             ერთჯერადი გადახდა — ავტო-განახლების გარეშე
           </div>
           <ul className="text-sm space-y-1.5 mt-4 text-muted-foreground">
-            <li className="flex gap-2"><Check className="h-4 w-4 text-primary shrink-0 mt-0.5" /> შეუზღუდავი ფეხბურთელები და გუნდები</li>
-            <li className="flex gap-2"><Check className="h-4 w-4 text-primary shrink-0 mt-0.5" /> გადახდების მართვა + SMS</li>
-            <li className="flex gap-2"><Check className="h-4 w-4 text-primary shrink-0 mt-0.5" /> AI ვარჯიშის გეგმები (კრედიტი ცალკე)</li>
-            <li className="flex gap-2"><Check className="h-4 w-4 text-primary shrink-0 mt-0.5" /> 30 დღიანი წვდომა ყველა ფუნქციაზე</li>
+            <li className="flex gap-2"><Check className="h-4 w-4 text-primary shrink-0 mt-0.5" /> ულიმიტო წვდომა საიტზე!</li>
+            <li className="flex gap-2"><Check className="h-4 w-4 text-primary shrink-0 mt-0.5" /> მართე შენი კლუბი შეზღუდვების გარეშე!</li>
           </ul>
         </div>
 
