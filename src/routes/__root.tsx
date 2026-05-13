@@ -45,6 +45,10 @@ export const Route = createRootRoute({
     links: [
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" as const },
+      { rel: "preconnect", href: "https://dlgqngcrfaralmxdfvxj.supabase.co", crossOrigin: "anonymous" as const },
+      // Preload critical font files to break the HTML→CSS→font request chain
+      { rel: "preload", as: "font", type: "font/woff2", href: "https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7W0Q5nw.woff2", crossOrigin: "anonymous" as const },
+      { rel: "preload", as: "font", type: "font/woff2", href: "https://fonts.gstatic.com/s/bebasneue/v14/JTUSjIg69CK48gW7PXooxW5rygbi49c.woff2", crossOrigin: "anonymous" as const },
       { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" },
       { rel: "stylesheet", href: appCss },
     ],
