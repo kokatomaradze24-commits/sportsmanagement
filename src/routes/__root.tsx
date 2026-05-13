@@ -49,7 +49,6 @@ export const Route = createRootRoute({
       // Preload critical font files to break the HTML→CSS→font request chain
       { rel: "preload", as: "font", type: "font/woff2", href: "https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7W0Q5nw.woff2", crossOrigin: "anonymous" as const },
       { rel: "preload", as: "font", type: "font/woff2", href: "https://fonts.gstatic.com/s/bebasneue/v14/JTUSjIg69CK48gW7PXooxW5rygbi49c.woff2", crossOrigin: "anonymous" as const },
-      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" },
       { rel: "stylesheet", href: appCss },
     ],
   }),
@@ -63,6 +62,20 @@ function RootShell({ children }: { children: React.ReactNode }) {
     <html lang="en">
       <head>
         <HeadContent />
+        {/* Load Google Fonts CSS asynchronously to avoid render-blocking */}
+        <link
+          rel="preload"
+          as="style"
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+          // @ts-expect-error - onLoad swap pattern for async CSS
+          onLoad="this.onload=null;this.rel='stylesheet'"
+        />
+        <noscript>
+          <link
+            rel="stylesheet"
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+          />
+        </noscript>
       </head>
       <body>
         {children}
