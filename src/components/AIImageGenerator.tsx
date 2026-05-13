@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useI18n } from "@/hooks/use-i18n";
+import { AICreditsPurchaseDialog } from "@/components/AICreditsPurchaseDialog";
 
 interface AIImageGeneratorProps {
   trigger?: React.ReactNode;
@@ -46,6 +47,7 @@ export function AIImageGenerator({
   const [referenceImage, setReferenceImage] = useState<string>("");
   const [generatedImage, setGeneratedImage] = useState<string>("");
   const [loading, setLoading] = useState(false);
+  const [showBuyCredits, setShowBuyCredits] = useState(false);
   const refInputRef = useRef<HTMLInputElement>(null);
 
   const dialogTitle = title ?? t("aiGenTitle");
@@ -99,6 +101,7 @@ export function AIImageGenerator({
       }
       if (res.status === 402) {
         toast.error(t("aiGenNoCredits"));
+        setShowBuyCredits(true);
         return;
       }
       if (!res.ok) {
@@ -283,6 +286,7 @@ export function AIImageGenerator({
           </Button>
         </DialogFooter>
       </DialogContent>
+      <AICreditsPurchaseDialog open={showBuyCredits} onOpenChange={setShowBuyCredits} />
     </Dialog>
   );
 }
