@@ -25,8 +25,11 @@ import { useSubscription } from "@/hooks/use-subscription";
 import { useOnboarding } from "@/hooks/use-onboarding";
 import { useI18n } from "@/hooks/use-i18n";
 import type { Database } from "@/integrations/supabase/types";
+import ogImage from "@/assets/og-home.jpg";
 
 type Player = Database["public"]["Tables"]["players"]["Row"];
+
+const OG_IMAGE_URL = new URL(ogImage, "https://my-club.live").href;
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -36,6 +39,11 @@ export const Route = createFileRoute("/")({
       { property: "og:title", content: "Club Management Software for Sports Academies — My Club" },
       { property: "og:description", content: "Sports club management software to run players, teams, payments, schedules, coaches and AI training plans — all in one place." },
       { property: "og:url", content: "https://my-club.live/" },
+      { property: "og:image", content: OG_IMAGE_URL },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "640" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: OG_IMAGE_URL },
     ],
     links: [{ rel: "canonical", href: "https://my-club.live/" }],
   }),
