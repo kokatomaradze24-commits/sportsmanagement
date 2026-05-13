@@ -19,6 +19,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useIsAdmin } from "@/hooks/use-is-admin";
 import { useI18n } from "@/hooks/use-i18n";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { AICreditsSalesPanel } from "@/components/AICreditsSalesPanel";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
@@ -230,6 +231,8 @@ function AdminPage() {
             </div>
           );
         })()}
+
+        <AICreditsSalesPanel />
 
         <div className="grid gap-3">
           {users.map((u, i) => (
