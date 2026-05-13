@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as SharePreviewRouteImport } from './routes/share-preview'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as CoachLoginRouteImport } from './routes/coach-login'
 import { Route as CoachRouteImport } from './routes/coach'
@@ -36,6 +37,11 @@ import { Route as ApiAiGenerateImageRouteImport } from './routes/api/ai/generate
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SharePreviewRoute = SharePreviewRouteImport.update({
+  id: '/share-preview',
+  path: '/share-preview',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -161,6 +167,7 @@ export interface FileRoutesByFullPath {
   '/coach': typeof CoachRoute
   '/coach-login': typeof CoachLoginRoute
   '/login': typeof LoginRoute
+  '/share-preview': typeof SharePreviewRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/api/og-preview': typeof ApiOgPreviewRoute
   '/hooks/send-payment-sms': typeof HooksSendPaymentSmsRoute
@@ -186,6 +193,7 @@ export interface FileRoutesByTo {
   '/coach': typeof CoachRoute
   '/coach-login': typeof CoachLoginRoute
   '/login': typeof LoginRoute
+  '/share-preview': typeof SharePreviewRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/api/og-preview': typeof ApiOgPreviewRoute
   '/hooks/send-payment-sms': typeof HooksSendPaymentSmsRoute
@@ -212,6 +220,7 @@ export interface FileRoutesById {
   '/coach': typeof CoachRoute
   '/coach-login': typeof CoachLoginRoute
   '/login': typeof LoginRoute
+  '/share-preview': typeof SharePreviewRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/api/og-preview': typeof ApiOgPreviewRoute
   '/hooks/send-payment-sms': typeof HooksSendPaymentSmsRoute
@@ -239,6 +248,7 @@ export interface FileRouteTypes {
     | '/coach'
     | '/coach-login'
     | '/login'
+    | '/share-preview'
     | '/sitemap.xml'
     | '/api/og-preview'
     | '/hooks/send-payment-sms'
@@ -264,6 +274,7 @@ export interface FileRouteTypes {
     | '/coach'
     | '/coach-login'
     | '/login'
+    | '/share-preview'
     | '/sitemap.xml'
     | '/api/og-preview'
     | '/hooks/send-payment-sms'
@@ -289,6 +300,7 @@ export interface FileRouteTypes {
     | '/coach'
     | '/coach-login'
     | '/login'
+    | '/share-preview'
     | '/sitemap.xml'
     | '/api/og-preview'
     | '/hooks/send-payment-sms'
@@ -315,6 +327,7 @@ export interface RootRouteChildren {
   CoachRoute: typeof CoachRoute
   CoachLoginRoute: typeof CoachLoginRoute
   LoginRoute: typeof LoginRoute
+  SharePreviewRoute: typeof SharePreviewRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   ApiOgPreviewRoute: typeof ApiOgPreviewRoute
   HooksSendPaymentSmsRoute: typeof HooksSendPaymentSmsRoute
@@ -342,6 +355,13 @@ declare module '@tanstack/react-router' {
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/share-preview': {
+      id: '/share-preview'
+      path: '/share-preview'
+      fullPath: '/share-preview'
+      preLoaderRoute: typeof SharePreviewRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -507,6 +527,7 @@ const rootRouteChildren: RootRouteChildren = {
   CoachRoute: CoachRoute,
   CoachLoginRoute: CoachLoginRoute,
   LoginRoute: LoginRoute,
+  SharePreviewRoute: SharePreviewRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   ApiOgPreviewRoute: ApiOgPreviewRoute,
   HooksSendPaymentSmsRoute: HooksSendPaymentSmsRoute,
