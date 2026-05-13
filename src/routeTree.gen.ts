@@ -17,6 +17,7 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as RegisterLinkIdRouteImport } from './routes/register.$linkId'
 import { Route as HooksSendPaymentSmsRouteImport } from './routes/hooks/send-payment-sms'
+import { Route as ApiOgPreviewRouteImport } from './routes/api/og-preview'
 import { Route as ApiPublicPlayerRegistrationRouteImport } from './routes/api/public/player-registration'
 import { Route as ApiPaypalSubscriptionConfigRouteImport } from './routes/api/paypal/subscription-config'
 import { Route as ApiPaypalCreateOrderRouteImport } from './routes/api/paypal/create-order'
@@ -70,6 +71,11 @@ const RegisterLinkIdRoute = RegisterLinkIdRouteImport.update({
 const HooksSendPaymentSmsRoute = HooksSendPaymentSmsRouteImport.update({
   id: '/hooks/send-payment-sms',
   path: '/hooks/send-payment-sms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiOgPreviewRoute = ApiOgPreviewRouteImport.update({
+  id: '/api/og-preview',
+  path: '/api/og-preview',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPublicPlayerRegistrationRoute =
@@ -156,6 +162,7 @@ export interface FileRoutesByFullPath {
   '/coach-login': typeof CoachLoginRoute
   '/login': typeof LoginRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/api/og-preview': typeof ApiOgPreviewRoute
   '/hooks/send-payment-sms': typeof HooksSendPaymentSmsRoute
   '/register/$linkId': typeof RegisterLinkIdRoute
   '/api/ai/generate-image': typeof ApiAiGenerateImageRoute
@@ -180,6 +187,7 @@ export interface FileRoutesByTo {
   '/coach-login': typeof CoachLoginRoute
   '/login': typeof LoginRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/api/og-preview': typeof ApiOgPreviewRoute
   '/hooks/send-payment-sms': typeof HooksSendPaymentSmsRoute
   '/register/$linkId': typeof RegisterLinkIdRoute
   '/api/ai/generate-image': typeof ApiAiGenerateImageRoute
@@ -205,6 +213,7 @@ export interface FileRoutesById {
   '/coach-login': typeof CoachLoginRoute
   '/login': typeof LoginRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/api/og-preview': typeof ApiOgPreviewRoute
   '/hooks/send-payment-sms': typeof HooksSendPaymentSmsRoute
   '/register/$linkId': typeof RegisterLinkIdRoute
   '/api/ai/generate-image': typeof ApiAiGenerateImageRoute
@@ -231,6 +240,7 @@ export interface FileRouteTypes {
     | '/coach-login'
     | '/login'
     | '/sitemap.xml'
+    | '/api/og-preview'
     | '/hooks/send-payment-sms'
     | '/register/$linkId'
     | '/api/ai/generate-image'
@@ -255,6 +265,7 @@ export interface FileRouteTypes {
     | '/coach-login'
     | '/login'
     | '/sitemap.xml'
+    | '/api/og-preview'
     | '/hooks/send-payment-sms'
     | '/register/$linkId'
     | '/api/ai/generate-image'
@@ -279,6 +290,7 @@ export interface FileRouteTypes {
     | '/coach-login'
     | '/login'
     | '/sitemap.xml'
+    | '/api/og-preview'
     | '/hooks/send-payment-sms'
     | '/register/$linkId'
     | '/api/ai/generate-image'
@@ -304,6 +316,7 @@ export interface RootRouteChildren {
   CoachLoginRoute: typeof CoachLoginRoute
   LoginRoute: typeof LoginRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  ApiOgPreviewRoute: typeof ApiOgPreviewRoute
   HooksSendPaymentSmsRoute: typeof HooksSendPaymentSmsRoute
   RegisterLinkIdRoute: typeof RegisterLinkIdRoute
   ApiAiGenerateImageRoute: typeof ApiAiGenerateImageRoute
@@ -378,6 +391,13 @@ declare module '@tanstack/react-router' {
       path: '/hooks/send-payment-sms'
       fullPath: '/hooks/send-payment-sms'
       preLoaderRoute: typeof HooksSendPaymentSmsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/og-preview': {
+      id: '/api/og-preview'
+      path: '/api/og-preview'
+      fullPath: '/api/og-preview'
+      preLoaderRoute: typeof ApiOgPreviewRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/player-registration': {
@@ -488,6 +508,7 @@ const rootRouteChildren: RootRouteChildren = {
   CoachLoginRoute: CoachLoginRoute,
   LoginRoute: LoginRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  ApiOgPreviewRoute: ApiOgPreviewRoute,
   HooksSendPaymentSmsRoute: HooksSendPaymentSmsRoute,
   RegisterLinkIdRoute: RegisterLinkIdRoute,
   ApiAiGenerateImageRoute: ApiAiGenerateImageRoute,
@@ -508,3 +529,12 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}
