@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useI18n } from "@/hooks/use-i18n";
+import { AICreditsPurchaseDialog } from "@/components/AICreditsPurchaseDialog";
 
 interface AIImageGeneratorProps {
   trigger?: React.ReactNode;
