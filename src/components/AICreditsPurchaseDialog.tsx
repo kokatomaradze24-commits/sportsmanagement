@@ -32,7 +32,8 @@ type PaypalApi = {
 
 export function AICreditsPurchaseDialog({ open, onOpenChange, onSuccess }: Props) {
   const { session } = useAuth();
-  const [selected, setSelected] = useState<AICreditPackage>(AI_CREDIT_PACKAGES[1]);
+  const [selected, setSelected] = useState<AICreditPackage>(AI_CREDIT_PACKAGES[0]);
+  const [calcAmount, setCalcAmount] = useState<number>(10);
   const [sdkReady, setSdkReady] = useState(false);
   const [processing, setProcessing] = useState(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
