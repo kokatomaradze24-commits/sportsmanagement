@@ -313,7 +313,7 @@ function LoginPage() {
             <BarChart3 className="w-3.5 h-3.5" />
             <span>{copy.socialProof}</span>
           </div>
-        </motion.div>
+        </div>
 
         {/* Main card */}
         <motion.div
