@@ -41,6 +41,7 @@ export const Route = createRootRoute({
       { name: "twitter:site", content: "@Lovable" },
       { name: "twitter:title", content: "sports management" },
       { name: "twitter:description", content: "sports management platform to track players, payments, schedules, and team performance. Perfect for academies" },
+      { name: "google-site-verification", content: "Az0qDpB1hkU7rSpisu0l_KkW2_l5N_UzQpaBNedcuFQ" },
     ],
     links: [
       { rel: "preconnect", href: "https://fonts.googleapis.com" },

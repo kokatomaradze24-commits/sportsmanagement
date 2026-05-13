@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as CoachLoginRouteImport } from './routes/coach-login'
 import { Route as CoachRouteImport } from './routes/coach'
@@ -31,6 +32,11 @@ import { Route as ApiCoachLoginRouteImport } from './routes/api/coach/login'
 import { Route as ApiAiGenerateTrainingPlanRouteImport } from './routes/api/ai/generate-training-plan'
 import { Route as ApiAiGenerateImageRouteImport } from './routes/api/ai/generate-image'
 
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
@@ -149,6 +155,7 @@ export interface FileRoutesByFullPath {
   '/coach': typeof CoachRoute
   '/coach-login': typeof CoachLoginRoute
   '/login': typeof LoginRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/hooks/send-payment-sms': typeof HooksSendPaymentSmsRoute
   '/register/$linkId': typeof RegisterLinkIdRoute
   '/api/ai/generate-image': typeof ApiAiGenerateImageRoute
@@ -172,6 +179,7 @@ export interface FileRoutesByTo {
   '/coach': typeof CoachRoute
   '/coach-login': typeof CoachLoginRoute
   '/login': typeof LoginRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/hooks/send-payment-sms': typeof HooksSendPaymentSmsRoute
   '/register/$linkId': typeof RegisterLinkIdRoute
   '/api/ai/generate-image': typeof ApiAiGenerateImageRoute
@@ -196,6 +204,7 @@ export interface FileRoutesById {
   '/coach': typeof CoachRoute
   '/coach-login': typeof CoachLoginRoute
   '/login': typeof LoginRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/hooks/send-payment-sms': typeof HooksSendPaymentSmsRoute
   '/register/$linkId': typeof RegisterLinkIdRoute
   '/api/ai/generate-image': typeof ApiAiGenerateImageRoute
@@ -221,6 +230,7 @@ export interface FileRouteTypes {
     | '/coach'
     | '/coach-login'
     | '/login'
+    | '/sitemap.xml'
     | '/hooks/send-payment-sms'
     | '/register/$linkId'
     | '/api/ai/generate-image'
@@ -244,6 +254,7 @@ export interface FileRouteTypes {
     | '/coach'
     | '/coach-login'
     | '/login'
+    | '/sitemap.xml'
     | '/hooks/send-payment-sms'
     | '/register/$linkId'
     | '/api/ai/generate-image'
@@ -267,6 +278,7 @@ export interface FileRouteTypes {
     | '/coach'
     | '/coach-login'
     | '/login'
+    | '/sitemap.xml'
     | '/hooks/send-payment-sms'
     | '/register/$linkId'
     | '/api/ai/generate-image'
@@ -291,6 +303,7 @@ export interface RootRouteChildren {
   CoachRoute: typeof CoachRoute
   CoachLoginRoute: typeof CoachLoginRoute
   LoginRoute: typeof LoginRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   HooksSendPaymentSmsRoute: typeof HooksSendPaymentSmsRoute
   RegisterLinkIdRoute: typeof RegisterLinkIdRoute
   ApiAiGenerateImageRoute: typeof ApiAiGenerateImageRoute
@@ -311,6 +324,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/login': {
       id: '/login'
       path: '/login'
@@ -467,6 +487,7 @@ const rootRouteChildren: RootRouteChildren = {
   CoachRoute: CoachRoute,
   CoachLoginRoute: CoachLoginRoute,
   LoginRoute: LoginRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   HooksSendPaymentSmsRoute: HooksSendPaymentSmsRoute,
   RegisterLinkIdRoute: RegisterLinkIdRoute,
   ApiAiGenerateImageRoute: ApiAiGenerateImageRoute,
