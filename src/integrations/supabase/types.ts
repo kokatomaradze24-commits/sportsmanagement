@@ -967,6 +967,19 @@ export type Database = {
           user_id: string
         }[]
       }
+      admin_list_subscription_revenue: {
+        Args: never
+        Returns: {
+          activated_at: string
+          email: string
+          expires_at: string
+          is_trial: boolean
+          paypal_order_id: string
+          paypal_status: string
+          plan: string
+          user_id: string
+        }[]
+      }
       admin_list_users: {
         Args: never
         Returns: {

@@ -20,6 +20,7 @@ import { useIsAdmin } from "@/hooks/use-is-admin";
 import { useI18n } from "@/hooks/use-i18n";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { AICreditsSalesPanel } from "@/components/AICreditsSalesPanel";
+import { SubscriptionRevenuePanel } from "@/components/SubscriptionRevenuePanel";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
@@ -235,6 +236,8 @@ function AdminPage() {
             </div>
           );
         })()}
+
+        <SubscriptionRevenuePanel />
 
         <AICreditsSalesPanel />
 
