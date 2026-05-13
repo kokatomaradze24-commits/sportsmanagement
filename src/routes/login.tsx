@@ -165,6 +165,19 @@ function LoginPage() {
   const copy = MARKETING[language] ?? MARKETING.en;
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showVideo, setShowVideo] = useState(false);
+
+  useEffect(() => {
+    // Defer mounting the autoplaying tutorial video so it doesn't block
+    // initial paint / hydration. Keeps autoplay UX after the page settles.
+    const w = window as Window & { requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number };
+    const schedule = w.requestIdleCallback ?? ((cb: () => void) => window.setTimeout(cb, 1500));
+    const id = schedule(() => setShowVideo(true), { timeout: 3000 });
+    return () => {
+      if (w.requestIdleCallback) (window as unknown as { cancelIdleCallback: (id: number) => void }).cancelIdleCallback(id as number);
+      else window.clearTimeout(id as number);
+    };
+  }, []);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
