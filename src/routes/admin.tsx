@@ -232,6 +232,8 @@ function AdminPage() {
           );
         })()}
 
+        <AICreditsSalesPanel />
+
         <div className="grid gap-3">
           {users.map((u, i) => (
             <motion.div
