@@ -1,12 +1,11 @@
 import { Composition } from "remotion";
-import { MainVideo } from "./MainVideo";
+import { MainVideo, TOTAL } from "./MainVideo";
 
-// 24 seconds at 30fps = 720 frames
 export const RemotionRoot = () => (
   <Composition
     id="main"
     component={MainVideo}
-    durationInFrames={720}
+    durationInFrames={TOTAL}
     fps={30}
     width={1280}
     height={720}
