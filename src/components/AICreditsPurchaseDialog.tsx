@@ -239,10 +239,10 @@ export function AICreditsPurchaseDialog({ open, onOpenChange, onSuccess }: Props
             <span className="text-sm">$</span>
             <input
               type="number"
-              min={1}
+              min={14.99}
               step={1}
               value={calcAmount}
-              onChange={(e) => setCalcAmount(Math.max(0, Number(e.target.value) || 0))}
+              onChange={(e) => setCalcAmount(Math.max(14.99, Number(e.target.value) || 14.99))}
               className="w-24 rounded-md border border-border bg-background px-2 py-1 text-sm tabular-nums"
             />
             <span className="text-xs text-muted-foreground">
