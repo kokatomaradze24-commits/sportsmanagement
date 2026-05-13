@@ -7,10 +7,10 @@ export interface AICreditPackage {
   durationLabelKey: string;
 }
 
-// Pricing rule: my worst-case cost (all credits used as images) + 20% margin.
-// 1 month: 1000 credits → max 200 images × $0.04 = $8 cost → +20% = $9.60 → $9.99
+// Pricing rule: price = my worst-case cost ($10 of credits) + ~$5 margin.
+// 1 month: 1250 credits → max 250 images × $0.04 = $10 cost → +$5 = $14.99
 export const AI_CREDIT_PACKAGES: AICreditPackage[] = [
-  { id: "month", nameKey: "pkgMonth", credits: 1000, amount: 9.99, currency: "USD", durationLabelKey: "pkgMonthLabel" },
+  { id: "month", nameKey: "pkgMonth", credits: 1250, amount: 14.99, currency: "USD", durationLabelKey: "pkgMonthLabel" },
 ];
 
 // Cost per AI action (in credits). Keep in sync with server endpoints.
