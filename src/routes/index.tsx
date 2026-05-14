@@ -133,6 +133,22 @@ function Index() {
           <StatsCards players={players} payments={payments} />
           <NotificationsBanner players={players} payments={payments} />
 
+          <Link
+            to="/stats-analysis"
+            className="block rounded-2xl border border-primary/40 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent p-4 sm:p-5 hover:border-primary hover:shadow-md transition-all group"
+          >
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-xl bg-primary/15 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                <BarChart3 className="w-6 h-6 text-primary" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="font-display tracking-wider text-base sm:text-lg">სტატისტიკის ანალიზი ✨</p>
+                <p className="text-xs sm:text-sm text-muted-foreground">ატვირთე მატჩის სტატისტიკა — AI იპოვის შენს გუნდს და მოამზადებს ანალიზს და რჩევებს</p>
+              </div>
+              <span className="text-primary text-xl group-hover:translate-x-1 transition-transform hidden sm:inline">→</span>
+            </div>
+          </Link>
+
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div className="theme-panel backdrop-blur-sm rounded-2xl border border-border p-5 shadow-sm hover:shadow-md transition-shadow">
               <PlayersList
