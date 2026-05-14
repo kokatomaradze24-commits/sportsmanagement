@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as StatsAnalysisRouteImport } from './routes/stats-analysis'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SharePreviewRouteImport } from './routes/share-preview'
 import { Route as LoginRouteImport } from './routes/login'
@@ -33,7 +34,13 @@ import { Route as ApiCoachRegisterRouteImport } from './routes/api/coach/registe
 import { Route as ApiCoachLoginRouteImport } from './routes/api/coach/login'
 import { Route as ApiAiGenerateTrainingPlanRouteImport } from './routes/api/ai/generate-training-plan'
 import { Route as ApiAiGenerateImageRouteImport } from './routes/api/ai/generate-image'
+import { Route as ApiAiAnalyzeStatsRouteImport } from './routes/api/ai/analyze-stats'
 
+const StatsAnalysisRoute = StatsAnalysisRouteImport.update({
+  id: '/stats-analysis',
+  path: '/stats-analysis',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
@@ -160,6 +167,11 @@ const ApiAiGenerateImageRoute = ApiAiGenerateImageRouteImport.update({
   path: '/api/ai/generate-image',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiAiAnalyzeStatsRoute = ApiAiAnalyzeStatsRouteImport.update({
+  id: '/api/ai/analyze-stats',
+  path: '/api/ai/analyze-stats',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -169,9 +181,11 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/share-preview': typeof SharePreviewRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/stats-analysis': typeof StatsAnalysisRoute
   '/api/og-preview': typeof ApiOgPreviewRoute
   '/hooks/send-payment-sms': typeof HooksSendPaymentSmsRoute
   '/register/$linkId': typeof RegisterLinkIdRoute
+  '/api/ai/analyze-stats': typeof ApiAiAnalyzeStatsRoute
   '/api/ai/generate-image': typeof ApiAiGenerateImageRoute
   '/api/ai/generate-training-plan': typeof ApiAiGenerateTrainingPlanRoute
   '/api/coach/login': typeof ApiCoachLoginRoute
@@ -195,9 +209,11 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/share-preview': typeof SharePreviewRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/stats-analysis': typeof StatsAnalysisRoute
   '/api/og-preview': typeof ApiOgPreviewRoute
   '/hooks/send-payment-sms': typeof HooksSendPaymentSmsRoute
   '/register/$linkId': typeof RegisterLinkIdRoute
+  '/api/ai/analyze-stats': typeof ApiAiAnalyzeStatsRoute
   '/api/ai/generate-image': typeof ApiAiGenerateImageRoute
   '/api/ai/generate-training-plan': typeof ApiAiGenerateTrainingPlanRoute
   '/api/coach/login': typeof ApiCoachLoginRoute
@@ -222,9 +238,11 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/share-preview': typeof SharePreviewRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/stats-analysis': typeof StatsAnalysisRoute
   '/api/og-preview': typeof ApiOgPreviewRoute
   '/hooks/send-payment-sms': typeof HooksSendPaymentSmsRoute
   '/register/$linkId': typeof RegisterLinkIdRoute
+  '/api/ai/analyze-stats': typeof ApiAiAnalyzeStatsRoute
   '/api/ai/generate-image': typeof ApiAiGenerateImageRoute
   '/api/ai/generate-training-plan': typeof ApiAiGenerateTrainingPlanRoute
   '/api/coach/login': typeof ApiCoachLoginRoute
@@ -250,9 +268,11 @@ export interface FileRouteTypes {
     | '/login'
     | '/share-preview'
     | '/sitemap.xml'
+    | '/stats-analysis'
     | '/api/og-preview'
     | '/hooks/send-payment-sms'
     | '/register/$linkId'
+    | '/api/ai/analyze-stats'
     | '/api/ai/generate-image'
     | '/api/ai/generate-training-plan'
     | '/api/coach/login'
@@ -276,9 +296,11 @@ export interface FileRouteTypes {
     | '/login'
     | '/share-preview'
     | '/sitemap.xml'
+    | '/stats-analysis'
     | '/api/og-preview'
     | '/hooks/send-payment-sms'
     | '/register/$linkId'
+    | '/api/ai/analyze-stats'
     | '/api/ai/generate-image'
     | '/api/ai/generate-training-plan'
     | '/api/coach/login'
@@ -302,9 +324,11 @@ export interface FileRouteTypes {
     | '/login'
     | '/share-preview'
     | '/sitemap.xml'
+    | '/stats-analysis'
     | '/api/og-preview'
     | '/hooks/send-payment-sms'
     | '/register/$linkId'
+    | '/api/ai/analyze-stats'
     | '/api/ai/generate-image'
     | '/api/ai/generate-training-plan'
     | '/api/coach/login'
@@ -329,9 +353,11 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   SharePreviewRoute: typeof SharePreviewRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  StatsAnalysisRoute: typeof StatsAnalysisRoute
   ApiOgPreviewRoute: typeof ApiOgPreviewRoute
   HooksSendPaymentSmsRoute: typeof HooksSendPaymentSmsRoute
   RegisterLinkIdRoute: typeof RegisterLinkIdRoute
+  ApiAiAnalyzeStatsRoute: typeof ApiAiAnalyzeStatsRoute
   ApiAiGenerateImageRoute: typeof ApiAiGenerateImageRoute
   ApiAiGenerateTrainingPlanRoute: typeof ApiAiGenerateTrainingPlanRoute
   ApiCoachLoginRoute: typeof ApiCoachLoginRoute
@@ -350,6 +376,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/stats-analysis': {
+      id: '/stats-analysis'
+      path: '/stats-analysis'
+      fullPath: '/stats-analysis'
+      preLoaderRoute: typeof StatsAnalysisRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/sitemap.xml': {
       id: '/sitemap.xml'
       path: '/sitemap.xml'
@@ -518,6 +551,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAiGenerateImageRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/ai/analyze-stats': {
+      id: '/api/ai/analyze-stats'
+      path: '/api/ai/analyze-stats'
+      fullPath: '/api/ai/analyze-stats'
+      preLoaderRoute: typeof ApiAiAnalyzeStatsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -529,9 +569,11 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   SharePreviewRoute: SharePreviewRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  StatsAnalysisRoute: StatsAnalysisRoute,
   ApiOgPreviewRoute: ApiOgPreviewRoute,
   HooksSendPaymentSmsRoute: HooksSendPaymentSmsRoute,
   RegisterLinkIdRoute: RegisterLinkIdRoute,
+  ApiAiAnalyzeStatsRoute: ApiAiAnalyzeStatsRoute,
   ApiAiGenerateImageRoute: ApiAiGenerateImageRoute,
   ApiAiGenerateTrainingPlanRoute: ApiAiGenerateTrainingPlanRoute,
   ApiCoachLoginRoute: ApiCoachLoginRoute,
