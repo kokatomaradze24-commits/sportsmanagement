@@ -33,6 +33,7 @@ import { Route as ApiCoachRegisterRouteImport } from './routes/api/coach/registe
 import { Route as ApiCoachLoginRouteImport } from './routes/api/coach/login'
 import { Route as ApiAiGenerateTrainingPlanRouteImport } from './routes/api/ai/generate-training-plan'
 import { Route as ApiAiGenerateImageRouteImport } from './routes/api/ai/generate-image'
+import { Route as ApiAiAnalyzeStatsRouteImport } from './routes/api/ai/analyze-stats'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
@@ -160,6 +161,11 @@ const ApiAiGenerateImageRoute = ApiAiGenerateImageRouteImport.update({
   path: '/api/ai/generate-image',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiAiAnalyzeStatsRoute = ApiAiAnalyzeStatsRouteImport.update({
+  id: '/api/ai/analyze-stats',
+  path: '/api/ai/analyze-stats',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -172,6 +178,7 @@ export interface FileRoutesByFullPath {
   '/api/og-preview': typeof ApiOgPreviewRoute
   '/hooks/send-payment-sms': typeof HooksSendPaymentSmsRoute
   '/register/$linkId': typeof RegisterLinkIdRoute
+  '/api/ai/analyze-stats': typeof ApiAiAnalyzeStatsRoute
   '/api/ai/generate-image': typeof ApiAiGenerateImageRoute
   '/api/ai/generate-training-plan': typeof ApiAiGenerateTrainingPlanRoute
   '/api/coach/login': typeof ApiCoachLoginRoute
@@ -198,6 +205,7 @@ export interface FileRoutesByTo {
   '/api/og-preview': typeof ApiOgPreviewRoute
   '/hooks/send-payment-sms': typeof HooksSendPaymentSmsRoute
   '/register/$linkId': typeof RegisterLinkIdRoute
+  '/api/ai/analyze-stats': typeof ApiAiAnalyzeStatsRoute
   '/api/ai/generate-image': typeof ApiAiGenerateImageRoute
   '/api/ai/generate-training-plan': typeof ApiAiGenerateTrainingPlanRoute
   '/api/coach/login': typeof ApiCoachLoginRoute
@@ -225,6 +233,7 @@ export interface FileRoutesById {
   '/api/og-preview': typeof ApiOgPreviewRoute
   '/hooks/send-payment-sms': typeof HooksSendPaymentSmsRoute
   '/register/$linkId': typeof RegisterLinkIdRoute
+  '/api/ai/analyze-stats': typeof ApiAiAnalyzeStatsRoute
   '/api/ai/generate-image': typeof ApiAiGenerateImageRoute
   '/api/ai/generate-training-plan': typeof ApiAiGenerateTrainingPlanRoute
   '/api/coach/login': typeof ApiCoachLoginRoute
@@ -253,6 +262,7 @@ export interface FileRouteTypes {
     | '/api/og-preview'
     | '/hooks/send-payment-sms'
     | '/register/$linkId'
+    | '/api/ai/analyze-stats'
     | '/api/ai/generate-image'
     | '/api/ai/generate-training-plan'
     | '/api/coach/login'
@@ -279,6 +289,7 @@ export interface FileRouteTypes {
     | '/api/og-preview'
     | '/hooks/send-payment-sms'
     | '/register/$linkId'
+    | '/api/ai/analyze-stats'
     | '/api/ai/generate-image'
     | '/api/ai/generate-training-plan'
     | '/api/coach/login'
@@ -305,6 +316,7 @@ export interface FileRouteTypes {
     | '/api/og-preview'
     | '/hooks/send-payment-sms'
     | '/register/$linkId'
+    | '/api/ai/analyze-stats'
     | '/api/ai/generate-image'
     | '/api/ai/generate-training-plan'
     | '/api/coach/login'
@@ -332,6 +344,7 @@ export interface RootRouteChildren {
   ApiOgPreviewRoute: typeof ApiOgPreviewRoute
   HooksSendPaymentSmsRoute: typeof HooksSendPaymentSmsRoute
   RegisterLinkIdRoute: typeof RegisterLinkIdRoute
+  ApiAiAnalyzeStatsRoute: typeof ApiAiAnalyzeStatsRoute
   ApiAiGenerateImageRoute: typeof ApiAiGenerateImageRoute
   ApiAiGenerateTrainingPlanRoute: typeof ApiAiGenerateTrainingPlanRoute
   ApiCoachLoginRoute: typeof ApiCoachLoginRoute
@@ -518,6 +531,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAiGenerateImageRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/ai/analyze-stats': {
+      id: '/api/ai/analyze-stats'
+      path: '/api/ai/analyze-stats'
+      fullPath: '/api/ai/analyze-stats'
+      preLoaderRoute: typeof ApiAiAnalyzeStatsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -532,6 +552,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiOgPreviewRoute: ApiOgPreviewRoute,
   HooksSendPaymentSmsRoute: HooksSendPaymentSmsRoute,
   RegisterLinkIdRoute: RegisterLinkIdRoute,
+  ApiAiAnalyzeStatsRoute: ApiAiAnalyzeStatsRoute,
   ApiAiGenerateImageRoute: ApiAiGenerateImageRoute,
   ApiAiGenerateTrainingPlanRoute: ApiAiGenerateTrainingPlanRoute,
   ApiCoachLoginRoute: ApiCoachLoginRoute,
@@ -550,12 +571,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-  }
-}
