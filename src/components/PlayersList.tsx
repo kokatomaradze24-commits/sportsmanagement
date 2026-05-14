@@ -66,7 +66,25 @@ function PlayerForm({ initial, sport, onSubmit, onCancel }: {
   const [firstName, setFirstName] = useState(initial?.first_name || "");
   const [lastName, setLastName] = useState(initial?.last_name || "");
   const [tNumber, setTNumber] = useState(initial?.t_number?.toString() || "");
-  const [birthDate, setBirthDate] = useState(initial?.birth_date || "");
+  const initialBirth = initial?.birth_date || "";
+  const [birthYear, setBirthYear] = useState(initialBirth ? initialBirth.slice(0, 4) : "");
+  const [birthMonth, setBirthMonth] = useState(initialBirth ? String(Number(initialBirth.slice(5, 7))) : "");
+  const [birthDay, setBirthDay] = useState(initialBirth ? String(Number(initialBirth.slice(8, 10))) : "");
+  const birthDate = birthYear && birthMonth && birthDay
+    ? `${birthYear}-${birthMonth.padStart(2, "0")}-${birthDay.padStart(2, "0")}`
+    : "";
+  const birthYears = useMemo(() => {
+    const yr = new Date().getFullYear();
+    return Array.from({ length: 81 }, (_, i) => yr - i);
+  }, []);
+  const daysInBirthMonth = useMemo(() => {
+    const m = Number(birthMonth);
+    const y = Number(birthYear);
+    if (!m) return 31;
+    if (!y) return m === 2 ? 29 : [4, 6, 9, 11].includes(m) ? 30 : 31;
+    return new Date(y, m, 0).getDate();
+  }, [birthMonth, birthYear]);
+  const selectClass = "flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring";
   const [phone, setPhone] = useState(() => prefillPhone(initial?.phone, language));
   const [parentPhone, setParentPhone] = useState(() => prefillPhone(initial?.parent_phone, language));
   const [email, setEmail] = useState(initial?.email || "");
@@ -127,13 +145,26 @@ function PlayerForm({ initial, sport, onSubmit, onCancel }: {
       </div>
       <div>
         <label className="text-sm text-muted-foreground mb-1 block">{t("birthDate")} *</label>
-        <Input
-          type="date"
-          value={birthDate}
-          onChange={(e) => setBirthDate(e.target.value)}
-          max={new Date().toISOString().slice(0, 10)}
-          required
-        />
+        <div className="grid grid-cols-3 gap-2">
+          <select value={birthDay} onChange={(e) => setBirthDay(e.target.value)} required className={selectClass} aria-label={t("regDay")}>
+            <option value="">{t("regDay")}</option>
+            {Array.from({ length: daysInBirthMonth }, (_, i) => i + 1).map((d) => (
+              <option key={d} value={d}>{d}</option>
+            ))}
+          </select>
+          <select value={birthMonth} onChange={(e) => setBirthMonth(e.target.value)} required className={selectClass} aria-label={t("regMonth")}>
+            <option value="">{t("regMonth")}</option>
+            {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => (
+              <option key={m} value={m}>{monthShort(m)}</option>
+            ))}
+          </select>
+          <select value={birthYear} onChange={(e) => setBirthYear(e.target.value)} required className={selectClass} aria-label={t("regYear")}>
+            <option value="">{t("regYear")}</option>
+            {birthYears.map((y) => (
+              <option key={y} value={y}>{y}</option>
+            ))}
+          </select>
+        </div>
       </div>
       <div>
         <label className="text-sm text-muted-foreground mb-1 block">{t("phone")}</label>
