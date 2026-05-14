@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as StatsAnalysisRouteImport } from './routes/stats-analysis'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SharePreviewRouteImport } from './routes/share-preview'
 import { Route as LoginRouteImport } from './routes/login'
@@ -35,6 +36,11 @@ import { Route as ApiAiGenerateTrainingPlanRouteImport } from './routes/api/ai/g
 import { Route as ApiAiGenerateImageRouteImport } from './routes/api/ai/generate-image'
 import { Route as ApiAiAnalyzeStatsRouteImport } from './routes/api/ai/analyze-stats'
 
+const StatsAnalysisRoute = StatsAnalysisRouteImport.update({
+  id: '/stats-analysis',
+  path: '/stats-analysis',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
@@ -175,6 +181,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/share-preview': typeof SharePreviewRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/stats-analysis': typeof StatsAnalysisRoute
   '/api/og-preview': typeof ApiOgPreviewRoute
   '/hooks/send-payment-sms': typeof HooksSendPaymentSmsRoute
   '/register/$linkId': typeof RegisterLinkIdRoute
@@ -202,6 +209,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/share-preview': typeof SharePreviewRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/stats-analysis': typeof StatsAnalysisRoute
   '/api/og-preview': typeof ApiOgPreviewRoute
   '/hooks/send-payment-sms': typeof HooksSendPaymentSmsRoute
   '/register/$linkId': typeof RegisterLinkIdRoute
@@ -230,6 +238,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/share-preview': typeof SharePreviewRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/stats-analysis': typeof StatsAnalysisRoute
   '/api/og-preview': typeof ApiOgPreviewRoute
   '/hooks/send-payment-sms': typeof HooksSendPaymentSmsRoute
   '/register/$linkId': typeof RegisterLinkIdRoute
@@ -259,6 +268,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/share-preview'
     | '/sitemap.xml'
+    | '/stats-analysis'
     | '/api/og-preview'
     | '/hooks/send-payment-sms'
     | '/register/$linkId'
@@ -286,6 +296,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/share-preview'
     | '/sitemap.xml'
+    | '/stats-analysis'
     | '/api/og-preview'
     | '/hooks/send-payment-sms'
     | '/register/$linkId'
@@ -313,6 +324,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/share-preview'
     | '/sitemap.xml'
+    | '/stats-analysis'
     | '/api/og-preview'
     | '/hooks/send-payment-sms'
     | '/register/$linkId'
@@ -341,6 +353,7 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   SharePreviewRoute: typeof SharePreviewRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  StatsAnalysisRoute: typeof StatsAnalysisRoute
   ApiOgPreviewRoute: typeof ApiOgPreviewRoute
   HooksSendPaymentSmsRoute: typeof HooksSendPaymentSmsRoute
   RegisterLinkIdRoute: typeof RegisterLinkIdRoute
@@ -363,6 +376,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/stats-analysis': {
+      id: '/stats-analysis'
+      path: '/stats-analysis'
+      fullPath: '/stats-analysis'
+      preLoaderRoute: typeof StatsAnalysisRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/sitemap.xml': {
       id: '/sitemap.xml'
       path: '/sitemap.xml'
@@ -549,6 +569,7 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   SharePreviewRoute: SharePreviewRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  StatsAnalysisRoute: StatsAnalysisRoute,
   ApiOgPreviewRoute: ApiOgPreviewRoute,
   HooksSendPaymentSmsRoute: HooksSendPaymentSmsRoute,
   RegisterLinkIdRoute: RegisterLinkIdRoute,
