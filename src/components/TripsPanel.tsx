@@ -579,7 +579,7 @@ export function TripsPanel({
 
   return (
     <section className="bg-card/80 backdrop-blur-sm rounded-2xl border border-border p-5 shadow-sm hover:shadow-md transition-shadow">
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
         <div className="flex items-center gap-2">
           <span className="text-2xl">🚌</span>
           <h2 className="text-xl font-display font-bold gradient-text">{t("tripsTitle")}</h2>

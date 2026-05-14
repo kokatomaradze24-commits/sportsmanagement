@@ -272,7 +272,7 @@ export function TeamsPanel({
 
   return (
     <div className="bg-card/80 backdrop-blur-sm rounded-2xl border border-border p-5 shadow-sm">
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
         <div className="flex items-center gap-2">
           <Users className="w-5 h-5 text-primary" />
           <h2 className="text-xl font-display tracking-wider">{t("teams")}</h2>

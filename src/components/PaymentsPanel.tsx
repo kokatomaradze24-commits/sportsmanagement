@@ -83,7 +83,7 @@ export function PaymentsPanel({ player, payments, loading, onUpdate }: PaymentsP
 
   return (
     <div className="space-y-4">
-      <div className="flex items-start justify-between gap-3">
+      <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <h2 className="text-2xl tracking-wider text-foreground">{t("paymentSchedule")}</h2>
           <p className="text-sm text-muted-foreground">

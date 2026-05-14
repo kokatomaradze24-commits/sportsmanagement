@@ -363,9 +363,9 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between gap-2">
+      <div className="flex flex-wrap items-center justify-between gap-2">
         <h2 className="text-2xl tracking-wider text-foreground">{sport.members}</h2>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
         <Button size="sm" variant="outline" className="shadow-sm hover:shadow-md" onClick={handleAllDebtsPdf} onMouseEnter={() => play("hover")}>
           <FileText className="w-4 h-4" /> დავალიანებები PDF
         </Button>
