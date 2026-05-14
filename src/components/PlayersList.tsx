@@ -84,7 +84,7 @@ function PlayerForm({ initial, sport, onSubmit, onCancel }: {
     if (!y) return m === 2 ? 29 : [4, 6, 9, 11].includes(m) ? 30 : 31;
     return new Date(y, m, 0).getDate();
   }, [birthMonth, birthYear]);
-  const selectClass = "flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring";
+  const selectClass = "flex h-9 w-full rounded-md border border-input bg-background text-foreground px-3 py-1 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring [&>option]:bg-background [&>option]:text-foreground";
   const [phone, setPhone] = useState(() => prefillPhone(initial?.phone, language));
   const [parentPhone, setParentPhone] = useState(() => prefillPhone(initial?.parent_phone, language));
   const [email, setEmail] = useState(initial?.email || "");
