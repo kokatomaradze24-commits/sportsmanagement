@@ -39,6 +39,7 @@ export function RegistrationNotificationsBell({ sportId, userId, label }: Props)
             description: `${row.first_name ?? ""} ${row.last_name ?? ""} დარეგისტრირდა`,
             icon: <UserPlus className="w-4 h-4" />,
           });
+          play("success");
           void refetch();
         },
       )
