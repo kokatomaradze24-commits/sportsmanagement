@@ -69,9 +69,9 @@ export function RegistrationNotificationsBell({ sportId, userId, label }: Props)
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   exit={{ scale: 0 }}
-                  className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 rounded-full bg-destructive text-destructive-foreground text-[10px] font-bold flex items-center justify-center leading-none ring-2 ring-background"
+                  className="absolute -top-1 -right-1 min-w-[20px] h-[20px] px-1.5 rounded-full bg-destructive text-destructive-foreground text-[11px] font-bold flex items-center justify-center leading-none ring-2 ring-background"
                 >
-                  {count > 9 ? "9+" : count}
+                  {count > 99 ? "99+" : count}
                 </motion.span>
               )}
             </AnimatePresence>
