@@ -29,7 +29,6 @@ import type { Database } from "@/integrations/supabase/types";
 import ogImage from "@/assets/og-home.jpg";
 import basketballBg from "@/assets/basketball-court-bg.png";
 import footballBg from "@/assets/football-stadium-bg.png";
-import mmaBg from "@/assets/mma-bg.jpg";
 
 type Player = Database["public"]["Tables"]["players"]["Row"];
 
