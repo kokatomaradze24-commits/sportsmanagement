@@ -7,6 +7,7 @@ import { AnimatePresence } from "framer-motion";
 import { lovable } from "@/integrations/lovable/index";
 import loginBg1 from "@/assets/login-bg-1.png";
 import loginBg2 from "@/assets/login-bg-2.png";
+import myClubLogo from "@/assets/my-club-logo.png";
 import { supabase } from "@/integrations/supabase/client";
 import { useI18n } from "@/hooks/use-i18n";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
