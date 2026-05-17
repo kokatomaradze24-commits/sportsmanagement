@@ -136,7 +136,7 @@ export function SubscriptionPaymentDialog({ open, onOpenChange, onSuccess }: Pro
       buttonsRef.current = [];
       container.replaceChildren();
     };
-  }, [sdkReady, session, open, clientId, onOpenChange, onSuccess]);
+  }, [sdkReady, session, open, clientId, onOpenChange, onSuccess, selectedPlanId, selectedPlan.label]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
