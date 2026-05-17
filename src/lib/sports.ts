@@ -1,12 +1,4 @@
-export type SportId =
-  | "basketball"
-  | "football"
-  | "rugby"
-  | "tennis"
-  | "dancing"
-  | "fitness"
-  | "swimming"
-  | "mma";
+export type SportId = "basketball" | "football";
 
 export interface SportConfig {
   id: SportId;
