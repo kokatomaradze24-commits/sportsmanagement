@@ -492,6 +492,9 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
                   <Button size="icon" className="h-8 w-8" onClick={() => approveRegistrationRequest(request)} title="დამტკიცება">
                     <Check className="w-3.5 h-3.5" />
                   </Button>
+                  <Button size="icon" variant="destructive" className="h-8 w-8" onClick={() => rejectRegistrationRequest(request)} title="წაშლა">
+                    <X className="w-3.5 h-3.5" />
+                  </Button>
                 </div>
               </div>
             ))}
