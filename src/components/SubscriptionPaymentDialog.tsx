@@ -64,6 +64,7 @@ export function SubscriptionPaymentDialog({ open, onOpenChange, onSuccess }: Pro
             "Content-Type": "application/json",
             Authorization: `Bearer ${session.access_token}`,
           },
+          body: JSON.stringify({ planId: selectedPlanId }),
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || "Failed to create order");
@@ -78,11 +79,11 @@ export function SubscriptionPaymentDialog({ open, onOpenChange, onSuccess }: Pro
               "Content-Type": "application/json",
               Authorization: `Bearer ${session.access_token}`,
             },
-            body: JSON.stringify({ orderId: data.orderID }),
+            body: JSON.stringify({ orderId: data.orderID, planId: selectedPlanId }),
           });
           const json = await res.json();
           if (!res.ok) throw new Error(json.error || "Capture failed");
-          toast.success("წვდომა გააქტიურდა 30 დღით");
+          toast.success(`წვდომა გააქტიურდა ${selectedPlan.label}-ით`);
           onSuccess?.();
           onOpenChange(false);
           setTimeout(() => window.location.reload(), 800);
