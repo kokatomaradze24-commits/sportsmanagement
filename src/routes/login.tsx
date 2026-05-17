@@ -185,6 +185,8 @@ function LoginPage() {
     }, 6000);
     return () => window.clearInterval(id);
   }, [bgImages.length]);
+
+  useEffect(() => {
     // Defer mounting the autoplaying tutorial video so it doesn't block
     // initial paint / hydration. Keeps autoplay UX after the page settles.
     const w = window as Window & {
