@@ -5,7 +5,7 @@ import { CreditCard, Check, Loader2, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/use-auth";
 import { loadPaypalSdk } from "@/lib/paypal-sdk";
-import { SUBSCRIPTION_PLAN } from "@/lib/subscription-plan";
+import { SUBSCRIPTION_PLAN, SUBSCRIPTION_PLANS, getPlan } from "@/lib/subscription-plan";
 
 interface Props {
   open: boolean;
