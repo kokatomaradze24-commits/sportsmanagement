@@ -1,0 +1,2 @@
+ALTER TABLE public.player_registration_requests REPLICA IDENTITY FULL;
+ALTER PUBLICATION supabase_realtime ADD TABLE public.player_registration_requests;
