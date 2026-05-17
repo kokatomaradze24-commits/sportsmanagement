@@ -14,6 +14,7 @@ import { LanguageSwitcher } from "./LanguageSwitcher";
 import { LogoAdjustDialog } from "./LogoAdjustDialog";
 import { AIImageGenerator } from "./AIImageGenerator";
 import { AICreditsBadge } from "./AICreditsBadge";
+import { RegistrationNotificationsBell } from "./RegistrationNotificationsBell";
 import type { AppTheme } from "@/hooks/use-theme";
 
 interface AppHeaderProps {
@@ -30,9 +31,10 @@ interface AppHeaderProps {
   currentTheme?: AppTheme;
   themes?: { id: AppTheme; label: string }[];
   onSelectTheme?: (theme: AppTheme) => void;
+  userId?: string;
 }
 
-export function AppHeader({ schoolName, logoUrl, sport, isDark, onToggleTheme, onUpdateName, onUploadLogo, onChangeSport, onResetBranding, onSignOut, currentTheme, themes = [], onSelectTheme }: AppHeaderProps) {
+export function AppHeader({ schoolName, logoUrl, sport, isDark, onToggleTheme, onUpdateName, onUploadLogo, onChangeSport, onResetBranding, onSignOut, currentTheme, themes = [], onSelectTheme, userId }: AppHeaderProps) {
   const [editing, setEditing] = useState(false);
   const [nameValue, setNameValue] = useState(schoolName);
   const [logoFile, setLogoFile] = useState<File | null>(null);
@@ -166,6 +168,8 @@ export function AppHeader({ schoolName, logoUrl, sport, isDark, onToggleTheme, o
             <AICreditsBadge />
             <span className="text-[10px] text-muted-foreground leading-none">AI კრედიტი</span>
           </div>
+
+          <RegistrationNotificationsBell sportId={sport.id} userId={userId} label="შეტყობინება" />
 
           <div className="flex flex-col items-center gap-1">
             <AIImageGenerator
