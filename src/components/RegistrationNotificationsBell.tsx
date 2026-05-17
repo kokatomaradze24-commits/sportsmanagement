@@ -18,7 +18,9 @@ export function RegistrationNotificationsBell({ sportId, userId, label }: Props)
   const { requests, refetch } = usePlayerRegistrationRequests(sportId);
   const { play } = useSounds();
   const [open, setOpen] = useState(false);
-  const count = requests.length;
+  const [seenIds, setSeenIds] = useState<Set<string>>(new Set());
+  const visibleRequests = requests.filter((r) => !seenIds.has(r.id));
+  const count = visibleRequests.length;
 
   useEffect(() => {
     if (!userId || !sportId) return;
