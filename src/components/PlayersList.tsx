@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, Pencil, Trash2, User, Phone, Search, Filter, ChevronDown, Link as LinkIcon, ExternalLink, Check, Eye, FileText } from "lucide-react";
+import { Plus, Pencil, Trash2, User, Phone, Search, Filter, ChevronDown, Link as LinkIcon, ExternalLink, Check, Eye, FileText, X } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
