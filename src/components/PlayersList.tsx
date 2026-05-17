@@ -393,7 +393,7 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" data-players-list>
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h2 className="text-2xl tracking-wider text-foreground">{sport.members}</h2>
         <div className="flex items-center gap-2 flex-wrap">
