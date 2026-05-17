@@ -19,9 +19,11 @@ export function SubscriptionPaymentDialog({ open, onOpenChange, onSuccess }: Pro
   const [sdkReady, setSdkReady] = useState(false);
   const [processing, setProcessing] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [selectedPlanId, setSelectedPlanId] = useState<string>("pro_yearly");
   const containerRef = useRef<HTMLDivElement | null>(null);
   const buttonsRef = useRef<Array<{ close?: () => void }>>([]);
   const renderIdRef = useRef(0);
+  const selectedPlan = getPlan(selectedPlanId);
 
   useEffect(() => {
     if (!open) return;
