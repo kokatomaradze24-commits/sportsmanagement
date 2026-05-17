@@ -105,13 +105,13 @@ function Index() {
   // Tutorial: shows once for new users
   const showTutorial = !settingsLoading && !onboardingLoading && !tutorialDone;
 
-  const isBasketball = sportId === "basketball";
+  const sportBg = sportId === "basketball" ? basketballBg : sportId === "football" ? footballBg : null;
 
   return (
     <div
-      className={`min-h-screen bg-background relative overflow-hidden ${isBasketball ? "no-ambient-lines" : "theme-ambient-bg"}`}
-      style={isBasketball ? {
-        backgroundImage: `linear-gradient(180deg, rgba(2,6,23,0.72), rgba(2,6,23,0.85)), url(${basketballBg})`,
+      className={`min-h-screen bg-background relative overflow-hidden ${sportBg ? "no-ambient-lines" : "theme-ambient-bg"}`}
+      style={sportBg ? {
+        backgroundImage: `linear-gradient(180deg, rgba(2,6,23,0.72), rgba(2,6,23,0.85)), url(${sportBg})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundAttachment: "fixed",
