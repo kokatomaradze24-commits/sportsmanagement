@@ -266,7 +266,7 @@ function LoginPage() {
                   initial={{ opacity: 0, y: 12 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.15 + i * 0.06 }}
-                  className="flex gap-3 items-start p-3.5 rounded-xl bg-white/[0.03] border border-white/10 hover:bg-white/[0.06] hover:border-white/20 transition-all"
+                  className="flex gap-3 items-start p-3.5 rounded-xl bg-white/[0.05] border border-white/10 shadow-[0_10px_30px_-12px_rgba(0,0,0,0.7),inset_0_1px_0_rgba(255,255,255,0.08)] hover:bg-white/[0.08] hover:border-white/20 hover:-translate-y-0.5 hover:shadow-[0_18px_40px_-12px_rgba(249,115,22,0.35),inset_0_1px_0_rgba(255,255,255,0.12)] transition-all"
                 >
                   <div className="flex-shrink-0 w-9 h-9 rounded-lg bg-gradient-to-br from-orange-500/20 to-amber-500/10 border border-orange-400/20 flex items-center justify-center">
                     <Icon className="w-4.5 h-4.5 text-orange-300" strokeWidth={2.2} />
