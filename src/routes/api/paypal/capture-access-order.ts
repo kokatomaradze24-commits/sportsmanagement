@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { paypalFetch } from "@/lib/paypal.server";
-import { SUBSCRIPTION_PLAN } from "@/lib/subscription-plan";
+import { getPlan } from "@/lib/subscription-plan";
 
 async function authenticate(request: Request) {
   const authHeader = request.headers.get("Authorization") ?? "";
