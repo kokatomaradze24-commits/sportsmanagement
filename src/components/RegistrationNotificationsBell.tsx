@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { supabase } from "@/integrations/supabase/client";
 import { usePlayerRegistrationRequests } from "@/hooks/use-player-registration-requests";
+import { useSounds } from "@/hooks/use-sounds";
 
 interface Props {
   sportId: string;
@@ -15,6 +16,7 @@ interface Props {
 
 export function RegistrationNotificationsBell({ sportId, userId, label }: Props) {
   const { requests, refetch } = usePlayerRegistrationRequests(sportId);
+  const { play } = useSounds();
   const [open, setOpen] = useState(false);
   const count = requests.length;
 
@@ -37,6 +39,7 @@ export function RegistrationNotificationsBell({ sportId, userId, label }: Props)
             description: `${row.first_name ?? ""} ${row.last_name ?? ""} დარეგისტრირდა`,
             icon: <UserPlus className="w-4 h-4" />,
           });
+          play("success");
           void refetch();
         },
       )
@@ -45,7 +48,7 @@ export function RegistrationNotificationsBell({ sportId, userId, label }: Props)
     return () => {
       void supabase.removeChannel(channel);
     };
-  }, [userId, sportId, refetch]);
+  }, [userId, sportId, refetch, play]);
 
   const handleScrollToList = () => {
     setOpen(false);
@@ -66,9 +69,9 @@ export function RegistrationNotificationsBell({ sportId, userId, label }: Props)
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   exit={{ scale: 0 }}
-                  className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 rounded-full bg-destructive text-destructive-foreground text-[10px] font-bold flex items-center justify-center leading-none ring-2 ring-background"
+                  className="absolute -top-1 -right-1 min-w-[20px] h-[20px] px-1.5 rounded-full bg-destructive text-destructive-foreground text-[11px] font-bold flex items-center justify-center leading-none ring-2 ring-background"
                 >
-                  {count > 9 ? "9+" : count}
+                  {count > 99 ? "99+" : count}
                 </motion.span>
               )}
             </AnimatePresence>
