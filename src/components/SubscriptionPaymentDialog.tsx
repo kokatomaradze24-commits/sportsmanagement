@@ -5,7 +5,7 @@ import { CreditCard, Check, Loader2, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/use-auth";
 import { loadPaypalSdk } from "@/lib/paypal-sdk";
-import { SUBSCRIPTION_PLAN } from "@/lib/subscription-plan";
+import { SUBSCRIPTION_PLAN, SUBSCRIPTION_PLANS, getPlan } from "@/lib/subscription-plan";
 
 interface Props {
   open: boolean;
@@ -19,9 +19,11 @@ export function SubscriptionPaymentDialog({ open, onOpenChange, onSuccess }: Pro
   const [sdkReady, setSdkReady] = useState(false);
   const [processing, setProcessing] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [selectedPlanId, setSelectedPlanId] = useState<string>("pro_yearly");
   const containerRef = useRef<HTMLDivElement | null>(null);
   const buttonsRef = useRef<Array<{ close?: () => void }>>([]);
   const renderIdRef = useRef(0);
+  const selectedPlan = getPlan(selectedPlanId);
 
   useEffect(() => {
     if (!open) return;
@@ -62,6 +64,7 @@ export function SubscriptionPaymentDialog({ open, onOpenChange, onSuccess }: Pro
             "Content-Type": "application/json",
             Authorization: `Bearer ${session.access_token}`,
           },
+          body: JSON.stringify({ planId: selectedPlanId }),
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || "Failed to create order");
@@ -76,11 +79,11 @@ export function SubscriptionPaymentDialog({ open, onOpenChange, onSuccess }: Pro
               "Content-Type": "application/json",
               Authorization: `Bearer ${session.access_token}`,
             },
-            body: JSON.stringify({ orderId: data.orderID }),
+            body: JSON.stringify({ orderId: data.orderID, planId: selectedPlanId }),
           });
           const json = await res.json();
           if (!res.ok) throw new Error(json.error || "Capture failed");
-          toast.success("წვდომა გააქტიურდა 30 დღით");
+          toast.success(`წვდომა გააქტიურდა ${selectedPlan.label}-ით`);
           onSuccess?.();
           onOpenChange(false);
           setTimeout(() => window.location.reload(), 800);
@@ -133,7 +136,7 @@ export function SubscriptionPaymentDialog({ open, onOpenChange, onSuccess }: Pro
       buttonsRef.current = [];
       container.replaceChildren();
     };
-  }, [sdkReady, session, open, clientId, onOpenChange, onSuccess]);
+  }, [sdkReady, session, open, clientId, onOpenChange, onSuccess, selectedPlanId, selectedPlan.label]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -148,18 +151,47 @@ export function SubscriptionPaymentDialog({ open, onOpenChange, onSuccess }: Pro
           </DialogDescription>
         </DialogHeader>
 
-        <div className="rounded-2xl border bg-gradient-to-br from-primary/10 to-primary/5 p-5 my-2">
-          <div className="flex items-baseline gap-2 flex-wrap">
-            <span className="text-2xl font-semibold text-muted-foreground line-through decoration-destructive/70">$40</span>
-            <span className="text-4xl font-bold">${SUBSCRIPTION_PLAN.amount}</span>
-            <span className="text-muted-foreground">/ 30 დღე</span>
-            <span className="text-xs font-bold text-destructive bg-destructive/10 rounded-full px-2 py-0.5">-75%</span>
-          </div>
-          <div className="mt-2 inline-flex items-center gap-1.5 text-xs font-semibold text-primary bg-primary/15 rounded-full px-2.5 py-1">
+        <div className="grid grid-cols-2 gap-2 my-2">
+          {SUBSCRIPTION_PLANS.map((p) => {
+            const active = p.id === selectedPlanId;
+            const isYear = p.days >= 365;
+            return (
+              <button
+                key={p.id}
+                type="button"
+                onClick={() => setSelectedPlanId(p.id)}
+                className={`relative text-left rounded-2xl border-2 p-4 transition ${
+                  active
+                    ? "border-primary bg-primary/10"
+                    : "border-border bg-muted/30 hover:border-primary/40"
+                }`}
+              >
+                {isYear && (
+                  <span className="absolute -top-2 right-3 text-[10px] font-bold bg-primary text-primary-foreground rounded-full px-2 py-0.5">
+                    ყველაზე მომგებიანი
+                  </span>
+                )}
+                <div className="text-sm font-semibold">{p.label}</div>
+                <div className="mt-1 flex items-baseline gap-1.5">
+                  <span className="text-sm text-muted-foreground line-through decoration-destructive/70">
+                    ${p.originalAmount}
+                  </span>
+                  <span className="text-2xl font-bold">${p.amount}</span>
+                </div>
+                <div className="mt-1 text-[10px] font-bold text-destructive">
+                  -{p.discountPct}%
+                </div>
+              </button>
+            );
+          })}
+        </div>
+
+        <div className="rounded-2xl border bg-gradient-to-br from-primary/10 to-primary/5 p-4 my-2">
+          <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary bg-primary/15 rounded-full px-2.5 py-1">
             <Check className="h-3 w-3" />
             ერთჯერადი გადახდა — ავტო-განახლების გარეშე
           </div>
-          <ul className="text-sm space-y-1.5 mt-4 text-muted-foreground">
+          <ul className="text-sm space-y-1.5 mt-3 text-muted-foreground">
             <li className="flex gap-2"><Check className="h-4 w-4 text-primary shrink-0 mt-0.5" /> ულიმიტო წვდომა საიტზე!</li>
             <li className="flex gap-2"><Check className="h-4 w-4 text-primary shrink-0 mt-0.5" /> მართე შენი კლუბი შეზღუდვების გარეშე!</li>
           </ul>

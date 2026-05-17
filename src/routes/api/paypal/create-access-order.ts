@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { paypalFetch } from "@/lib/paypal.server";
-import { SUBSCRIPTION_PLAN } from "@/lib/subscription-plan";
+import { getPlan } from "@/lib/subscription-plan";
 
 async function authenticate(request: Request) {
   const authHeader = request.headers.get("Authorization") ?? "";
@@ -19,6 +19,9 @@ export const Route = createFileRoute("/api/paypal/create-access-order")({
         const user = await authenticate(request);
         if (!user) return Response.json({ error: "Unauthorized" }, { status: 401 });
 
+        const body = (await request.json().catch(() => ({}))) as { planId?: string };
+        const plan = getPlan(String(body.planId || "pro_monthly"));
+
         try {
           const order = (await paypalFetch("/v2/checkout/orders", {
             method: "POST",
@@ -26,12 +29,12 @@ export const Route = createFileRoute("/api/paypal/create-access-order")({
               intent: "CAPTURE",
               purchase_units: [
                 {
-                  reference_id: SUBSCRIPTION_PLAN.id,
-                  description: `${SUBSCRIPTION_PLAN.name} — 30 დღე`,
-                  custom_id: user.id,
+                  reference_id: plan.id,
+                  description: `${plan.name} — ${plan.label}`,
+                  custom_id: `${user.id}|${plan.id}`,
                   amount: {
-                    currency_code: SUBSCRIPTION_PLAN.currency,
-                    value: SUBSCRIPTION_PLAN.amount.toFixed(2),
+                    currency_code: plan.currency,
+                    value: plan.amount.toFixed(2),
                   },
                 },
               ],
@@ -46,7 +49,7 @@ export const Route = createFileRoute("/api/paypal/create-access-order")({
             }),
           })) as { id: string };
 
-          return Response.json({ orderId: order.id });
+          return Response.json({ orderId: order.id, planId: plan.id });
         } catch (e) {
           return Response.json({ error: e instanceof Error ? e.message : String(e) }, { status: 500 });
         }
