@@ -27,7 +27,7 @@ export const SUBSCRIPTION_PLANS: SubscriptionPlanDef[] = [
     id: "pro_yearly",
     name: "Sports Management Pro — Yearly",
     description: "Full access for 1 year",
-    amount: 100,
+    amount: 99,
     originalAmount: 480,
     currency: "USD",
     days: 365,
