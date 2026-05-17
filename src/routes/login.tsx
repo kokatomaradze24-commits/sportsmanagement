@@ -225,9 +225,9 @@ function LoginPage() {
         <AnimatePresence mode="sync">
           <motion.div
             key={bgIndex}
-            initial={{ opacity: 0, x: 60 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -60 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
             transition={{ duration: 1.2, ease: "easeInOut" }}
             className="absolute inset-0 bg-cover bg-center"
             style={{ backgroundImage: `url(${bgImages[bgIndex]})` }}
