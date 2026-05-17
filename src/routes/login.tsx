@@ -246,7 +246,7 @@ function LoginPage() {
       <div className="relative z-10 w-full max-w-6xl grid grid-cols-1 lg:grid-cols-[1.1fr_minmax(0,420px)] gap-10 lg:gap-16 items-center">
 
         {/* Marketing / Features column */}
-        <div className="text-white order-2 lg:order-1">
+        <div className="text-white order-2 lg:order-1 rounded-3xl bg-slate-950/40 backdrop-blur-xl border border-white/10 p-6 sm:p-8 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.8),0_10px_30px_-12px_rgba(249,115,22,0.25),inset_0_1px_0_rgba(255,255,255,0.08)] ring-1 ring-white/5">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-orange-500/10 border border-orange-400/30 text-orange-300 text-xs font-medium mb-5">
             <span className="w-1.5 h-1.5 rounded-full bg-orange-400 animate-pulse" />
             {copy.tagline}
