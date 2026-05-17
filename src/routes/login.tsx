@@ -236,33 +236,22 @@ function LoginPage() {
   };
 
   return (
-    <div className="relative min-h-screen overflow-hidden flex items-center justify-center px-4 py-10 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
-      {/* Animated gradient orbs */}
+    <div className="relative min-h-screen overflow-hidden flex items-center justify-center px-4 py-10 bg-slate-950">
+      {/* Sliding background images */}
       <div className="absolute inset-0 overflow-hidden">
-        <motion.div
-          animate={{
-            x: [0, 100, 0],
-            y: [0, 50, 0],
-          }}
-          transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute -top-40 -left-40 w-[500px] h-[500px] rounded-full bg-orange-500/20 blur-[120px]"
-        />
-        <motion.div
-          animate={{
-            x: [0, -80, 0],
-            y: [0, -60, 0],
-          }}
-          transition={{ duration: 25, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute top-1/3 -right-40 w-[600px] h-[600px] rounded-full bg-blue-500/20 blur-[120px]"
-        />
-        <motion.div
-          animate={{
-            x: [0, 60, 0],
-            y: [0, -80, 0],
-          }}
-          transition={{ duration: 22, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute -bottom-40 left-1/3 w-[500px] h-[500px] rounded-full bg-emerald-500/20 blur-[120px]"
-        />
+        <AnimatePresence mode="sync">
+          <motion.div
+            key={bgIndex}
+            initial={{ opacity: 0, x: 60 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -60 }}
+            transition={{ duration: 1.2, ease: "easeInOut" }}
+            className="absolute inset-0 bg-cover bg-center"
+            style={{ backgroundImage: `url(${bgImages[bgIndex]})` }}
+          />
+        </AnimatePresence>
+        {/* Dark overlay for readability */}
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-950/85 via-slate-950/70 to-slate-950/85" />
       </div>
 
       {/* Stadium-light grid overlay */}
