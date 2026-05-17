@@ -186,22 +186,6 @@ function LoginPage() {
   }, [bgImages.length]);
 
   useEffect(() => {
-    // Defer mounting the autoplaying tutorial video so it doesn't block
-    // initial paint / hydration. Keeps autoplay UX after the page settles.
-    const w = window as Window & {
-      requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number;
-      cancelIdleCallback?: (id: number) => void;
-    };
-    const id: number = w.requestIdleCallback
-      ? w.requestIdleCallback(() => setShowVideo(true), { timeout: 3000 })
-      : window.setTimeout(() => setShowVideo(true), 1500);
-    return () => {
-      if (w.cancelIdleCallback) w.cancelIdleCallback(id);
-      else window.clearTimeout(id);
-    };
-  }, []);
-
-  useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) navigate({ to: "/" });
     });
