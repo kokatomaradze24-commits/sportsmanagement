@@ -7,6 +7,7 @@ import { AnimatePresence } from "framer-motion";
 import { lovable } from "@/integrations/lovable/index";
 import loginBg1 from "@/assets/login-bg-1.png";
 import loginBg2 from "@/assets/login-bg-2.png";
+import myClubLogo from "@/assets/my-club-logo.png";
 import { supabase } from "@/integrations/supabase/client";
 import { useI18n } from "@/hooks/use-i18n";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
@@ -303,30 +304,14 @@ function LoginPage() {
           className="relative w-full max-w-md mx-auto lg:mx-0 order-1 lg:order-2"
         >
           <div className="text-center mb-8">
-            <motion.div
-              initial={{ scale: 0, rotate: -180 }}
-              animate={{ scale: 1, rotate: 0 }}
-              transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-              className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br from-orange-400 via-amber-500 to-yellow-500 shadow-2xl shadow-orange-500/40 mb-5 ring-1 ring-white/20"
-            >
-              <Trophy className="w-10 h-10 text-white drop-shadow-lg" strokeWidth={2.5} />
-            </motion.div>
-            <motion.h1
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-              className="text-5xl font-display tracking-[0.15em] text-white drop-shadow-lg"
-            >
-              MY
-            </motion.h1>
-            <motion.h2
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
-              className="text-3xl font-display tracking-[0.3em] bg-gradient-to-r from-orange-400 via-amber-300 to-yellow-400 bg-clip-text text-transparent mt-1"
-            >
-              CLUB
-            </motion.h2>
+            <motion.img
+              src={myClubLogo}
+              alt="My Club"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.2, duration: 0.6, ease: "easeOut" }}
+              className="mx-auto w-64 h-auto drop-shadow-2xl"
+            />
           </div>
 
           <motion.div
