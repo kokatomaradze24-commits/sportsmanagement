@@ -126,7 +126,7 @@ export function RegistrationNotificationsBell({ sportId, userId, label }: Props)
           </div>
           {count > 0 && (
             <div className="px-4 py-2 border-t border-border">
-              <Button variant="ghost" size="sm" className="w-full text-xs" onClick={handleScrollToList}>
+              <Button variant="ghost" size="sm" className="w-full text-xs" onClick={() => handleScrollToList()}>
                 მოთამაშეების სიაში გადასვლა
               </Button>
             </div>
