@@ -333,7 +333,7 @@ function LoginPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
-            className="bg-white/[0.04] backdrop-blur-xl rounded-2xl border border-white/10 p-6 shadow-2xl space-y-4"
+            className="bg-white/[0.06] backdrop-blur-xl rounded-2xl border border-white/15 p-6 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.85),0_10px_30px_-12px_rgba(249,115,22,0.3),inset_0_1px_0_rgba(255,255,255,0.12)] ring-1 ring-white/10 space-y-4"
           >
             <div className="text-center pb-2">
               <h3 className="text-lg font-semibold text-white">{copy.ctaTitle}</h3>
