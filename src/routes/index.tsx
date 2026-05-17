@@ -105,7 +105,7 @@ function Index() {
   // Tutorial: shows once for new users
   const showTutorial = !settingsLoading && !onboardingLoading && !tutorialDone;
 
-  const sportBg = sportId === "basketball" ? basketballBg : sportId === "football" ? footballBg : sportId === "mma" ? mmaBg : null;
+  const sportBg = sportId === "basketball" ? basketballBg : sportId === "football" ? footballBg : null;
 
   return (
     <div
