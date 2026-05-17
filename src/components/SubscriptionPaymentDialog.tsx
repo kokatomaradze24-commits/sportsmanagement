@@ -149,9 +149,11 @@ export function SubscriptionPaymentDialog({ open, onOpenChange, onSuccess }: Pro
         </DialogHeader>
 
         <div className="rounded-2xl border bg-gradient-to-br from-primary/10 to-primary/5 p-5 my-2">
-          <div className="flex items-baseline gap-1">
+          <div className="flex items-baseline gap-2 flex-wrap">
+            <span className="text-2xl font-semibold text-muted-foreground line-through decoration-destructive/70">$40</span>
             <span className="text-4xl font-bold">${SUBSCRIPTION_PLAN.amount}</span>
             <span className="text-muted-foreground">/ 30 დღე</span>
+            <span className="text-xs font-bold text-destructive bg-destructive/10 rounded-full px-2 py-0.5">-75%</span>
           </div>
           <div className="mt-2 inline-flex items-center gap-1.5 text-xs font-semibold text-primary bg-primary/15 rounded-full px-2.5 py-1">
             <Check className="h-3 w-3" />
