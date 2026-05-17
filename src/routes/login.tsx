@@ -210,6 +210,7 @@ function LoginPage() {
     try {
       const result = await lovable.auth.signInWithOAuth("google", {
         redirect_uri: window.location.origin,
+        extraParams: { prompt: "select_account" },
       });
       if (result.error) {
         setError("Sign in failed. Please try again.");
