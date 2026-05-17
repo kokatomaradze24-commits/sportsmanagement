@@ -106,5 +106,15 @@ export function usePlayerRegistrationRequests(sport: string, onApproved?: () => 
     return { error: updateError };
   }, [fetchRequests, onApproved]);
 
-  return { requests, loading, approveRequest, refetch: fetchRequests };
+  const rejectRequest = useCallback(async (request: PlayerRegistrationRequest) => {
+    const client = supabase as any;
+    const { error } = await client
+      .from("player_registration_requests")
+      .update({ status: "rejected", reviewed_at: new Date().toISOString() })
+      .eq("id", request.id);
+    if (!error) await fetchRequests();
+    return { error };
+  }, [fetchRequests]);
+
+  return { requests, loading, approveRequest, rejectRequest, refetch: fetchRequests };
 }
