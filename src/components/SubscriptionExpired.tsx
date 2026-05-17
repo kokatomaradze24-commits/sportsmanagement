@@ -34,7 +34,8 @@ export function SubscriptionExpired() {
         <div className="flex flex-col gap-2">
           <Button size="lg" onClick={() => setOpen(true)}>
             <CreditCard className="h-4 w-4 mr-2" />
-            გადახდა — $9.99 / 30 დღე
+            გადახდა — <span className="line-through opacity-70 ml-1">$40</span> $9.99 / 30 დღე
+            <span className="ml-2 text-[10px] font-bold bg-destructive/20 text-destructive rounded-full px-1.5 py-0.5">-75%</span>
           </Button>
           <Button size="lg" variant="ghost" onClick={signOut}>
             <LogOut className="h-4 w-4 mr-2" />
