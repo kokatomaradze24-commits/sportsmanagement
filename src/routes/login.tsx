@@ -317,7 +317,7 @@ function LoginPage() {
               transition={{ delay: 0.3 }}
               className="text-5xl font-display tracking-[0.15em] text-white drop-shadow-lg"
             >
-              CLUB
+              MY
             </motion.h1>
             <motion.h2
               initial={{ opacity: 0, y: 10 }}
@@ -325,7 +325,7 @@ function LoginPage() {
               transition={{ delay: 0.4 }}
               className="text-3xl font-display tracking-[0.3em] bg-gradient-to-r from-orange-400 via-amber-300 to-yellow-400 bg-clip-text text-transparent mt-1"
             >
-              MANAGEMENT
+              CLUB
             </motion.h2>
           </div>
 
