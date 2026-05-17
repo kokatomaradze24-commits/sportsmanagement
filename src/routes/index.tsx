@@ -27,6 +27,7 @@ import { useOnboarding } from "@/hooks/use-onboarding";
 import { useI18n } from "@/hooks/use-i18n";
 import type { Database } from "@/integrations/supabase/types";
 import ogImage from "@/assets/og-home.jpg";
+import basketballBg from "@/assets/basketball-court-bg.png";
 
 type Player = Database["public"]["Tables"]["players"]["Row"];
 
