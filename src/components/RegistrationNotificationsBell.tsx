@@ -100,11 +100,11 @@ export function RegistrationNotificationsBell({ sportId, userId, label }: Props)
               </div>
             ) : (
               <ul className="divide-y divide-border">
-                {requests.map((r) => (
+                {visibleRequests.map((r) => (
                   <li key={r.id}>
                     <button
                       type="button"
-                      onClick={handleScrollToList}
+                      onClick={() => handleScrollToList(r.id)}
                       className="w-full px-4 py-3 flex items-start gap-3 hover:bg-muted/50 text-left transition-colors"
                     >
                       <div className="w-8 h-8 rounded-full bg-primary/15 text-primary flex items-center justify-center flex-shrink-0">
