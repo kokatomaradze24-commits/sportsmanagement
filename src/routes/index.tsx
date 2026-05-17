@@ -104,8 +104,18 @@ function Index() {
   // Tutorial: shows once for new users
   const showTutorial = !settingsLoading && !onboardingLoading && !tutorialDone;
 
+  const isBasketball = sportId === "basketball";
+
   return (
-    <div className="min-h-screen bg-background theme-ambient-bg relative overflow-hidden">
+    <div
+      className={`min-h-screen bg-background relative overflow-hidden ${isBasketball ? "no-ambient-lines" : "theme-ambient-bg"}`}
+      style={isBasketball ? {
+        backgroundImage: `linear-gradient(180deg, rgba(2,6,23,0.72), rgba(2,6,23,0.85)), url(${basketballBg})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundAttachment: "fixed",
+      } : undefined}
+    >
 
       <div className="relative z-10">
         <OnboardingTutorial
