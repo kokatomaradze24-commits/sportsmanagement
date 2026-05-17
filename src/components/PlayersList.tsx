@@ -529,9 +529,14 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
                 )}
               </div>
               {viewRequest.notes && <div><p className="text-muted-foreground">შენიშვნა</p><p className="whitespace-pre-wrap">{viewRequest.notes}</p></div>}
-              <Button className="w-full" onClick={() => approveRegistrationRequest(viewRequest)}>
-                <Check className="w-4 h-4 mr-2" /> მოთამაშედ დამატება
-              </Button>
+              <div className="flex gap-2">
+                <Button variant="outline" className="flex-1" onClick={() => rejectRegistrationRequest(viewRequest)}>
+                  <X className="w-4 h-4 mr-2" /> წაშლა
+                </Button>
+                <Button className="flex-1" onClick={() => approveRegistrationRequest(viewRequest)}>
+                  <Check className="w-4 h-4 mr-2" /> მოთამაშედ დამატება
+                </Button>
+              </div>
             </div>
           )}
         </DialogContent>
