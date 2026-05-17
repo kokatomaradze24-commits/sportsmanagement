@@ -267,29 +267,6 @@ function LoginPage() {
           </h2>
           <p className="text-base sm:text-lg text-slate-300/90 mb-6 max-w-xl leading-relaxed">{copy.subline}</p>
 
-          {/* App tutorial video */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="relative mb-8 rounded-2xl overflow-hidden border border-white/10 shadow-2xl shadow-orange-500/10 bg-slate-950"
-          >
-            {showVideo ? (
-              <video
-                src="/my-club-tutorial.mp4"
-                autoPlay
-                loop
-                muted
-                playsInline
-                preload="metadata"
-                className="w-full h-auto block"
-              />
-            ) : (
-              <div className="w-full aspect-video" aria-hidden="true" />
-            )}
-            <div className="pointer-events-none absolute inset-0 ring-1 ring-inset ring-white/10 rounded-2xl" />
-          </motion.div>
-
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-8">
             {copy.features.map((feature, i) => {
               const Icon = FEATURE_ICONS[i % FEATURE_ICONS.length];
