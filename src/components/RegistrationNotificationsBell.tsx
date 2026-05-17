@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { supabase } from "@/integrations/supabase/client";
 import { usePlayerRegistrationRequests } from "@/hooks/use-player-registration-requests";
+import { useSounds } from "@/hooks/use-sounds";
 
 interface Props {
   sportId: string;
