@@ -175,7 +175,6 @@ function LoginPage() {
   const copy = MARKETING[language] ?? MARKETING.en;
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [showVideo, setShowVideo] = useState(false);
   const bgImages = [loginBg1, loginBg2];
   const [bgIndex, setBgIndex] = useState(0);
 
