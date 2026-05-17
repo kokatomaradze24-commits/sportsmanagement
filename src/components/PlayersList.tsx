@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, Pencil, Trash2, User, Phone, Search, Filter, ChevronDown, Link as LinkIcon, ExternalLink, Check, Eye, FileText } from "lucide-react";
+import { Plus, Pencil, Trash2, User, Phone, Search, Filter, ChevronDown, Link as LinkIcon, ExternalLink, Check, Eye, FileText, X } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -382,6 +382,16 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
     }
   };
 
+  const rejectRegistrationRequest = async (request: PlayerRegistrationRequest) => {
+    play("click");
+    const { error } = await registrationRequests.rejectRequest(request);
+    if (error) toast.error("წაშლა ვერ მოხერხდა");
+    else {
+      toast.success("რეგისტრაცია წაიშალა");
+      setViewRequest(null);
+    }
+  };
+
   const handlePlayerPdf = async (player: Player) => {
     play("success");
     await downloadPlayerPaymentsPdf({ player, payments, clubName: schoolName, sportName: sport.name, monthShort, formatMoney, language });
@@ -482,6 +492,9 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
                   <Button size="icon" className="h-8 w-8" onClick={() => approveRegistrationRequest(request)} title="დამტკიცება">
                     <Check className="w-3.5 h-3.5" />
                   </Button>
+                  <Button size="icon" variant="destructive" className="h-8 w-8" onClick={() => rejectRegistrationRequest(request)} title="წაშლა">
+                    <X className="w-3.5 h-3.5" />
+                  </Button>
                 </div>
               </div>
             ))}
@@ -516,9 +529,14 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
                 )}
               </div>
               {viewRequest.notes && <div><p className="text-muted-foreground">შენიშვნა</p><p className="whitespace-pre-wrap">{viewRequest.notes}</p></div>}
-              <Button className="w-full" onClick={() => approveRegistrationRequest(viewRequest)}>
-                <Check className="w-4 h-4 mr-2" /> მოთამაშედ დამატება
-              </Button>
+              <div className="flex gap-2">
+                <Button variant="outline" className="flex-1" onClick={() => rejectRegistrationRequest(viewRequest)}>
+                  <X className="w-4 h-4 mr-2" /> წაშლა
+                </Button>
+                <Button className="flex-1" onClick={() => approveRegistrationRequest(viewRequest)}>
+                  <Check className="w-4 h-4 mr-2" /> მოთამაშედ დამატება
+                </Button>
+              </div>
             </div>
           )}
         </DialogContent>

@@ -18,7 +18,9 @@ export function RegistrationNotificationsBell({ sportId, userId, label }: Props)
   const { requests, refetch } = usePlayerRegistrationRequests(sportId);
   const { play } = useSounds();
   const [open, setOpen] = useState(false);
-  const count = requests.length;
+  const [seenIds, setSeenIds] = useState<Set<string>>(new Set());
+  const visibleRequests = requests.filter((r) => !seenIds.has(r.id));
+  const count = visibleRequests.length;
 
   useEffect(() => {
     if (!userId || !sportId) return;
@@ -50,8 +52,17 @@ export function RegistrationNotificationsBell({ sportId, userId, label }: Props)
     };
   }, [userId, sportId, refetch, play]);
 
-  const handleScrollToList = () => {
+  const handleScrollToList = (requestId?: string) => {
     setOpen(false);
+    if (requestId) {
+      setSeenIds((prev) => {
+        const next = new Set(prev);
+        next.add(requestId);
+        return next;
+      });
+    } else {
+      setSeenIds(new Set(requests.map((r) => r.id)));
+    }
     const el = document.querySelector<HTMLElement>("[data-players-list]");
     el?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
@@ -89,11 +100,11 @@ export function RegistrationNotificationsBell({ sportId, userId, label }: Props)
               </div>
             ) : (
               <ul className="divide-y divide-border">
-                {requests.map((r) => (
+                {visibleRequests.map((r) => (
                   <li key={r.id}>
                     <button
                       type="button"
-                      onClick={handleScrollToList}
+                      onClick={() => handleScrollToList(r.id)}
                       className="w-full px-4 py-3 flex items-start gap-3 hover:bg-muted/50 text-left transition-colors"
                     >
                       <div className="w-8 h-8 rounded-full bg-primary/15 text-primary flex items-center justify-center flex-shrink-0">
@@ -115,7 +126,7 @@ export function RegistrationNotificationsBell({ sportId, userId, label }: Props)
           </div>
           {count > 0 && (
             <div className="px-4 py-2 border-t border-border">
-              <Button variant="ghost" size="sm" className="w-full text-xs" onClick={handleScrollToList}>
+              <Button variant="ghost" size="sm" className="w-full text-xs" onClick={() => handleScrollToList()}>
                 მოთამაშეების სიაში გადასვლა
               </Button>
             </div>
