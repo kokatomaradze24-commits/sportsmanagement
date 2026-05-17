@@ -176,8 +176,15 @@ function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showVideo, setShowVideo] = useState(false);
+  const bgImages = [loginBg1, loginBg2];
+  const [bgIndex, setBgIndex] = useState(0);
 
   useEffect(() => {
+    const id = window.setInterval(() => {
+      setBgIndex((i) => (i + 1) % bgImages.length);
+    }, 6000);
+    return () => window.clearInterval(id);
+  }, [bgImages.length]);
     // Defer mounting the autoplaying tutorial video so it doesn't block
     // initial paint / hydration. Keeps autoplay UX after the page settles.
     const w = window as Window & {
