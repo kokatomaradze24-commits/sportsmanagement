@@ -29,7 +29,6 @@ import type { Database } from "@/integrations/supabase/types";
 import ogImage from "@/assets/og-home.jpg";
 import basketballBg from "@/assets/basketball-court-bg.png";
 import footballBg from "@/assets/football-stadium-bg.png";
-import mmaBg from "@/assets/mma-bg.jpg";
 
 type Player = Database["public"]["Tables"]["players"]["Row"];
 
@@ -106,7 +105,7 @@ function Index() {
   // Tutorial: shows once for new users
   const showTutorial = !settingsLoading && !onboardingLoading && !tutorialDone;
 
-  const sportBg = sportId === "basketball" ? basketballBg : sportId === "football" ? footballBg : sportId === "mma" ? mmaBg : null;
+  const sportBg = sportId === "basketball" ? basketballBg : sportId === "football" ? footballBg : null;
 
   return (
     <div
