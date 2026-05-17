@@ -382,6 +382,16 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
     }
   };
 
+  const rejectRegistrationRequest = async (request: PlayerRegistrationRequest) => {
+    play("click");
+    const { error } = await registrationRequests.rejectRequest(request);
+    if (error) toast.error("წაშლა ვერ მოხერხდა");
+    else {
+      toast.success("რეგისტრაცია წაიშალა");
+      setViewRequest(null);
+    }
+  };
+
   const handlePlayerPdf = async (player: Player) => {
     play("success");
     await downloadPlayerPaymentsPdf({ player, payments, clubName: schoolName, sportName: sport.name, monthShort, formatMoney, language });
