@@ -246,7 +246,7 @@ function LoginPage() {
       <div className="relative z-10 w-full max-w-6xl grid grid-cols-1 lg:grid-cols-[1.1fr_minmax(0,420px)] gap-10 lg:gap-16 items-center">
 
         {/* Marketing / Features column */}
-        <div className="text-white order-2 lg:order-1">
+        <div className="text-white order-2 lg:order-1 rounded-3xl bg-slate-950/40 backdrop-blur-xl border border-white/10 p-6 sm:p-8 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.8),0_10px_30px_-12px_rgba(249,115,22,0.25),inset_0_1px_0_rgba(255,255,255,0.08)] ring-1 ring-white/5">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-orange-500/10 border border-orange-400/30 text-orange-300 text-xs font-medium mb-5">
             <span className="w-1.5 h-1.5 rounded-full bg-orange-400 animate-pulse" />
             {copy.tagline}
@@ -266,7 +266,7 @@ function LoginPage() {
                   initial={{ opacity: 0, y: 12 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.15 + i * 0.06 }}
-                  className="flex gap-3 items-start p-3.5 rounded-xl bg-white/[0.03] border border-white/10 hover:bg-white/[0.06] hover:border-white/20 transition-all"
+                  className="flex gap-3 items-start p-3.5 rounded-xl bg-white/[0.05] border border-white/10 shadow-[0_10px_30px_-12px_rgba(0,0,0,0.7),inset_0_1px_0_rgba(255,255,255,0.08)] hover:bg-white/[0.08] hover:border-white/20 hover:-translate-y-0.5 hover:shadow-[0_18px_40px_-12px_rgba(249,115,22,0.35),inset_0_1px_0_rgba(255,255,255,0.12)] transition-all"
                 >
                   <div className="flex-shrink-0 w-9 h-9 rounded-lg bg-gradient-to-br from-orange-500/20 to-amber-500/10 border border-orange-400/20 flex items-center justify-center">
                     <Icon className="w-4.5 h-4.5 text-orange-300" strokeWidth={2.2} />
@@ -333,7 +333,7 @@ function LoginPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
-            className="bg-white/[0.04] backdrop-blur-xl rounded-2xl border border-white/10 p-6 shadow-2xl space-y-4"
+            className="bg-white/[0.06] backdrop-blur-xl rounded-2xl border border-white/15 p-6 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.85),0_10px_30px_-12px_rgba(249,115,22,0.3),inset_0_1px_0_rgba(255,255,255,0.12)] ring-1 ring-white/10 space-y-4"
           >
             <div className="text-center pb-2">
               <h3 className="text-lg font-semibold text-white">{copy.ctaTitle}</h3>
