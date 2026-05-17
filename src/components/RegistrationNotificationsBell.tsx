@@ -52,8 +52,17 @@ export function RegistrationNotificationsBell({ sportId, userId, label }: Props)
     };
   }, [userId, sportId, refetch, play]);
 
-  const handleScrollToList = () => {
+  const handleScrollToList = (requestId?: string) => {
     setOpen(false);
+    if (requestId) {
+      setSeenIds((prev) => {
+        const next = new Set(prev);
+        next.add(requestId);
+        return next;
+      });
+    } else {
+      setSeenIds(new Set(requests.map((r) => r.id)));
+    }
     const el = document.querySelector<HTMLElement>("[data-players-list]");
     el?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
