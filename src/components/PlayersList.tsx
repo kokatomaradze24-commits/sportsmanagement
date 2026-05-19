@@ -452,9 +452,25 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
         </Dialog>
         </div>
       </div>
+      {registrationLink.registrationUrl && (
+        <div className="rounded-xl border border-primary/20 bg-primary/5 p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="min-w-0">
+            <p className="text-sm font-semibold text-foreground">{t("playerRegLinkLabel")}</p>
+          </div>
+          <div className="flex gap-2 shrink-0">
+            <Button size="sm" variant="outline" onClick={copyRegistrationLink}>
+              <LinkIcon className="w-3.5 h-3.5 mr-1" /> {t("copyBtn")}
+            </Button>
+            <Button size="sm" variant="ghost" asChild>
+              <a href={registrationLink.registrationUrl} target="_blank" rel="noreferrer">
+                <ExternalLink className="w-3.5 h-3.5 mr-1" /> {t("viewBtn")}
+              </a>
+            </Button>
+          </div>
+        </div>
+      )}
 
 
-      {registrationRequests.requests.length > 0 && (
         <div className="rounded-xl border border-border bg-card p-3 space-y-2">
           <div className="flex items-center justify-between gap-2">
             <p className="text-sm font-semibold text-foreground">{t("newRegistrationsLabel")}</p>
