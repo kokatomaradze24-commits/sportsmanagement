@@ -470,7 +470,7 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
         </div>
       )}
 
-
+      {registrationRequests.requests.length > 0 && (
         <div className="rounded-xl border border-border bg-card p-3 space-y-2">
           <div className="flex items-center justify-between gap-2">
             <p className="text-sm font-semibold text-foreground">{t("newRegistrationsLabel")}</p>
