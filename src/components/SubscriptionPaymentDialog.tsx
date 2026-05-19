@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { CreditCard, Check, Loader2, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/use-auth";
+import { useI18n } from "@/hooks/use-i18n";
 import { loadPaypalSdk } from "@/lib/paypal-sdk";
 import { SUBSCRIPTION_PLAN, SUBSCRIPTION_PLANS, getPlan } from "@/lib/subscription-plan";
 
