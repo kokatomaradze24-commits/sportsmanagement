@@ -215,11 +215,11 @@ export function SubscriptionPaymentDialog({ open, onOpenChange, onSuccess }: Pro
         </div>
 
         <p className="text-[11px] text-muted-foreground text-center mt-2 flex items-center justify-center gap-1">
-          <CreditCard className="h-3 w-3" /> უსაფრთხო გადახდა PayPal-ით — ბარათი, Apple Pay, Google Pay
+          <CreditCard className="h-3 w-3" /> {t("payDlgSecurePaypal")}
         </p>
 
         <Button variant="ghost" onClick={() => onOpenChange(false)} className="mt-1">
-          მოგვიანებით
+          {t("payDlgLater")}
         </Button>
       </DialogContent>
     </Dialog>
