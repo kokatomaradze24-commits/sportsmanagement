@@ -79,7 +79,7 @@ function StatsAnalysisPage() {
   const { isAuthenticated, loading: authLoading } = useAuth();
   const { schoolName } = useAppSettings();
   const { sportId } = useSport();
-  const { language } = useI18n();
+  const { language, t } = useI18n();
   const { credits, refresh: refreshCredits } = useAICredits();
 
   const [files, setFiles] = useState<UploadedFile[]>([]);
@@ -110,24 +110,24 @@ function StatsAnalysisPage() {
       try {
         if (file.type.startsWith("image/")) {
           if (file.size > 5 * 1024 * 1024) {
-            toast.error(`${file.name}: ფაილი ძალიან დიდია (მაქს 5MB)`);
+            toast.error(t("statsTooLarge", { name: file.name }));
             continue;
           }
           const dataUrl = await readFileAsDataUrl(file);
           next.push({ id, name: file.name, type: "image", size: file.size, dataUrl });
         } else if (file.type === "application/pdf") {
           if (file.size > 15 * 1024 * 1024) {
-            toast.error(`${file.name}: PDF ძალიან დიდია (მაქს 15MB)`);
+            toast.error(t("statsPdfTooLarge", { name: file.name }));
             continue;
           }
           const { text, pageCount } = await extractPdfText(file);
           next.push({ id, name: file.name, type: "pdf", size: file.size, extractedText: text, pageCount });
         } else {
-          toast.error(`${file.name}: მხოლოდ სურათი ან PDF`);
+          toast.error(t("statsOnlyImageOrPdf", { name: file.name }));
         }
       } catch (err) {
         console.error(err);
-        toast.error(`${file.name}: ვერ ვამუშავებ ფაილს`);
+        toast.error(t("statsProcessError", { name: file.name }));
       }
     }
     setFiles((prev) => [...prev, ...next].slice(0, 8));
@@ -138,11 +138,11 @@ function StatsAnalysisPage() {
 
   const runAnalysis = async () => {
     if (files.length === 0) {
-      toast.error("ატვირთე მინიმუმ ერთი ფაილი");
+      toast.error(t("statsUploadAtLeastOne"));
       return;
     }
     if (!schoolName) {
-      toast.error("კლუბის სახელი არ არის მითითებული");
+      toast.error(t("statsClubNameMissing"));
       return;
     }
     setBusy(true);
@@ -151,7 +151,7 @@ function StatsAnalysisPage() {
       const { data: sessionData } = await supabase.auth.getSession();
       const token = sessionData.session?.access_token;
       if (!token) {
-        toast.error("გაიარე ავტორიზაცია");
+        toast.error(t("statsAuthRequired"));
         return;
       }
       const text = files
@@ -178,20 +178,20 @@ function StatsAnalysisPage() {
 
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        toast.error(data.error || "ანალიზი ვერ მოხერხდა");
+        toast.error(data.error || t("statsAnalysisFailed"));
         return;
       }
       const data = (await res.json()) as AnalysisResult;
       setResult(data);
       refreshCredits();
       if (!data.team_identified) {
-        toast.warning("გუნდი ვერ მოიძებნა სტატისტიკაში");
+        toast.warning(t("statsTeamNotFound"));
       } else {
-        toast.success("ანალიზი მზადაა");
+        toast.success(t("statsReady"));
       }
     } catch (err) {
       console.error(err);
-      toast.error("ქსელის შეცდომა");
+      toast.error(t("statsNetworkError"));
     } finally {
       setBusy(false);
     }
@@ -211,11 +211,11 @@ function StatsAnalysisPage() {
           <Button variant="ghost" size="sm" asChild>
             <Link to="/">
               <ArrowLeft className="w-4 h-4 mr-2" />
-              უკან
+              {t("statsBack")}
             </Link>
           </Button>
           <Badge variant="outline" className="text-xs">
-            AI კრედიტი: {credits ?? "—"} · ღირებულება: 5
+            {t("statsAiCredits")}: {credits ?? "—"} · {t("statsCost")}: 5
           </Badge>
         </div>
 
@@ -229,36 +229,36 @@ function StatsAnalysisPage() {
               <Sparkles className="w-6 h-6 text-primary" />
             </div>
             <div className="min-w-0">
-              <h1 className="text-2xl font-display tracking-wider">სტატისტიკის ანალიზი</h1>
+              <h1 className="text-2xl font-display tracking-wider">{t("statsTitle")}</h1>
               <p className="text-sm text-muted-foreground mt-1">
-                ატვირთე მატჩის/ტურნირის სტატისტიკა (სურათი ან PDF). AI იპოვის{" "}
-                <span className="font-semibold text-foreground">{schoolName || "შენს კლუბს"}</span>{" "}
-                სტატისტიკაში და მოამზადებს დეტალურ ანალიზს და რჩევებს რაზე გაქვს სამუშაო.
+                {t("statsDescPrefix")}{" "}
+                <span className="font-semibold text-foreground">{schoolName || t("statsYourClub")}</span>{" "}
+                {t("statsDescSuffix")}
               </p>
             </div>
           </div>
 
           <div className="mt-6 space-y-4">
             <div>
-              <label className="text-sm font-medium mb-2 block">დამატებითი კონტექსტი (არასავალდებულო)</label>
+              <label className="text-sm font-medium mb-2 block">{t("statsContextLabel")}</label>
               <Textarea
                 value={context}
                 onChange={(e) => setContext(e.target.value)}
-                placeholder="მაგ: U16 ლიგის ფინალი, მოწინააღმდეგე გუნდი X, წინა მატჩი წავაგეთ..."
+                placeholder={t("statsContextPlaceholder")}
                 rows={2}
                 maxLength={2000}
               />
             </div>
 
             <div>
-              <label className="text-sm font-medium mb-2 block">ფაილები ({files.length}/8)</label>
+              <label className="text-sm font-medium mb-2 block">{t("statsFilesLabel")} ({files.length}/8)</label>
               <div
                 onClick={() => fileRef.current?.click()}
                 className="border-2 border-dashed border-border rounded-xl p-6 text-center cursor-pointer hover:border-primary/50 hover:bg-primary/5 transition-colors"
               >
                 <Upload className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
-                <p className="text-sm font-medium">დააჭირე ან ჩააგდე სურათი / PDF</p>
-                <p className="text-xs text-muted-foreground mt-1">JPG, PNG, WEBP ან PDF · მაქს 8 ფაილი</p>
+                <p className="text-sm font-medium">{t("statsDropzoneText")}</p>
+                <p className="text-xs text-muted-foreground mt-1">{t("statsDropzoneHint")}</p>
                 <input
                   ref={fileRef}
                   type="file"
@@ -274,7 +274,7 @@ function StatsAnalysisPage() {
 
               {parsing && (
                 <p className="text-xs text-muted-foreground mt-2 flex items-center gap-2">
-                  <Loader2 className="w-3 h-3 animate-spin" /> ფაილის დამუშავება...
+                  <Loader2 className="w-3 h-3 animate-spin" /> {t("statsParsing")}
                 </p>
               )}
 
@@ -293,8 +293,8 @@ function StatsAnalysisPage() {
                         <p className="text-sm font-medium truncate">{f.name}</p>
                         <p className="text-xs text-muted-foreground">
                           {f.type === "pdf"
-                            ? `PDF · ${f.pageCount} გვ. · ${f.extractedText?.length ?? 0} სიმბოლო`
-                            : `სურათი · ${(f.size / 1024).toFixed(0)} KB`}
+                            ? t("statsPdfMeta", { pages: f.pageCount ?? 0, chars: f.extractedText?.length ?? 0 })
+                            : t("statsImageMeta", { size: (f.size / 1024).toFixed(0) })}
                         </p>
                       </div>
                       <Button size="icon" variant="ghost" onClick={() => removeFile(f.id)}>
@@ -314,11 +314,11 @@ function StatsAnalysisPage() {
             >
               {busy ? (
                 <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" /> ანალიზი მიმდინარეობს...
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" /> {t("statsAnalyzing")}
                 </>
               ) : (
                 <>
-                  <Sparkles className="w-4 h-4 mr-2" /> გენერირება (5 კრედიტი)
+                  <Sparkles className="w-4 h-4 mr-2" /> {t("statsGenerate", { credits: 5 })}
                 </>
               )}
             </Button>
@@ -340,8 +340,8 @@ function StatsAnalysisPage() {
                 )}
                 <h2 className="text-xl font-display tracking-wider">
                   {result.team_identified
-                    ? `გუნდი: ${result.identified_team_name || schoolName}`
-                    : "გუნდი ვერ ცალსახად მოიძებნა"}
+                    ? t("statsTeamLabel", { name: result.identified_team_name || schoolName || "" })
+                    : t("statsTeamAmbiguous")}
                 </h2>
               </div>
               <p className="text-sm leading-relaxed whitespace-pre-wrap">{result.summary}</p>
@@ -349,7 +349,7 @@ function StatsAnalysisPage() {
 
             {result.key_metrics && result.key_metrics.length > 0 && (
               <div className="theme-panel rounded-2xl border border-border p-6 shadow-sm">
-                <h3 className="text-lg font-display tracking-wider mb-3">📊 ძირითადი მაჩვენებლები</h3>
+                <h3 className="text-lg font-display tracking-wider mb-3">📊 {t("statsKeyMetrics")}</h3>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                   {result.key_metrics.map((m, i) => (
                     <div key={i} className="rounded-lg border border-border p-3 bg-muted/30">
@@ -365,7 +365,7 @@ function StatsAnalysisPage() {
             <div className="grid sm:grid-cols-2 gap-4">
               {result.strengths && result.strengths.length > 0 && (
                 <div className="theme-panel rounded-2xl border border-success/30 bg-success/5 p-5">
-                  <h3 className="text-base font-display tracking-wider mb-2 text-success">✅ ძლიერი მხარეები</h3>
+                  <h3 className="text-base font-display tracking-wider mb-2 text-success">✅ {t("statsStrengths")}</h3>
                   <ul className="space-y-2 text-sm">
                     {result.strengths.map((s, i) => (
                       <li key={i} className="flex gap-2">
@@ -379,7 +379,7 @@ function StatsAnalysisPage() {
 
               {result.weaknesses && result.weaknesses.length > 0 && (
                 <div className="theme-panel rounded-2xl border border-destructive/30 bg-destructive/5 p-5">
-                  <h3 className="text-base font-display tracking-wider mb-2 text-destructive">⚠️ სუსტი მხარეები</h3>
+                  <h3 className="text-base font-display tracking-wider mb-2 text-destructive">⚠️ {t("statsWeaknesses")}</h3>
                   <ul className="space-y-2 text-sm">
                     {result.weaknesses.map((w, i) => (
                       <li key={i} className="flex gap-2">
@@ -394,7 +394,7 @@ function StatsAnalysisPage() {
 
             {result.top_players && result.top_players.length > 0 && (
               <div className="theme-panel rounded-2xl border border-border p-6 shadow-sm">
-                <h3 className="text-lg font-display tracking-wider mb-3">⭐ ლიდერი მოთამაშეები</h3>
+                <h3 className="text-lg font-display tracking-wider mb-3">⭐ {t("statsTopPlayers")}</h3>
                 <div className="space-y-2">
                   {result.top_players.map((p, i) => (
                     <div key={i} className="flex gap-3 items-start p-2 rounded-lg hover:bg-muted/30">
@@ -412,13 +412,13 @@ function StatsAnalysisPage() {
             )}
 
             <div className="theme-panel rounded-2xl border border-primary/40 bg-primary/5 p-6 shadow-sm">
-              <h3 className="text-lg font-display tracking-wider mb-3 text-primary">🎯 რჩევები — რაზე გვაქვს სამუშაო</h3>
+              <h3 className="text-lg font-display tracking-wider mb-3 text-primary">🎯 {t("statsRecommendations")}</h3>
               <div className="space-y-3">
                 {result.recommendations.map((r, i) => (
                   <div key={i} className="rounded-lg border border-border bg-background p-3">
                     <div className="flex items-center gap-2 mb-1 flex-wrap">
                       <span className={`text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full border ${priorityColor(r.priority)}`}>
-                        {r.priority === "high" ? "მაღალი" : r.priority === "medium" ? "საშუალო" : "დაბალი"}
+                        {r.priority === "high" ? t("statsPriorityHigh") : r.priority === "medium" ? t("statsPriorityMedium") : t("statsPriorityLow")}
                       </span>
                       <p className="font-semibold text-sm">{r.area}</p>
                     </div>
