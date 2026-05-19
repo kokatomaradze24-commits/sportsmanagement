@@ -290,11 +290,11 @@ export function AICreditsPurchaseDialog({ open, onOpenChange, onSuccess }: Props
         </div>
 
         <p className="text-[11px] text-muted-foreground text-center mt-2">
-          🔒 უსაფრთხო გადახდა PayPal-ით — PayPal, ბარათი, Apple Pay და Google Pay (თუ ხელმისაწვდომია).
+          🔒 {t("aiDlgSecureFooter")}
         </p>
 
         <Button variant="ghost" onClick={() => onOpenChange(false)} className="mt-1">
-          გაუქმება
+          {t("cancel")}
         </Button>
       </DialogContent>
     </Dialog>
