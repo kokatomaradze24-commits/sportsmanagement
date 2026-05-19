@@ -191,11 +191,11 @@ export function SubscriptionPaymentDialog({ open, onOpenChange, onSuccess }: Pro
         <div className="rounded-2xl border bg-gradient-to-br from-primary/10 to-primary/5 p-4 my-2">
           <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary bg-primary/15 rounded-full px-2.5 py-1">
             <Check className="h-3 w-3" />
-            ერთჯერადი გადახდა — ავტო-განახლების გარეშე
+            {t("payDlgOneTimeBadge")}
           </div>
           <ul className="text-sm space-y-1.5 mt-3 text-muted-foreground">
-            <li className="flex gap-2"><Check className="h-4 w-4 text-primary shrink-0 mt-0.5" /> ულიმიტო წვდომა საიტზე!</li>
-            <li className="flex gap-2"><Check className="h-4 w-4 text-primary shrink-0 mt-0.5" /> მართე შენი კლუბი შეზღუდვების გარეშე!</li>
+            <li className="flex gap-2"><Check className="h-4 w-4 text-primary shrink-0 mt-0.5" /> {t("payDlgUnlimitedItem")}</li>
+            <li className="flex gap-2"><Check className="h-4 w-4 text-primary shrink-0 mt-0.5" /> {t("payDlgManageItem")}</li>
           </ul>
         </div>
 
