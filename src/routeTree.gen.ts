@@ -18,6 +18,7 @@ import { Route as CoachRouteImport } from './routes/coach'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as RegisterLinkIdRouteImport } from './routes/register.$linkId'
+import { Route as RCodeRouteImport } from './routes/r.$code'
 import { Route as HooksSendPaymentSmsRouteImport } from './routes/hooks/send-payment-sms'
 import { Route as ApiOgPreviewRouteImport } from './routes/api/og-preview'
 import { Route as ApiPublicPlayerRegistrationRouteImport } from './routes/api/public/player-registration'
@@ -79,6 +80,11 @@ const IndexRoute = IndexRouteImport.update({
 const RegisterLinkIdRoute = RegisterLinkIdRouteImport.update({
   id: '/register/$linkId',
   path: '/register/$linkId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RCodeRoute = RCodeRouteImport.update({
+  id: '/r/$code',
+  path: '/r/$code',
   getParentRoute: () => rootRouteImport,
 } as any)
 const HooksSendPaymentSmsRoute = HooksSendPaymentSmsRouteImport.update({
@@ -184,6 +190,7 @@ export interface FileRoutesByFullPath {
   '/stats-analysis': typeof StatsAnalysisRoute
   '/api/og-preview': typeof ApiOgPreviewRoute
   '/hooks/send-payment-sms': typeof HooksSendPaymentSmsRoute
+  '/r/$code': typeof RCodeRoute
   '/register/$linkId': typeof RegisterLinkIdRoute
   '/api/ai/analyze-stats': typeof ApiAiAnalyzeStatsRoute
   '/api/ai/generate-image': typeof ApiAiGenerateImageRoute
@@ -212,6 +219,7 @@ export interface FileRoutesByTo {
   '/stats-analysis': typeof StatsAnalysisRoute
   '/api/og-preview': typeof ApiOgPreviewRoute
   '/hooks/send-payment-sms': typeof HooksSendPaymentSmsRoute
+  '/r/$code': typeof RCodeRoute
   '/register/$linkId': typeof RegisterLinkIdRoute
   '/api/ai/analyze-stats': typeof ApiAiAnalyzeStatsRoute
   '/api/ai/generate-image': typeof ApiAiGenerateImageRoute
@@ -241,6 +249,7 @@ export interface FileRoutesById {
   '/stats-analysis': typeof StatsAnalysisRoute
   '/api/og-preview': typeof ApiOgPreviewRoute
   '/hooks/send-payment-sms': typeof HooksSendPaymentSmsRoute
+  '/r/$code': typeof RCodeRoute
   '/register/$linkId': typeof RegisterLinkIdRoute
   '/api/ai/analyze-stats': typeof ApiAiAnalyzeStatsRoute
   '/api/ai/generate-image': typeof ApiAiGenerateImageRoute
@@ -271,6 +280,7 @@ export interface FileRouteTypes {
     | '/stats-analysis'
     | '/api/og-preview'
     | '/hooks/send-payment-sms'
+    | '/r/$code'
     | '/register/$linkId'
     | '/api/ai/analyze-stats'
     | '/api/ai/generate-image'
@@ -299,6 +309,7 @@ export interface FileRouteTypes {
     | '/stats-analysis'
     | '/api/og-preview'
     | '/hooks/send-payment-sms'
+    | '/r/$code'
     | '/register/$linkId'
     | '/api/ai/analyze-stats'
     | '/api/ai/generate-image'
@@ -327,6 +338,7 @@ export interface FileRouteTypes {
     | '/stats-analysis'
     | '/api/og-preview'
     | '/hooks/send-payment-sms'
+    | '/r/$code'
     | '/register/$linkId'
     | '/api/ai/analyze-stats'
     | '/api/ai/generate-image'
@@ -356,6 +368,7 @@ export interface RootRouteChildren {
   StatsAnalysisRoute: typeof StatsAnalysisRoute
   ApiOgPreviewRoute: typeof ApiOgPreviewRoute
   HooksSendPaymentSmsRoute: typeof HooksSendPaymentSmsRoute
+  RCodeRoute: typeof RCodeRoute
   RegisterLinkIdRoute: typeof RegisterLinkIdRoute
   ApiAiAnalyzeStatsRoute: typeof ApiAiAnalyzeStatsRoute
   ApiAiGenerateImageRoute: typeof ApiAiGenerateImageRoute
@@ -437,6 +450,13 @@ declare module '@tanstack/react-router' {
       path: '/register/$linkId'
       fullPath: '/register/$linkId'
       preLoaderRoute: typeof RegisterLinkIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/r/$code': {
+      id: '/r/$code'
+      path: '/r/$code'
+      fullPath: '/r/$code'
+      preLoaderRoute: typeof RCodeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/hooks/send-payment-sms': {
@@ -572,6 +592,7 @@ const rootRouteChildren: RootRouteChildren = {
   StatsAnalysisRoute: StatsAnalysisRoute,
   ApiOgPreviewRoute: ApiOgPreviewRoute,
   HooksSendPaymentSmsRoute: HooksSendPaymentSmsRoute,
+  RCodeRoute: RCodeRoute,
   RegisterLinkIdRoute: RegisterLinkIdRoute,
   ApiAiAnalyzeStatsRoute: ApiAiAnalyzeStatsRoute,
   ApiAiGenerateImageRoute: ApiAiGenerateImageRoute,
