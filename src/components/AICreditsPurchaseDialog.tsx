@@ -101,11 +101,11 @@ export function AICreditsPurchaseDialog({ open, onOpenChange, onSuccess }: Props
         });
         const json = await res.json();
         if (!res.ok) throw new Error(json.error || "Capture failed");
-        toast.success(`დაემატა ${selected.credits} AI კრედიტი`);
+        toast.success(t("aiDlgCreditsAdded", { credits: selected.credits }));
         onSuccess?.(json.credits);
         onOpenChange(false);
       } catch (e) {
-        toast.error(e instanceof Error ? e.message : "Payment failed");
+        toast.error(e instanceof Error ? e.message : t("aiDlgPaymentFailed"));
       } finally {
         setProcessing(false);
       }
@@ -113,7 +113,7 @@ export function AICreditsPurchaseDialog({ open, onOpenChange, onSuccess }: Props
 
     const onError = (err: unknown) => {
       console.error("PayPal error", err);
-      toast.error("გადახდა ვერ მოხერხდა");
+      toast.error(t("aiDlgPaymentFailed"));
     };
 
     const buttonOptions = {
