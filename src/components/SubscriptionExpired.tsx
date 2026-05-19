@@ -65,7 +65,7 @@ export function SubscriptionExpired() {
               >
                 {isYear && (
                   <span className="absolute -top-2.5 right-3 inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider bg-primary text-primary-foreground rounded-full px-2 py-0.5 shadow">
-                    <Sparkles className="h-3 w-3" /> საუკეთესო
+                    <Sparkles className="h-3 w-3" /> {t("subExpBest")}
                   </span>
                 )}
                 <div className="text-sm font-semibold">{p.label}</div>
