@@ -688,7 +688,7 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
                         size="icon"
                         variant="ghost"
                         className="h-8 w-8 text-muted-foreground hover:text-primary"
-                        title="გადახდების PDF"
+                        title={t("paymentsPdf")}
                         onMouseEnter={() => play("hover")}
                         onClick={(e) => { e.stopPropagation(); void handlePlayerPdf(player); }}
                       >
