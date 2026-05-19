@@ -52,7 +52,7 @@ export function RegistrationNotificationsBell({ sportId, userId, label }: Props)
     return () => {
       void supabase.removeChannel(channel);
     };
-  }, [userId, sportId, refetch, play]);
+  }, [userId, sportId, refetch, play, t]);
 
   const handleScrollToList = (requestId?: string) => {
     setOpen(false);
