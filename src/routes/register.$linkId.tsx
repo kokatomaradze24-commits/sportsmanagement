@@ -62,6 +62,13 @@ function PublicPlayerRegistration() {
   const [lastCoach, setLastCoach] = useState("");
   const [notes, setNotes] = useState("");
 
+  // Switch UI language to match the link's owner once we know it.
+  useEffect(() => {
+    if (info?.language && LANGUAGES.some((l) => l.code === info.language) && info.language !== language) {
+      setLanguage(info.language);
+    }
+  }, [info?.language, language, setLanguage]);
+
   // When the page language changes, refresh empty phone defaults to match country.
   useEffect(() => {
     setPhone((v) => (v.trim() && v.trim() !== `${getDialCodeForLanguage(language).code}` ? v : prefillPhone("", pageLang)));
