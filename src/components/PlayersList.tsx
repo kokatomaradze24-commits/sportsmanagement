@@ -486,13 +486,13 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
                   <p className="text-xs text-muted-foreground truncate">{request.primary_contact === "parent" ? request.parent_phone : request.phone}</p>
                 </button>
                 <div className="flex items-center gap-1 shrink-0">
-                  <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => setViewRequest(request)} title="სრულად ნახვა">
+                  <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => setViewRequest(request)} title={t("viewFull")}>
                     <Eye className="w-3.5 h-3.5" />
                   </Button>
-                  <Button size="icon" className="h-8 w-8" onClick={() => approveRegistrationRequest(request)} title="დამტკიცება">
+                  <Button size="icon" className="h-8 w-8" onClick={() => approveRegistrationRequest(request)} title={t("approve")}>
                     <Check className="w-3.5 h-3.5" />
                   </Button>
-                  <Button size="icon" variant="destructive" className="h-8 w-8" onClick={() => rejectRegistrationRequest(request)} title="წაშლა">
+                  <Button size="icon" variant="destructive" className="h-8 w-8" onClick={() => rejectRegistrationRequest(request)} title={t("removeAction")}>
                     <X className="w-3.5 h-3.5" />
                   </Button>
                 </div>
