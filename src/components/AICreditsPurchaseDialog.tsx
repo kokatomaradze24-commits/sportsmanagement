@@ -170,10 +170,10 @@ export function AICreditsPurchaseDialog({ open, onOpenChange, onSuccess }: Props
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-primary" />
-            AI კრედიტების შეძენა
+            {t("buyAiCreditsTitle")}
           </DialogTitle>
           <DialogDescription>
-            აირჩიე პაკეტი და გადაიხადე ერთი უსაფრთხო გადახდის ღილაკით
+            {t("aiDlgDesc")}
           </DialogDescription>
         </DialogHeader>
 
