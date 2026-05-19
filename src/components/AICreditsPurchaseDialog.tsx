@@ -207,11 +207,11 @@ export function AICreditsPurchaseDialog({ open, onOpenChange, onSuccess }: Props
           <div className="flex items-center justify-between">
             <div>
               <div className="text-xs font-semibold text-primary uppercase tracking-wider">
-                1 თვიანი პაკეტი
+                {t("aiDlgOneMonthPkg")}
               </div>
               <div className="mt-1 flex items-baseline gap-2">
                 <span className="text-3xl font-bold">${selected.amount}</span>
-                <span className="text-sm text-muted-foreground">/ {selected.credits} კრედიტი</span>
+                <span className="text-sm text-muted-foreground">/ {selected.credits} {t("aiDlgCreditsUnit")}</span>
               </div>
             </div>
             <Sparkles className="h-8 w-8 text-primary opacity-60" />
@@ -219,7 +219,7 @@ export function AICreditsPurchaseDialog({ open, onOpenChange, onSuccess }: Props
           <div className="mt-3 grid grid-cols-3 gap-2 text-center">
             <div className="rounded-lg bg-background/60 p-2">
               <div className="text-lg font-bold">{Math.floor(selected.credits / CREDIT_COSTS.image)}</div>
-              <div className="text-[10px] text-muted-foreground uppercase">სურათი</div>
+              <div className="text-[10px] text-muted-foreground uppercase">{t("aiDlgImage")}</div>
             </div>
             <div className="rounded-lg bg-background/60 p-2">
               <div className="text-lg font-bold">{Math.floor(selected.credits / CREDIT_COSTS.expertPlan)}</div>
