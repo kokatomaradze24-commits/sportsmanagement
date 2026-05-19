@@ -9,7 +9,7 @@ import { useI18n } from "@/hooks/use-i18n";
 import { useSounds } from "@/hooks/use-sounds";
 import { getDialCodeForLanguage, prefillPhone } from "@/lib/phone-codes";
 import { getSport } from "@/lib/sports";
-import { LANGUAGES, type LanguageCode } from "@/lib/i18n/translations";
+import { type LanguageCode } from "@/lib/i18n/translations";
 
 export const Route = createFileRoute("/register/$linkId")({
   head: ({ params }) => ({
