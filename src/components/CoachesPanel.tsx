@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useCoaches, type Coach } from "@/hooks/use-coaches";
 import { generateCoachPassword, slugifyClubName } from "@/lib/coach-session";
+import { useI18n } from "@/hooks/use-i18n";
 
 interface Props {
   sportId: string;
