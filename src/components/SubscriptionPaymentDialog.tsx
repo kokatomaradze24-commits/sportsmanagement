@@ -16,6 +16,7 @@ interface Props {
 
 export function SubscriptionPaymentDialog({ open, onOpenChange, onSuccess }: Props) {
   const { session } = useAuth();
+  const { t } = useI18n();
   const [clientId, setClientId] = useState<string | null>(null);
   const [sdkReady, setSdkReady] = useState(false);
   const [processing, setProcessing] = useState(false);
