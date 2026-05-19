@@ -369,7 +369,7 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
   const copyRegistrationLink = () => {
     if (!registrationLink.registrationUrl) return;
     navigator.clipboard.writeText(registrationLink.registrationUrl);
-    toast.success("სარეგისტრაციო ლინკი დაკოპირდა");
+    toast.success(t("toastLinkCopied"));
   };
 
   const approveRegistrationRequest = async (request: PlayerRegistrationRequest) => {
