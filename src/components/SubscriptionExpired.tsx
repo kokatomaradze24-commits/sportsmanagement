@@ -76,7 +76,7 @@ export function SubscriptionExpired() {
                   <span className="text-2xl font-bold tracking-tight">${p.amount}</span>
                 </div>
                 <div className="mt-1 inline-flex items-center text-[10px] font-bold text-destructive bg-destructive/10 rounded-full px-2 py-0.5">
-                  -{p.discountPct}% ფასდაკლება
+                  -{p.discountPct}% {t("subExpDiscountSuffix")}
                 </div>
               </button>
             );
