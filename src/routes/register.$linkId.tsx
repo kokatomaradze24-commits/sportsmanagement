@@ -34,7 +34,7 @@ interface LinkInfo {
 
 function PublicPlayerRegistration() {
   const { linkId } = Route.useParams();
-  const { language, t, monthLong } = useI18n();
+  const { setLanguage, language, t, monthLong } = useI18n();
   const { play } = useSounds();
   const [info, setInfo] = useState<LinkInfo | null>(null);
   const [loading, setLoading] = useState(true);
