@@ -170,7 +170,7 @@ export function SubscriptionPaymentDialog({ open, onOpenChange, onSuccess }: Pro
               >
                 {isYear && (
                   <span className="absolute -top-2 right-3 text-[10px] font-bold bg-primary text-primary-foreground rounded-full px-2 py-0.5">
-                    ყველაზე მომგებიანი
+                    {t("payDlgBestValue")}
                   </span>
                 )}
                 <div className="text-sm font-semibold">{p.label}</div>
