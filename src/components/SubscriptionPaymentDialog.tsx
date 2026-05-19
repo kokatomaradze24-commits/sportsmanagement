@@ -85,19 +85,19 @@ export function SubscriptionPaymentDialog({ open, onOpenChange, onSuccess }: Pro
           });
           const json = await res.json();
           if (!res.ok) throw new Error(json.error || "Capture failed");
-          toast.success(`წვდომა გააქტიურდა ${selectedPlan.label}-ით`);
+          toast.success(t("payDlgAccessActivated", { plan: selectedPlan.label }));
           onSuccess?.();
           onOpenChange(false);
           setTimeout(() => window.location.reload(), 800);
         } catch (e) {
-          toast.error(e instanceof Error ? e.message : "გადახდა ვერ მოხერხდა");
+          toast.error(e instanceof Error ? e.message : t("payDlgPaymentFailed"));
         } finally {
           setProcessing(false);
         }
       },
       onError: (err: unknown) => {
         console.error("PayPal error", err);
-        toast.error("გადახდა ვერ მოხერხდა");
+        toast.error(t("payDlgPaymentFailed"));
       },
     };
 
