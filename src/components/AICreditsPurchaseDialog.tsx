@@ -152,7 +152,7 @@ export function AICreditsPurchaseDialog({ open, onOpenChange, onSuccess }: Props
     }
 
     if (rendered === 0) {
-      toast.error("გადახდის მეთოდი ხელმისაწვდომი არ არის");
+      toast.error(t("payDlgNoMethod"));
     }
 
     return () => {
@@ -162,7 +162,7 @@ export function AICreditsPurchaseDialog({ open, onOpenChange, onSuccess }: Props
       paypalButtonsRef.current = [];
       container.replaceChildren();
     };
-  }, [sdkReady, selected, session, open, onOpenChange, onSuccess]);
+  }, [sdkReady, selected, session, open, onOpenChange, onSuccess, t]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
