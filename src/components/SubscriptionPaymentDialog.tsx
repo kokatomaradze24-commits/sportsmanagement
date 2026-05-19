@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { CreditCard, Check, Loader2, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/use-auth";
+import { useI18n } from "@/hooks/use-i18n";
 import { loadPaypalSdk } from "@/lib/paypal-sdk";
 import { SUBSCRIPTION_PLAN, SUBSCRIPTION_PLANS, getPlan } from "@/lib/subscription-plan";
 
@@ -15,6 +16,7 @@ interface Props {
 
 export function SubscriptionPaymentDialog({ open, onOpenChange, onSuccess }: Props) {
   const { session } = useAuth();
+  const { t } = useI18n();
   const [clientId, setClientId] = useState<string | null>(null);
   const [sdkReady, setSdkReady] = useState(false);
   const [processing, setProcessing] = useState(false);
@@ -83,19 +85,19 @@ export function SubscriptionPaymentDialog({ open, onOpenChange, onSuccess }: Pro
           });
           const json = await res.json();
           if (!res.ok) throw new Error(json.error || "Capture failed");
-          toast.success(`წვდომა გააქტიურდა ${selectedPlan.label}-ით`);
+          toast.success(t("payDlgAccessActivated", { plan: selectedPlan.label }));
           onSuccess?.();
           onOpenChange(false);
           setTimeout(() => window.location.reload(), 800);
         } catch (e) {
-          toast.error(e instanceof Error ? e.message : "გადახდა ვერ მოხერხდა");
+          toast.error(e instanceof Error ? e.message : t("payDlgPaymentFailed"));
         } finally {
           setProcessing(false);
         }
       },
       onError: (err: unknown) => {
         console.error("PayPal error", err);
-        toast.error("გადახდა ვერ მოხერხდა");
+        toast.error(t("payDlgPaymentFailed"));
       },
     };
 
@@ -127,7 +129,7 @@ export function SubscriptionPaymentDialog({ open, onOpenChange, onSuccess }: Pro
       rendered++;
     }
 
-    if (rendered === 0) setErrorMsg("გადახდის მეთოდი ხელმისაწვდომი არ არის");
+    if (rendered === 0) setErrorMsg(t("payDlgNoMethod"));
 
     return () => {
       cancelled = true;
@@ -136,7 +138,7 @@ export function SubscriptionPaymentDialog({ open, onOpenChange, onSuccess }: Pro
       buttonsRef.current = [];
       container.replaceChildren();
     };
-  }, [sdkReady, session, open, clientId, onOpenChange, onSuccess, selectedPlanId, selectedPlan.label]);
+  }, [sdkReady, session, open, clientId, onOpenChange, onSuccess, selectedPlanId, selectedPlan.label, t]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -144,10 +146,10 @@ export function SubscriptionPaymentDialog({ open, onOpenChange, onSuccess }: Pro
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-primary" />
-            ულიმიტო წვდომა საიტზე!
+            {t("payDlgUnlimitedTitle")}
           </DialogTitle>
           <DialogDescription>
-            მართე შენი კლუბი შეზღუდვების გარეშე!
+            {t("payDlgUnlimitedDesc")}
           </DialogDescription>
         </DialogHeader>
 
@@ -168,7 +170,7 @@ export function SubscriptionPaymentDialog({ open, onOpenChange, onSuccess }: Pro
               >
                 {isYear && (
                   <span className="absolute -top-2 right-3 text-[10px] font-bold bg-primary text-primary-foreground rounded-full px-2 py-0.5">
-                    ყველაზე მომგებიანი
+                    {t("payDlgBestValue")}
                   </span>
                 )}
                 <div className="text-sm font-semibold">{p.label}</div>
@@ -189,11 +191,11 @@ export function SubscriptionPaymentDialog({ open, onOpenChange, onSuccess }: Pro
         <div className="rounded-2xl border bg-gradient-to-br from-primary/10 to-primary/5 p-4 my-2">
           <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary bg-primary/15 rounded-full px-2.5 py-1">
             <Check className="h-3 w-3" />
-            ერთჯერადი გადახდა — ავტო-განახლების გარეშე
+            {t("payDlgOneTimeBadge")}
           </div>
           <ul className="text-sm space-y-1.5 mt-3 text-muted-foreground">
-            <li className="flex gap-2"><Check className="h-4 w-4 text-primary shrink-0 mt-0.5" /> ულიმიტო წვდომა საიტზე!</li>
-            <li className="flex gap-2"><Check className="h-4 w-4 text-primary shrink-0 mt-0.5" /> მართე შენი კლუბი შეზღუდვების გარეშე!</li>
+            <li className="flex gap-2"><Check className="h-4 w-4 text-primary shrink-0 mt-0.5" /> {t("payDlgUnlimitedItem")}</li>
+            <li className="flex gap-2"><Check className="h-4 w-4 text-primary shrink-0 mt-0.5" /> {t("payDlgManageItem")}</li>
           </ul>
         </div>
 
@@ -213,11 +215,11 @@ export function SubscriptionPaymentDialog({ open, onOpenChange, onSuccess }: Pro
         </div>
 
         <p className="text-[11px] text-muted-foreground text-center mt-2 flex items-center justify-center gap-1">
-          <CreditCard className="h-3 w-3" /> უსაფრთხო გადახდა PayPal-ით — ბარათი, Apple Pay, Google Pay
+          <CreditCard className="h-3 w-3" /> {t("payDlgSecurePaypal")}
         </p>
 
         <Button variant="ghost" onClick={() => onOpenChange(false)} className="mt-1">
-          მოგვიანებით
+          {t("payDlgLater")}
         </Button>
       </DialogContent>
     </Dialog>

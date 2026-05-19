@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Sparkles, Check, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/use-auth";
+import { useI18n } from "@/hooks/use-i18n";
 import { AI_CREDIT_PACKAGES, CREDIT_COSTS, type AICreditPackage } from "@/lib/ai-credit-packages";
 import { loadPaypalSdk } from "@/lib/paypal-sdk";
 
@@ -32,6 +33,7 @@ type PaypalApi = {
 
 export function AICreditsPurchaseDialog({ open, onOpenChange, onSuccess }: Props) {
   const { session } = useAuth();
+  const { t } = useI18n();
   const [selected, setSelected] = useState<AICreditPackage>(AI_CREDIT_PACKAGES[0]);
   const [calcAmount, setCalcAmount] = useState<number>(14.99);
   const [sdkReady, setSdkReady] = useState(false);
@@ -99,11 +101,11 @@ export function AICreditsPurchaseDialog({ open, onOpenChange, onSuccess }: Props
         });
         const json = await res.json();
         if (!res.ok) throw new Error(json.error || "Capture failed");
-        toast.success(`დაემატა ${selected.credits} AI კრედიტი`);
+        toast.success(t("aiDlgCreditsAdded", { credits: selected.credits }));
         onSuccess?.(json.credits);
         onOpenChange(false);
       } catch (e) {
-        toast.error(e instanceof Error ? e.message : "Payment failed");
+        toast.error(e instanceof Error ? e.message : t("aiDlgPaymentFailed"));
       } finally {
         setProcessing(false);
       }
@@ -111,7 +113,7 @@ export function AICreditsPurchaseDialog({ open, onOpenChange, onSuccess }: Props
 
     const onError = (err: unknown) => {
       console.error("PayPal error", err);
-      toast.error("გადახდა ვერ მოხერხდა");
+      toast.error(t("aiDlgPaymentFailed"));
     };
 
     const buttonOptions = {
@@ -150,7 +152,7 @@ export function AICreditsPurchaseDialog({ open, onOpenChange, onSuccess }: Props
     }
 
     if (rendered === 0) {
-      toast.error("გადახდის მეთოდი ხელმისაწვდომი არ არის");
+      toast.error(t("payDlgNoMethod"));
     }
 
     return () => {
@@ -160,7 +162,7 @@ export function AICreditsPurchaseDialog({ open, onOpenChange, onSuccess }: Props
       paypalButtonsRef.current = [];
       container.replaceChildren();
     };
-  }, [sdkReady, selected, session, open, onOpenChange, onSuccess]);
+  }, [sdkReady, selected, session, open, onOpenChange, onSuccess, t]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -168,34 +170,34 @@ export function AICreditsPurchaseDialog({ open, onOpenChange, onSuccess }: Props
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-primary" />
-            AI კრედიტების შეძენა
+            {t("buyAiCreditsTitle")}
           </DialogTitle>
           <DialogDescription>
-            აირჩიე პაკეტი და გადაიხადე ერთი უსაფრთხო გადახდის ღილაკით
+            {t("aiDlgDesc")}
           </DialogDescription>
         </DialogHeader>
 
         {/* AI features list */}
         <div className="mt-3 rounded-xl border border-border p-3 bg-gradient-to-br from-primary/5 to-transparent">
           <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
-            ✨ რა შეგიძლია AI-ით
+            ✨ {t("aiDlgWhatYouCan")}
           </div>
           <ul className="space-y-1.5 text-sm">
             <li className="flex items-center justify-between gap-2">
-              <span className="flex items-center gap-2">🖼️ სურათების გენერაცია</span>
-              <span className="text-xs text-muted-foreground tabular-nums">{CREDIT_COSTS.image} კრედიტი</span>
+              <span className="flex items-center gap-2">🖼️ {t("aiDlgImageGen")}</span>
+              <span className="text-xs text-muted-foreground tabular-nums">{CREDIT_COSTS.image} {t("aiDlgCreditsUnit")}</span>
             </li>
             <li className="flex items-center justify-between gap-2">
-              <span className="flex items-center gap-2">🏋️ ვარჯიშის გეგმის გენერაცია (Expert)</span>
-              <span className="text-xs text-muted-foreground tabular-nums">{CREDIT_COSTS.expertPlan} კრედიტი</span>
+              <span className="flex items-center gap-2">🏋️ {t("aiDlgExpertGen")}</span>
+              <span className="text-xs text-muted-foreground tabular-nums">{CREDIT_COSTS.expertPlan} {t("aiDlgCreditsUnit")}</span>
             </li>
             <li className="flex items-center justify-between gap-2">
-              <span className="flex items-center gap-2">📋 თვითდამოუკიდებელი გეგმა (Self)</span>
-              <span className="text-xs text-muted-foreground tabular-nums">{CREDIT_COSTS.selfPlan} კრედიტი</span>
+              <span className="flex items-center gap-2">📋 {t("aiDlgSelfGen")}</span>
+              <span className="text-xs text-muted-foreground tabular-nums">{CREDIT_COSTS.selfPlan} {t("aiDlgCreditsUnit")}</span>
             </li>
             <li className="flex items-center justify-between gap-2">
-              <span className="flex items-center gap-2">📅 1-წლიანი სავარჯიშო გეგმა</span>
-              <span className="text-xs text-muted-foreground tabular-nums">{CREDIT_COSTS.expertPlan} კრედიტი</span>
+              <span className="flex items-center gap-2">📅 {t("aiDlgYearPlan")}</span>
+              <span className="text-xs text-muted-foreground tabular-nums">{CREDIT_COSTS.expertPlan} {t("aiDlgCreditsUnit")}</span>
             </li>
           </ul>
         </div>
@@ -205,11 +207,11 @@ export function AICreditsPurchaseDialog({ open, onOpenChange, onSuccess }: Props
           <div className="flex items-center justify-between">
             <div>
               <div className="text-xs font-semibold text-primary uppercase tracking-wider">
-                1 თვიანი პაკეტი
+                {t("aiDlgOneMonthPkg")}
               </div>
               <div className="mt-1 flex items-baseline gap-2">
                 <span className="text-3xl font-bold">${selected.amount}</span>
-                <span className="text-sm text-muted-foreground">/ {selected.credits} კრედიტი</span>
+                <span className="text-sm text-muted-foreground">/ {selected.credits} {t("aiDlgCreditsUnit")}</span>
               </div>
             </div>
             <Sparkles className="h-8 w-8 text-primary opacity-60" />
@@ -217,7 +219,7 @@ export function AICreditsPurchaseDialog({ open, onOpenChange, onSuccess }: Props
           <div className="mt-3 grid grid-cols-3 gap-2 text-center">
             <div className="rounded-lg bg-background/60 p-2">
               <div className="text-lg font-bold">{Math.floor(selected.credits / CREDIT_COSTS.image)}</div>
-              <div className="text-[10px] text-muted-foreground uppercase">სურათი</div>
+              <div className="text-[10px] text-muted-foreground uppercase">{t("aiDlgImage")}</div>
             </div>
             <div className="rounded-lg bg-background/60 p-2">
               <div className="text-lg font-bold">{Math.floor(selected.credits / CREDIT_COSTS.expertPlan)}</div>
@@ -233,7 +235,7 @@ export function AICreditsPurchaseDialog({ open, onOpenChange, onSuccess }: Props
         {/* Calculator */}
         <div className="mb-4 rounded-xl border border-border p-3 bg-muted/20">
           <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
-            🧮 კალკულატორი — რას მიიღებ თანხაში
+            🧮 {t("aiDlgCalcTitle")}
           </div>
           <div className="flex items-center gap-2 mb-3">
             <span className="text-sm">$</span>
@@ -246,7 +248,7 @@ export function AICreditsPurchaseDialog({ open, onOpenChange, onSuccess }: Props
               className="w-24 rounded-md border border-border bg-background px-2 py-1 text-sm tabular-nums"
             />
             <span className="text-xs text-muted-foreground">
-              ({((calcAmount / selected.amount) * selected.credits).toFixed(0)} კრედიტი)
+              {t("aiDlgCreditsInParen", { credits: ((calcAmount / selected.amount) * selected.credits).toFixed(0) })}
             </span>
           </div>
           {(() => {
@@ -255,7 +257,7 @@ export function AICreditsPurchaseDialog({ open, onOpenChange, onSuccess }: Props
               <div className="grid grid-cols-3 gap-2 text-center">
                 <div className="rounded-lg bg-background p-2 border border-border/50">
                   <div className="text-base font-bold">{Math.floor(credits / CREDIT_COSTS.image)}</div>
-                  <div className="text-[10px] text-muted-foreground">სურათი</div>
+                  <div className="text-[10px] text-muted-foreground">{t("aiDlgImage")}</div>
                 </div>
                 <div className="rounded-lg bg-background p-2 border border-border/50">
                   <div className="text-base font-bold">{Math.floor(credits / CREDIT_COSTS.expertPlan)}</div>
@@ -269,7 +271,7 @@ export function AICreditsPurchaseDialog({ open, onOpenChange, onSuccess }: Props
             );
           })()}
           <div className="mt-2 text-[10px] text-muted-foreground">
-            1 სურათი = {CREDIT_COSTS.image} კრედიტი · 1 expert plan = {CREDIT_COSTS.expertPlan} · 1 self plan = {CREDIT_COSTS.selfPlan}
+            {t("aiDlgCalcFooter", { image: CREDIT_COSTS.image, expert: CREDIT_COSTS.expertPlan, self: CREDIT_COSTS.selfPlan })}
           </div>
         </div>
 
@@ -288,11 +290,11 @@ export function AICreditsPurchaseDialog({ open, onOpenChange, onSuccess }: Props
         </div>
 
         <p className="text-[11px] text-muted-foreground text-center mt-2">
-          🔒 უსაფრთხო გადახდა PayPal-ით — PayPal, ბარათი, Apple Pay და Google Pay (თუ ხელმისაწვდომია).
+          🔒 {t("aiDlgSecureFooter")}
         </p>
 
         <Button variant="ghost" onClick={() => onOpenChange(false)} className="mt-1">
-          გაუქმება
+          {t("cancel")}
         </Button>
       </DialogContent>
     </Dialog>
