@@ -18,6 +18,7 @@ interface Props {
 export function RegistrationNotificationsBell({ sportId, userId, label }: Props) {
   const { requests, refetch } = usePlayerRegistrationRequests(sportId);
   const { play } = useSounds();
+  const { t } = useI18n();
   const [open, setOpen] = useState(false);
   const [seenIds, setSeenIds] = useState<Set<string>>(new Set());
   const visibleRequests = requests.filter((r) => !seenIds.has(r.id));
