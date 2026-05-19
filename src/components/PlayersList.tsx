@@ -375,9 +375,9 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
   const approveRegistrationRequest = async (request: PlayerRegistrationRequest) => {
     play("success");
     const { error } = await registrationRequests.approveRequest(request);
-    if (error) toast.error("რეგისტრაციის დამტკიცება ვერ მოხერხდა");
+    if (error) toast.error(t("toastApproveFailed"));
     else {
-      toast.success("მოთამაშე დაემატა სიაში");
+      toast.success(t("toastPlayerAdded"));
       setViewRequest(null);
     }
   };
