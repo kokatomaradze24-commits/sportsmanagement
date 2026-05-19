@@ -7,6 +7,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { supabase } from "@/integrations/supabase/client";
 import { usePlayerRegistrationRequests } from "@/hooks/use-player-registration-requests";
 import { useSounds } from "@/hooks/use-sounds";
+import { useI18n } from "@/hooks/use-i18n";
 
 interface Props {
   sportId: string;
@@ -17,6 +18,7 @@ interface Props {
 export function RegistrationNotificationsBell({ sportId, userId, label }: Props) {
   const { requests, refetch } = usePlayerRegistrationRequests(sportId);
   const { play } = useSounds();
+  const { t } = useI18n();
   const [open, setOpen] = useState(false);
   const [seenIds, setSeenIds] = useState<Set<string>>(new Set());
   const visibleRequests = requests.filter((r) => !seenIds.has(r.id));
@@ -37,8 +39,8 @@ export function RegistrationNotificationsBell({ sportId, userId, label }: Props)
         (payload) => {
           const row = payload.new as { sport?: string; first_name?: string; last_name?: string };
           if (row.sport !== sportId) return;
-          toast.success("ახალი რეგისტრაცია", {
-            description: `${row.first_name ?? ""} ${row.last_name ?? ""} დარეგისტრირდა`,
+          toast.success(t("notifNewRegistration"), {
+            description: t("notifRegisteredDesc", { name: `${row.first_name ?? ""} ${row.last_name ?? ""}`.trim() }),
             icon: <UserPlus className="w-4 h-4" />,
           });
           play("success");
@@ -50,7 +52,7 @@ export function RegistrationNotificationsBell({ sportId, userId, label }: Props)
     return () => {
       void supabase.removeChannel(channel);
     };
-  }, [userId, sportId, refetch, play]);
+  }, [userId, sportId, refetch, play, t]);
 
   const handleScrollToList = (requestId?: string) => {
     setOpen(false);
@@ -90,13 +92,13 @@ export function RegistrationNotificationsBell({ sportId, userId, label }: Props)
         </PopoverTrigger>
         <PopoverContent align="end" className="w-80 p-0">
           <div className="px-4 py-3 border-b border-border">
-            <p className="font-semibold text-sm">შეტყობინებები</p>
-            <p className="text-xs text-muted-foreground">ახალი რეგისტრაციის მოთხოვნები</p>
+            <p className="font-semibold text-sm">{t("notifPanelTitle")}</p>
+            <p className="text-xs text-muted-foreground">{t("notifPanelSubtitle")}</p>
           </div>
           <div className="max-h-80 overflow-y-auto">
             {count === 0 ? (
               <div className="px-4 py-8 text-center text-sm text-muted-foreground">
-                ახალი შეტყობინება არ არის
+                {t("notifPanelEmpty")}
               </div>
             ) : (
               <ul className="divide-y divide-border">
@@ -115,7 +117,7 @@ export function RegistrationNotificationsBell({ sportId, userId, label }: Props)
                           {r.first_name} {r.last_name}
                         </p>
                         <p className="text-xs text-muted-foreground truncate">
-                          ბმულით დარეგისტრირდა • {new Date(r.created_at).toLocaleDateString()}
+                          {t("notifRegisteredViaLink")} • {new Date(r.created_at).toLocaleDateString()}
                         </p>
                       </div>
                     </button>
@@ -127,7 +129,7 @@ export function RegistrationNotificationsBell({ sportId, userId, label }: Props)
           {count > 0 && (
             <div className="px-4 py-2 border-t border-border">
               <Button variant="ghost" size="sm" className="w-full text-xs" onClick={() => handleScrollToList()}>
-                მოთამაშეების სიაში გადასვლა
+                {t("notifGoToPlayers")}
               </Button>
             </div>
           )}

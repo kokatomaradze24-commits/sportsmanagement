@@ -29,7 +29,7 @@ interface AppHeaderProps {
   onResetBranding: () => void;
   onSignOut?: () => void;
   currentTheme?: AppTheme;
-  themes?: { id: AppTheme; label: string }[];
+  themes?: { id: AppTheme; labelKey: "themeClassic" | "themeMidnight" | "themeEmerald" | "themeSunset" | "themeRoyal" }[];
   onSelectTheme?: (theme: AppTheme) => void;
   userId?: string;
 }
@@ -166,10 +166,11 @@ export function AppHeader({ schoolName, logoUrl, sport, isDark, onToggleTheme, o
 
           <div className="flex flex-col items-center gap-1">
             <AICreditsBadge />
-            <span className="text-[10px] text-muted-foreground leading-none">AI კრედიტი</span>
+            <span className="text-[10px] text-muted-foreground leading-none">{t("aiCreditsLabel")}</span>
           </div>
 
-          <RegistrationNotificationsBell sportId={sport.id} userId={userId} label="შეტყობინება" />
+          <RegistrationNotificationsBell sportId={sport.id} userId={userId} label={t("notificationLabel")} />
+
 
           <div className="flex flex-col items-center gap-1">
             <AIImageGenerator
@@ -204,7 +205,7 @@ export function AppHeader({ schoolName, logoUrl, sport, isDark, onToggleTheme, o
                 {themes.length > 0 ? themes.map((themeOption) => (
                   <DropdownMenuItem key={themeOption.id} onClick={() => { play("click"); onSelectTheme?.(themeOption.id); }} className={themeOption.id === currentTheme ? "bg-primary/10 font-semibold" : ""}>
                     <span className={`mr-2 h-4 w-4 rounded-full border border-border theme-swatch-${themeOption.id}`} />
-                    {themeOption.label}
+                    {t(themeOption.labelKey)}
                   </DropdownMenuItem>
                 )) : (
                   <DropdownMenuItem onClick={() => { play("click"); onToggleTheme(); }}>

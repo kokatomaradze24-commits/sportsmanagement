@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useCoaches, type Coach } from "@/hooks/use-coaches";
 import { generateCoachPassword, slugifyClubName } from "@/lib/coach-session";
+import { useI18n } from "@/hooks/use-i18n";
 
 interface Props {
   sportId: string;
@@ -34,6 +35,7 @@ interface Props {
 
 export function CoachesPanel({ sportId, clubName }: Props) {
   const { coaches, loading, addCoach, resetPassword, toggleActive, deleteCoach } = useCoaches(sportId);
+  const { t } = useI18n();
   const [openAdd, setOpenAdd] = useState(false);
 
   return (
@@ -41,24 +43,24 @@ export function CoachesPanel({ sportId, clubName }: Props) {
       <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
         <div className="flex items-center gap-2">
           <Users className="w-5 h-5 text-primary" />
-          <h2 className="font-display text-xl tracking-wider">მწვრთნელები</h2>
+          <h2 className="font-display text-xl tracking-wider">{t("coachesTitle")}</h2>
           <span className="text-sm text-muted-foreground">({coaches.length})</span>
         </div>
         <Button size="sm" onClick={() => setOpenAdd(true)}>
           <UserPlus className="w-4 h-4 mr-1" />
-          მწვრთნელის დამატება
+          {t("addCoach")}
         </Button>
       </div>
 
       <p className="text-xs text-muted-foreground mb-3">
-        მწვრთნელები შედიან <code className="px-1 py-0.5 rounded bg-muted">/coach-login</code>-ზე საკუთარი username-ით და პაროლით.
+        {t("coachesLoginHint")}
       </p>
 
       {loading ? (
-        <p className="text-sm text-muted-foreground">Loading...</p>
+        <p className="text-sm text-muted-foreground">{t("loading")}</p>
       ) : coaches.length === 0 ? (
         <div className="rounded-xl border border-dashed border-border p-6 text-center text-muted-foreground text-sm">
-          მწვრთნელი ჯერ არ არის. დააჭირე „მწვრთნელის დამატება“-ს.
+          {t("noCoachesYet")}
         </div>
       ) : (
         <div className="space-y-2">

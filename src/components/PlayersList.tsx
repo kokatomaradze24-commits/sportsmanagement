@@ -369,15 +369,15 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
   const copyRegistrationLink = () => {
     if (!registrationLink.registrationUrl) return;
     navigator.clipboard.writeText(registrationLink.registrationUrl);
-    toast.success("სარეგისტრაციო ლინკი დაკოპირდა");
+    toast.success(t("toastLinkCopied"));
   };
 
   const approveRegistrationRequest = async (request: PlayerRegistrationRequest) => {
     play("success");
     const { error } = await registrationRequests.approveRequest(request);
-    if (error) toast.error("რეგისტრაციის დამტკიცება ვერ მოხერხდა");
+    if (error) toast.error(t("toastApproveFailed"));
     else {
-      toast.success("მოთამაშე დაემატა სიაში");
+      toast.success(t("toastPlayerAdded"));
       setViewRequest(null);
     }
   };
@@ -385,9 +385,9 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
   const rejectRegistrationRequest = async (request: PlayerRegistrationRequest) => {
     play("click");
     const { error } = await registrationRequests.rejectRequest(request);
-    if (error) toast.error("წაშლა ვერ მოხერხდა");
+    if (error) toast.error(t("toastDeleteFailed"));
     else {
-      toast.success("რეგისტრაცია წაიშალა");
+      toast.success(t("toastRegistrationDeleted"));
       setViewRequest(null);
     }
   };
@@ -408,7 +408,7 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
         <h2 className="text-2xl tracking-wider text-foreground">{sport.members}</h2>
         <div className="flex items-center gap-2 flex-wrap">
         <Button size="sm" variant="outline" className="shadow-sm hover:shadow-md" onClick={handleAllDebtsPdf} onMouseEnter={() => play("hover")}>
-          <FileText className="w-4 h-4" /> დავალიანებები PDF
+          <FileText className="w-4 h-4" /> {t("debtsPdf")}
         </Button>
         <Dialog open={addOpen} onOpenChange={(o) => { if (o) play("click"); setAddOpen(o); }}>
           <DialogTrigger asChild>
@@ -456,16 +456,16 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
       {registrationLink.registrationUrl && (
         <div className="rounded-xl border border-primary/20 bg-primary/5 p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="min-w-0">
-            <p className="text-sm font-semibold text-foreground">მოთამაშეების სარეგისტრაციო ლინკი</p>
+            <p className="text-sm font-semibold text-foreground">{t("playerRegLinkLabel")}</p>
             <p className="text-xs text-muted-foreground truncate">{registrationLink.registrationUrl}</p>
           </div>
           <div className="flex gap-2 shrink-0">
             <Button size="sm" variant="outline" onClick={copyRegistrationLink}>
-              <LinkIcon className="w-3.5 h-3.5 mr-1" /> კოპირება
+              <LinkIcon className="w-3.5 h-3.5 mr-1" /> {t("copyBtn")}
             </Button>
             <Button size="sm" variant="ghost" asChild>
               <a href={registrationLink.registrationUrl} target="_blank" rel="noreferrer">
-                <ExternalLink className="w-3.5 h-3.5 mr-1" /> ნახვა
+                <ExternalLink className="w-3.5 h-3.5 mr-1" /> {t("viewBtn")}
               </a>
             </Button>
           </div>
@@ -475,7 +475,7 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
       {registrationRequests.requests.length > 0 && (
         <div className="rounded-xl border border-border bg-card p-3 space-y-2">
           <div className="flex items-center justify-between gap-2">
-            <p className="text-sm font-semibold text-foreground">ახალი დარეგისტრირებულები</p>
+            <p className="text-sm font-semibold text-foreground">{t("newRegistrationsLabel")}</p>
             <span className="text-xs text-muted-foreground">{registrationRequests.requests.length}</span>
           </div>
           <div className="space-y-2">
@@ -486,13 +486,13 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
                   <p className="text-xs text-muted-foreground truncate">{request.primary_contact === "parent" ? request.parent_phone : request.phone}</p>
                 </button>
                 <div className="flex items-center gap-1 shrink-0">
-                  <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => setViewRequest(request)} title="სრულად ნახვა">
+                  <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => setViewRequest(request)} title={t("viewFull")}>
                     <Eye className="w-3.5 h-3.5" />
                   </Button>
-                  <Button size="icon" className="h-8 w-8" onClick={() => approveRegistrationRequest(request)} title="დამტკიცება">
+                  <Button size="icon" className="h-8 w-8" onClick={() => approveRegistrationRequest(request)} title={t("approve")}>
                     <Check className="w-3.5 h-3.5" />
                   </Button>
-                  <Button size="icon" variant="destructive" className="h-8 w-8" onClick={() => rejectRegistrationRequest(request)} title="წაშლა">
+                  <Button size="icon" variant="destructive" className="h-8 w-8" onClick={() => rejectRegistrationRequest(request)} title={t("removeAction")}>
                     <X className="w-3.5 h-3.5" />
                   </Button>
                 </div>
@@ -505,36 +505,36 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
       <Dialog open={!!viewRequest} onOpenChange={(open) => !open && setViewRequest(null)}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle className="text-2xl tracking-wider">რეგისტრაციის დეტალები</DialogTitle>
+            <DialogTitle className="text-2xl tracking-wider">{t("regDetailsTitle")}</DialogTitle>
           </DialogHeader>
           {viewRequest && (
             <div className="space-y-3 text-sm">
               <div className="grid grid-cols-2 gap-3">
-                <div><p className="text-muted-foreground">სახელი</p><p className="font-medium">{viewRequest.first_name}</p></div>
-                <div><p className="text-muted-foreground">გვარი</p><p className="font-medium">{viewRequest.last_name}</p></div>
-                <div><p className="text-muted-foreground">დაბადების თარიღი</p><p className="font-medium">{viewRequest.birth_date}</p></div>
-                <div><p className="text-muted-foreground">საკონტაქტო</p><p className="font-medium">{viewRequest.primary_contact === "parent" ? "მშობელი" : "მოთამაშე"}</p></div>
-                <div><p className="text-muted-foreground">პირადი ტელეფონი</p><p className="font-medium">{viewRequest.phone ?? "—"}</p></div>
-                <div><p className="text-muted-foreground">მშობლის ტელეფონი</p><p className="font-medium">{viewRequest.parent_phone ?? "—"}</p></div>
+                <div><p className="text-muted-foreground">{t("firstName")}</p><p className="font-medium">{viewRequest.first_name}</p></div>
+                <div><p className="text-muted-foreground">{t("lastName")}</p><p className="font-medium">{viewRequest.last_name}</p></div>
+                <div><p className="text-muted-foreground">{t("birthDate")}</p><p className="font-medium">{viewRequest.birth_date}</p></div>
+                <div><p className="text-muted-foreground">{t("contactLabel")}</p><p className="font-medium">{viewRequest.primary_contact === "parent" ? t("parentLabel") : t("playerLabel")}</p></div>
+                <div><p className="text-muted-foreground">{t("personalPhoneLabel")}</p><p className="font-medium">{viewRequest.phone ?? "—"}</p></div>
+                <div><p className="text-muted-foreground">{t("parentPhoneLabel")}</p><p className="font-medium">{viewRequest.parent_phone ?? "—"}</p></div>
               </div>
               <div className="rounded-lg border border-border p-3 space-y-2">
-                <p className="font-semibold">გამოცდილება: {viewRequest.experience_level === "inexperienced" ? "გამოუცდელი" : "გამოცდილი"}</p>
+                <p className="font-semibold">{t("experienceLabel")}: {viewRequest.experience_level === "inexperienced" ? t("expInexperienced") : t("expExperienced")}</p>
                 {viewRequest.experience_level === "experienced" && (
                   <div className="grid grid-cols-2 gap-3">
-                    <div><p className="text-muted-foreground">წინა კლუბი</p><p>{viewRequest.previous_club}</p></div>
-                    <div><p className="text-muted-foreground">გუნდი</p><p>{viewRequest.previous_team}</p></div>
-                    <div><p className="text-muted-foreground">ლიგა</p><p>{viewRequest.league}</p></div>
-                    <div><p className="text-muted-foreground">ბოლო მწვრთნელი</p><p>{viewRequest.last_coach}</p></div>
+                    <div><p className="text-muted-foreground">{t("previousClubLabel")}</p><p>{viewRequest.previous_club}</p></div>
+                    <div><p className="text-muted-foreground">{t("previousTeamLabel")}</p><p>{viewRequest.previous_team}</p></div>
+                    <div><p className="text-muted-foreground">{t("leagueLabel")}</p><p>{viewRequest.league}</p></div>
+                    <div><p className="text-muted-foreground">{t("lastCoachLabel")}</p><p>{viewRequest.last_coach}</p></div>
                   </div>
                 )}
               </div>
-              {viewRequest.notes && <div><p className="text-muted-foreground">შენიშვნა</p><p className="whitespace-pre-wrap">{viewRequest.notes}</p></div>}
+              {viewRequest.notes && <div><p className="text-muted-foreground">{t("noteLabel")}</p><p className="whitespace-pre-wrap">{viewRequest.notes}</p></div>}
               <div className="flex gap-2">
                 <Button variant="outline" className="flex-1" onClick={() => rejectRegistrationRequest(viewRequest)}>
-                  <X className="w-4 h-4 mr-2" /> წაშლა
+                  <X className="w-4 h-4 mr-2" /> {t("removeAction")}
                 </Button>
                 <Button className="flex-1" onClick={() => approveRegistrationRequest(viewRequest)}>
-                  <Check className="w-4 h-4 mr-2" /> მოთამაშედ დამატება
+                  <Check className="w-4 h-4 mr-2" /> {t("addAsPlayerBtn")}
                 </Button>
               </div>
             </div>
@@ -688,7 +688,7 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
                         size="icon"
                         variant="ghost"
                         className="h-8 w-8 text-muted-foreground hover:text-primary"
-                        title="გადახდების PDF"
+                        title={t("paymentsPdf")}
                         onMouseEnter={() => play("hover")}
                         onClick={(e) => { e.stopPropagation(); void handlePlayerPdf(player); }}
                       >

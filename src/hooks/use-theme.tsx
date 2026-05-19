@@ -2,12 +2,12 @@ import { useState, useEffect, useCallback } from "react";
 
 export type AppTheme = "classic" | "midnight" | "emerald" | "sunset" | "royal";
 
-export const APP_THEMES: { id: AppTheme; label: string }[] = [
-  { id: "classic", label: "კლასიკური" },
-  { id: "midnight", label: "ღამის" },
-  { id: "emerald", label: "ზურმუხტი" },
-  { id: "sunset", label: "მზის ჩასვლა" },
-  { id: "royal", label: "სამეფო" },
+export const APP_THEMES: { id: AppTheme; labelKey: "themeClassic" | "themeMidnight" | "themeEmerald" | "themeSunset" | "themeRoyal" }[] = [
+  { id: "classic", labelKey: "themeClassic" },
+  { id: "midnight", labelKey: "themeMidnight" },
+  { id: "emerald", labelKey: "themeEmerald" },
+  { id: "sunset", labelKey: "themeSunset" },
+  { id: "royal", labelKey: "themeRoyal" },
 ];
 
 const isAppTheme = (value: string | null): value is AppTheme => APP_THEMES.some((theme) => theme.id === value);
