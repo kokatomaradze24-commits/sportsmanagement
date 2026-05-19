@@ -205,7 +205,7 @@ export function AppHeader({ schoolName, logoUrl, sport, isDark, onToggleTheme, o
                 {themes.length > 0 ? themes.map((themeOption) => (
                   <DropdownMenuItem key={themeOption.id} onClick={() => { play("click"); onSelectTheme?.(themeOption.id); }} className={themeOption.id === currentTheme ? "bg-primary/10 font-semibold" : ""}>
                     <span className={`mr-2 h-4 w-4 rounded-full border border-border theme-swatch-${themeOption.id}`} />
-                    {themeOption.label}
+                    {t(themeOption.labelKey)}
                   </DropdownMenuItem>
                 )) : (
                   <DropdownMenuItem onClick={() => { play("click"); onToggleTheme(); }}>
