@@ -8,11 +8,12 @@ export const Route = createFileRoute("/api/public/player-registration")({
         const linkId = new URL(request.url).searchParams.get("linkId");
         if (!linkId) return Response.json({ error: "Missing link" }, { status: 400 });
 
+        const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(linkId);
         const client = supabaseAdmin as any;
         const { data: link, error } = await client
           .from("player_registration_links")
           .select("id, user_id, sport, is_active")
-          .eq("id", linkId)
+          .eq(isUuid ? "id" : "short_code", linkId)
           .maybeSingle();
 
         if (error || !link?.is_active) return Response.json({ error: "Registration link is not active" }, { status: 404 });
@@ -60,11 +61,12 @@ export const Route = createFileRoute("/api/public/player-registration")({
           return Response.json({ error: "Birth date is invalid" }, { status: 400 });
         }
 
+        const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(linkId);
         const client = supabaseAdmin as any;
         const { data: link, error: linkError } = await client
           .from("player_registration_links")
-          .select("user_id, sport, is_active")
-          .eq("id", linkId)
+          .select("id, user_id, sport, is_active")
+          .eq(isUuid ? "id" : "short_code", linkId)
           .maybeSingle();
 
         if (linkError || !link?.is_active) return Response.json({ error: "Registration link is not active" }, { status: 404 });
@@ -72,7 +74,7 @@ export const Route = createFileRoute("/api/public/player-registration")({
         const { data: registration, error } = await client
           .from("player_registration_requests")
           .insert({
-            link_id: linkId,
+            link_id: link.id,
             user_id: link.user_id,
             sport: link.sport,
             first_name: firstName,
