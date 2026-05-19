@@ -166,10 +166,11 @@ export function AppHeader({ schoolName, logoUrl, sport, isDark, onToggleTheme, o
 
           <div className="flex flex-col items-center gap-1">
             <AICreditsBadge />
-            <span className="text-[10px] text-muted-foreground leading-none">AI კრედიტი</span>
+            <span className="text-[10px] text-muted-foreground leading-none">{t("aiCreditsLabel")}</span>
           </div>
 
-          <RegistrationNotificationsBell sportId={sport.id} userId={userId} label="შეტყობინება" />
+          <RegistrationNotificationsBell sportId={sport.id} userId={userId} label={t("notificationLabel")} />
+
 
           <div className="flex flex-col items-center gap-1">
             <AIImageGenerator
