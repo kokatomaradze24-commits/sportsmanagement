@@ -9,7 +9,7 @@ import { useI18n } from "@/hooks/use-i18n";
 import { useSounds } from "@/hooks/use-sounds";
 import { getDialCodeForLanguage, prefillPhone } from "@/lib/phone-codes";
 import { getSport } from "@/lib/sports";
-import { LANGUAGES, type LanguageCode } from "@/lib/i18n/translations";
+import { type LanguageCode } from "@/lib/i18n/translations";
 
 export const Route = createFileRoute("/register/$linkId")({
   head: ({ params }) => ({
@@ -34,7 +34,7 @@ interface LinkInfo {
 
 function PublicPlayerRegistration() {
   const { linkId } = Route.useParams();
-  const { setLanguage, language, t, monthLong } = useI18n();
+  const { language, t, monthLong } = useI18n();
   const { play } = useSounds();
   const [info, setInfo] = useState<LinkInfo | null>(null);
   const [loading, setLoading] = useState(true);
@@ -42,9 +42,8 @@ function PublicPlayerRegistration() {
   const [done, setDone] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // The active language for THIS page is the club owner's language (from API).
-  // Until it loads, fall back to the visitor's current i18n language.
-  const pageLang: LanguageCode = info?.language ?? language;
+  // The active language for THIS page is always English.
+  const pageLang: LanguageCode = "en";
   const dial = getDialCodeForLanguage(pageLang);
 
   const [firstName, setFirstName] = useState("");
@@ -61,13 +60,6 @@ function PublicPlayerRegistration() {
   const [league, setLeague] = useState<"A" | "B" | "C" | "">("");
   const [lastCoach, setLastCoach] = useState("");
   const [notes, setNotes] = useState("");
-
-  // Switch UI language to match the link's owner once we know it.
-  useEffect(() => {
-    if (info?.language && LANGUAGES.some((l) => l.code === info.language) && info.language !== language) {
-      setLanguage(info.language);
-    }
-  }, [info?.language, language, setLanguage]);
 
   // When the page language changes, refresh empty phone defaults to match country.
   useEffect(() => {
