@@ -155,8 +155,8 @@ function Index() {
                 <BarChart3 className="w-6 h-6 text-primary" />
               </div>
               <div className="min-w-0 flex-1">
-                <p className="font-display tracking-wider text-base sm:text-lg">სტატისტიკის ანალიზი ✨</p>
-                <p className="text-xs sm:text-sm text-muted-foreground">ატვირთე მატჩის სტატისტიკა — AI იპოვის შენს გუნდს და მოამზადებს ანალიზს და რჩევებს</p>
+                <p className="font-display tracking-wider text-base sm:text-lg">{t("statsTitle")} ✨</p>
+                <p className="text-xs sm:text-sm text-muted-foreground">{`${t("statsDescPrefix")} ${t("statsYourClub")} ${t("statsDescSuffix")}`}</p>
               </div>
               <span className="text-primary text-xl group-hover:translate-x-1 transition-transform hidden sm:inline">→</span>
             </div>
