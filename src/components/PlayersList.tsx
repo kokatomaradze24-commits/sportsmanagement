@@ -505,36 +505,36 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
       <Dialog open={!!viewRequest} onOpenChange={(open) => !open && setViewRequest(null)}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle className="text-2xl tracking-wider">რეგისტრაციის დეტალები</DialogTitle>
+            <DialogTitle className="text-2xl tracking-wider">{t("regDetailsTitle")}</DialogTitle>
           </DialogHeader>
           {viewRequest && (
             <div className="space-y-3 text-sm">
               <div className="grid grid-cols-2 gap-3">
-                <div><p className="text-muted-foreground">სახელი</p><p className="font-medium">{viewRequest.first_name}</p></div>
-                <div><p className="text-muted-foreground">გვარი</p><p className="font-medium">{viewRequest.last_name}</p></div>
-                <div><p className="text-muted-foreground">დაბადების თარიღი</p><p className="font-medium">{viewRequest.birth_date}</p></div>
-                <div><p className="text-muted-foreground">საკონტაქტო</p><p className="font-medium">{viewRequest.primary_contact === "parent" ? "მშობელი" : "მოთამაშე"}</p></div>
-                <div><p className="text-muted-foreground">პირადი ტელეფონი</p><p className="font-medium">{viewRequest.phone ?? "—"}</p></div>
-                <div><p className="text-muted-foreground">მშობლის ტელეფონი</p><p className="font-medium">{viewRequest.parent_phone ?? "—"}</p></div>
+                <div><p className="text-muted-foreground">{t("firstName")}</p><p className="font-medium">{viewRequest.first_name}</p></div>
+                <div><p className="text-muted-foreground">{t("lastName")}</p><p className="font-medium">{viewRequest.last_name}</p></div>
+                <div><p className="text-muted-foreground">{t("birthDate")}</p><p className="font-medium">{viewRequest.birth_date}</p></div>
+                <div><p className="text-muted-foreground">{t("contactLabel")}</p><p className="font-medium">{viewRequest.primary_contact === "parent" ? t("parentLabel") : t("playerLabel")}</p></div>
+                <div><p className="text-muted-foreground">{t("personalPhoneLabel")}</p><p className="font-medium">{viewRequest.phone ?? "—"}</p></div>
+                <div><p className="text-muted-foreground">{t("parentPhoneLabel")}</p><p className="font-medium">{viewRequest.parent_phone ?? "—"}</p></div>
               </div>
               <div className="rounded-lg border border-border p-3 space-y-2">
-                <p className="font-semibold">გამოცდილება: {viewRequest.experience_level === "inexperienced" ? "გამოუცდელი" : "გამოცდილი"}</p>
+                <p className="font-semibold">{t("experienceLabel")}: {viewRequest.experience_level === "inexperienced" ? t("expInexperienced") : t("expExperienced")}</p>
                 {viewRequest.experience_level === "experienced" && (
                   <div className="grid grid-cols-2 gap-3">
-                    <div><p className="text-muted-foreground">წინა კლუბი</p><p>{viewRequest.previous_club}</p></div>
-                    <div><p className="text-muted-foreground">გუნდი</p><p>{viewRequest.previous_team}</p></div>
-                    <div><p className="text-muted-foreground">ლიგა</p><p>{viewRequest.league}</p></div>
-                    <div><p className="text-muted-foreground">ბოლო მწვრთნელი</p><p>{viewRequest.last_coach}</p></div>
+                    <div><p className="text-muted-foreground">{t("previousClubLabel")}</p><p>{viewRequest.previous_club}</p></div>
+                    <div><p className="text-muted-foreground">{t("previousTeamLabel")}</p><p>{viewRequest.previous_team}</p></div>
+                    <div><p className="text-muted-foreground">{t("leagueLabel")}</p><p>{viewRequest.league}</p></div>
+                    <div><p className="text-muted-foreground">{t("lastCoachLabel")}</p><p>{viewRequest.last_coach}</p></div>
                   </div>
                 )}
               </div>
-              {viewRequest.notes && <div><p className="text-muted-foreground">შენიშვნა</p><p className="whitespace-pre-wrap">{viewRequest.notes}</p></div>}
+              {viewRequest.notes && <div><p className="text-muted-foreground">{t("noteLabel")}</p><p className="whitespace-pre-wrap">{viewRequest.notes}</p></div>}
               <div className="flex gap-2">
                 <Button variant="outline" className="flex-1" onClick={() => rejectRegistrationRequest(viewRequest)}>
-                  <X className="w-4 h-4 mr-2" /> წაშლა
+                  <X className="w-4 h-4 mr-2" /> {t("removeAction")}
                 </Button>
                 <Button className="flex-1" onClick={() => approveRegistrationRequest(viewRequest)}>
-                  <Check className="w-4 h-4 mr-2" /> მოთამაშედ დამატება
+                  <Check className="w-4 h-4 mr-2" /> {t("addAsPlayerBtn")}
                 </Button>
               </div>
             </div>
