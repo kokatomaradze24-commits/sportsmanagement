@@ -180,24 +180,24 @@ export function AICreditsPurchaseDialog({ open, onOpenChange, onSuccess }: Props
         {/* AI features list */}
         <div className="mt-3 rounded-xl border border-border p-3 bg-gradient-to-br from-primary/5 to-transparent">
           <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
-            ✨ რა შეგიძლია AI-ით
+            ✨ {t("aiDlgWhatYouCan")}
           </div>
           <ul className="space-y-1.5 text-sm">
             <li className="flex items-center justify-between gap-2">
-              <span className="flex items-center gap-2">🖼️ სურათების გენერაცია</span>
-              <span className="text-xs text-muted-foreground tabular-nums">{CREDIT_COSTS.image} კრედიტი</span>
+              <span className="flex items-center gap-2">🖼️ {t("aiDlgImageGen")}</span>
+              <span className="text-xs text-muted-foreground tabular-nums">{CREDIT_COSTS.image} {t("aiDlgCreditsUnit")}</span>
             </li>
             <li className="flex items-center justify-between gap-2">
-              <span className="flex items-center gap-2">🏋️ ვარჯიშის გეგმის გენერაცია (Expert)</span>
-              <span className="text-xs text-muted-foreground tabular-nums">{CREDIT_COSTS.expertPlan} კრედიტი</span>
+              <span className="flex items-center gap-2">🏋️ {t("aiDlgExpertGen")}</span>
+              <span className="text-xs text-muted-foreground tabular-nums">{CREDIT_COSTS.expertPlan} {t("aiDlgCreditsUnit")}</span>
             </li>
             <li className="flex items-center justify-between gap-2">
-              <span className="flex items-center gap-2">📋 თვითდამოუკიდებელი გეგმა (Self)</span>
-              <span className="text-xs text-muted-foreground tabular-nums">{CREDIT_COSTS.selfPlan} კრედიტი</span>
+              <span className="flex items-center gap-2">📋 {t("aiDlgSelfGen")}</span>
+              <span className="text-xs text-muted-foreground tabular-nums">{CREDIT_COSTS.selfPlan} {t("aiDlgCreditsUnit")}</span>
             </li>
             <li className="flex items-center justify-between gap-2">
-              <span className="flex items-center gap-2">📅 1-წლიანი სავარჯიშო გეგმა</span>
-              <span className="text-xs text-muted-foreground tabular-nums">{CREDIT_COSTS.expertPlan} კრედიტი</span>
+              <span className="flex items-center gap-2">📅 {t("aiDlgYearPlan")}</span>
+              <span className="text-xs text-muted-foreground tabular-nums">{CREDIT_COSTS.expertPlan} {t("aiDlgCreditsUnit")}</span>
             </li>
           </ul>
         </div>
