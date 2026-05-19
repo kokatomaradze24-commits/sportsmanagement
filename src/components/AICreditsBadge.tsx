@@ -3,11 +3,13 @@ import { Sparkles, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
 import { useAICredits } from "@/hooks/use-ai-credits";
+import { useI18n } from "@/hooks/use-i18n";
 import { AICreditsPurchaseDialog } from "./AICreditsPurchaseDialog";
 
 export function AICreditsBadge() {
   const { user } = useAuth();
   const { credits, refresh } = useAICredits();
+  const { t } = useI18n();
   const [open, setOpen] = useState(false);
 
   if (!user) return null;
