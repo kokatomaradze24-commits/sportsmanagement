@@ -235,7 +235,7 @@ export function AICreditsPurchaseDialog({ open, onOpenChange, onSuccess }: Props
         {/* Calculator */}
         <div className="mb-4 rounded-xl border border-border p-3 bg-muted/20">
           <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
-            🧮 კალკულატორი — რას მიიღებ თანხაში
+            🧮 {t("aiDlgCalcTitle")}
           </div>
           <div className="flex items-center gap-2 mb-3">
             <span className="text-sm">$</span>
@@ -248,7 +248,7 @@ export function AICreditsPurchaseDialog({ open, onOpenChange, onSuccess }: Props
               className="w-24 rounded-md border border-border bg-background px-2 py-1 text-sm tabular-nums"
             />
             <span className="text-xs text-muted-foreground">
-              ({((calcAmount / selected.amount) * selected.credits).toFixed(0)} კრედიტი)
+              {t("aiDlgCreditsInParen", { credits: ((calcAmount / selected.amount) * selected.credits).toFixed(0) })}
             </span>
           </div>
           {(() => {
@@ -257,7 +257,7 @@ export function AICreditsPurchaseDialog({ open, onOpenChange, onSuccess }: Props
               <div className="grid grid-cols-3 gap-2 text-center">
                 <div className="rounded-lg bg-background p-2 border border-border/50">
                   <div className="text-base font-bold">{Math.floor(credits / CREDIT_COSTS.image)}</div>
-                  <div className="text-[10px] text-muted-foreground">სურათი</div>
+                  <div className="text-[10px] text-muted-foreground">{t("aiDlgImage")}</div>
                 </div>
                 <div className="rounded-lg bg-background p-2 border border-border/50">
                   <div className="text-base font-bold">{Math.floor(credits / CREDIT_COSTS.expertPlan)}</div>
@@ -271,7 +271,7 @@ export function AICreditsPurchaseDialog({ open, onOpenChange, onSuccess }: Props
             );
           })()}
           <div className="mt-2 text-[10px] text-muted-foreground">
-            1 სურათი = {CREDIT_COSTS.image} კრედიტი · 1 expert plan = {CREDIT_COSTS.expertPlan} · 1 self plan = {CREDIT_COSTS.selfPlan}
+            {t("aiDlgCalcFooter", { image: CREDIT_COSTS.image, expert: CREDIT_COSTS.expertPlan, self: CREDIT_COSTS.selfPlan })}
           </div>
         </div>
 
