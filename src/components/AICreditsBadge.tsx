@@ -21,7 +21,7 @@ export function AICreditsBadge() {
         size="sm"
         onClick={() => setOpen(true)}
         className="h-9 gap-1.5 rounded-full px-3 border-primary/30 bg-primary/5 hover:bg-primary/10"
-        title="AI კრედიტების შეძენა"
+        title={t("buyAiCreditsTitle")}
       >
         <Sparkles className="h-3.5 w-3.5 text-primary" />
         <span className="font-semibold tabular-nums text-sm">{credits ?? 0}</span>
