@@ -385,9 +385,9 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
   const rejectRegistrationRequest = async (request: PlayerRegistrationRequest) => {
     play("click");
     const { error } = await registrationRequests.rejectRequest(request);
-    if (error) toast.error("წაშლა ვერ მოხერხდა");
+    if (error) toast.error(t("toastDeleteFailed"));
     else {
-      toast.success("რეგისტრაცია წაიშალა");
+      toast.success(t("toastRegistrationDeleted"));
       setViewRequest(null);
     }
   };
