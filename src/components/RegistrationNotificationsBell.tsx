@@ -92,13 +92,13 @@ export function RegistrationNotificationsBell({ sportId, userId, label }: Props)
         </PopoverTrigger>
         <PopoverContent align="end" className="w-80 p-0">
           <div className="px-4 py-3 border-b border-border">
-            <p className="font-semibold text-sm">შეტყობინებები</p>
-            <p className="text-xs text-muted-foreground">ახალი რეგისტრაციის მოთხოვნები</p>
+            <p className="font-semibold text-sm">{t("notifPanelTitle")}</p>
+            <p className="text-xs text-muted-foreground">{t("notifPanelSubtitle")}</p>
           </div>
           <div className="max-h-80 overflow-y-auto">
             {count === 0 ? (
               <div className="px-4 py-8 text-center text-sm text-muted-foreground">
-                ახალი შეტყობინება არ არის
+                {t("notifPanelEmpty")}
               </div>
             ) : (
               <ul className="divide-y divide-border">
@@ -117,7 +117,7 @@ export function RegistrationNotificationsBell({ sportId, userId, label }: Props)
                           {r.first_name} {r.last_name}
                         </p>
                         <p className="text-xs text-muted-foreground truncate">
-                          ბმულით დარეგისტრირდა • {new Date(r.created_at).toLocaleDateString()}
+                          {t("notifRegisteredViaLink")} • {new Date(r.created_at).toLocaleDateString()}
                         </p>
                       </div>
                     </button>
@@ -129,7 +129,7 @@ export function RegistrationNotificationsBell({ sportId, userId, label }: Props)
           {count > 0 && (
             <div className="px-4 py-2 border-t border-border">
               <Button variant="ghost" size="sm" className="w-full text-xs" onClick={() => handleScrollToList()}>
-                მოთამაშეების სიაში გადასვლა
+                {t("notifGoToPlayers")}
               </Button>
             </div>
           )}
