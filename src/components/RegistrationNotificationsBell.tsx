@@ -39,8 +39,8 @@ export function RegistrationNotificationsBell({ sportId, userId, label }: Props)
         (payload) => {
           const row = payload.new as { sport?: string; first_name?: string; last_name?: string };
           if (row.sport !== sportId) return;
-          toast.success("ახალი რეგისტრაცია", {
-            description: `${row.first_name ?? ""} ${row.last_name ?? ""} დარეგისტრირდა`,
+          toast.success(t("notifNewRegistration"), {
+            description: t("notifRegisteredDesc", { name: `${row.first_name ?? ""} ${row.last_name ?? ""}`.trim() }),
             icon: <UserPlus className="w-4 h-4" />,
           });
           play("success");
