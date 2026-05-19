@@ -8,11 +8,12 @@ export const Route = createFileRoute("/api/public/player-registration")({
         const linkId = new URL(request.url).searchParams.get("linkId");
         if (!linkId) return Response.json({ error: "Missing link" }, { status: 400 });
 
+        const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(linkId);
         const client = supabaseAdmin as any;
         const { data: link, error } = await client
           .from("player_registration_links")
           .select("id, user_id, sport, is_active")
-          .eq("id", linkId)
+          .eq(isUuid ? "id" : "short_code", linkId)
           .maybeSingle();
 
         if (error || !link?.is_active) return Response.json({ error: "Registration link is not active" }, { status: 404 });
