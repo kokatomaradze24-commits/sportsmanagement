@@ -408,7 +408,7 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
         <h2 className="text-2xl tracking-wider text-foreground">{sport.members}</h2>
         <div className="flex items-center gap-2 flex-wrap">
         <Button size="sm" variant="outline" className="shadow-sm hover:shadow-md" onClick={handleAllDebtsPdf} onMouseEnter={() => play("hover")}>
-          <FileText className="w-4 h-4" /> დავალიანებები PDF
+          <FileText className="w-4 h-4" /> {t("debtsPdf")}
         </Button>
         <Dialog open={addOpen} onOpenChange={(o) => { if (o) play("click"); setAddOpen(o); }}>
           <DialogTrigger asChild>
