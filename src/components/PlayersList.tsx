@@ -475,7 +475,7 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
       {registrationRequests.requests.length > 0 && (
         <div className="rounded-xl border border-border bg-card p-3 space-y-2">
           <div className="flex items-center justify-between gap-2">
-            <p className="text-sm font-semibold text-foreground">ახალი დარეგისტრირებულები</p>
+            <p className="text-sm font-semibold text-foreground">{t("newRegistrationsLabel")}</p>
             <span className="text-xs text-muted-foreground">{registrationRequests.requests.length}</span>
           </div>
           <div className="space-y-2">
