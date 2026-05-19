@@ -74,7 +74,7 @@ export const Route = createFileRoute("/api/public/player-registration")({
         const { data: registration, error } = await client
           .from("player_registration_requests")
           .insert({
-            link_id: linkId,
+            link_id: link.id,
             user_id: link.user_id,
             sport: link.sport,
             first_name: firstName,
