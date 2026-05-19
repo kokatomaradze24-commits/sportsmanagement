@@ -42,9 +42,8 @@ function PublicPlayerRegistration() {
   const [done, setDone] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // The active language for THIS page is the club owner's language (from API).
-  // Until it loads, fall back to the visitor's current i18n language.
-  const pageLang: LanguageCode = info?.language ?? language;
+  // The active language for THIS page is always English.
+  const pageLang: LanguageCode = "en";
   const dial = getDialCodeForLanguage(pageLang);
 
   const [firstName, setFirstName] = useState("");
