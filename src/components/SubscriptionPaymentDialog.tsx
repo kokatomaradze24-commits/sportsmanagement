@@ -129,7 +129,7 @@ export function SubscriptionPaymentDialog({ open, onOpenChange, onSuccess }: Pro
       rendered++;
     }
 
-    if (rendered === 0) setErrorMsg("გადახდის მეთოდი ხელმისაწვდომი არ არის");
+    if (rendered === 0) setErrorMsg(t("payDlgNoMethod"));
 
     return () => {
       cancelled = true;
