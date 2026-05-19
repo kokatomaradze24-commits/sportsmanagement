@@ -85,21 +85,21 @@ export function SubscriptionExpired() {
 
         {/* Benefits */}
         <ul className="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-muted-foreground">
-          <li className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-primary" /> ულიმიტო წვდომა</li>
-          <li className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-primary" /> ერთჯერადი გადახდა</li>
-          <li className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-primary" /> ავტო-განახლების გარეშე</li>
-          <li className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-primary" /> უსაფრთხო PayPal გადახდა</li>
+          <li className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-primary" /> {t("subExpUnlimitedItem")}</li>
+          <li className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-primary" /> {t("subExpOneTimeItem")}</li>
+          <li className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-primary" /> {t("subExpNoAutoRenewItem")}</li>
+          <li className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-primary" /> {t("subExpSecurePaypalItem")}</li>
         </ul>
 
         {/* CTA */}
         <Button size="lg" className="w-full mt-6 h-12 text-base font-semibold shadow-lg shadow-primary/20" onClick={() => setOpen(true)}>
           <CreditCard className="h-4 w-4 mr-2" />
-          აირჩიე პაკეტი და გადაიხადე
+          {t("subExpPickAndPay")}
         </Button>
 
         <div className="mt-3 flex items-center justify-center gap-1.5 text-[11px] text-muted-foreground">
           <ShieldCheck className="h-3.5 w-3.5" />
-          უსაფრთხო გადახდა — PayPal, ბარათი, Apple Pay, Google Pay
+          {t("subExpSecureLine")}
         </div>
 
         <div className="mt-4 pt-4 border-t border-border/60 flex justify-center">
