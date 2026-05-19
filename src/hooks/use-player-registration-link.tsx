@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 interface RegistrationLinkRow {
   id: string;
   is_active: boolean;
+  short_code: string;
 }
 
 export function usePlayerRegistrationLink(sport: string) {
@@ -21,7 +22,7 @@ export function usePlayerRegistrationLink(sport: string) {
     const client = supabase as any;
     const { data: existing } = await client
       .from("player_registration_links")
-      .select("id, is_active")
+      .select("id, is_active, short_code")
       .eq("user_id", user.id)
       .eq("sport", sport)
       .maybeSingle();
@@ -35,7 +36,7 @@ export function usePlayerRegistrationLink(sport: string) {
     const { data: created } = await client
       .from("player_registration_links")
       .insert({ user_id: user.id, sport, is_active: true })
-      .select("id, is_active")
+      .select("id, is_active, short_code")
       .single();
 
     setLink(created ?? null);
@@ -47,9 +48,9 @@ export function usePlayerRegistrationLink(sport: string) {
   }, [sport, ensureLink]);
 
   const registrationUrl = useMemo(() => {
-    if (!link?.id || typeof window === "undefined") return "";
-    return `${window.location.origin}/register/${link.id}`;
-  }, [link?.id]);
+    if (!link?.short_code || typeof window === "undefined") return "";
+    return `${window.location.origin}/r/${link.short_code}`;
+  }, [link?.short_code]);
 
   return { link, registrationUrl, loading, refetch: ensureLink };
 }
