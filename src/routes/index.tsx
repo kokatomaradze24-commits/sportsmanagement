@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { BarChart3 } from "lucide-react";
+import { motion } from "framer-motion";
+import { BarChart3, Users, Wallet, Calendar as CalendarIcon, UserCog, MapPin, Shield, Sparkles, ArrowRight } from "lucide-react";
 import { AppHeader } from "@/components/AppHeader";
 import { PlayersList } from "@/components/PlayersList";
 import { PaymentsPanel } from "@/components/PaymentsPanel";
@@ -13,6 +14,7 @@ import { TripsPanel } from "@/components/TripsPanel";
 import { TeamsPanel } from "@/components/TeamsPanel";
 import { CoachesPanel } from "@/components/CoachesPanel";
 import { SchedulePanel } from "@/components/SchedulePanel";
+
 import { useTeams } from "@/hooks/use-teams";
 import { useTheme } from "@/hooks/use-theme";
 import { useAppSettings } from "@/hooks/use-app-settings";
