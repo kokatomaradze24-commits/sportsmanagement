@@ -220,40 +220,47 @@ function LoginPage() {
   };
 
   return (
-    <div className="relative min-h-screen overflow-hidden flex items-center justify-center px-4 py-10 bg-slate-950">
+    <div className="relative min-h-screen overflow-hidden flex items-center justify-center px-4 py-10" style={{ background: "#06080A" }}>
       {/* Sliding background images */}
       <div className="absolute inset-0 overflow-hidden">
         <AnimatePresence mode="sync">
           <motion.div
             key={bgIndex}
             initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+            animate={{ opacity: 0.35 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 1.2, ease: "easeInOut" }}
             className="absolute inset-0 bg-cover bg-center"
             style={{ backgroundImage: `url(${bgImages[bgIndex]})` }}
           />
         </AnimatePresence>
-        {/* Dark overlay for readability */}
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-950/85 via-slate-950/70 to-slate-950/85" />
+        <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, rgba(6,8,10,0.85), rgba(6,8,10,0.95))" }} />
+        <div className="pointer-events-none absolute -top-32 -left-32 w-[520px] h-[520px] rounded-full blur-3xl opacity-30" style={{ background: "#00FF85" }} />
+        <div className="pointer-events-none absolute -bottom-32 -right-32 w-[460px] h-[460px] rounded-full blur-3xl opacity-25" style={{ background: "#38bdf8" }} />
+        <div
+          className="absolute inset-0 opacity-[0.06]"
+          style={{
+            backgroundImage:
+              "linear-gradient(rgba(255,255,255,0.6) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.6) 1px, transparent 1px)",
+            backgroundSize: "56px 56px",
+            maskImage: "radial-gradient(circle at center, black, transparent 78%)",
+          }}
+        />
       </div>
 
-      {/* Top-right language switcher */}
       <div className="absolute top-4 right-4 z-20">
         <LanguageSwitcher variant="topbar" />
       </div>
 
-      {/* Two-column layout: marketing on the left, sign-in on the right */}
       <div className="relative z-10 w-full max-w-6xl grid grid-cols-1 lg:grid-cols-[1.1fr_minmax(0,420px)] gap-10 lg:gap-16 items-center">
 
-        {/* Marketing / Features column */}
-        <div className="text-white order-2 lg:order-1">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-orange-500/10 border border-orange-400/30 text-orange-300 text-xs font-medium mb-5">
-            <span className="w-1.5 h-1.5 rounded-full bg-orange-400 animate-pulse" />
+        <div className="text-white order-2 lg:order-1" style={{ fontFamily: "Sora, Inter, system-ui, sans-serif" }}>
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border text-xs font-medium mb-5" style={{ background: "rgba(0,255,133,0.08)", borderColor: "rgba(0,255,133,0.3)", color: "#7CFFB8" }}>
+            <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: "#00FF85" }} />
             {copy.tagline}
           </div>
 
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight mb-4 bg-gradient-to-br from-white via-white to-slate-300 bg-clip-text text-transparent">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight mb-4 tracking-tight bg-gradient-to-br from-white via-white to-slate-400 bg-clip-text text-transparent">
             {copy.headline}
           </h2>
           <p className="text-base sm:text-lg text-slate-300/90 mb-6 max-w-xl leading-relaxed">{copy.subline}</p>
@@ -267,10 +274,11 @@ function LoginPage() {
                   initial={{ opacity: 0, y: 12 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.15 + i * 0.06 }}
-                  className="flex gap-3 items-start p-3.5 rounded-xl bg-white/[0.03] border border-white/10 hover:bg-white/[0.06] hover:border-white/20 transition-all"
+                  className="flex gap-3 items-start p-3.5 rounded-xl border transition-all"
+                  style={{ background: "rgba(14,18,22,0.6)", borderColor: "rgba(255,255,255,0.08)", backdropFilter: "blur(10px)" }}
                 >
-                  <div className="flex-shrink-0 w-9 h-9 rounded-lg bg-gradient-to-br from-orange-500/20 to-amber-500/10 border border-orange-400/20 flex items-center justify-center">
-                    <Icon className="w-4.5 h-4.5 text-orange-300" strokeWidth={2.2} />
+                  <div className="flex-shrink-0 w-9 h-9 rounded-lg flex items-center justify-center" style={{ background: "linear-gradient(135deg, rgba(0,255,133,0.18), rgba(0,184,95,0.08))", border: "1px solid rgba(0,255,133,0.25)" }}>
+                    <Icon className="w-4 h-4" strokeWidth={2.2} style={{ color: "#00FF85" }} />
                   </div>
                   <div className="min-w-0">
                     <h3 className="text-sm font-semibold text-white leading-tight">{feature.title}</h3>
@@ -284,7 +292,7 @@ function LoginPage() {
           <div className="flex flex-wrap gap-x-5 gap-y-2 mb-6">
             {copy.benefits.map((b, i) => (
               <div key={i} className="flex items-center gap-1.5 text-sm text-slate-300">
-                <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                <CheckCircle2 className="w-4 h-4 flex-shrink-0" style={{ color: "#00FF85" }} />
                 <span>{b}</span>
               </div>
             ))}
@@ -318,10 +326,17 @@ function LoginPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
-            className="bg-white/[0.04] backdrop-blur-xl rounded-2xl border border-white/10 p-6 shadow-2xl space-y-4"
+            className="rounded-2xl border p-6 shadow-2xl space-y-4"
+            style={{
+              background: "linear-gradient(180deg, rgba(14,18,22,0.85), rgba(8,11,15,0.7))",
+              borderColor: "rgba(255,255,255,0.1)",
+              backdropFilter: "blur(20px)",
+              boxShadow: "0 20px 60px -20px rgba(0,255,133,0.15), 0 8px 30px -10px rgba(0,0,0,0.6)",
+              fontFamily: "Sora, Inter, system-ui, sans-serif",
+            }}
           >
             <div className="text-center pb-2">
-              <h3 className="text-lg font-semibold text-white">{copy.ctaTitle}</h3>
+              <h3 className="text-lg font-semibold text-white tracking-tight">{copy.ctaTitle}</h3>
               <p className="text-xs text-slate-400 mt-1">{copy.ctaSubtitle}</p>
             </div>
 
@@ -338,25 +353,14 @@ function LoginPage() {
             <Button
               onClick={handleGoogleSignIn}
               disabled={loading}
-              className="w-full h-12 text-base bg-white hover:bg-white/90 text-slate-900 font-medium shadow-lg transition-all hover:shadow-xl hover:scale-[1.02] active:scale-[0.98]"
+              className="w-full h-12 text-base font-semibold border-0 transition-all hover:scale-[1.02] active:scale-[0.98]"
+              style={{ background: "#00FF85", color: "#06080A", boxShadow: "0 0 30px -5px #00FF85" }}
             >
               <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
-                <path
-                  d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"
-                  fill="#4285F4"
-                />
-                <path
-                  d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                  fill="#34A853"
-                />
-                <path
-                  d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
-                  fill="#FBBC05"
-                />
-                <path
-                  d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-                  fill="#EA4335"
-                />
+                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4" />
+                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
+                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
+                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
               </svg>
               {loading ? t("signingIn") : t("continueWithGoogle")}
             </Button>
@@ -366,7 +370,7 @@ function LoginPage() {
                 <span className="w-full border-t border-white/10" />
               </div>
               <div className="relative flex justify-center text-xs">
-                <span className="bg-transparent px-2 text-slate-500">or</span>
+                <span className="px-2 text-slate-500">or</span>
               </div>
             </div>
 
@@ -374,9 +378,10 @@ function LoginPage() {
               <Button
                 type="button"
                 variant="outline"
-                className="w-full h-12 bg-white/[0.03] border-white/15 text-white hover:bg-white/[0.08] hover:text-white"
+                className="w-full h-12 text-white hover:text-white"
+                style={{ background: "rgba(255,255,255,0.03)", borderColor: "rgba(0,255,133,0.25)" }}
               >
-                <UserCog className="w-5 h-5 mr-2 text-emerald-300" />
+                <UserCog className="w-5 h-5 mr-2" style={{ color: "#00FF85" }} />
                 {copy.coachLink}
               </Button>
             </Link>
