@@ -105,18 +105,28 @@ function Index() {
   // Tutorial: shows once for new users
   const showTutorial = !settingsLoading && !onboardingLoading && !tutorialDone;
 
-  const sportBg = sportId === "basketball" ? basketballBg : sportId === "football" ? footballBg : null;
+  const isMyClub = theme === "myclub";
+  const sportBg = !isMyClub && (sportId === "basketball" ? basketballBg : sportId === "football" ? footballBg : null);
 
   return (
     <div
-      className={`min-h-screen bg-background relative overflow-hidden ${sportBg ? "no-ambient-lines" : "theme-ambient-bg"}`}
-      style={sportBg ? {
+      className={`min-h-screen bg-background relative overflow-hidden ${
+        isMyClub ? "myclub-bg" : sportBg ? "no-ambient-lines" : "theme-ambient-bg"
+      }`}
+      style={!isMyClub && sportBg ? {
         backgroundImage: `linear-gradient(180deg, rgba(2,6,23,0.72), rgba(2,6,23,0.85)), url(${sportBg})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundAttachment: "fixed",
       } : undefined}
     >
+      {isMyClub && (
+        <>
+          <div className="myclub-orb" style={{ width: 520, height: 520, top: -120, left: -120, background: "#00FF85" }} />
+          <div className="myclub-orb" style={{ width: 420, height: 420, bottom: -100, right: -80, background: "#38bdf8" }} />
+        </>
+      )}
+
 
       <div className="relative z-10">
         <OnboardingTutorial
