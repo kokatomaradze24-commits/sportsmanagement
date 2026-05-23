@@ -165,7 +165,7 @@ function Index() {
           >
             <div className="inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-medium mb-5"
               style={{ borderColor: "rgba(0,255,133,0.3)", background: "rgba(0,255,133,0.08)", color: "#7CFFB8" }}>
-              <Sparkles className="w-3.5 h-3.5" /> {sport.label} · {schoolName}
+              <Sparkles className="w-3.5 h-3.5" /> {sport.name} · {schoolName}
             </div>
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white leading-[1.05]"
               style={{ fontFamily: "Sora, Inter, sans-serif" }}>
