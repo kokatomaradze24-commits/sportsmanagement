@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { BarChart3 } from "lucide-react";
 import { AppHeader } from "@/components/AppHeader";
 import { PlayersList } from "@/components/PlayersList";
@@ -25,6 +25,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useSubscription } from "@/hooks/use-subscription";
 import { useOnboarding } from "@/hooks/use-onboarding";
 import { useI18n } from "@/hooks/use-i18n";
+import { Landing } from "@/components/marketing/Landing";
 import type { Database } from "@/integrations/supabase/types";
 import ogImage from "@/assets/og-home.jpg";
 import basketballBg from "@/assets/basketball-court-bg.png";
@@ -54,7 +55,7 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
-  const navigate = useNavigate();
+  // navigate removed: unauthenticated users now see the marketing landing
   const { isAuthenticated, loading: authLoading, signOut, user } = useAuth();
   const { isDark, theme, themes, setTheme, toggle } = useTheme();
   const { schoolName, logoUrl, loading: settingsLoading, updateSchoolName, updateLogo, resetBranding } = useAppSettings();
@@ -93,8 +94,7 @@ function Index() {
   }
 
   if (!isAuthenticated) {
-    navigate({ to: "/login" });
-    return null;
+    return <Landing />;
   }
 
   // Block access if subscription expired
