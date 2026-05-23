@@ -29,7 +29,7 @@ interface AppHeaderProps {
   onResetBranding: () => void;
   onSignOut?: () => void;
   currentTheme?: AppTheme;
-  themes?: { id: AppTheme; labelKey: "themeClassic" | "themeMidnight" | "themeEmerald" | "themeSunset" | "themeRoyal" }[];
+  themes?: { id: AppTheme; labelKey: "themeMyClub" | "themeClassic" | "themeMidnight" | "themeEmerald" | "themeSunset" | "themeRoyal" }[];
   onSelectTheme?: (theme: AppTheme) => void;
   userId?: string;
 }

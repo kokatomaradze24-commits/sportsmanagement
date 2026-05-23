@@ -66,6 +66,9 @@
   src: url('https://fonts.gstatic.com/s/bebasneue/v14/JTUSjIg69CK48gW7PXooxW5rygbi49c.woff2') format('woff2');
 }
 
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+
+
 :root {
   --radius: 0.75rem;
   --font-display: 'Bebas Neue', sans-serif;
@@ -223,6 +226,53 @@
   --sidebar-ring: var(--ring);
 }
 
+[data-theme="myclub"] {
+  --font-display: 'Sora', 'Inter', system-ui, sans-serif;
+  --font-body: 'Sora', 'Inter', system-ui, sans-serif;
+  /* MY CLUB landing palette: #06080A bg, #00FF85 neon accent, #0E1216 panels */
+  --background: oklch(0.09 0.008 240);
+  --foreground: oklch(0.97 0.01 200);
+  --card: oklch(0.14 0.012 235);
+  --card-foreground: oklch(0.97 0.01 200);
+  --popover: oklch(0.12 0.012 235);
+  --popover-foreground: oklch(0.97 0.01 200);
+  --primary: oklch(0.88 0.27 152);
+  --primary-foreground: oklch(0.1 0.02 240);
+  --secondary: oklch(0.18 0.012 235);
+  --secondary-foreground: oklch(0.97 0.01 200);
+  --muted: oklch(0.16 0.012 235);
+  --muted-foreground: oklch(0.7 0.02 220);
+  --accent: oklch(0.78 0.18 220);
+  --accent-foreground: oklch(0.1 0.02 240);
+  --destructive: oklch(0.65 0.24 25);
+  --destructive-foreground: oklch(0.98 0 0);
+  --border: oklch(1 0 0 / 0.1);
+  --input: oklch(1 0 0 / 0.12);
+  --ring: oklch(0.88 0.27 152);
+  --header: oklch(0.1 0.012 235 / 0.7);
+  --header-foreground: oklch(0.97 0.01 200);
+  --panel: oklch(0.13 0.012 235 / 0.7);
+  --panel-foreground: oklch(0.97 0.01 200);
+  --panel-accent: oklch(0.16 0.014 235);
+  --warning: oklch(0.82 0.18 80);
+  --warning-foreground: oklch(0.1 0.02 240);
+  --success: oklch(0.88 0.27 152);
+  --success-foreground: oklch(0.1 0.02 240);
+  --chart-1: oklch(0.88 0.27 152);
+  --chart-2: oklch(0.78 0.18 220);
+  --chart-3: oklch(0.82 0.18 80);
+  --chart-4: oklch(0.7 0.2 320);
+  --chart-5: oklch(0.65 0.24 25);
+  --sidebar: oklch(0.11 0.012 235);
+  --sidebar-foreground: oklch(0.97 0.01 200);
+  --sidebar-primary: oklch(0.88 0.27 152);
+  --sidebar-primary-foreground: oklch(0.1 0.02 240);
+  --sidebar-accent: oklch(0.18 0.012 235);
+  --sidebar-accent-foreground: oklch(0.97 0.01 200);
+  --sidebar-border: oklch(1 0 0 / 0.1);
+  --sidebar-ring: oklch(0.88 0.27 152);
+}
+
 [data-theme="royal"] {
   --background: oklch(0.95 0.018 285);
   --foreground: oklch(0.17 0.052 270);
@@ -357,6 +407,70 @@
   .theme-swatch-emerald { background: linear-gradient(135deg, oklch(0.43 0.13 178), oklch(0.72 0.17 84), oklch(0.95 0.022 172)); }
   .theme-swatch-sunset { background: linear-gradient(135deg, oklch(0.5 0.16 34), oklch(0.62 0.18 330), oklch(0.95 0.026 63)); }
   .theme-swatch-royal { background: linear-gradient(135deg, oklch(0.32 0.13 274), oklch(0.66 0.18 18), oklch(0.95 0.018 285)); }
+  .theme-swatch-myclub { background: linear-gradient(135deg, oklch(0.09 0.008 240), oklch(0.88 0.27 152), oklch(0.78 0.18 220)); }
+
+  /* Landing-page-style dark futuristic background for the dashboard */
+  .myclub-bg {
+    background-color: #06080A;
+    background-image:
+      radial-gradient(circle at 18% 12%, oklch(0.88 0.27 152 / 0.18), transparent 42%),
+      radial-gradient(circle at 82% 88%, oklch(0.78 0.18 220 / 0.14), transparent 45%),
+      linear-gradient(180deg, #06080A, #080B0F 60%, #06080A);
+  }
+
+  .myclub-bg::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background-image:
+      linear-gradient(oklch(1 0 0 / 0.025) 1px, transparent 1px),
+      linear-gradient(90deg, oklch(1 0 0 / 0.025) 1px, transparent 1px);
+    background-size: 56px 56px;
+    mask-image: radial-gradient(circle at center, black, transparent 78%);
+  }
+
+  .myclub-orb {
+    position: fixed;
+    pointer-events: none;
+    border-radius: 9999px;
+    filter: blur(120px);
+    opacity: 0.4;
+    z-index: 0;
+  }
+
+  /* Frosted glass card style mirroring landing panels */
+  [data-theme="myclub"] .theme-panel {
+    background: linear-gradient(145deg, oklch(0.13 0.012 235 / 0.75), oklch(0.16 0.014 235 / 0.55));
+    border-color: oklch(1 0 0 / 0.08);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    box-shadow: 0 8px 40px -20px oklch(0 0 0 / 0.6), inset 0 1px 0 0 oklch(1 0 0 / 0.04);
+  }
+
+  [data-theme="myclub"] .theme-header {
+    background: linear-gradient(180deg, oklch(0.1 0.012 235 / 0.85), oklch(0.08 0.012 235 / 0.7));
+    border-bottom: 1px solid oklch(1 0 0 / 0.08);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 1px 0 0 oklch(1 0 0 / 0.04), 0 20px 50px -30px oklch(0.88 0.27 152 / 0.3);
+  }
+
+  [data-theme="myclub"] .gradient-text {
+    background: linear-gradient(135deg, #00FF85, #7CFFB8 45%, #5fb8ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  [data-theme="myclub"] h1, [data-theme="myclub"] h2, [data-theme="myclub"] h3,
+  [data-theme="myclub"] h4, [data-theme="myclub"] h5, [data-theme="myclub"] h6 {
+    font-family: 'Sora', 'Inter', system-ui, sans-serif;
+    letter-spacing: -0.01em;
+    font-weight: 700;
+  }
+
 
   @keyframes ambient-theme-flow {
     from { transform: translate3d(-4%, -2%, 0) rotate(0deg); }
