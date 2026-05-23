@@ -25,6 +25,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useSubscription } from "@/hooks/use-subscription";
 import { useOnboarding } from "@/hooks/use-onboarding";
 import { useI18n } from "@/hooks/use-i18n";
+import { Landing } from "@/components/marketing/Landing";
 import type { Database } from "@/integrations/supabase/types";
 import ogImage from "@/assets/og-home.jpg";
 import basketballBg from "@/assets/basketball-court-bg.png";
@@ -93,8 +94,7 @@ function Index() {
   }
 
   if (!isAuthenticated) {
-    navigate({ to: "/login" });
-    return null;
+    return <Landing />;
   }
 
   // Block access if subscription expired
