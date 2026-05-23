@@ -55,7 +55,7 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
-  const navigate = useNavigate();
+  // navigate removed: unauthenticated users now see the marketing landing
   const { isAuthenticated, loading: authLoading, signOut, user } = useAuth();
   const { isDark, theme, themes, setTheme, toggle } = useTheme();
   const { schoolName, logoUrl, loading: settingsLoading, updateSchoolName, updateLogo, resetBranding } = useAppSettings();
