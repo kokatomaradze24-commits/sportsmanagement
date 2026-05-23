@@ -66,6 +66,9 @@
   src: url('https://fonts.gstatic.com/s/bebasneue/v14/JTUSjIg69CK48gW7PXooxW5rygbi49c.woff2') format('woff2');
 }
 
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+
+
 :root {
   --radius: 0.75rem;
   --font-display: 'Bebas Neue', sans-serif;
