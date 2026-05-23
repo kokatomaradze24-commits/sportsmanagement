@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { motion } from "framer-motion";
+import { motion, type Variants } from "framer-motion";
 import {
   ArrowRight, Play, Users, BarChart3, Calendar, Wallet, Smartphone,
   Brain, Shield, Zap, Check, ChevronDown, Trophy, Target, Activity,
@@ -12,12 +12,12 @@ import mobileImg from "@/assets/marketing/mobile-app.jpg";
 import footballImg from "@/assets/marketing/football-training.jpg";
 import basketballImg from "@/assets/marketing/basketball-training.jpg";
 
-const fade = {
+const fade: Variants = {
   hidden: { opacity: 0, y: 24 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] } },
+  show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] } },
 };
 
-const stagger = {
+const stagger: Variants = {
   show: { transition: { staggerChildren: 0.08 } },
 };
 
