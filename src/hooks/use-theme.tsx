@@ -1,9 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
 
-export type AppTheme = "myclub" | "classic" | "midnight" | "emerald" | "sunset" | "royal";
+export type AppTheme = "classic" | "midnight" | "emerald" | "sunset" | "royal";
 
-export const APP_THEMES: { id: AppTheme; labelKey: "themeMyClub" | "themeClassic" | "themeMidnight" | "themeEmerald" | "themeSunset" | "themeRoyal" }[] = [
-  { id: "myclub", labelKey: "themeMyClub" },
+export const APP_THEMES: { id: AppTheme; labelKey: "themeClassic" | "themeMidnight" | "themeEmerald" | "themeSunset" | "themeRoyal" }[] = [
   { id: "classic", labelKey: "themeClassic" },
   { id: "midnight", labelKey: "themeMidnight" },
   { id: "emerald", labelKey: "themeEmerald" },
@@ -15,14 +14,13 @@ const isAppTheme = (value: string | null): value is AppTheme => APP_THEMES.some(
 
 export function useTheme() {
   const [theme, setThemeState] = useState<AppTheme>(() => {
-    if (typeof window === "undefined") return "myclub";
+    if (typeof window === "undefined") return "classic";
     const saved = localStorage.getItem("theme");
     if (isAppTheme(saved)) return saved;
-    if (saved === "dark") return "midnight";
-    return "myclub";
+    return saved === "dark" ? "midnight" : "classic";
   });
 
-  const isDark = theme === "midnight" || theme === "myclub";
+  const isDark = theme === "midnight";
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -32,7 +30,7 @@ export function useTheme() {
     localStorage.setItem("theme", theme);
   }, [theme, isDark]);
 
-  const toggle = useCallback(() => setThemeState((current) => (current === "myclub" || current === "midnight" ? "classic" : "myclub")), []);
+  const toggle = useCallback(() => setThemeState((current) => (current === "midnight" ? "classic" : "midnight")), []);
   const setTheme = useCallback((nextTheme: AppTheme) => setThemeState(nextTheme), []);
 
   return { isDark, theme, themes: APP_THEMES, setTheme, toggle };
