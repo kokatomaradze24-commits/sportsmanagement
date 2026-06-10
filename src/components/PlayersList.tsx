@@ -94,7 +94,7 @@ function PlayerForm({ initial, sport, onSubmit, onCancel }: {
   const [emailPickerOpen, setEmailPickerOpen] = useState(false);
 
   // Subscription fields
-  const [monthlyFee, setMonthlyFee] = useState(initial?.monthly_fee?.toString() || "50");
+  const [monthlyFee, setMonthlyFee] = useState(initial?.monthly_fee?.toString() || "150");
   const [months, setMonths] = useState((initial?.subscription_months || seasonDefaults.subscriptionMonths).toString());
   const [startMonth, setStartMonth] = useState((initial?.start_month || seasonDefaults.startMonth).toString());
   const [firstMonthPaid, setFirstMonthPaid] = useState(false);
