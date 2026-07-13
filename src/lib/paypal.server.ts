@@ -1,10 +1,13 @@
 // PayPal REST API helpers (server only).
 // Sandbox: api-m.sandbox.paypal.com  |  Live: api-m.paypal.com
 
-const PAYPAL_BASE =
-  process.env.PAYPAL_ENV === "live"
+function getPaypalBase() {
+  return process.env.PAYPAL_ENV === "live"
     ? "https://api-m.paypal.com"
     : "https://api-m.sandbox.paypal.com";
+}
+
+
 
 let cachedToken: { token: string; expiresAt: number } | null = null;
 
@@ -18,7 +21,7 @@ export async function getPaypalAccessToken(): Promise<string> {
   }
 
   const auth = Buffer.from(`${id}:${secret}`).toString("base64");
-  const res = await fetch(`${PAYPAL_BASE}/v1/oauth2/token`, {
+  const res = await fetch(`${getPaypalBase()}/v1/oauth2/token`, {
     method: "POST",
     headers: {
       Authorization: `Basic ${auth}`,
@@ -40,7 +43,7 @@ export async function getPaypalAccessToken(): Promise<string> {
 
 export async function paypalFetch(path: string, init: RequestInit = {}) {
   const token = await getPaypalAccessToken();
-  const res = await fetch(`${PAYPAL_BASE}${path}`, {
+  const res = await fetch(`${getPaypalBase()}${path}`, {
     ...init,
     headers: {
       Authorization: `Bearer ${token}`,
