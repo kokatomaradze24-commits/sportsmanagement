@@ -65,6 +65,7 @@ export const Route = createFileRoute("/api/paypal/create-order")({
           return Response.json({ orderId: order.id });
         } catch (e) {
           const msg = e instanceof Error ? e.message : String(e);
+          console.error("[paypal/create-order] failed:", msg);
           return Response.json({ error: msg }, { status: 500 });
         }
       },
