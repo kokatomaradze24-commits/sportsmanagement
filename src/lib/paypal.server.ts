@@ -1,10 +1,13 @@
 // PayPal REST API helpers (server only).
 // Sandbox: api-m.sandbox.paypal.com  |  Live: api-m.paypal.com
 
-const PAYPAL_BASE =
-  process.env.PAYPAL_ENV === "live"
+function getPaypalBase() {
+  return process.env.PAYPAL_ENV === "live"
     ? "https://api-m.paypal.com"
     : "https://api-m.sandbox.paypal.com";
+}
+
+
 
 let cachedToken: { token: string; expiresAt: number } | null = null;
 
