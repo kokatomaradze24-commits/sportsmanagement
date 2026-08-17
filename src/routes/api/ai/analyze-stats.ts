@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
 const GATEWAY_URL = "https://ai.gateway.lovable.dev/v1/chat/completions";
-const ANALYSIS_COST = 5;
+
 const MAX_IMAGES = 8;
 const MAX_IMAGE_BYTES = 4 * 1024 * 1024; // ~4MB per image after base64 decode estimate
 const MAX_TEXT_CHARS = 60_000;
