@@ -318,7 +318,7 @@ function StatsAnalysisPage() {
                 </>
               ) : (
                 <>
-                  <Sparkles className="w-4 h-4 mr-2" /> {t("statsGenerate", { credits: 5 })}
+                  <Sparkles className="w-4 h-4 mr-2" /> {t("statsGenerateFree")}
                 </>
               )}
             </Button>
