@@ -183,7 +183,7 @@ function StatsAnalysisPage() {
       }
       const data = (await res.json()) as AnalysisResult;
       setResult(data);
-      refreshCredits();
+      
       if (!data.team_identified) {
         toast.warning(t("statsTeamNotFound"));
       } else {
