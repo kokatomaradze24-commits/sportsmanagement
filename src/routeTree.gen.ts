@@ -9,62 +9,37 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as StatsAnalysisRouteImport } from './routes/stats-analysis'
-import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
-import { Route as SharePreviewRouteImport } from './routes/share-preview'
-import { Route as LoginRouteImport } from './routes/login'
-import { Route as CoachLoginRouteImport } from './routes/coach-login'
-import { Route as CoachRouteImport } from './routes/coach'
-import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as RegisterLinkIdRouteImport } from './routes/register.$linkId'
-import { Route as RCodeRouteImport } from './routes/r.$code'
-import { Route as HooksSendPaymentSmsRouteImport } from './routes/hooks/send-payment-sms'
+import { Route as AdminRouteImport } from './routes/admin'
+import { Route as CoachRouteImport } from './routes/coach'
+import { Route as CoachLoginRouteImport } from './routes/coach-login'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as SharePreviewRouteImport } from './routes/share-preview'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as StatsAnalysisRouteImport } from './routes/stats-analysis'
 import { Route as ApiOgPreviewRouteImport } from './routes/api/og-preview'
-import { Route as ApiPublicPlayerRegistrationRouteImport } from './routes/api/public/player-registration'
-import { Route as ApiPaypalSubscriptionConfigRouteImport } from './routes/api/paypal/subscription-config'
-import { Route as ApiPaypalCreateOrderRouteImport } from './routes/api/paypal/create-order'
-import { Route as ApiPaypalCreateAccessOrderRouteImport } from './routes/api/paypal/create-access-order'
-import { Route as ApiPaypalConfigRouteImport } from './routes/api/paypal/config'
-import { Route as ApiPaypalCaptureOrderRouteImport } from './routes/api/paypal/capture-order'
-import { Route as ApiPaypalCaptureAccessOrderRouteImport } from './routes/api/paypal/capture-access-order'
-import { Route as ApiPaypalActivateSubscriptionRouteImport } from './routes/api/paypal/activate-subscription'
-import { Route as ApiCoachScheduleRouteImport } from './routes/api/coach/schedule'
-import { Route as ApiCoachResetPasswordRouteImport } from './routes/api/coach/reset-password'
-import { Route as ApiCoachRegisterRouteImport } from './routes/api/coach/register'
-import { Route as ApiCoachLoginRouteImport } from './routes/api/coach/login'
-import { Route as ApiAiGenerateTrainingPlanRouteImport } from './routes/api/ai/generate-training-plan'
-import { Route as ApiAiGenerateImageRouteImport } from './routes/api/ai/generate-image'
+import { Route as HooksSendPaymentSmsRouteImport } from './routes/hooks/send-payment-sms'
+import { Route as RCodeRouteImport } from './routes/r.$code'
+import { Route as RegisterLinkIdRouteImport } from './routes/register.$linkId'
 import { Route as ApiAiAnalyzeStatsRouteImport } from './routes/api/ai/analyze-stats'
+import { Route as ApiAiGenerateImageRouteImport } from './routes/api/ai/generate-image'
+import { Route as ApiAiGenerateTrainingPlanRouteImport } from './routes/api/ai/generate-training-plan'
+import { Route as ApiCoachLoginRouteImport } from './routes/api/coach/login'
+import { Route as ApiCoachRegisterRouteImport } from './routes/api/coach/register'
+import { Route as ApiCoachResetPasswordRouteImport } from './routes/api/coach/reset-password'
+import { Route as ApiCoachScheduleRouteImport } from './routes/api/coach/schedule'
+import { Route as ApiPaypalActivateSubscriptionRouteImport } from './routes/api/paypal/activate-subscription'
+import { Route as ApiPaypalCaptureAccessOrderRouteImport } from './routes/api/paypal/capture-access-order'
+import { Route as ApiPaypalCaptureOrderRouteImport } from './routes/api/paypal/capture-order'
+import { Route as ApiPaypalConfigRouteImport } from './routes/api/paypal/config'
+import { Route as ApiPaypalCreateAccessOrderRouteImport } from './routes/api/paypal/create-access-order'
+import { Route as ApiPaypalCreateOrderRouteImport } from './routes/api/paypal/create-order'
+import { Route as ApiPaypalSubscriptionConfigRouteImport } from './routes/api/paypal/subscription-config'
+import { Route as ApiPublicPlayerRegistrationRouteImport } from './routes/api/public/player-registration'
 
-const StatsAnalysisRoute = StatsAnalysisRouteImport.update({
-  id: '/stats-analysis',
-  path: '/stats-analysis',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
-  id: '/sitemap.xml',
-  path: '/sitemap.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SharePreviewRoute = SharePreviewRouteImport.update({
-  id: '/share-preview',
-  path: '/share-preview',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LoginRoute = LoginRouteImport.update({
-  id: '/login',
-  path: '/login',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CoachLoginRoute = CoachLoginRouteImport.update({
-  id: '/coach-login',
-  path: '/coach-login',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CoachRoute = CoachRouteImport.update({
-  id: '/coach',
-  path: '/coach',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminRoute = AdminRouteImport.update({
@@ -72,24 +47,34 @@ const AdminRoute = AdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const CoachRoute = CoachRouteImport.update({
+  id: '/coach',
+  path: '/coach',
   getParentRoute: () => rootRouteImport,
 } as any)
-const RegisterLinkIdRoute = RegisterLinkIdRouteImport.update({
-  id: '/register/$linkId',
-  path: '/register/$linkId',
+const CoachLoginRoute = CoachLoginRouteImport.update({
+  id: '/coach-login',
+  path: '/coach-login',
   getParentRoute: () => rootRouteImport,
 } as any)
-const RCodeRoute = RCodeRouteImport.update({
-  id: '/r/$code',
-  path: '/r/$code',
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
-const HooksSendPaymentSmsRoute = HooksSendPaymentSmsRouteImport.update({
-  id: '/hooks/send-payment-sms',
-  path: '/hooks/send-payment-sms',
+const SharePreviewRoute = SharePreviewRouteImport.update({
+  id: '/share-preview',
+  path: '/share-preview',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StatsAnalysisRoute = StatsAnalysisRouteImport.update({
+  id: '/stats-analysis',
+  path: '/stats-analysis',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiOgPreviewRoute = ApiOgPreviewRouteImport.update({
@@ -97,69 +82,29 @@ const ApiOgPreviewRoute = ApiOgPreviewRouteImport.update({
   path: '/api/og-preview',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiPublicPlayerRegistrationRoute =
-  ApiPublicPlayerRegistrationRouteImport.update({
-    id: '/api/public/player-registration',
-    path: '/api/public/player-registration',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPaypalSubscriptionConfigRoute =
-  ApiPaypalSubscriptionConfigRouteImport.update({
-    id: '/api/paypal/subscription-config',
-    path: '/api/paypal/subscription-config',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPaypalCreateOrderRoute = ApiPaypalCreateOrderRouteImport.update({
-  id: '/api/paypal/create-order',
-  path: '/api/paypal/create-order',
+const HooksSendPaymentSmsRoute = HooksSendPaymentSmsRouteImport.update({
+  id: '/hooks/send-payment-sms',
+  path: '/hooks/send-payment-sms',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiPaypalCreateAccessOrderRoute =
-  ApiPaypalCreateAccessOrderRouteImport.update({
-    id: '/api/paypal/create-access-order',
-    path: '/api/paypal/create-access-order',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPaypalConfigRoute = ApiPaypalConfigRouteImport.update({
-  id: '/api/paypal/config',
-  path: '/api/paypal/config',
+const RCodeRoute = RCodeRouteImport.update({
+  id: '/r/$code',
+  path: '/r/$code',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiPaypalCaptureOrderRoute = ApiPaypalCaptureOrderRouteImport.update({
-  id: '/api/paypal/capture-order',
-  path: '/api/paypal/capture-order',
+const RegisterLinkIdRoute = RegisterLinkIdRouteImport.update({
+  id: '/register/$linkId',
+  path: '/register/$linkId',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiPaypalCaptureAccessOrderRoute =
-  ApiPaypalCaptureAccessOrderRouteImport.update({
-    id: '/api/paypal/capture-access-order',
-    path: '/api/paypal/capture-access-order',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPaypalActivateSubscriptionRoute =
-  ApiPaypalActivateSubscriptionRouteImport.update({
-    id: '/api/paypal/activate-subscription',
-    path: '/api/paypal/activate-subscription',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiCoachScheduleRoute = ApiCoachScheduleRouteImport.update({
-  id: '/api/coach/schedule',
-  path: '/api/coach/schedule',
+const ApiAiAnalyzeStatsRoute = ApiAiAnalyzeStatsRouteImport.update({
+  id: '/api/ai/analyze-stats',
+  path: '/api/ai/analyze-stats',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiCoachResetPasswordRoute = ApiCoachResetPasswordRouteImport.update({
-  id: '/api/coach/reset-password',
-  path: '/api/coach/reset-password',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiCoachRegisterRoute = ApiCoachRegisterRouteImport.update({
-  id: '/api/coach/register',
-  path: '/api/coach/register',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiCoachLoginRoute = ApiCoachLoginRouteImport.update({
-  id: '/api/coach/login',
-  path: '/api/coach/login',
+const ApiAiGenerateImageRoute = ApiAiGenerateImageRouteImport.update({
+  id: '/api/ai/generate-image',
+  path: '/api/ai/generate-image',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiAiGenerateTrainingPlanRoute =
@@ -168,16 +113,71 @@ const ApiAiGenerateTrainingPlanRoute =
     path: '/api/ai/generate-training-plan',
     getParentRoute: () => rootRouteImport,
   } as any)
-const ApiAiGenerateImageRoute = ApiAiGenerateImageRouteImport.update({
-  id: '/api/ai/generate-image',
-  path: '/api/ai/generate-image',
+const ApiCoachLoginRoute = ApiCoachLoginRouteImport.update({
+  id: '/api/coach/login',
+  path: '/api/coach/login',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiAiAnalyzeStatsRoute = ApiAiAnalyzeStatsRouteImport.update({
-  id: '/api/ai/analyze-stats',
-  path: '/api/ai/analyze-stats',
+const ApiCoachRegisterRoute = ApiCoachRegisterRouteImport.update({
+  id: '/api/coach/register',
+  path: '/api/coach/register',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiCoachResetPasswordRoute = ApiCoachResetPasswordRouteImport.update({
+  id: '/api/coach/reset-password',
+  path: '/api/coach/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiCoachScheduleRoute = ApiCoachScheduleRouteImport.update({
+  id: '/api/coach/schedule',
+  path: '/api/coach/schedule',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPaypalActivateSubscriptionRoute =
+  ApiPaypalActivateSubscriptionRouteImport.update({
+    id: '/api/paypal/activate-subscription',
+    path: '/api/paypal/activate-subscription',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPaypalCaptureAccessOrderRoute =
+  ApiPaypalCaptureAccessOrderRouteImport.update({
+    id: '/api/paypal/capture-access-order',
+    path: '/api/paypal/capture-access-order',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPaypalCaptureOrderRoute = ApiPaypalCaptureOrderRouteImport.update({
+  id: '/api/paypal/capture-order',
+  path: '/api/paypal/capture-order',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPaypalConfigRoute = ApiPaypalConfigRouteImport.update({
+  id: '/api/paypal/config',
+  path: '/api/paypal/config',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPaypalCreateAccessOrderRoute =
+  ApiPaypalCreateAccessOrderRouteImport.update({
+    id: '/api/paypal/create-access-order',
+    path: '/api/paypal/create-access-order',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPaypalCreateOrderRoute = ApiPaypalCreateOrderRouteImport.update({
+  id: '/api/paypal/create-order',
+  path: '/api/paypal/create-order',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPaypalSubscriptionConfigRoute =
+  ApiPaypalSubscriptionConfigRouteImport.update({
+    id: '/api/paypal/subscription-config',
+    path: '/api/paypal/subscription-config',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicPlayerRegistrationRoute =
+  ApiPublicPlayerRegistrationRouteImport.update({
+    id: '/api/public/player-registration',
+    path: '/api/public/player-registration',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -389,46 +389,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/stats-analysis': {
-      id: '/stats-analysis'
-      path: '/stats-analysis'
-      fullPath: '/stats-analysis'
-      preLoaderRoute: typeof StatsAnalysisRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sitemap.xml': {
-      id: '/sitemap.xml'
-      path: '/sitemap.xml'
-      fullPath: '/sitemap.xml'
-      preLoaderRoute: typeof SitemapDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/share-preview': {
-      id: '/share-preview'
-      path: '/share-preview'
-      fullPath: '/share-preview'
-      preLoaderRoute: typeof SharePreviewRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/coach-login': {
-      id: '/coach-login'
-      path: '/coach-login'
-      fullPath: '/coach-login'
-      preLoaderRoute: typeof CoachLoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/coach': {
-      id: '/coach'
-      path: '/coach'
-      fullPath: '/coach'
-      preLoaderRoute: typeof CoachRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin': {
@@ -438,32 +403,46 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/coach': {
+      id: '/coach'
+      path: '/coach'
+      fullPath: '/coach'
+      preLoaderRoute: typeof CoachRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/register/$linkId': {
-      id: '/register/$linkId'
-      path: '/register/$linkId'
-      fullPath: '/register/$linkId'
-      preLoaderRoute: typeof RegisterLinkIdRouteImport
+    '/coach-login': {
+      id: '/coach-login'
+      path: '/coach-login'
+      fullPath: '/coach-login'
+      preLoaderRoute: typeof CoachLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/r/$code': {
-      id: '/r/$code'
-      path: '/r/$code'
-      fullPath: '/r/$code'
-      preLoaderRoute: typeof RCodeRouteImport
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/hooks/send-payment-sms': {
-      id: '/hooks/send-payment-sms'
-      path: '/hooks/send-payment-sms'
-      fullPath: '/hooks/send-payment-sms'
-      preLoaderRoute: typeof HooksSendPaymentSmsRouteImport
+    '/share-preview': {
+      id: '/share-preview'
+      path: '/share-preview'
+      fullPath: '/share-preview'
+      preLoaderRoute: typeof SharePreviewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/stats-analysis': {
+      id: '/stats-analysis'
+      path: '/stats-analysis'
+      fullPath: '/stats-analysis'
+      preLoaderRoute: typeof StatsAnalysisRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/og-preview': {
@@ -473,95 +452,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiOgPreviewRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/player-registration': {
-      id: '/api/public/player-registration'
-      path: '/api/public/player-registration'
-      fullPath: '/api/public/player-registration'
-      preLoaderRoute: typeof ApiPublicPlayerRegistrationRouteImport
+    '/hooks/send-payment-sms': {
+      id: '/hooks/send-payment-sms'
+      path: '/hooks/send-payment-sms'
+      fullPath: '/hooks/send-payment-sms'
+      preLoaderRoute: typeof HooksSendPaymentSmsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/paypal/subscription-config': {
-      id: '/api/paypal/subscription-config'
-      path: '/api/paypal/subscription-config'
-      fullPath: '/api/paypal/subscription-config'
-      preLoaderRoute: typeof ApiPaypalSubscriptionConfigRouteImport
+    '/r/$code': {
+      id: '/r/$code'
+      path: '/r/$code'
+      fullPath: '/r/$code'
+      preLoaderRoute: typeof RCodeRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/paypal/create-order': {
-      id: '/api/paypal/create-order'
-      path: '/api/paypal/create-order'
-      fullPath: '/api/paypal/create-order'
-      preLoaderRoute: typeof ApiPaypalCreateOrderRouteImport
+    '/register/$linkId': {
+      id: '/register/$linkId'
+      path: '/register/$linkId'
+      fullPath: '/register/$linkId'
+      preLoaderRoute: typeof RegisterLinkIdRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/paypal/create-access-order': {
-      id: '/api/paypal/create-access-order'
-      path: '/api/paypal/create-access-order'
-      fullPath: '/api/paypal/create-access-order'
-      preLoaderRoute: typeof ApiPaypalCreateAccessOrderRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/paypal/config': {
-      id: '/api/paypal/config'
-      path: '/api/paypal/config'
-      fullPath: '/api/paypal/config'
-      preLoaderRoute: typeof ApiPaypalConfigRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/paypal/capture-order': {
-      id: '/api/paypal/capture-order'
-      path: '/api/paypal/capture-order'
-      fullPath: '/api/paypal/capture-order'
-      preLoaderRoute: typeof ApiPaypalCaptureOrderRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/paypal/capture-access-order': {
-      id: '/api/paypal/capture-access-order'
-      path: '/api/paypal/capture-access-order'
-      fullPath: '/api/paypal/capture-access-order'
-      preLoaderRoute: typeof ApiPaypalCaptureAccessOrderRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/paypal/activate-subscription': {
-      id: '/api/paypal/activate-subscription'
-      path: '/api/paypal/activate-subscription'
-      fullPath: '/api/paypal/activate-subscription'
-      preLoaderRoute: typeof ApiPaypalActivateSubscriptionRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/coach/schedule': {
-      id: '/api/coach/schedule'
-      path: '/api/coach/schedule'
-      fullPath: '/api/coach/schedule'
-      preLoaderRoute: typeof ApiCoachScheduleRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/coach/reset-password': {
-      id: '/api/coach/reset-password'
-      path: '/api/coach/reset-password'
-      fullPath: '/api/coach/reset-password'
-      preLoaderRoute: typeof ApiCoachResetPasswordRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/coach/register': {
-      id: '/api/coach/register'
-      path: '/api/coach/register'
-      fullPath: '/api/coach/register'
-      preLoaderRoute: typeof ApiCoachRegisterRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/coach/login': {
-      id: '/api/coach/login'
-      path: '/api/coach/login'
-      fullPath: '/api/coach/login'
-      preLoaderRoute: typeof ApiCoachLoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/ai/generate-training-plan': {
-      id: '/api/ai/generate-training-plan'
-      path: '/api/ai/generate-training-plan'
-      fullPath: '/api/ai/generate-training-plan'
-      preLoaderRoute: typeof ApiAiGenerateTrainingPlanRouteImport
+    '/api/ai/analyze-stats': {
+      id: '/api/ai/analyze-stats'
+      path: '/api/ai/analyze-stats'
+      fullPath: '/api/ai/analyze-stats'
+      preLoaderRoute: typeof ApiAiAnalyzeStatsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/ai/generate-image': {
@@ -571,11 +487,95 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAiGenerateImageRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/ai/analyze-stats': {
-      id: '/api/ai/analyze-stats'
-      path: '/api/ai/analyze-stats'
-      fullPath: '/api/ai/analyze-stats'
-      preLoaderRoute: typeof ApiAiAnalyzeStatsRouteImport
+    '/api/ai/generate-training-plan': {
+      id: '/api/ai/generate-training-plan'
+      path: '/api/ai/generate-training-plan'
+      fullPath: '/api/ai/generate-training-plan'
+      preLoaderRoute: typeof ApiAiGenerateTrainingPlanRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/coach/login': {
+      id: '/api/coach/login'
+      path: '/api/coach/login'
+      fullPath: '/api/coach/login'
+      preLoaderRoute: typeof ApiCoachLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/coach/register': {
+      id: '/api/coach/register'
+      path: '/api/coach/register'
+      fullPath: '/api/coach/register'
+      preLoaderRoute: typeof ApiCoachRegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/coach/reset-password': {
+      id: '/api/coach/reset-password'
+      path: '/api/coach/reset-password'
+      fullPath: '/api/coach/reset-password'
+      preLoaderRoute: typeof ApiCoachResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/coach/schedule': {
+      id: '/api/coach/schedule'
+      path: '/api/coach/schedule'
+      fullPath: '/api/coach/schedule'
+      preLoaderRoute: typeof ApiCoachScheduleRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/paypal/activate-subscription': {
+      id: '/api/paypal/activate-subscription'
+      path: '/api/paypal/activate-subscription'
+      fullPath: '/api/paypal/activate-subscription'
+      preLoaderRoute: typeof ApiPaypalActivateSubscriptionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/paypal/capture-access-order': {
+      id: '/api/paypal/capture-access-order'
+      path: '/api/paypal/capture-access-order'
+      fullPath: '/api/paypal/capture-access-order'
+      preLoaderRoute: typeof ApiPaypalCaptureAccessOrderRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/paypal/capture-order': {
+      id: '/api/paypal/capture-order'
+      path: '/api/paypal/capture-order'
+      fullPath: '/api/paypal/capture-order'
+      preLoaderRoute: typeof ApiPaypalCaptureOrderRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/paypal/config': {
+      id: '/api/paypal/config'
+      path: '/api/paypal/config'
+      fullPath: '/api/paypal/config'
+      preLoaderRoute: typeof ApiPaypalConfigRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/paypal/create-access-order': {
+      id: '/api/paypal/create-access-order'
+      path: '/api/paypal/create-access-order'
+      fullPath: '/api/paypal/create-access-order'
+      preLoaderRoute: typeof ApiPaypalCreateAccessOrderRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/paypal/create-order': {
+      id: '/api/paypal/create-order'
+      path: '/api/paypal/create-order'
+      fullPath: '/api/paypal/create-order'
+      preLoaderRoute: typeof ApiPaypalCreateOrderRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/paypal/subscription-config': {
+      id: '/api/paypal/subscription-config'
+      path: '/api/paypal/subscription-config'
+      fullPath: '/api/paypal/subscription-config'
+      preLoaderRoute: typeof ApiPaypalSubscriptionConfigRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/player-registration': {
+      id: '/api/public/player-registration'
+      path: '/api/public/player-registration'
+      fullPath: '/api/public/player-registration'
+      preLoaderRoute: typeof ApiPublicPlayerRegistrationRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
