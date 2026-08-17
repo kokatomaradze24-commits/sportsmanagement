@@ -183,7 +183,7 @@ function StatsAnalysisPage() {
       }
       const data = (await res.json()) as AnalysisResult;
       setResult(data);
-      refreshCredits();
+      
       if (!data.team_identified) {
         toast.warning(t("statsTeamNotFound"));
       } else {
@@ -215,7 +215,7 @@ function StatsAnalysisPage() {
             </Link>
           </Button>
           <Badge variant="outline" className="text-xs">
-            {t("statsAiCredits")}: {credits ?? "—"} · {t("statsCost")}: 5
+            {t("statsFreeBadge")}
           </Badge>
         </div>
 
@@ -318,7 +318,7 @@ function StatsAnalysisPage() {
                 </>
               ) : (
                 <>
-                  <Sparkles className="w-4 h-4 mr-2" /> {t("statsGenerate", { credits: 5 })}
+                  <Sparkles className="w-4 h-4 mr-2" /> {t("statsGenerateFree")}
                 </>
               )}
             </Button>
