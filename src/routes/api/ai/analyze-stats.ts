@@ -52,28 +52,9 @@ export const Route = createFileRoute("/api/ai/analyze-stats")({
           return Response.json({ error: "Club name is required" }, { status: 400 });
         }
 
-        const admin = supabaseAdmin as any;
-        const { data: deductOk, error: deductErr } = await admin.rpc("deduct_ai_credits", {
-          _user_id: user.id,
-          _amount: ANALYSIS_COST,
-        });
-        if (deductErr) {
-          console.error("deduct_ai_credits failed", deductErr);
-          return Response.json({ error: "Credit check failed" }, { status: 500 });
-        }
-        if (!deductOk) {
-          return Response.json(
-            { error: "Insufficient AI credits. Please purchase more." },
-            { status: 402 },
-          );
-        }
-
+        // Stats analysis is free — no AI credits are charged.
         const refund = async () => {
-          try {
-            await admin.rpc("refund_ai_credits", { _user_id: user.id, _amount: ANALYSIS_COST });
-          } catch {
-            /* ignore */
-          }
+          /* no-op: analysis is free */
         };
 
         const systemPrompt = `You are an elite ${sport} performance analyst and head coach.
