@@ -215,7 +215,7 @@ function StatsAnalysisPage() {
             </Link>
           </Button>
           <Badge variant="outline" className="text-xs">
-            {t("statsAiCredits")}: {credits ?? "—"} · {t("statsCost")}: 5
+            {t("statsFreeBadge")}
           </Badge>
         </div>
 
