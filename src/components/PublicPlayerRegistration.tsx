@@ -40,7 +40,6 @@ export function PublicPlayerRegistration({ linkId }: { linkId: string }) {
   const [primaryContact, setPrimaryContact] = useState<"player" | "parent">("player");
   const [experienceLevel, setExperienceLevel] = useState<"experienced" | "inexperienced">("experienced");
   const [previousClub, setPreviousClub] = useState("");
-  const [previousTeam, setPreviousTeam] = useState("");
   const [league, setLeague] = useState<"A" | "B" | "C" | "">("");
   const [lastCoach, setLastCoach] = useState("");
   const [notes, setNotes] = useState("");
