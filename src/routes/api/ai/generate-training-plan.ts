@@ -86,11 +86,11 @@ Each session must have:
             type: "function",
             function: {
               name: "submit_training_plan",
-              description: "Submit the generated training plan as a structured list of practice sessions.",
+              description: "Submit the training plan.",
               parameters: {
                 type: "object",
                 properties: {
-                  summary: { type: "string", description: "Short overview of the plan focus and progression." },
+                  summary: { type: "string" },
                   sessions: {
                     type: "array",
                     items: {
@@ -104,11 +104,10 @@ Each session must have:
                       },
                       required: ["title", "practice_date", "start_time", "end_time", "notes"],
                     },
-
                   },
                 },
                 required: ["summary", "sessions"],
-                additionalProperties: false,
+
               },
             },
           },
