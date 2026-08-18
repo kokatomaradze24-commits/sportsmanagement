@@ -119,7 +119,6 @@ export function PublicPlayerRegistration({ linkId }: { linkId: string }) {
           primaryContact,
           experienceLevel,
           previousClub,
-          previousTeam,
           league,
           lastCoach,
           notes,
@@ -213,9 +212,8 @@ export function PublicPlayerRegistration({ linkId }: { linkId: string }) {
                 {experienceLevel === "experienced" && (
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div><label className="text-sm text-muted-foreground mb-1 block">{t("regPreviousClub")} *</label><Input value={previousClub} onChange={(e) => setPreviousClub(e.target.value)} required /></div>
-                    <div><label className="text-sm text-muted-foreground mb-1 block">{t("regPreviousTeam")} *</label><Input value={previousTeam} onChange={(e) => setPreviousTeam(e.target.value)} required /></div>
                     <div><label className="text-sm text-muted-foreground mb-1 block">{t("regLeague")} *</label><select value={league} onChange={(e) => setLeague(e.target.value as "A" | "B" | "C" | "")} required className={selectClass}><option value="">{t("regSelect")}</option><option value="A">A</option><option value="B">B</option><option value="C">C</option></select></div>
-                    <div><label className="text-sm text-muted-foreground mb-1 block">{t("regLastCoach")} *</label><Input value={lastCoach} onChange={(e) => setLastCoach(e.target.value)} required /></div>
+                    <div className="sm:col-span-2"><label className="text-sm text-muted-foreground mb-1 block">{t("regLastCoach")} *</label><Input value={lastCoach} onChange={(e) => setLastCoach(e.target.value)} required /></div>
                   </div>
                 )}
               </div>

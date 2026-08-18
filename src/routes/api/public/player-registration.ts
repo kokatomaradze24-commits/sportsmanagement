@@ -43,7 +43,6 @@ export const Route = createFileRoute("/api/public/player-registration")({
         const primaryContact = String(body.primaryContact ?? "player") === "parent" ? "parent" : "player";
         const experienceLevel = String(body.experienceLevel ?? "experienced") === "inexperienced" ? "inexperienced" : "experienced";
         const previousClub = String(body.previousClub ?? "").trim();
-        const previousTeam = String(body.previousTeam ?? "").trim();
         const league = String(body.league ?? "").trim().toUpperCase();
         const lastCoach = String(body.lastCoach ?? "").trim();
         const notes = String(body.notes ?? "").trim();
