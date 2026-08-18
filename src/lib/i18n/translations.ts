@@ -550,9 +550,9 @@ export const translations = {
     subExpUnlimitedItem: "Unlimited access",
     subExpOneTimeItem: "One-time payment",
     subExpNoAutoRenewItem: "No auto-renewal",
-    subExpSecurePaypalItem: "Secure PayPal payment",
+    subExpSecurePaypalItem: "Secure bank transfer",
     subExpPickAndPay: "Pick a plan and pay",
-    subExpSecureLine: "Secure payment — PayPal, Card, Apple Pay, Google Pay",
+    subExpSecureLine: "Pay by bank transfer — activated after confirmation",
   },
 
   de: {
@@ -908,9 +908,9 @@ export const translations = {
     subExpUnlimitedItem: "Unbegrenzter Zugang",
     subExpOneTimeItem: "Einmalige Zahlung",
     subExpNoAutoRenewItem: "Keine automatische Verlängerung",
-    subExpSecurePaypalItem: "Sichere PayPal-Zahlung",
+    subExpSecurePaypalItem: "Sichere Banküberweisung",
     subExpPickAndPay: "Paket wählen und bezahlen",
-    subExpSecureLine: "Sichere Zahlung — PayPal, Karte, Apple Pay, Google Pay",
+    subExpSecureLine: "Zahlung per Banküberweisung — Aktivierung nach Bestätigung",
 
     regSubtitle: "Spielerregistrierung",
     regIntro: "Wir würden uns freuen, wenn Sie unserem Verein beitreten. Bitte füllen Sie die folgenden Felder sorgfältig aus, unser Manager wird sich innerhalb von 24 Stunden bei Ihnen melden. Viel Erfolg!",
@@ -1295,9 +1295,9 @@ export const translations = {
     subExpUnlimitedItem: "Acceso ilimitado",
     subExpOneTimeItem: "Pago único",
     subExpNoAutoRenewItem: "Sin renovación automática",
-    subExpSecurePaypalItem: "Pago PayPal seguro",
+    subExpSecurePaypalItem: "Transferencia bancaria segura",
     subExpPickAndPay: "Elige un plan y paga",
-    subExpSecureLine: "Pago seguro — PayPal, Tarjeta, Apple Pay, Google Pay",
+    subExpSecureLine: "Pago por transferencia bancaria — activado tras la confirmación",
 
     regSubtitle: "Registro de jugador",
     regIntro: "Nos encantaría que te unieras a nuestro club. Por favor, completa cuidadosamente los campos a continuación y nuestro gerente se pondrá en contacto contigo en un plazo de 24 horas. ¡Mucho éxito!",
@@ -1682,9 +1682,9 @@ export const translations = {
     subExpUnlimitedItem: "Accès illimité",
     subExpOneTimeItem: "Paiement unique",
     subExpNoAutoRenewItem: "Pas de renouvellement automatique",
-    subExpSecurePaypalItem: "Paiement PayPal sécurisé",
+    subExpSecurePaypalItem: "Virement bancaire sécurisé",
     subExpPickAndPay: "Choisissez un forfait et payez",
-    subExpSecureLine: "Paiement sécurisé — PayPal, Carte, Apple Pay, Google Pay",
+    subExpSecureLine: "Paiement par virement bancaire — activé après confirmation",
 
     regSubtitle: "Inscription du joueur",
     regIntro: "Nous serions ravis que vous rejoigniez notre club. Veuillez remplir attentivement les champs ci-dessous et notre responsable vous contactera dans les 24 heures. Bonne chance !",
@@ -2151,9 +2151,9 @@ export const translations = {
     subExpUnlimitedItem: "ულიმიტო წვდომა",
     subExpOneTimeItem: "ერთჯერადი გადახდა",
     subExpNoAutoRenewItem: "ავტო-განახლების გარეშე",
-    subExpSecurePaypalItem: "უსაფრთხო PayPal გადახდა",
+    subExpSecurePaypalItem: "უსაფრთხო ბანკის გადარიცხვა",
     subExpPickAndPay: "აირჩიე პაკეტი და გადაიხადე",
-    subExpSecureLine: "უსაფრთხო გადახდა — PayPal, ბარათი, Apple Pay, Google Pay",
+    subExpSecureLine: "გადახდა ბანკის გადარიცხვით — აქტივირდება დადასტურების შემდეგ",
   },
 
   ru: {
@@ -2509,9 +2509,9 @@ export const translations = {
     subExpUnlimitedItem: "Безлимитный доступ",
     subExpOneTimeItem: "Разовая оплата",
     subExpNoAutoRenewItem: "Без автопродления",
-    subExpSecurePaypalItem: "Безопасная PayPal оплата",
+    subExpSecurePaypalItem: "Безопасный банковский перевод",
     subExpPickAndPay: "Выберите пакет и оплатите",
-    subExpSecureLine: "Безопасная оплата — PayPal, Карта, Apple Pay, Google Pay",
+    subExpSecureLine: "Оплата банковским переводом — активация после подтверждения",
 
     regSubtitle: "Регистрация игрока",
     regIntro: "Мы будем рады, если вы присоединитесь к нашему клубу. Пожалуйста, внимательно заполните поля ниже, и наш менеджер свяжется с вами в течение 24 часов. Удачи!",
