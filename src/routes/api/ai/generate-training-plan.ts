@@ -86,31 +86,28 @@ Each session must have:
             type: "function",
             function: {
               name: "submit_training_plan",
-              description: "Submit the generated training plan as a structured list of practice sessions.",
+              description: "Submit the training plan.",
               parameters: {
                 type: "object",
                 properties: {
-                  summary: { type: "string", description: "Short overview of the plan focus and progression." },
+                  summary: { type: "string" },
                   sessions: {
                     type: "array",
-                    minItems: 1,
-                    maxItems: 40,
                     items: {
                       type: "object",
                       properties: {
                         title: { type: "string" },
-                        practice_date: { type: "string", description: "YYYY-MM-DD" },
-                        start_time: { type: "string", description: "HH:MM 24h" },
-                        end_time: { type: "string", description: "HH:MM 24h" },
+                        practice_date: { type: "string" },
+                        start_time: { type: "string" },
+                        end_time: { type: "string" },
                         notes: { type: "string" },
                       },
                       required: ["title", "practice_date", "start_time", "end_time", "notes"],
-                      additionalProperties: false,
                     },
                   },
                 },
                 required: ["summary", "sessions"],
-                additionalProperties: false,
+
               },
             },
           },
