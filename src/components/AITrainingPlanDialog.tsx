@@ -129,10 +129,10 @@ export function AITrainingPlanDialog({ sportId, onAdded, trigger, defaultAgeGrou
         return;
       }
       if (res.status === 402) {
-        toast.error(t("aiGenNoCredits"));
-        setShowBuyCredits(true);
+        toast.error(t("aiGenError"));
         return;
       }
+
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
         toast.error(data?.error ?? t("aiGenError"));
