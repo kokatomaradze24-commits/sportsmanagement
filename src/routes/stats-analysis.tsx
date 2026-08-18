@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { ArrowLeft, Upload, Sparkles, Trash2, Loader2, FileText, Image as ImageIcon, AlertCircle, CheckCircle2 } from "lucide-react";
@@ -89,17 +89,18 @@ function StatsAnalysisPage() {
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
-  if (authLoading) {
+  useEffect(() => {
+    if (!authLoading && !isAuthenticated) navigate({ to: "/login" });
+  }, [authLoading, isAuthenticated, navigate]);
+
+  if (authLoading || !isAuthenticated) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </div>
     );
   }
-  if (!isAuthenticated) {
-    navigate({ to: "/login" });
-    return null;
-  }
+
 
   const handleFiles = async (selected: FileList | null) => {
     if (!selected || selected.length === 0) return;
