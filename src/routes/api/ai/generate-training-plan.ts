@@ -93,20 +93,18 @@ Each session must have:
                   summary: { type: "string", description: "Short overview of the plan focus and progression." },
                   sessions: {
                     type: "array",
-                    minItems: 1,
-                    maxItems: 40,
                     items: {
                       type: "object",
                       properties: {
                         title: { type: "string" },
-                        practice_date: { type: "string", description: "YYYY-MM-DD" },
-                        start_time: { type: "string", description: "HH:MM 24h" },
-                        end_time: { type: "string", description: "HH:MM 24h" },
+                        practice_date: { type: "string" },
+                        start_time: { type: "string" },
+                        end_time: { type: "string" },
                         notes: { type: "string" },
                       },
                       required: ["title", "practice_date", "start_time", "end_time", "notes"],
-                      additionalProperties: false,
                     },
+
                   },
                 },
                 required: ["summary", "sessions"],
