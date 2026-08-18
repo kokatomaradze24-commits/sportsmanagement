@@ -117,23 +117,9 @@ Each session must have:
         ];
 
 
-        const PLAN_COST = mode === "expert" ? 3 : 1;
-        const admin = supabaseAdmin as any;
-        const { data: deductOk, error: deductErr } = await admin.rpc("deduct_ai_credits", {
-          _user_id: user.id,
-          _amount: PLAN_COST,
-        });
-        if (deductErr) {
-          console.error("deduct_ai_credits failed", deductErr);
-          return Response.json({ error: "Credit check failed" }, { status: 500 });
-        }
-        if (!deductOk) {
-          return Response.json({ error: "Insufficient AI credits. Please purchase more." }, { status: 402 });
-        }
+        // Training plan generation is free — no AI credits are charged.
+        const refund = async () => { /* no-op: feature is free */ };
 
-        const refund = async () => {
-          try { await admin.rpc("refund_ai_credits", { _user_id: user.id, _amount: PLAN_COST }); } catch { /* ignore */ }
-        };
 
         try {
           const response = await fetch(GATEWAY_URL, {
