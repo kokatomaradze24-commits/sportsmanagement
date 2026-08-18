@@ -81,7 +81,11 @@ function Index() {
     if (!onboarded) markOnboarded();
   }, [settingsLoading, onboardingLoading, user, onboarded, markOnboarded]);
 
-  if (authLoading) {
+  useEffect(() => {
+    if (!authLoading && !isAuthenticated) navigate({ to: "/login" });
+  }, [authLoading, isAuthenticated, navigate]);
+
+  if (authLoading || !isAuthenticated) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
@@ -92,10 +96,6 @@ function Index() {
     );
   }
 
-  if (!isAuthenticated) {
-    navigate({ to: "/login" });
-    return null;
-  }
 
   // Block access if subscription expired
   if (!subLoading && !subActive) {
