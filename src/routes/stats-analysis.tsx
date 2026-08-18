@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { ArrowLeft, Upload, Sparkles, Trash2, Loader2, FileText, Image as ImageIcon, AlertCircle, CheckCircle2 } from "lucide-react";
