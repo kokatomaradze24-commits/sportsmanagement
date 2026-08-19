@@ -73,8 +73,8 @@ export function RegistrationNotificationsBell({ sportId, userId, label }: Props)
     <div className="flex flex-col items-center gap-1">
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
-          <Button variant="ghost" size="icon" className="rounded-full w-10 h-10 relative" title={label}>
-            <Bell className="w-5 h-5" />
+          <Button variant="ghost" size="icon" className="rounded-full w-12 h-12 sm:w-14 sm:h-14 relative" title={label}>
+            <Bell className="w-6 h-6 sm:w-7 sm:h-7" />
             <AnimatePresence>
               {count > 0 && (
                 <motion.span
@@ -135,7 +135,7 @@ export function RegistrationNotificationsBell({ sportId, userId, label }: Props)
           )}
         </PopoverContent>
       </Popover>
-      <span className="text-[10px] text-muted-foreground leading-none">{label}</span>
+      <span className="text-[11px] sm:text-xs text-muted-foreground leading-none">{label}</span>
     </div>
   );
 }

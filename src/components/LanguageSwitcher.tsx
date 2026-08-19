@@ -21,7 +21,7 @@ export function LanguageSwitcher({ variant = "header", className }: LanguageSwit
           size={variant === "header" ? "icon" : "sm"}
           className={
             (variant === "header"
-              ? "rounded-full w-10 h-10 "
+              ? "rounded-full w-12 h-12 sm:w-14 sm:h-14 "
               : variant === "topbar"
                 ? "gap-2 bg-white/[0.06] border-white/15 text-white hover:bg-white/[0.12] hover:text-white backdrop-blur-md "
                 : "gap-1.5 ") + (className ?? "")
@@ -29,7 +29,7 @@ export function LanguageSwitcher({ variant = "header", className }: LanguageSwit
           title={t("language")}
         >
           {variant === "header" ? (
-            <Languages className="w-5 h-5" />
+            <Languages className="w-6 h-6 sm:w-7 sm:h-7" />
           ) : (
             <>
               <span className="text-base leading-none">{current?.flag}</span>
