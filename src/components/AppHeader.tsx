@@ -136,8 +136,8 @@ export function AppHeader({ schoolName, logoUrl, sport, isDark, onToggleTheme, o
           <div className="flex flex-col items-center gap-1">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="rounded-full w-10 h-10" title={t("changeSport")}>
-                  <Trophy className="w-5 h-5" />
+                <Button variant="ghost" size="icon" className="rounded-full w-12 h-12 sm:w-14 sm:h-14" title={t("changeSport")}>
+                  <Trophy className="w-6 h-6 sm:w-7 sm:h-7" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
@@ -155,12 +155,12 @@ export function AppHeader({ schoolName, logoUrl, sport, isDark, onToggleTheme, o
                 ))}
               </DropdownMenuContent>
             </DropdownMenu>
-            <span className="text-[10px] text-muted-foreground leading-none">{t("lblSport")}</span>
+            <span className="text-[11px] sm:text-xs text-muted-foreground leading-none">{t("lblSport")}</span>
           </div>
 
           <div className="flex flex-col items-center gap-1">
             <LanguageSwitcher />
-            <span className="text-[10px] text-muted-foreground leading-none">{t("lblLanguage")}</span>
+            <span className="text-[11px] sm:text-xs text-muted-foreground leading-none">{t("lblLanguage")}</span>
           </div>
 
           <RegistrationNotificationsBell sportId={sport.id} userId={userId} label={t("notificationLabel")} />
@@ -176,19 +176,19 @@ export function AppHeader({ schoolName, logoUrl, sport, isDark, onToggleTheme, o
                 setAdjustOpen(true);
               }}
               trigger={
-                <Button variant="ghost" size="icon" className="rounded-full w-10 h-10 text-primary" title={t("aiGenButton")}>
-                  <Sparkles className="w-5 h-5" />
+                <Button variant="ghost" size="icon" className="rounded-full w-12 h-12 sm:w-14 sm:h-14 text-primary" title={t("aiGenButton")}>
+                  <Sparkles className="w-6 h-6 sm:w-7 sm:h-7" />
                 </Button>
               }
             />
-            <span className="text-[10px] text-muted-foreground leading-none">{t("aiGenButton")}</span>
+            <span className="text-[11px] sm:text-xs text-muted-foreground leading-none">{t("aiGenButton")}</span>
           </div>
 
           <div className="flex flex-col items-center gap-1">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="rounded-full w-10 h-10" title={t("lblSettings")}>
-                  <Settings className="w-5 h-5" />
+                <Button variant="ghost" size="icon" className="rounded-full w-12 h-12 sm:w-14 sm:h-14" title={t("lblSettings")}>
+                  <Settings className="w-6 h-6 sm:w-7 sm:h-7" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
@@ -221,7 +221,7 @@ export function AppHeader({ schoolName, logoUrl, sport, isDark, onToggleTheme, o
                 )}
               </DropdownMenuContent>
             </DropdownMenu>
-            <span className="text-[10px] text-muted-foreground leading-none">{t("lblSettings")}</span>
+            <span className="text-[11px] sm:text-xs text-muted-foreground leading-none">{t("lblSettings")}</span>
           </div>
         </div>
 
