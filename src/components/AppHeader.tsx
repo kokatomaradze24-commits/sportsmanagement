@@ -1,7 +1,7 @@
 import { useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { Link } from "@tanstack/react-router";
-import { Moon, Sun, Upload, Pencil, Check, X, LogOut, Trophy, RotateCcw, Shield, Volume2, VolumeX, Palette, Sparkles, Settings } from "lucide-react";
+import { Upload, Pencil, Check, X, LogOut, Trophy, RotateCcw, Shield, Volume2, VolumeX, Sparkles, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuLabel, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
@@ -28,7 +28,7 @@ interface AppHeaderProps {
   onResetBranding: () => void;
   onSignOut?: () => void;
   currentTheme?: AppTheme;
-  themes?: { id: AppTheme; labelKey: "themeClassic" | "themeMidnight" | "themeEmerald" | "themeSunset" | "themeRoyal" }[];
+  themes?: { id: AppTheme; labelKey: "themeMidnight" }[];
   onSelectTheme?: (theme: AppTheme) => void;
   userId?: string;
 }

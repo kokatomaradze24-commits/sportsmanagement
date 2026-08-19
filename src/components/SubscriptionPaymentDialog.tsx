@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { useI18n } from "@/hooks/use-i18n";
-import { BANK_ACCOUNTS } from "@/lib/bank-accounts";
+import { BANK_ACCOUNTS, PAYMENT_CONTACT_EMAIL } from "@/lib/bank-accounts";
 import { SUBSCRIPTION_PLANS, getPlan } from "@/lib/subscription-plan";
 
 interface Props {
@@ -137,17 +137,15 @@ export function SubscriptionPaymentDialog({ open, onOpenChange, onSuccess }: Pro
           ))}
         </div>
 
-        {user?.email && (
-          <div className="rounded-xl border border-border p-3 bg-muted/20">
-            <div className="text-xs text-muted-foreground mb-1">{t("bankReference")}</div>
-            <div className="flex items-center justify-between gap-2">
-              <code className="text-sm font-mono break-all">{user.email}</code>
-              <Button size="icon" variant="ghost" className="shrink-0" onClick={() => copy(user.email!)}>
-                {copied === user.email ? <Check className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
-              </Button>
-            </div>
+        <div className="rounded-xl border border-border p-3 bg-muted/20">
+          <div className="text-xs text-muted-foreground mb-1">{t("bankReference")}</div>
+          <div className="flex items-center justify-between gap-2">
+            <code className="text-sm font-mono break-all">{PAYMENT_CONTACT_EMAIL}</code>
+            <Button size="icon" variant="ghost" className="shrink-0" onClick={() => copy(PAYMENT_CONTACT_EMAIL)}>
+              {copied === PAYMENT_CONTACT_EMAIL ? <Check className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
+            </Button>
           </div>
-        )}
+        </div>
 
         {hasPending ? (
           <div className="flex items-center gap-2 rounded-xl border border-primary/40 bg-primary/10 p-3 text-xs text-muted-foreground mt-1">
