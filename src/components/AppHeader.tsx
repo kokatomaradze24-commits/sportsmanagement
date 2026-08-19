@@ -13,7 +13,6 @@ import { useSounds } from "@/hooks/use-sounds";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import { LogoAdjustDialog } from "./LogoAdjustDialog";
 import { AIImageGenerator } from "./AIImageGenerator";
-import { AICreditsBadge } from "./AICreditsBadge";
 import { RegistrationNotificationsBell } from "./RegistrationNotificationsBell";
 import type { AppTheme } from "@/hooks/use-theme";
 
@@ -164,11 +163,6 @@ export function AppHeader({ schoolName, logoUrl, sport, isDark, onToggleTheme, o
             <span className="text-[10px] text-muted-foreground leading-none">{t("lblLanguage")}</span>
           </div>
 
-          <div className="flex flex-col items-center gap-1">
-            <AICreditsBadge />
-            <span className="text-[10px] text-muted-foreground leading-none">{t("aiCreditsLabel")}</span>
-          </div>
-
           <RegistrationNotificationsBell sportId={sport.id} userId={userId} label={t("notificationLabel")} />
 
 
@@ -188,34 +182,6 @@ export function AppHeader({ schoolName, logoUrl, sport, isDark, onToggleTheme, o
               }
             />
             <span className="text-[10px] text-muted-foreground leading-none">{t("aiGenButton")}</span>
-          </div>
-
-          <div className="flex flex-col items-center gap-1">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" onClick={() => play("click")} className="rounded-full w-10 h-10" title={t("lblTheme")}>
-                  <motion.div key={currentTheme ?? (isDark ? "moon" : "sun")} initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} transition={{ duration: 0.3 }}>
-                    <Palette className="w-5 h-5" />
-                  </motion.div>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuLabel>{t("lblTheme")}</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                {themes.length > 0 ? themes.map((themeOption) => (
-                  <DropdownMenuItem key={themeOption.id} onClick={() => { play("click"); onSelectTheme?.(themeOption.id); }} className={themeOption.id === currentTheme ? "bg-primary/10 font-semibold" : ""}>
-                    <span className={`mr-2 h-4 w-4 rounded-full border border-border theme-swatch-${themeOption.id}`} />
-                    {t(themeOption.labelKey)}
-                  </DropdownMenuItem>
-                )) : (
-                  <DropdownMenuItem onClick={() => { play("click"); onToggleTheme(); }}>
-                    {isDark ? <Sun className="mr-2 w-4 h-4" /> : <Moon className="mr-2 w-4 h-4" />}
-                    {t("lblTheme")}
-                  </DropdownMenuItem>
-                )}
-              </DropdownMenuContent>
-            </DropdownMenu>
-            <span className="text-[10px] text-muted-foreground leading-none">{t("lblTheme")}</span>
           </div>
 
           <div className="flex flex-col items-center gap-1">
