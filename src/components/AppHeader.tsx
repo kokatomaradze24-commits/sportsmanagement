@@ -125,9 +125,6 @@ export function AppHeader({ schoolName, logoUrl, sport, isDark, onToggleTheme, o
                   <span>{sport.emoji}</span> {sport.name}
                 </p>
               </div>
-              <Button size="icon" variant="ghost" onClick={() => { setNameValue(schoolName); setEditing(true); }}>
-                <Pencil className="w-4 h-4" />
-              </Button>
             </div>
           )}
         </div>
