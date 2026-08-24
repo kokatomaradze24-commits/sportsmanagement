@@ -30,20 +30,6 @@ export const Route = createFileRoute("/api/ai/generate-image")({
         if (!prompt) return Response.json({ error: "Prompt is required" }, { status: 400 });
         if (prompt.length > 2000) return Response.json({ error: "Prompt is too long" }, { status: 400 });
 
-        const IMAGE_COST = 5;
-        const admin = supabaseAdmin as any;
-        const { data: deductOk, error: deductErr } = await admin.rpc("deduct_ai_credits", {
-          _user_id: user.id,
-          _amount: IMAGE_COST,
-        });
-        if (deductErr) {
-          console.error("deduct_ai_credits failed", deductErr);
-          return Response.json({ error: "Credit check failed" }, { status: 500 });
-        }
-        if (!deductOk) {
-          return Response.json({ error: "Insufficient AI credits. Please purchase more." }, { status: 402 });
-        }
-
         const userContent: any[] = [{ type: "text", text: prompt }];
         if (referenceImage && referenceImage.startsWith("data:image/")) {
           userContent.push({ type: "image_url", image_url: { url: referenceImage } });
@@ -63,20 +49,13 @@ export const Route = createFileRoute("/api/ai/generate-image")({
             }),
           });
 
-          const refund = async () => {
-            try { await admin.rpc("refund_ai_credits", { _user_id: user.id, _amount: IMAGE_COST }); } catch { /* ignore */ }
-          };
-
           if (response.status === 429) {
-            await refund();
             return Response.json({ error: "Rate limit exceeded. Please try again shortly." }, { status: 429 });
           }
           if (response.status === 402) {
-            await refund();
             return Response.json({ error: "AI service temporarily unavailable. Please try again later." }, { status: 503 });
           }
           if (!response.ok) {
-            await refund();
             const txt = await response.text();
             console.error("AI gateway error", response.status, txt);
             return Response.json({ error: "Image generation failed" }, { status: 500 });
@@ -85,14 +64,12 @@ export const Route = createFileRoute("/api/ai/generate-image")({
           const data = await response.json();
           const imageUrl: string | undefined = data?.choices?.[0]?.message?.images?.[0]?.image_url?.url;
           if (!imageUrl) {
-            await refund();
             console.error("No image in AI response", JSON.stringify(data).slice(0, 500));
             return Response.json({ error: "No image returned" }, { status: 500 });
           }
 
           return Response.json({ imageUrl });
         } catch (err) {
-          try { await admin.rpc("refund_ai_credits", { _user_id: user.id, _amount: IMAGE_COST }); } catch { /* ignore */ }
           console.error("generate-image exception", err);
           return Response.json({ error: "Image generation failed" }, { status: 500 });
         }
