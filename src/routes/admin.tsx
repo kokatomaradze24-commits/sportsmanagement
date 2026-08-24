@@ -19,7 +19,6 @@ import { useAuth } from "@/hooks/use-auth";
 import { useIsAdmin } from "@/hooks/use-is-admin";
 import { useI18n } from "@/hooks/use-i18n";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
-import { AICreditsSalesPanel } from "@/components/AICreditsSalesPanel";
 import { BankTransferRequestsPanel } from "@/components/BankTransferRequestsPanel";
 import { SubscriptionRevenuePanel } from "@/components/SubscriptionRevenuePanel";
 
@@ -241,8 +240,6 @@ function AdminPage() {
         <BankTransferRequestsPanel />
 
         <SubscriptionRevenuePanel />
-
-        <AICreditsSalesPanel />
 
         <div className="grid gap-3">
           {users.map((u, i) => (
