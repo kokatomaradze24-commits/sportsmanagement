@@ -55,6 +55,7 @@ export const Route = createRootRoute({
       { rel: "preload", as: "font", type: "font/woff2", href: "https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7W0Q5nw.woff2", crossOrigin: "anonymous" as const },
       { rel: "preload", as: "font", type: "font/woff2", href: "https://fonts.gstatic.com/s/bebasneue/v14/JTUSjIg69CK48gW7PXooxW5rygbi49c.woff2", crossOrigin: "anonymous" as const },
       { rel: "stylesheet", href: appCss },
+      { rel: "icon", type: "image/png", href: "/favicon.png" },
     ],
     scripts: [
       {
