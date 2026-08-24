@@ -195,6 +195,10 @@ export function AppHeader({ schoolName, logoUrl, sport, isDark, onToggleTheme, o
                   <RotateCcw className="mr-2 w-4 h-4" />
                   {t("lblResetLogo")}
                 </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => { setNameValue(schoolName); setEditing(true); }}>
+                  <Pencil className="mr-2 w-4 h-4" />
+                  {t("lblRenameClub")}
+                </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => { play("click"); toggleMuted(); }}>
                   {muted ? <VolumeX className="mr-2 w-4 h-4" /> : <Volume2 className="mr-2 w-4 h-4" />}
                   {muted ? t("soundOff") : t("soundOn")}
