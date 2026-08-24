@@ -383,6 +383,7 @@ export const translations = {
     aiPresetUniformPrompt: "A modern team uniform/jersey design for \"{name}\" {sport} team, front view, professional sportswear, clean background",
     aiPresetCustomPrompt: "A creative design for \"{name}\" featuring our club logo, {sport} themed",
     lblSettings: "Settings",
+    lblRenameClub: "Rename club",
     lblResetLogo: "Logo reset",
     aiPlanButton: "AI plan",
     aiPlanTitle: "AI Training Plan",
