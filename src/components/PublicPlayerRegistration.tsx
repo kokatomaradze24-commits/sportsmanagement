@@ -28,15 +28,16 @@ export function PublicPlayerRegistration({ linkId }: { linkId: string }) {
   const [error, setError] = useState<string | null>(null);
 
   const pageLang: LanguageCode = info?.language ?? language;
-  const dial = getDialCodeForLanguage(pageLang);
+  // Registration links always default the phone prefix to Georgia.
+  const dial = getDialCodeForLanguage("ka");
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [birthDay, setBirthDay] = useState("");
   const [birthMonth, setBirthMonth] = useState("");
   const [birthYear, setBirthYear] = useState("");
-  const [phone, setPhone] = useState(() => prefillPhone("", language));
-  const [parentPhone, setParentPhone] = useState(() => prefillPhone("", language));
+  const [phone, setPhone] = useState(() => prefillPhone("", "ka"));
+  const [parentPhone, setParentPhone] = useState(() => prefillPhone("", "ka"));
   const [primaryContact, setPrimaryContact] = useState<"player" | "parent">("player");
   const [experienceLevel, setExperienceLevel] = useState<"experienced" | "inexperienced">("experienced");
   const [previousClub, setPreviousClub] = useState("");
