@@ -75,6 +75,11 @@ export function PublicPlayerRegistration({ linkId }: { linkId: string }) {
     return v === dial.code || v.replace(/[\s-]/g, "") === dial.code ? "" : v;
   };
 
+  // Names must be typed with Latin letters only.
+  const hasNonLatin = (value: string) => /[^a-zA-Z\s'\-.]/.test(value.trim());
+  const firstNameNonLatin = hasNonLatin(firstName);
+  const lastNameNonLatin = hasNonLatin(lastName);
+
   const years = useMemo(() => {
     const now = new Date().getFullYear();
     const arr: number[] = [];
@@ -92,6 +97,10 @@ export function PublicPlayerRegistration({ linkId }: { linkId: string }) {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (firstNameNonLatin || lastNameNonLatin) {
+      setError(t("regLatinOnly"));
+      return;
+    }
     if (!birthDay || !birthMonth || !birthYear) {
       setError(t("regBirthDate"));
       return;
@@ -176,8 +185,16 @@ export function PublicPlayerRegistration({ linkId }: { linkId: string }) {
               </p>
               {error && <div className="rounded-lg border border-destructive/20 bg-destructive/10 p-3 text-sm text-destructive">{error}</div>}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div><label className="text-sm text-muted-foreground mb-1 block">{t("regFirstName")} *</label><Input value={firstName} onChange={(e) => setFirstName(e.target.value)} required /></div>
-                <div><label className="text-sm text-muted-foreground mb-1 block">{t("regLastName")} *</label><Input value={lastName} onChange={(e) => setLastName(e.target.value)} required /></div>
+                <div>
+                  <label className="text-sm text-muted-foreground mb-1 block">{t("regFirstName")} *</label>
+                  <Input value={firstName} onChange={(e) => setFirstName(e.target.value)} required className={firstNameNonLatin ? "border-destructive" : undefined} />
+                  {firstNameNonLatin && <p className="text-xs text-destructive mt-1">{t("regLatinOnly")}</p>}
+                </div>
+                <div>
+                  <label className="text-sm text-muted-foreground mb-1 block">{t("regLastName")} *</label>
+                  <Input value={lastName} onChange={(e) => setLastName(e.target.value)} required className={lastNameNonLatin ? "border-destructive" : undefined} />
+                  {lastNameNonLatin && <p className="text-xs text-destructive mt-1">{t("regLatinOnly")}</p>}
+                </div>
               </div>
               <div>
                 <label className="text-sm text-muted-foreground mb-1 block">{t("regBirthDate")} *</label>
