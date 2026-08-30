@@ -48,8 +48,15 @@ export function usePlayerRegistrationLink(sport: string) {
   }, [sport, ensureLink]);
 
   const registrationUrl = useMemo(() => {
-    if (!link?.short_code || typeof window === "undefined") return "";
-    return `${window.location.origin}/r/${link.short_code}`;
+    if (!link?.short_code) return "";
+    // Always build the link on the public production domain so anyone can
+    // open it without a Lovable account (preview URLs require login).
+    const PUBLIC_ORIGIN = "https://my-club.live";
+    const origin =
+      typeof window !== "undefined" && /(^|\.)my-club\.live$/.test(window.location.hostname)
+        ? window.location.origin
+        : PUBLIC_ORIGIN;
+    return `${origin}/r/${link.short_code}`;
   }, [link?.short_code]);
 
   return { link, registrationUrl, loading, refetch: ensureLink };
