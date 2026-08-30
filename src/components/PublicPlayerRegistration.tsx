@@ -52,8 +52,8 @@ export function PublicPlayerRegistration({ linkId }: { linkId: string }) {
   }, [info?.language, language, setLanguage]);
 
   useEffect(() => {
-    setPhone((v) => (v.trim() && v.trim() !== `${getDialCodeForLanguage(language).code}` ? v : prefillPhone("", pageLang)));
-    setParentPhone((v) => (v.trim() && v.trim() !== `${getDialCodeForLanguage(language).code}` ? v : prefillPhone("", pageLang)));
+    setPhone((v) => (v.trim() && v.trim() !== `${getDialCodeForLanguage(language).code}` ? v : prefillPhone("", "ka")));
+    setParentPhone((v) => (v.trim() && v.trim() !== `${getDialCodeForLanguage(language).code}` ? v : prefillPhone("", "ka")));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pageLang]);
 
