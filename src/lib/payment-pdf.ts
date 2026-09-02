@@ -117,6 +117,34 @@ function isDebt(payment: Payment, player: Player) {
   return payment.status === "overdue" || (payment.status !== "paid" && dueDate(payment, player) <= new Date());
 }
 
+const BOTTOM_LIMIT = 118;
+
+function startPage(
+  pdf: Awaited<ReturnType<typeof createDoc>>["pdf"],
+  title: string,
+  subtitle: string,
+  cols: number[],
+  headers: string[],
+  boldFont: PDFFont,
+  bodyFont: PDFFont,
+) {
+  const page = pdf.addPage([PAGE.width, PAGE.height]);
+  header(page, title, subtitle, boldFont, bodyFont);
+  let y = PAGE.height - 128;
+  headers.forEach((label, i) => text(page, label, cols[i], y, boldFont, 9, muted));
+  y -= 14;
+  page.drawLine({ start: { x: 40, y }, end: { x: PAGE.width - 40, y }, thickness: 1, color: line });
+  y -= 20;
+  return { page, y };
+}
+
+function drawFooters(pdf: Awaited<ReturnType<typeof createDoc>>["pdf"], font: PDFFont, label: string) {
+  const pages = pdf.getPages();
+  pages.forEach((p, i) => {
+    text(p, `${label} ${i + 1} / ${pages.length}`, PAGE.width / 2 - 24, 26, font, 9, muted);
+  });
+}
+
 export async function downloadPlayerPaymentsPdf({
   player,
   payments,
@@ -138,18 +166,20 @@ export async function downloadPlayerPaymentsPdf({
   const labels = pdfText[language] ?? pdfText.en;
   const bodyFont = language === "ka" ? regular : latinRegular;
   const boldFont = language === "ka" ? bold : latinBold;
-  const page = pdf.addPage([PAGE.width, PAGE.height]);
-  header(page, `${player.first_name} ${player.last_name} — ${labels.payments}`, `${clubName} · ${sportName} · #${player.t_number}`, boldFont, bodyFont);
+
+  const title = `${player.first_name} ${player.last_name} — ${labels.payments}`;
+  const subtitle = `${clubName} · ${sportName} · #${player.t_number}`;
+  const cols = [42, 170, 282, 390, 485];
+  const headers = [labels.month, labels.amount, labels.status, labels.paidDate, labels.note];
+
+  let { page, y } = startPage(pdf, title, subtitle, cols, headers, boldFont, bodyFont);
 
   const rows = payments.filter((p) => p.player_id === player.id).sort((a, b) => a.year - b.year || a.month - b.month);
-  let y = PAGE.height - 128;
-  const cols = [42, 170, 282, 390, 485];
-  [labels.month, labels.amount, labels.status, labels.paidDate, labels.note].forEach((label, i) => text(page, label, cols[i], y, boldFont, 9, muted));
-  y -= 14;
-  page.drawLine({ start: { x: 40, y }, end: { x: PAGE.width - 40, y }, thickness: 1, color: line });
-  y -= 20;
 
   rows.forEach((payment) => {
+    if (y < BOTTOM_LIMIT) {
+      ({ page, y } = startPage(pdf, title, subtitle, cols, headers, boldFont, bodyFont));
+    }
     const statusColor = payment.status === "paid" ? success : payment.status === "overdue" ? danger : muted;
     text(page, `${monthShort(payment.month)} ${payment.year}`, cols[0], y, bodyFont, 10);
     text(page, formatMoney(payment.amount), cols[1], y, bodyFont, 10);
@@ -161,10 +191,14 @@ export async function downloadPlayerPaymentsPdf({
 
   const paid = rows.filter((p) => p.status === "paid").reduce((s, p) => s + p.amount, 0);
   const debt = rows.filter((p) => p.status !== "paid").reduce((s, p) => s + p.amount, 0);
+  if (y < BOTTOM_LIMIT) {
+    ({ page, y } = startPage(pdf, title, subtitle, cols, headers, boldFont, bodyFont));
+  }
   page.drawRectangle({ x: 40, y: 48, width: PAGE.width - 80, height: 48, color: rgb(0.98, 0.99, 1), borderColor: line, borderWidth: 1 });
   text(page, `${labels.paid}: ${formatMoney(paid)}`, 58, 66, boldFont, 11, success);
   text(page, `${labels.remaining}: ${formatMoney(debt)}`, 230, 66, boldFont, 11, danger);
 
+  drawFooters(pdf, bodyFont, labels.page);
   download(await pdf.save(), `${player.first_name}-${player.last_name}-payments.pdf`);
 }
 
@@ -187,14 +221,12 @@ export async function downloadAllDebtsPdf({
   const labels = pdfText[language] ?? pdfText.en;
   const bodyFont = language === "ka" ? regular : latinRegular;
   const boldFont = language === "ka" ? bold : latinBold;
-  const page = pdf.addPage([PAGE.width, PAGE.height]);
-  header(page, labels.debts, `${clubName} · ${sportName}`, boldFont, bodyFont);
-  let y = PAGE.height - 128;
-  const cols = [42, 190, 326, 442];
-  [labels.fullName, labels.phone, labels.months, labels.amount].forEach((label, i) => text(page, label, cols[i], y, boldFont, 9, muted));
-  y -= 14;
-  page.drawLine({ start: { x: 40, y }, end: { x: PAGE.width - 40, y }, thickness: 1, color: line });
-  y -= 20;
+
+  const subtitle = `${clubName} · ${sportName}`;
+  const cols = [42, 176, 292, 400, 470];
+  const headers = [labels.fullName, labels.phone, labels.contactType, labels.months, labels.amount];
+
+  let { page, y } = startPage(pdf, labels.debts, subtitle, cols, headers, boldFont, bodyFont);
 
   let total = 0;
   players.forEach((player) => {
@@ -202,14 +234,32 @@ export async function downloadAllDebtsPdf({
     if (debts.length === 0) return;
     const amount = debts.reduce((s, p) => s + p.amount, 0);
     total += amount;
-    text(page, fit(`${player.first_name} ${player.last_name}`, bodyFont, 10, 132), cols[0], y, bodyFont, 10);
-    text(page, fit(player.primary_contact === "parent" ? player.parent_phone ?? player.phone ?? "—" : player.phone ?? player.parent_phone ?? "—", bodyFont, 10, 120), cols[1], y, bodyFont, 10);
-    text(page, `${debts.length}`, cols[2], y, boldFont, 10, danger);
-    text(page, formatMoney(amount), cols[3], y, boldFont, 10, danger);
+
+    if (y < BOTTOM_LIMIT) {
+      ({ page, y } = startPage(pdf, labels.debts, subtitle, cols, headers, boldFont, bodyFont));
+    }
+
+    const preferParent = player.primary_contact === "parent";
+    const parentPhone = player.parent_phone ?? null;
+    const playerPhone = player.phone ?? null;
+    const phone = preferParent ? parentPhone ?? playerPhone : playerPhone ?? parentPhone;
+    const usedParent = phone != null && phone === parentPhone && (preferParent || !playerPhone);
+    const contactLabel = phone ? (usedParent ? labels.parentContact : labels.playerContact) : "—";
+
+    text(page, fit(`${player.first_name} ${player.last_name}`, bodyFont, 10, 126), cols[0], y, bodyFont, 10);
+    text(page, fit(phone ?? "—", bodyFont, 10, 108), cols[1], y, bodyFont, 10);
+    text(page, contactLabel, cols[2], y, bodyFont, 9, usedParent ? accent : muted);
+    text(page, `${debts.length}`, cols[3], y, boldFont, 10, danger);
+    text(page, formatMoney(amount), cols[4], y, boldFont, 10, danger);
     y -= 22;
   });
 
+  if (y < BOTTOM_LIMIT) {
+    ({ page, y } = startPage(pdf, labels.debts, subtitle, cols, headers, boldFont, bodyFont));
+  }
   page.drawRectangle({ x: 40, y: 48, width: PAGE.width - 80, height: 48, color: rgb(1, 0.96, 0.96), borderColor: rgb(0.95, 0.78, 0.78), borderWidth: 1 });
   text(page, `${labels.totalDebt}: ${formatMoney(total)}`, 58, 66, boldFont, 12, danger);
+
+  drawFooters(pdf, bodyFont, labels.page);
   download(await pdf.save(), "all-overdue-payments.pdf");
 }
