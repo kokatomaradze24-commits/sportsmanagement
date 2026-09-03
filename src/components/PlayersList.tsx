@@ -329,8 +329,14 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
       });
     }
 
-    return result;
+    return [...result].sort(
+      (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    );
   }, [players, payments, search, paymentFilter, currentMonth, currentYear]);
+
+  const isNewPlayer = (createdAt: string) =>
+    Date.now() - new Date(createdAt).getTime() < 2 * 24 * 60 * 60 * 1000;
+
 
   const toggleOne = (id: string) => {
     setSelectedIds((prev) => {
