@@ -20,7 +20,7 @@ export function usePlayers(sport: string, onPlayersChanged?: () => void) {
       .from("players")
       .select("*")
       .eq("sport", sport)
-      .order("last_name");
+      .order("created_at", { ascending: false });
     if (data) setPlayers(data);
     setLoading(false);
   }, [sport]);

@@ -329,8 +329,14 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
       });
     }
 
-    return result;
+    return [...result].sort(
+      (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    );
   }, [players, payments, search, paymentFilter, currentMonth, currentYear]);
+
+  const isNewPlayer = (createdAt: string) =>
+    Date.now() - new Date(createdAt).getTime() < 2 * 24 * 60 * 60 * 1000;
+
 
   const toggleOne = (id: string) => {
     setSelectedIds((prev) => {
@@ -665,7 +671,13 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
                             <div className="min-w-0">
                               <p className="font-semibold text-card-foreground flex items-center gap-2">
                                 <span className="truncate">{player.first_name} {player.last_name}</span>
+                        {isNewPlayer(player.created_at) && (
+                          <span className="text-[10px] font-semibold uppercase tracking-wide px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-500 border border-emerald-500/30 shrink-0">
+                            New Player
+                          </span>
+                        )}
                         {player.birth_date ? (
+
                                   <span className="text-xs font-normal px-1.5 py-0.5 rounded bg-primary/10 text-primary shrink-0">
                             {t("yearsOld", { count: calcAge(player.birth_date) })}
                           </span>
