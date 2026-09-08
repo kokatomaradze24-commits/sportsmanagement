@@ -211,13 +211,19 @@ const playersListText: Record<PdfLanguage, {
   active: string;
   inactive: string;
   total: string;
+  currentMonth: string;
+  monthPaid: string;
+  monthDebt: string;
+  monthNone: string;
+  paidCount: string;
+  debtCount: string;
 }> = {
-  en: { title: "Players list", jersey: "Jersey", fee: "Monthly fee", birthDate: "Birth date", status: "Status", active: "Active", inactive: "Inactive", total: "Total players" },
-  ka: { title: "მოთამაშეების სია", jersey: "ნომერი", fee: "თვიური გადასახადი", birthDate: "დაბ. თარიღი", status: "სტატუსი", active: "აქტიური", inactive: "არააქტიური", total: "სულ მოთამაშე" },
-  de: { title: "Spielerliste", jersey: "Nr.", fee: "Monatsbeitrag", birthDate: "Geburtsdatum", status: "Status", active: "Aktiv", inactive: "Inaktiv", total: "Spieler gesamt" },
-  es: { title: "Lista de jugadores", jersey: "Dorsal", fee: "Cuota mensual", birthDate: "Fecha de nac.", status: "Estado", active: "Activo", inactive: "Inactivo", total: "Jugadores totales" },
-  fr: { title: "Liste des joueurs", jersey: "N°", fee: "Cotisation", birthDate: "Date de naiss.", status: "Statut", active: "Actif", inactive: "Inactif", total: "Joueurs au total" },
-  ru: { title: "Список игроков", jersey: "Номер", fee: "Взнос в месяц", birthDate: "Дата рожд.", status: "Статус", active: "Активен", inactive: "Неактивен", total: "Всего игроков" },
+  en: { title: "Players list", jersey: "Jersey", fee: "Monthly fee", birthDate: "Birth date", status: "Status", active: "Active", inactive: "Inactive", total: "Total players", currentMonth: "Current month", monthPaid: "Paid", monthDebt: "Debt", monthNone: "—", paidCount: "Paid this month", debtCount: "In debt this month" },
+  ka: { title: "მოთამაშეების სია", jersey: "ნომერი", fee: "თვიური გადასახადი", birthDate: "დაბ. თარიღი", status: "სტატუსი", active: "აქტიური", inactive: "არააქტიური", total: "სულ მოთამაშე", currentMonth: "მიმდინარე თვე", monthPaid: "გადახდილი", monthDebt: "დავალიანება", monthNone: "—", paidCount: "გადახდილი ამ თვის", debtCount: "დავალიანება ამ თვის" },
+  de: { title: "Spielerliste", jersey: "Nr.", fee: "Monatsbeitrag", birthDate: "Geburtsdatum", status: "Status", active: "Aktiv", inactive: "Inaktiv", total: "Spieler gesamt", currentMonth: "Aktueller Monat", monthPaid: "Bezahlt", monthDebt: "Schuld", monthNone: "—", paidCount: "Diesen Monat bezahlt", debtCount: "Diesen Monat Schuld" },
+  es: { title: "Lista de jugadores", jersey: "Dorsal", fee: "Cuota mensual", birthDate: "Fecha de nac.", status: "Estado", active: "Activo", inactive: "Inactivo", total: "Jugadores totales", currentMonth: "Mes actual", monthPaid: "Pagado", monthDebt: "Deuda", monthNone: "—", paidCount: "Pagado este mes", debtCount: "Deuda este mes" },
+  fr: { title: "Liste des joueurs", jersey: "N°", fee: "Cotisation", birthDate: "Date de naiss.", status: "Statut", active: "Actif", inactive: "Inactif", total: "Joueurs au total", currentMonth: "Mois en cours", monthPaid: "Payé", monthDebt: "Dette", monthNone: "—", paidCount: "Payé ce mois", debtCount: "Dette ce mois" },
+  ru: { title: "Список игроков", jersey: "Номер", fee: "Взнос в месяц", birthDate: "Дата рожд.", status: "Статус", active: "Активен", inactive: "Неактивен", total: "Всего игроков", currentMonth: "Текущий месяц", monthPaid: "Оплачено", monthDebt: "Долг", monthNone: "—", paidCount: "Оплачено в этом месяце", debtCount: "Долг в этом месяце" },
 };
 
 export async function downloadPlayersListPdf({
