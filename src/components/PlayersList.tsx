@@ -410,7 +410,7 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
 
   const handlePlayersListPdf = async () => {
     play("success");
-    await downloadPlayersListPdf({ players, clubName: schoolName, sportName: sport.name, formatMoney, language });
+    await downloadPlayersListPdf({ players, payments, clubName: schoolName, sportName: sport.name, formatMoney, language });
   };
 
   return (
