@@ -228,12 +228,14 @@ const playersListText: Record<PdfLanguage, {
 
 export async function downloadPlayersListPdf({
   players,
+  payments,
   clubName,
   sportName,
   formatMoney,
   language,
 }: {
   players: Player[];
+  payments?: Payment[];
   clubName: string;
   sportName: string;
   formatMoney: MoneyFormatter;
@@ -246,12 +248,30 @@ export async function downloadPlayersListPdf({
   const boldFont = language === "ka" ? bold : latinBold;
 
   const subtitle = `${clubName} · ${sportName}`;
-  const cols = [42, 176, 224, 336, 408, 486];
-  const headers = [labels.fullName, list.jersey, labels.phone, labels.contactType, list.fee, list.birthDate];
+  const cols = [42, 160, 200, 286, 348, 408, 488];
+  const headers = [labels.fullName, list.jersey, labels.phone, labels.contactType, list.fee, list.currentMonth, list.birthDate];
+
+  const now = new Date();
+  const cm = now.getMonth() + 1;
+  const cy = now.getFullYear();
+
+  type MonthStatus = "paid" | "debt" | "none";
+  const monthStatus = (player: Player): MonthStatus => {
+    if (!payments) return "none";
+    const rows = payments.filter((p) => p.player_id === player.id && p.month === cm && p.year === cy);
+    if (rows.some((p) => p.status === "paid")) return "paid";
+    if (rows.some((p) => p.status === "overdue")) return "debt";
+    if (rows.some((p) => p.status !== "paid" && dueDate(p, player) <= now)) return "debt";
+    if (rows.length > 0) return "none";
+    return "none";
+  };
 
   const sorted = [...players].sort((a, b) => a.first_name.localeCompare(b.first_name) || a.last_name.localeCompare(b.last_name));
 
   let { page, y } = startPage(pdf, list.title, subtitle, cols, headers, boldFont, bodyFont);
+
+  let paidCount = 0;
+  let debtCount = 0;
 
   sorted.forEach((player) => {
     if (y < BOTTOM_LIMIT) {
@@ -265,12 +285,19 @@ export async function downloadPlayersListPdf({
     const usedParent = phone != null && phone === parentPhone && (preferParent || !playerPhone);
     const contactLabel = phone ? (usedParent ? labels.parentContact : labels.playerContact) : "—";
 
-    text(page, fit(`${player.first_name} ${player.last_name}`, bodyFont, 10, 126), cols[0], y, bodyFont, 10, player.is_active ? ink : muted);
+    const ms = monthStatus(player);
+    if (ms === "paid") paidCount++;
+    if (ms === "debt") debtCount++;
+    const msLabel = ms === "paid" ? list.monthPaid : ms === "debt" ? list.monthDebt : list.monthNone;
+    const msColor = ms === "paid" ? success : ms === "debt" ? danger : muted;
+
+    text(page, fit(`${player.first_name} ${player.last_name}`, bodyFont, 10, 112), cols[0], y, bodyFont, 10, player.is_active ? ink : muted);
     text(page, `#${player.t_number}`, cols[1], y, bodyFont, 10);
-    text(page, fit(phone ?? "—", bodyFont, 10, 104), cols[2], y, bodyFont, 10);
+    text(page, fit(phone ?? "—", bodyFont, 10, 78), cols[2], y, bodyFont, 10);
     text(page, contactLabel, cols[3], y, bodyFont, 9, usedParent ? accent : muted);
     text(page, formatMoney(player.monthly_fee), cols[4], y, bodyFont, 10);
-    text(page, player.birth_date ?? "—", cols[5], y, bodyFont, 10);
+    text(page, msLabel, cols[5], y, boldFont, 9, msColor);
+    text(page, player.birth_date ?? "—", cols[6], y, bodyFont, 10);
     y -= 22;
   });
 
@@ -280,8 +307,12 @@ export async function downloadPlayersListPdf({
   const activeCount = sorted.filter((p) => p.is_active).length;
   page.drawRectangle({ x: 40, y: 48, width: PAGE.width - 80, height: 48, color: rgb(0.95, 0.97, 1), borderColor: line, borderWidth: 1 });
   text(page, `${list.total}: ${sorted.length}`, 58, 66, boldFont, 11, accent);
-  text(page, `${list.active}: ${activeCount}`, 240, 66, boldFont, 11, success);
-  text(page, `${list.inactive}: ${sorted.length - activeCount}`, 380, 66, boldFont, 11, muted);
+  text(page, `${list.active}: ${activeCount}`, 200, 66, boldFont, 11, success);
+  text(page, `${list.inactive}: ${sorted.length - activeCount}`, 330, 66, boldFont, 11, muted);
+  if (payments) {
+    text(page, `${list.paidCount}: ${paidCount}`, 58, 36, boldFont, 10, success);
+    text(page, `${list.debtCount}: ${debtCount}`, 200, 36, boldFont, 10, danger);
+  }
 
   drawFooters(pdf, bodyFont, labels.page);
   download(await pdf.save(), "players-list.pdf");
