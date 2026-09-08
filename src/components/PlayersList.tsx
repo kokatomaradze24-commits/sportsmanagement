@@ -21,7 +21,7 @@ import { sendEventSms } from "@/lib/notifications";
 import { getDialCodeForLanguage, prefillPhone } from "@/lib/phone-codes";
 import { getRemainingSeasonMonths, getSeasonRegistrationDefaults, getSeasonYearForMonth } from "@/lib/season";
 import { PhoneInput } from "@/components/PhoneInput";
-import { downloadAllDebtsPdf, downloadPlayerPaymentsPdf } from "@/lib/payment-pdf";
+import { downloadAllDebtsPdf, downloadPlayerPaymentsPdf, downloadPlayersListPdf } from "@/lib/payment-pdf";
 
 type Player = Database["public"]["Tables"]["players"]["Row"];
 type Payment = Database["public"]["Tables"]["payments"]["Row"];
