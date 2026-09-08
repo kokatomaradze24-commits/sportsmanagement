@@ -202,6 +202,85 @@ export async function downloadPlayerPaymentsPdf({
   download(await pdf.save(), `${player.first_name}-${player.last_name}-payments.pdf`);
 }
 
+const playersListText: Record<PdfLanguage, {
+  title: string;
+  jersey: string;
+  fee: string;
+  birthDate: string;
+  status: string;
+  active: string;
+  inactive: string;
+  total: string;
+}> = {
+  en: { title: "Players list", jersey: "Jersey", fee: "Monthly fee", birthDate: "Birth date", status: "Status", active: "Active", inactive: "Inactive", total: "Total players" },
+  ka: { title: "მოთამაშეების სია", jersey: "ნომერი", fee: "თვიური გადასახადი", birthDate: "დაბ. თარიღი", status: "სტატუსი", active: "აქტიური", inactive: "არააქტიური", total: "სულ მოთამაშე" },
+  de: { title: "Spielerliste", jersey: "Nr.", fee: "Monatsbeitrag", birthDate: "Geburtsdatum", status: "Status", active: "Aktiv", inactive: "Inaktiv", total: "Spieler gesamt" },
+  es: { title: "Lista de jugadores", jersey: "Dorsal", fee: "Cuota mensual", birthDate: "Fecha de nac.", status: "Estado", active: "Activo", inactive: "Inactivo", total: "Jugadores totales" },
+  fr: { title: "Liste des joueurs", jersey: "N°", fee: "Cotisation", birthDate: "Date de naiss.", status: "Statut", active: "Actif", inactive: "Inactif", total: "Joueurs au total" },
+  ru: { title: "Список игроков", jersey: "Номер", fee: "Взнос в месяц", birthDate: "Дата рожд.", status: "Статус", active: "Активен", inactive: "Неактивен", total: "Всего игроков" },
+};
+
+export async function downloadPlayersListPdf({
+  players,
+  clubName,
+  sportName,
+  formatMoney,
+  language,
+}: {
+  players: Player[];
+  clubName: string;
+  sportName: string;
+  formatMoney: MoneyFormatter;
+  language: PdfLanguage;
+}) {
+  const { pdf, regular, bold, latinRegular, latinBold } = await createDoc();
+  const labels = pdfText[language] ?? pdfText.en;
+  const list = playersListText[language] ?? playersListText.en;
+  const bodyFont = language === "ka" ? regular : latinRegular;
+  const boldFont = language === "ka" ? bold : latinBold;
+
+  const subtitle = `${clubName} · ${sportName}`;
+  const cols = [42, 176, 224, 336, 408, 486];
+  const headers = [labels.fullName, list.jersey, labels.phone, labels.contactType, list.fee, list.birthDate];
+
+  const sorted = [...players].sort((a, b) => a.first_name.localeCompare(b.first_name) || a.last_name.localeCompare(b.last_name));
+
+  let { page, y } = startPage(pdf, list.title, subtitle, cols, headers, boldFont, bodyFont);
+
+  sorted.forEach((player) => {
+    if (y < BOTTOM_LIMIT) {
+      ({ page, y } = startPage(pdf, list.title, subtitle, cols, headers, boldFont, bodyFont));
+    }
+
+    const preferParent = player.primary_contact === "parent";
+    const parentPhone = player.parent_phone ?? null;
+    const playerPhone = player.phone ?? null;
+    const phone = preferParent ? parentPhone ?? playerPhone : playerPhone ?? parentPhone;
+    const usedParent = phone != null && phone === parentPhone && (preferParent || !playerPhone);
+    const contactLabel = phone ? (usedParent ? labels.parentContact : labels.playerContact) : "—";
+
+    text(page, fit(`${player.first_name} ${player.last_name}`, bodyFont, 10, 126), cols[0], y, bodyFont, 10, player.is_active ? ink : muted);
+    text(page, `#${player.t_number}`, cols[1], y, bodyFont, 10);
+    text(page, fit(phone ?? "—", bodyFont, 10, 104), cols[2], y, bodyFont, 10);
+    text(page, contactLabel, cols[3], y, bodyFont, 9, usedParent ? accent : muted);
+    text(page, formatMoney(player.monthly_fee), cols[4], y, bodyFont, 10);
+    text(page, player.birth_date ?? "—", cols[5], y, bodyFont, 10);
+    y -= 22;
+  });
+
+  if (y < BOTTOM_LIMIT) {
+    ({ page, y } = startPage(pdf, list.title, subtitle, cols, headers, boldFont, bodyFont));
+  }
+  const activeCount = sorted.filter((p) => p.is_active).length;
+  page.drawRectangle({ x: 40, y: 48, width: PAGE.width - 80, height: 48, color: rgb(0.95, 0.97, 1), borderColor: line, borderWidth: 1 });
+  text(page, `${list.total}: ${sorted.length}`, 58, 66, boldFont, 11, accent);
+  text(page, `${list.active}: ${activeCount}`, 240, 66, boldFont, 11, success);
+  text(page, `${list.inactive}: ${sorted.length - activeCount}`, 380, 66, boldFont, 11, muted);
+
+  drawFooters(pdf, bodyFont, labels.page);
+  download(await pdf.save(), "players-list.pdf");
+}
+
 export async function downloadAllDebtsPdf({
   players,
   payments,
