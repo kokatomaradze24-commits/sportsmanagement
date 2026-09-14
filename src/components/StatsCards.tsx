@@ -26,23 +26,23 @@ export function StatsCards({ players, payments }: StatsCardsProps) {
   ];
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+    <div className="grid grid-cols-2 xl:grid-cols-4 gap-3">
       {stats.map((stat, i) => (
         <motion.div
           key={stat.label}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: i * 0.1 }}
-          whileHover={{ y: -4, transition: { duration: 0.2 } }}
-          className="group bg-card/80 backdrop-blur-sm rounded-xl border border-border p-4 card-hover relative overflow-hidden"
+          whileHover={{ y: -2, transition: { duration: 0.2 } }}
+          className="group workspace-panel backdrop-blur-xl rounded-lg border border-border p-4 sm:p-5 relative overflow-hidden hover:border-primary/30 transition-colors"
         >
           <div className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 ${stat.color.split(" ")[1] || ""}`} style={{ filter: "blur(40px)" }} />
           <div className="relative flex items-center gap-3">
-            <div className={`w-10 h-10 rounded-lg flex items-center justify-center transition-transform group-hover:scale-110 group-hover:rotate-3 ${stat.color}`}>
+            <div className={`w-10 h-10 rounded-md flex items-center justify-center transition-transform group-hover:scale-105 ${stat.color}`}>
               <stat.icon className="w-5 h-5" />
             </div>
             <div>
-              <p className="text-2xl font-display tracking-wider text-card-foreground">{stat.value}</p>
+              <p className="text-3xl font-display text-card-foreground leading-none">{stat.value}</p>
               <p className="text-xs text-muted-foreground">{stat.label}</p>
             </div>
           </div>

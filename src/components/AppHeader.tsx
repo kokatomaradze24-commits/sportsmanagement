@@ -66,12 +66,12 @@ export function AppHeader({ schoolName, logoUrl, sport, isDark, onToggleTheme, o
     <motion.header
       initial={{ y: -20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      className="theme-header border-b border-border/60 px-6 py-4"
+      className="theme-header sticky top-0 z-40 border-b border-border px-3 sm:px-6 py-3 backdrop-blur-2xl"
     >
-      <div className="max-w-7xl mx-auto flex flex-col gap-4">
-        <div className="flex items-center gap-4 min-w-0 justify-center">
+      <div className="max-w-[1440px] mx-auto flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
+        <div className="flex items-center gap-3 min-w-0 justify-center lg:justify-start">
           <div
-            className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-xl bg-gradient-to-br from-primary-foreground/30 to-primary/10 flex items-center justify-center overflow-hidden cursor-pointer group flex-shrink-0 ring-1 ring-primary-foreground/25 shadow-lg"
+            className="relative w-14 h-14 sm:w-16 sm:h-16 rounded-md bg-secondary flex items-center justify-center overflow-hidden cursor-pointer group flex-shrink-0 ring-1 ring-border"
             onClick={() => fileRef.current?.click()}
           >
             {logoUrl ? (
@@ -120,8 +120,8 @@ export function AppHeader({ schoolName, logoUrl, sport, isDark, onToggleTheme, o
           ) : (
             <div className="flex items-center gap-2 min-w-0">
               <div className="min-w-0">
-                <h1 className="text-2xl sm:text-3xl tracking-wider text-current truncate">{schoolName}</h1>
-                <p className="text-xs text-current/75 flex items-center gap-1">
+                <h1 className="text-3xl sm:text-4xl text-current truncate uppercase leading-none">{schoolName}</h1>
+                <p className="text-xs text-muted-foreground flex items-center gap-1 uppercase">
                   <span>{sport.emoji}</span> {sport.name}
                 </p>
               </div>
@@ -129,11 +129,11 @@ export function AppHeader({ schoolName, logoUrl, sport, isDark, onToggleTheme, o
           )}
         </div>
 
-        <div className="flex items-start gap-2 flex-wrap justify-center border-t border-primary-foreground/20 pt-3">
+        <div className="flex items-start gap-1.5 sm:gap-2 flex-wrap justify-center lg:justify-end border-t lg:border-t-0 border-border pt-3 lg:pt-0">
           <div className="flex flex-col items-center gap-1">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="rounded-full w-12 h-12 sm:w-14 sm:h-14" title={t("changeSport")}>
+                <Button variant="ghost" size="icon" className="rounded-md w-12 h-12 sm:w-14 sm:h-14 border border-transparent hover:border-primary/30" title={t("changeSport")}>
                   <Trophy className="w-6 h-6 sm:w-7 sm:h-7" />
                 </Button>
               </DropdownMenuTrigger>
@@ -173,7 +173,7 @@ export function AppHeader({ schoolName, logoUrl, sport, isDark, onToggleTheme, o
                 setAdjustOpen(true);
               }}
               trigger={
-                <Button variant="ghost" size="icon" className="rounded-full w-12 h-12 sm:w-14 sm:h-14 text-primary" title={t("aiGenButton")}>
+                <Button variant="ghost" size="icon" className="rounded-md w-12 h-12 sm:w-14 sm:h-14 text-primary border border-transparent hover:border-primary/30" title={t("aiGenButton")}>
                   <Sparkles className="w-6 h-6 sm:w-7 sm:h-7" />
                 </Button>
               }
@@ -184,7 +184,7 @@ export function AppHeader({ schoolName, logoUrl, sport, isDark, onToggleTheme, o
           <div className="flex flex-col items-center gap-1">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="rounded-full w-12 h-12 sm:w-14 sm:h-14" title={t("lblSettings")}>
+                <Button variant="ghost" size="icon" className="rounded-md w-12 h-12 sm:w-14 sm:h-14 border border-transparent hover:border-primary/30" title={t("lblSettings")}>
                   <Settings className="w-6 h-6 sm:w-7 sm:h-7" />
                 </Button>
               </DropdownMenuTrigger>
