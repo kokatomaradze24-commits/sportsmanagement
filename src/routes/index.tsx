@@ -109,9 +109,9 @@ function Index() {
 
   return (
     <div
-      className={`min-h-screen bg-background relative overflow-hidden ${sportBg ? "no-ambient-lines" : "theme-ambient-bg"}`}
+      className={`workspace-shell min-h-screen bg-background relative overflow-hidden ${sportBg ? "no-ambient-lines" : "theme-ambient-bg"}`}
       style={sportBg ? {
-        backgroundImage: `linear-gradient(180deg, rgba(2,6,23,0.72), rgba(2,6,23,0.85)), url(${sportBg})`,
+        backgroundImage: `url(${sportBg})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundAttachment: "fixed",
@@ -141,17 +141,17 @@ function Index() {
           userId={user?.id}
         />
 
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6">
+        <main className="max-w-[1440px] mx-auto px-3 sm:px-6 lg:px-8 py-5 lg:py-7 space-y-5">
           <SubscriptionBanner />
           <StatsCards players={players} payments={payments} />
           <NotificationsBanner players={players} payments={payments} />
 
           <Link
             to="/stats-analysis"
-            className="block rounded-2xl border border-primary/40 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent p-4 sm:p-5 hover:border-primary hover:shadow-md transition-all group"
+            className="workspace-panel block rounded-lg border border-primary/30 p-4 sm:p-5 hover:border-primary transition-all group"
           >
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-primary/15 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+              <div className="w-12 h-12 rounded-md bg-primary/15 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
                 <BarChart3 className="w-6 h-6 text-primary" />
               </div>
               <div className="min-w-0 flex-1">
@@ -163,7 +163,7 @@ function Index() {
           </Link>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="theme-panel backdrop-blur-sm rounded-2xl border border-border p-5 shadow-sm hover:shadow-md transition-shadow">
+            <div className="workspace-panel backdrop-blur-xl rounded-lg border border-border p-4 sm:p-5 transition-colors hover:border-primary/30">
               <PlayersList
                 players={players}
                 payments={payments}
@@ -178,7 +178,7 @@ function Index() {
               />
             </div>
 
-            <div className="theme-panel backdrop-blur-sm rounded-2xl border border-border p-5 shadow-sm hover:shadow-md transition-shadow">
+            <div className="workspace-panel backdrop-blur-xl rounded-lg border border-border p-4 sm:p-5 transition-colors hover:border-primary/30">
               {selectedPlayer ? (
                 <PaymentsPanel
                   player={selectedPlayer}

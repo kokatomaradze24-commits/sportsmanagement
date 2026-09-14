@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Trophy, Users, CalendarDays, Wallet, Bell, BarChart3, Globe2, CheckCircle2, Sparkles, UserCog, Link2 } from "lucide-react";
+import { Users, CalendarDays, Wallet, Bell, BarChart3, Globe2, CheckCircle2, Sparkles, UserCog, Link2, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AnimatePresence } from "framer-motion";
 import { lovable } from "@/integrations/lovable/index";
@@ -163,7 +163,11 @@ export const Route = createFileRoute("/login")({
       { name: "description", content: "Sign in to My Club to manage your sports club: players, payments, practices, teams and coaches." },
       { property: "og:title", content: "Sign In — My Club" },
       { property: "og:description", content: "Sign in to My Club to manage your sports club: players, payments, practices, teams and coaches." },
+      { property: "og:type", content: "website" },
       { property: "og:url", content: "https://my-club.live/login" },
+      { name: "twitter:card", content: "summary" },
+      { name: "twitter:title", content: "Sign In — My Club" },
+      { name: "twitter:description", content: "Sign in to My Club to manage players, payments, practices, teams and coaches." },
     ],
     links: [{ rel: "canonical", href: "https://my-club.live/login" }],
   }),
@@ -220,7 +224,7 @@ function LoginPage() {
   };
 
   return (
-    <div className="relative min-h-screen overflow-hidden flex items-center justify-center px-4 py-10 bg-slate-950">
+    <div className="dark cinematic-login relative min-h-screen overflow-hidden flex items-center justify-center px-4 py-12 selection:bg-primary/30 selection:text-foreground">
       {/* Sliding background images */}
       <div className="absolute inset-0 overflow-hidden">
         <AnimatePresence mode="sync">
@@ -230,12 +234,12 @@ function LoginPage() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 1.2, ease: "easeInOut" }}
-            className="absolute inset-0 bg-cover bg-center"
+            className="absolute inset-0 bg-cover bg-center scale-105 opacity-60"
             style={{ backgroundImage: `url(${bgImages[bgIndex]})` }}
           />
         </AnimatePresence>
         {/* Dark overlay for readability */}
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-950/85 via-slate-950/70 to-slate-950/85" />
+        <div className="cinematic-login-overlay absolute inset-0" />
       </div>
 
       {/* Top-right language switcher */}
@@ -244,19 +248,19 @@ function LoginPage() {
       </div>
 
       {/* Two-column layout: marketing on the left, sign-in on the right */}
-      <div className="relative z-10 w-full max-w-6xl grid grid-cols-1 lg:grid-cols-[1.1fr_minmax(0,420px)] gap-10 lg:gap-16 items-center">
+      <div className="relative z-10 w-full max-w-7xl grid grid-cols-1 lg:grid-cols-[1.2fr_minmax(380px,460px)] gap-10 lg:gap-20 items-center">
 
         {/* Marketing / Features column */}
-        <div className="text-white order-2 lg:order-1">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-orange-500/10 border border-orange-400/30 text-orange-300 text-xs font-medium mb-5">
-            <span className="w-1.5 h-1.5 rounded-full bg-orange-400 animate-pulse" />
+        <div className="text-foreground order-2 lg:order-1">
+          <div className="inline-flex items-center gap-2 border-l-2 border-primary pl-3 text-primary text-xs font-semibold uppercase mb-5">
+            <span className="w-1.5 h-1.5 bg-primary animate-pulse" />
             {copy.tagline}
           </div>
 
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight mb-4 bg-gradient-to-br from-white via-white to-slate-300 bg-clip-text text-transparent">
+          <h2 className="text-5xl sm:text-6xl lg:text-7xl leading-[0.95] mb-5 max-w-3xl text-foreground uppercase">
             {copy.headline}
           </h2>
-          <p className="text-base sm:text-lg text-slate-300/90 mb-6 max-w-xl leading-relaxed">{copy.subline}</p>
+          <p className="text-base sm:text-lg text-muted-foreground mb-7 max-w-2xl leading-relaxed">{copy.subline}</p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-8">
             {copy.features.map((feature, i) => {
@@ -267,14 +271,14 @@ function LoginPage() {
                   initial={{ opacity: 0, y: 12 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.15 + i * 0.06 }}
-                  className="flex gap-3 items-start p-3.5 rounded-xl bg-white/[0.03] border border-white/10 hover:bg-white/[0.06] hover:border-white/20 transition-all"
+                  className="cinematic-feature flex gap-3 items-start p-3.5 transition-all"
                 >
-                  <div className="flex-shrink-0 w-9 h-9 rounded-lg bg-gradient-to-br from-orange-500/20 to-amber-500/10 border border-orange-400/20 flex items-center justify-center">
-                    <Icon className="w-4.5 h-4.5 text-orange-300" strokeWidth={2.2} />
+                  <div className="flex-shrink-0 w-9 h-9 bg-primary/10 border border-primary/20 flex items-center justify-center">
+                    <Icon className="w-4.5 h-4.5 text-primary" strokeWidth={2.2} />
                   </div>
                   <div className="min-w-0">
-                    <h3 className="text-sm font-semibold text-white leading-tight">{feature.title}</h3>
-                    <p className="text-xs text-slate-400 mt-0.5 leading-snug">{feature.desc}</p>
+                    <h3 className="font-body text-sm font-semibold text-foreground leading-tight">{feature.title}</h3>
+                    <p className="text-xs text-muted-foreground mt-0.5 leading-snug">{feature.desc}</p>
                   </div>
                 </motion.div>
               );
@@ -283,14 +287,14 @@ function LoginPage() {
 
           <div className="flex flex-wrap gap-x-5 gap-y-2 mb-6">
             {copy.benefits.map((b, i) => (
-              <div key={i} className="flex items-center gap-1.5 text-sm text-slate-300">
-                <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+              <div key={i} className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" />
                 <span>{b}</span>
               </div>
             ))}
           </div>
 
-          <div className="flex items-center gap-2 text-xs text-slate-500">
+          <div className="flex items-center gap-2 text-xs text-muted-foreground">
             <BarChart3 className="w-3.5 h-3.5" />
             <span>{copy.socialProof}</span>
           </div>
@@ -303,33 +307,23 @@ function LoginPage() {
           transition={{ duration: 0.5, ease: "easeOut" }}
           className="relative w-full max-w-md mx-auto lg:mx-0 order-1 lg:order-2"
         >
-          <div className="text-center mb-8">
-            <motion.img
-              src={myClubLogo}
-              alt="My Club"
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.2, duration: 0.6, ease: "easeOut" }}
-              className="mx-auto w-64 h-auto drop-shadow-2xl"
-            />
-          </div>
-
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
-            className="bg-white/[0.04] backdrop-blur-xl rounded-2xl border border-white/10 p-6 shadow-2xl space-y-4"
+            className="cinematic-panel rounded-lg p-7 sm:p-10 space-y-5"
           >
-            <div className="text-center pb-2">
-              <h3 className="text-lg font-semibold text-white">{copy.ctaTitle}</h3>
-              <p className="text-xs text-slate-400 mt-1">{copy.ctaSubtitle}</p>
+            <div className="text-center pb-4">
+              <motion.img src={myClubLogo} alt="My Club" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.2 }} className="mx-auto w-48 sm:w-56 h-auto mb-7" />
+              <h1 className="text-3xl sm:text-4xl text-foreground uppercase">{copy.ctaTitle}</h1>
+              <p className="text-xs text-muted-foreground mt-2 uppercase">{copy.ctaSubtitle}</p>
             </div>
 
             {error && (
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="text-sm text-red-300 bg-red-500/10 border border-red-500/20 rounded-lg p-3 text-center"
+                className="text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md p-3 text-center"
               >
                 {error}
               </motion.div>
@@ -338,7 +332,7 @@ function LoginPage() {
             <Button
               onClick={handleGoogleSignIn}
               disabled={loading}
-              className="w-full h-12 text-base bg-white hover:bg-white/90 text-slate-900 font-medium shadow-lg transition-all hover:shadow-xl hover:scale-[1.02] active:scale-[0.98]"
+              className="w-full h-14 text-base bg-primary hover:bg-primary/90 text-primary-foreground font-bold rounded-md"
             >
               <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
                 <path
@@ -359,14 +353,15 @@ function LoginPage() {
                 />
               </svg>
               {loading ? t("signingIn") : t("continueWithGoogle")}
+              <ArrowRight className="ml-auto" />
             </Button>
 
             <div className="relative my-2">
               <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t border-white/10" />
+                <span className="w-full border-t border-border" />
               </div>
               <div className="relative flex justify-center text-xs">
-                <span className="bg-transparent px-2 text-slate-500">or</span>
+                <span className="bg-transparent px-2 text-muted-foreground">or</span>
               </div>
             </div>
 
@@ -374,14 +369,14 @@ function LoginPage() {
               <Button
                 type="button"
                 variant="outline"
-                className="w-full h-12 bg-white/[0.03] border-white/15 text-white hover:bg-white/[0.08] hover:text-white"
+                className="w-full h-14 bg-secondary/60 border-border text-foreground hover:bg-secondary hover:text-foreground rounded-md"
               >
-                <UserCog className="w-5 h-5 mr-2 text-emerald-300" />
+                <UserCog className="w-5 h-5 mr-2 text-primary" />
                 {copy.coachLink}
               </Button>
             </Link>
 
-            <p className="text-xs text-center text-slate-500 pt-2">{t("bySigningIn")}</p>
+            <p className="text-xs text-center text-muted-foreground pt-2">{t("bySigningIn")}</p>
           </motion.div>
 
           <div className="mt-4 flex justify-center">
