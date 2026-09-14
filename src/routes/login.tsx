@@ -224,7 +224,7 @@ function LoginPage() {
   };
 
   return (
-    <div className="cinematic-login relative min-h-screen overflow-hidden flex items-center justify-center px-4 py-12 selection:bg-primary/30 selection:text-foreground">
+    <div className="dark cinematic-login relative min-h-screen overflow-hidden flex items-center justify-center px-4 py-12 selection:bg-primary/30 selection:text-foreground">
       {/* Sliding background images */}
       <div className="absolute inset-0 overflow-hidden">
         <AnimatePresence mode="sync">
