@@ -25,7 +25,7 @@ import { downloadAllDebtsPdf, downloadPlayerPaymentsPdf, downloadPlayersListPdf 
 
 type Player = Database["public"]["Tables"]["players"]["Row"];
 type Payment = Database["public"]["Tables"]["payments"]["Row"];
-type PlayerInsert = Database["public"]["Tables"]["players"]["Insert"] & { firstMonthPaid?: boolean };
+type PlayerInsert = Database["public"]["Tables"]["players"]["Insert"] & { firstMonthPaid?: boolean; siblings?: { firstName: string; tNumber: number }[]; family_id?: string | null };
 
 type PaymentFilter = "all" | "paid" | "pending" | "overdue";
 
@@ -464,8 +464,15 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
             </DialogHeader>
             <PlayerForm
               sport={sport}
-              onSubmit={async (data) => {
+              onSubmit={async (formData) => {
                 play("success");
+                const { siblings: sibs, ...main } = formData;
+                const familyId = sibs?.length ? crypto.randomUUID() : null;
+                const entries: PlayerInsert[] = [
+                  { ...main, family_id: familyId },
+                  ...(sibs ?? []).map((s) => ({ ...main, first_name: s.firstName, t_number: s.tNumber, family_id: familyId })),
+                ];
+                for (const data of entries) {
                 const { created } = await onAdd(data);
                 if (created && user) {
                   // Fire-and-forget: registration + payment schedule SMS
@@ -485,6 +492,7 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
                     sportName: sport.name,
                     lang: language,
                   });
+                }
                 }
                 setAddOpen(false);
               }}
