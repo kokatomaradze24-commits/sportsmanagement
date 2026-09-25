@@ -94,10 +94,11 @@ function PlayerForm({ initial, sport, onSubmit, onCancel }: {
   const [emailPickerOpen, setEmailPickerOpen] = useState(false);
 
   // Subscription fields
-  const [monthlyFee, setMonthlyFee] = useState(initial?.monthly_fee?.toString() || "150");
+  const [monthlyFee, setMonthlyFee] = useState(initial?.monthly_fee?.toString() || "170");
   const [months, setMonths] = useState((initial?.subscription_months || seasonDefaults.subscriptionMonths).toString());
   const [startMonth, setStartMonth] = useState((initial?.start_month || seasonDefaults.startMonth).toString());
   const [firstMonthPaid, setFirstMonthPaid] = useState(false);
+  const [siblings, setSiblings] = useState<{ firstName: string; tNumber: string }[]>([]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -123,6 +124,10 @@ function PlayerForm({ initial, sport, onSubmit, onCancel }: {
       base.start_year = getSeasonYearForMonth(parseInt(startMonth), now);
       base.start_day = 1;
       base.firstMonthPaid = firstMonthPaid;
+      const validSiblings = siblings.filter((s) => s.firstName.trim());
+      if (validSiblings.length) {
+        base.siblings = validSiblings.map((s) => ({ firstName: s.firstName.trim(), tNumber: parseInt(s.tNumber) || 0 }));
+      }
     }
     onSubmit(base);
   };
@@ -132,13 +137,36 @@ function PlayerForm({ initial, sport, onSubmit, onCancel }: {
       <div className="grid grid-cols-2 gap-3">
         <div>
           <label className="text-sm text-muted-foreground mb-1 block">{t("firstName")} *</label>
-          <Input value={firstName} onChange={(e) => setFirstName(e.target.value)} required />
+          <div className="flex gap-2">
+            <Input value={firstName} onChange={(e) => setFirstName(e.target.value)} required className="flex-1" />
+            {!isEdit && (
+              <Button type="button" variant="outline" size="icon" className="shrink-0" title="+"
+                onClick={() => setSiblings((s) => [...s, { firstName: "", tNumber: "" }])}>
+                <Plus className="w-4 h-4" />
+              </Button>
+            )}
+          </div>
         </div>
         <div>
           <label className="text-sm text-muted-foreground mb-1 block">{t("lastName")} *</label>
           <Input value={lastName} onChange={(e) => setLastName(e.target.value)} required />
         </div>
       </div>
+      {siblings.map((s, i) => (
+        <div key={i} className="rounded-xl border border-primary/30 bg-primary/5 p-3 grid grid-cols-[1fr_90px_auto] gap-2 items-end">
+          <div>
+            <label className="text-xs text-muted-foreground mb-1 block">{t("firstName")} ({i + 2})</label>
+            <Input value={s.firstName} onChange={(e) => setSiblings((arr) => arr.map((x, j) => j === i ? { ...x, firstName: e.target.value } : x))} required />
+          </div>
+          <div>
+            <label className="text-xs text-muted-foreground mb-1 block">{sport.numberLabel}</label>
+            <Input type="number" min={0} max={999} value={s.tNumber} onChange={(e) => setSiblings((arr) => arr.map((x, j) => j === i ? { ...x, tNumber: e.target.value } : x))} />
+          </div>
+          <Button type="button" variant="ghost" size="icon" onClick={() => setSiblings((arr) => arr.filter((_, j) => j !== i))}>
+            <X className="w-4 h-4" />
+          </Button>
+        </div>
+      ))}
       <div>
         <label className="text-sm text-muted-foreground mb-1 block">{sport.numberLabel} *</label>
         <Input type="number" value={tNumber} onChange={(e) => setTNumber(e.target.value)} required min={0} max={999} />
