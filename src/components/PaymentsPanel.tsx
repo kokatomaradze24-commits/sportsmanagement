@@ -14,6 +14,7 @@ type Player = Database["public"]["Tables"]["players"]["Row"];
 
 interface PaymentsPanelProps {
   player: Player;
+  players?: Player[];
   payments: Payment[];
   loading: boolean;
   onAdd: (payment: Database["public"]["Tables"]["payments"]["Insert"]) => Promise<{ error: unknown }>;
@@ -35,7 +36,7 @@ function StatusBadge({ status, t }: { status: string; t: ReturnType<typeof useI1
   );
 }
 
-export function PaymentsPanel({ player, payments, loading, onUpdate }: PaymentsPanelProps) {
+export function PaymentsPanel({ player, players = [], payments, loading, onUpdate }: PaymentsPanelProps) {
   const { t, monthShort, formatMoney, language } = useI18n();
   const { play } = useSounds();
   const { schoolName } = useAppSettings();
@@ -48,6 +49,22 @@ export function PaymentsPanel({ player, payments, loading, onUpdate }: PaymentsP
     .sort((a, b) => a.year - b.year || a.month - b.month);
 
   const overdueCount = playerPayments.filter((p) => p.status === "overdue").length;
+
+  // Siblings (family) summary: amounts due up to the current month
+  const familyId = (player as Player & { family_id?: string | null }).family_id;
+  const family = familyId
+    ? players.filter((p) => (p as Player & { family_id?: string | null }).family_id === familyId)
+    : [];
+  const nowD = new Date();
+  const curKey = nowD.getFullYear() * 12 + nowD.getMonth() + 1;
+  const familyRows = family.map((m) => {
+    const due = payments.filter((p) => p.player_id === m.id && p.year * 12 + p.month <= curKey);
+    const total = due.reduce((s, p) => s + Number(p.amount), 0);
+    const paid = due.filter((p) => p.status === "paid").reduce((s, p) => s + Number(p.amount), 0);
+    return { m, total, paid, remaining: total - paid };
+  });
+  const famTotal = familyRows.reduce((s, r) => s + r.total, 0);
+  const famPaid = familyRows.reduce((s, r) => s + r.paid, 0);
 
   const dueDateFor = (payment: Payment) => {
     const day = Math.min(player.start_day || 1, 28);
@@ -98,6 +115,25 @@ export function PaymentsPanel({ player, payments, loading, onUpdate }: PaymentsP
           </div>
         )}
       </div>
+
+      {family.length > 1 && (
+        <div className="rounded-xl border border-primary/30 bg-primary/5 p-3 space-y-2">
+          <div className="text-sm font-semibold text-foreground">👨‍👦 {family.length} × {player.last_name}</div>
+          {familyRows.map((r) => (
+            <div key={r.m.id} className="flex justify-between text-xs">
+              <span className="text-muted-foreground">{r.m.first_name} #{r.m.t_number}</span>
+              <span className={r.remaining > 0 ? "text-destructive font-semibold" : "text-success font-semibold"}>
+                {formatMoney(r.paid)} / {formatMoney(r.total)}
+              </span>
+            </div>
+          ))}
+          <div className="grid grid-cols-3 gap-2 pt-2 border-t border-border text-center text-xs">
+            <div><div className="text-muted-foreground">Σ</div><div className="font-bold text-foreground">{formatMoney(famTotal)}</div></div>
+            <div><div className="text-muted-foreground">{t("paid")}</div><div className="font-bold text-success">{formatMoney(famPaid)}</div></div>
+            <div><div className="text-muted-foreground">{t("overdue")}</div><div className="font-bold text-destructive">{formatMoney(famTotal - famPaid)}</div></div>
+          </div>
+        </div>
+      )}
 
       {loading ? (
         <div className="space-y-3">
