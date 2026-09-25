@@ -182,6 +182,7 @@ function Index() {
               {selectedPlayer ? (
                 <PaymentsPanel
                   player={selectedPlayer}
+                  players={players}
                   payments={payments}
                   loading={paymentsLoading}
                   onAdd={addPayment}
