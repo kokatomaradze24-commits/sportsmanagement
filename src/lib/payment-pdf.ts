@@ -1,3 +1,4 @@
+import { paidOf, remainingOf, isPartial } from "@/lib/payment-due";
 import { PDFDocument, rgb, type PDFFont, type PDFPage } from "pdf-lib";
 import fontkit from "@pdf-lib/fontkit";
 import regularFontUrl from "../assets/fonts/NotoSansGeorgian-Regular.ttf?url";
@@ -174,15 +175,15 @@ export async function downloadPlayerPaymentsPdf({
     }
     const statusColor = payment.status === "paid" ? success : payment.status === "overdue" ? danger : muted;
     text(page, `${monthShort(payment.month)} ${payment.year}`, cols[0], y, bodyFont, 10);
-    text(page, formatMoney(payment.amount), cols[1], y, bodyFont, 10);
+    text(page, isPartial(payment) ? `${formatMoney(paidOf(payment))} / ${formatMoney(payment.amount)}` : formatMoney(payment.amount), cols[1], y, bodyFont, 10);
     text(page, payment.status === "paid" ? labels.paidStatus : payment.status === "overdue" ? labels.overdueStatus : labels.pendingStatus, cols[2], y, boldFont, 10, statusColor);
     text(page, payment.payment_date ?? "—", cols[3], y, bodyFont, 10);
     text(page, fit(payment.notes ?? "—", bodyFont, 10, 68), cols[4], y, bodyFont, 10);
     y -= 22;
   });
 
-  const paid = rows.filter((p) => p.status === "paid").reduce((s, p) => s + p.amount, 0);
-  const debt = rows.filter((p) => p.status !== "paid").reduce((s, p) => s + p.amount, 0);
+  const paid = rows.reduce((s, p) => s + paidOf(p), 0);
+  const debt = rows.reduce((s, p) => s + remainingOf(p), 0);
   if (y < BOTTOM_LIMIT) {
     ({ page, y } = startPage(pdf, title, subtitle, cols, headers, boldFont, bodyFont));
   }
@@ -207,15 +208,16 @@ const playersListText: Record<PdfLanguage, {
   monthPaid: string;
   monthDebt: string;
   monthNone: string;
+  monthPartial: string;
   paidCount: string;
   debtCount: string;
 }> = {
-  en: { title: "Players list", jersey: "Jersey", fee: "Monthly fee", birthDate: "Birth date", status: "Status", active: "Active", inactive: "Inactive", total: "Total players", currentMonth: "Current month", monthPaid: "Paid", monthDebt: "Debt", monthNone: "—", paidCount: "Paid this month", debtCount: "In debt this month" },
-  ka: { title: "მოთამაშეების სია", jersey: "ნომერი", fee: "თვიური გადასახადი", birthDate: "დაბ. თარიღი", status: "სტატუსი", active: "აქტიური", inactive: "არააქტიური", total: "სულ მოთამაშე", currentMonth: "მიმდინარე თვე", monthPaid: "გადახდილი", monthDebt: "დავალიანება", monthNone: "—", paidCount: "გადახდილი ამ თვის", debtCount: "დავალიანება ამ თვის" },
-  de: { title: "Spielerliste", jersey: "Nr.", fee: "Monatsbeitrag", birthDate: "Geburtsdatum", status: "Status", active: "Aktiv", inactive: "Inaktiv", total: "Spieler gesamt", currentMonth: "Aktueller Monat", monthPaid: "Bezahlt", monthDebt: "Schuld", monthNone: "—", paidCount: "Diesen Monat bezahlt", debtCount: "Diesen Monat Schuld" },
-  es: { title: "Lista de jugadores", jersey: "Dorsal", fee: "Cuota mensual", birthDate: "Fecha de nac.", status: "Estado", active: "Activo", inactive: "Inactivo", total: "Jugadores totales", currentMonth: "Mes actual", monthPaid: "Pagado", monthDebt: "Deuda", monthNone: "—", paidCount: "Pagado este mes", debtCount: "Deuda este mes" },
-  fr: { title: "Liste des joueurs", jersey: "N°", fee: "Cotisation", birthDate: "Date de naiss.", status: "Statut", active: "Actif", inactive: "Inactif", total: "Joueurs au total", currentMonth: "Mois en cours", monthPaid: "Payé", monthDebt: "Dette", monthNone: "—", paidCount: "Payé ce mois", debtCount: "Dette ce mois" },
-  ru: { title: "Список игроков", jersey: "Номер", fee: "Взнос в месяц", birthDate: "Дата рожд.", status: "Статус", active: "Активен", inactive: "Неактивен", total: "Всего игроков", currentMonth: "Текущий месяц", monthPaid: "Оплачено", monthDebt: "Долг", monthNone: "—", paidCount: "Оплачено в этом месяце", debtCount: "Долг в этом месяце" },
+  en: { title: "Players list", jersey: "Jersey", fee: "Monthly fee", birthDate: "Birth date", status: "Status", active: "Active", inactive: "Inactive", total: "Total players", currentMonth: "Current month", monthPaid: "Paid", monthDebt: "Debt", monthNone: "—", monthPartial: "Partial", paidCount: "Paid this month", debtCount: "In debt this month" },
+  ka: { title: "მოთამაშეების სია", jersey: "ნომერი", fee: "თვიური გადასახადი", birthDate: "დაბ. თარიღი", status: "სტატუსი", active: "აქტიური", inactive: "არააქტიური", total: "სულ მოთამაშე", currentMonth: "მიმდინარე თვე", monthPaid: "გადახდილი", monthDebt: "დავალიანება", monthNone: "—", monthPartial: "ნაწილობრივ", paidCount: "გადახდილი ამ თვის", debtCount: "დავალიანება ამ თვის" },
+  de: { title: "Spielerliste", jersey: "Nr.", fee: "Monatsbeitrag", birthDate: "Geburtsdatum", status: "Status", active: "Aktiv", inactive: "Inaktiv", total: "Spieler gesamt", currentMonth: "Aktueller Monat", monthPaid: "Bezahlt", monthDebt: "Schuld", monthNone: "—", monthPartial: "Teilweise", paidCount: "Diesen Monat bezahlt", debtCount: "Diesen Monat Schuld" },
+  es: { title: "Lista de jugadores", jersey: "Dorsal", fee: "Cuota mensual", birthDate: "Fecha de nac.", status: "Estado", active: "Activo", inactive: "Inactivo", total: "Jugadores totales", currentMonth: "Mes actual", monthPaid: "Pagado", monthDebt: "Deuda", monthNone: "—", monthPartial: "Parcial", paidCount: "Pagado este mes", debtCount: "Deuda este mes" },
+  fr: { title: "Liste des joueurs", jersey: "N°", fee: "Cotisation", birthDate: "Date de naiss.", status: "Statut", active: "Actif", inactive: "Inactif", total: "Joueurs au total", currentMonth: "Mois en cours", monthPaid: "Payé", monthDebt: "Dette", monthNone: "—", monthPartial: "Partiel", paidCount: "Payé ce mois", debtCount: "Dette ce mois" },
+  ru: { title: "Список игроков", jersey: "Номер", fee: "Взнос в месяц", birthDate: "Дата рожд.", status: "Статус", active: "Активен", inactive: "Неактивен", total: "Всего игроков", currentMonth: "Текущий месяц", monthPaid: "Оплачено", monthDebt: "Долг", monthNone: "—", monthPartial: "Частично", paidCount: "Оплачено в этом месяце", debtCount: "Долг в этом месяце" },
 };
 
 export async function downloadPlayersListPdf({
@@ -247,12 +249,13 @@ export async function downloadPlayersListPdf({
   const cm = today.getMonth() + 1;
   const cy = today.getFullYear();
 
-  type MonthStatus = "paid" | "debt" | "pending" | "none";
+  type MonthStatus = "paid" | "debt" | "partial" | "pending" | "none";
   const monthStatus = (player: Player): MonthStatus => {
     if (!payments) return "none";
     const rows = payments.filter((p) => p.player_id === player.id && p.month === cm && p.year === cy);
-    if (rows.some((p) => p.status === "paid")) return "paid";
-    if (rows.some((p) => p.status === "overdue")) return "debt";
+    if (rows.length && rows.every((p) => p.status === "paid")) return "paid";
+    if (rows.some((p) => p.status === "overdue" && remainingOf(p) > 0) && !rows.some(isPartial)) return "debt";
+    if (rows.some(isPartial)) return "partial";
     if (rows.some((p) => p.status === "pending")) return "pending";
     return "none";
   };
@@ -279,8 +282,9 @@ export async function downloadPlayersListPdf({
     const ms = monthStatus(player);
     if (ms === "paid") paidCount++;
     if (ms === "debt") debtCount++;
-    const msLabel = ms === "paid" ? list.monthPaid : ms === "debt" ? list.monthDebt : ms === "pending" ? labels.pendingStatus : list.monthNone;
-    const msColor = ms === "paid" ? success : ms === "debt" ? danger : muted;
+    const curRemaining = (payments ?? []).filter((p) => p.player_id === player.id && p.month === cm && p.year === cy).reduce((s, p) => s + remainingOf(p), 0);
+    const msLabel = ms === "partial" ? `${list.monthPartial} -${formatMoney(curRemaining)}` : ms === "paid" ? list.monthPaid : ms === "debt" ? list.monthDebt : ms === "pending" ? labels.pendingStatus : list.monthNone;
+    const msColor = ms === "paid" ? success : ms === "debt" ? danger : ms === "partial" ? rgb(0.85, 0.55, 0.05) : muted;
 
     text(page, fit(`${player.first_name} ${player.last_name}`, bodyFont, 10, 112), cols[0], y, bodyFont, 10, player.is_active ? ink : muted);
     text(page, `#${player.t_number}`, cols[1], y, bodyFont, 10);
@@ -339,7 +343,7 @@ export async function downloadAllDebtsPdf({
   players.forEach((player) => {
     const debts = payments.filter((p) => p.player_id === player.id && p.status === "overdue");
     if (debts.length === 0) return;
-    const amount = debts.reduce((s, p) => s + p.amount, 0);
+    const amount = debts.reduce((s, p) => s + remainingOf(p), 0);
     total += amount;
 
     if (y < BOTTOM_LIMIT) {

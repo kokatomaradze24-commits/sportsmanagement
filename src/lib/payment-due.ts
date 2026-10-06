@@ -3,6 +3,25 @@ export interface PaymentDueInput {
   month: number;
   status: string;
   payment_date: string | null;
+  paid_amount?: number | string | null;
+}
+
+export interface PaymentMoneyInput {
+  amount: number | string;
+  status: string;
+  paid_amount?: number | string | null;
+}
+
+export function paidOf(p: PaymentMoneyInput): number {
+  return Number(p.paid_amount ?? 0) || 0;
+}
+
+export function remainingOf(p: PaymentMoneyInput): number {
+  return p.status === "paid" ? 0 : Math.max(0, Number(p.amount) - paidOf(p));
+}
+
+export function isPartial(p: PaymentMoneyInput): boolean {
+  return p.status !== "paid" && paidOf(p) > 0;
 }
 
 function localDate(date: string): Date {
@@ -30,7 +49,7 @@ export function getPaymentDueDate(
   const paymentIndex = monthIndex(payment);
   const previousPaid = playerPayments
     .filter((candidate) =>
-      candidate.status === "paid" &&
+      (candidate.status === "paid" || paidOf({ amount: 0, status: candidate.status, paid_amount: candidate.paid_amount }) > 0) &&
       candidate.payment_date != null &&
       monthIndex(candidate) < paymentIndex
     )
