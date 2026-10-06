@@ -15,6 +15,8 @@ interface AppSettingsContextValue {
   updateLogo: (file: File) => Promise<string>;
   updateSport: (id: string) => Promise<void>;
   resetBranding: () => Promise<void>;
+  waTemplates: Record<string, string>;
+  updateWaTemplate: (key: string, value: string) => Promise<void>;
 }
 
 const AppSettingsContext = createContext<AppSettingsContextValue | null>(null);
@@ -24,6 +26,7 @@ export function AppSettingsProvider({ children }: { children: ReactNode }) {
   const [logoUrl, setLogoUrl] = useState("");
   const [sportId, setSportId] = useState<string>(DEFAULT_SPORT);
   const [loading, setLoading] = useState(true);
+  const [waTemplates, setWaTemplates] = useState<Record<string, string>>({});
 
   const fetchAll = useCallback(async () => {
     setLoading(true);
@@ -42,6 +45,7 @@ export function AppSettingsProvider({ children }: { children: ReactNode }) {
       return;
     }
 
+    setWaTemplates(Object.fromEntries(data.filter((r) => r.key.startsWith("wa_template_") && r.value).map((r) => [r.key, r.value as string])));
     const sportRow = data.find((r) => r.key === SPORT_KEY);
     const currentSport = sportRow?.value || DEFAULT_SPORT;
     setSportId(currentSport);
@@ -169,9 +173,14 @@ export function AppSettingsProvider({ children }: { children: ReactNode }) {
       .remove(exts.map((ext) => `${user.id}/logo-${sportId}.${ext}`));
   }, [sportId]);
 
+  const updateWaTemplate = useCallback(async (key: string, value: string) => {
+    setWaTemplates((prev) => ({ ...prev, [key]: value }));
+    await upsertSetting(key, value);
+  }, [upsertSetting]);
+
   return (
     <AppSettingsContext.Provider
-      value={{ schoolName, logoUrl, sportId, loading, updateSchoolName, updateLogo, updateSport, resetBranding }}
+      value={{ schoolName, logoUrl, sportId, loading, updateSchoolName, updateLogo, updateSport, resetBranding, waTemplates, updateWaTemplate }}
     >
       {children}
     </AppSettingsContext.Provider>
@@ -187,6 +196,8 @@ const defaultAppSettings: AppSettingsContextValue = {
   updateLogo: async () => "",
   updateSport: async () => {},
   resetBranding: async () => {},
+  waTemplates: {},
+  updateWaTemplate: async () => {},
 };
 
 export function useAppSettings() {
