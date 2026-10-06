@@ -1,15 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { getPaymentDueDate } from "@/lib/payment-due";
 
 // Format YYYY-MM-DD in UTC
 function ymd(d: Date): string {
   return d.toISOString().slice(0, 10);
-}
-
-// Compute the due date for a payment (year, month, start_day clamped to 28)
-function dueDate(year: number, month: number, startDay: number): Date {
-  const day = Math.min(Math.max(1, startDay), 28);
-  return new Date(Date.UTC(year, month - 1, day));
 }
 
 interface PlayerLite {
@@ -28,6 +23,7 @@ interface PaymentLite {
   month: number;
   year: number;
   status: string;
+  payment_date: string | null;
 }
 
 interface UserSmsSettings {
@@ -151,14 +147,14 @@ export const Route = createFileRoute("/hooks/send-payment-sms")({
 
         const userIds = settingsList.map((s) => s.user_id);
 
-        // 2) Fetch pending/overdue payments for those users
-        const { data: paymentsRows } = await supabaseAdmin
+        // 2) Fetch all payment history so due dates can follow the latest earlier paid month
+        const { data: allPaymentsRows } = await supabaseAdmin
           .from("payments")
-          .select("id, player_id, user_id, amount, month, year, status")
-          .in("user_id", userIds)
-          .in("status", ["pending", "overdue"]);
+          .select("id, player_id, user_id, amount, month, year, status, payment_date")
+          .in("user_id", userIds);
 
-        const payments = (paymentsRows ?? []) as PaymentLite[];
+        const allPayments = (allPaymentsRows ?? []) as PaymentLite[];
+        const payments = allPayments.filter((payment) => payment.status === "pending" || payment.status === "overdue");
         if (payments.length === 0) {
           return Response.json({ ok: true, processed: 0, message: "No outstanding payments" });
         }
@@ -203,7 +199,11 @@ export const Route = createFileRoute("/hooks/send-payment-sms")({
               continue;
             }
 
-            const due = dueDate(pmt.year, pmt.month, player.start_day);
+            const due = getPaymentDueDate(
+              pmt,
+              allPayments.filter((payment) => payment.player_id === pmt.player_id),
+              player.start_day,
+            );
             const dueStr = ymd(due);
 
             // Decide reminder vs overdue

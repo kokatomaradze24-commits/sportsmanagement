@@ -8,6 +8,7 @@ import { useAppSettings } from "@/hooks/use-app-settings";
 import { useAuth } from "@/hooks/use-auth";
 import { useSport } from "@/hooks/use-sport";
 import { sendEventSms } from "@/lib/notifications";
+import { getPaymentDueDate } from "@/lib/payment-due";
 
 type Payment = Database["public"]["Tables"]["payments"]["Row"];
 type Player = Database["public"]["Tables"]["players"]["Row"];
@@ -67,9 +68,7 @@ export function PaymentsPanel({ player, players = [], payments, loading, onUpdat
   const famPaid = familyRows.reduce((s, r) => s + r.paid, 0);
 
   const dueDateFor = (payment: Payment) => {
-    const day = Math.min(player.start_day || 1, 28);
-    const d = new Date(payment.year, payment.month - 1, day);
-    return d.toLocaleDateString();
+    return getPaymentDueDate(payment, playerPayments, player.start_day).toLocaleDateString();
   };
 
   const togglePaid = async (payment: Payment) => {
