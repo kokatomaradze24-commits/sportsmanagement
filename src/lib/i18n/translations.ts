@@ -294,6 +294,10 @@ export const translations = {
     paymentStatus: "Payment status",
     fullyPaid: "Fully paid",
     partiallyPaid: "Partially paid",
+    paidAmountLabel: "Paid",
+    remainingLabel: "Remaining",
+    amountReceived: "Amount received",
+    saveAmount: "Save",
     notPaid: "Not paid",
     create: "Create",
 
@@ -559,6 +563,11 @@ export const translations = {
   },
 
   de: {
+    partiallyPaid: "Teilweise bezahlt",
+    paidAmountLabel: "Bezahlt",
+    remainingLabel: "Offen",
+    amountReceived: "Erhaltener Betrag",
+    saveAmount: "Speichern",
     loading: "Wird geladen...",
     save: "Speichern", cancel: "Abbrechen", delete: "Löschen", edit: "Bearbeiten",
     add: "Hinzufügen", confirm: "Bestätigen", close: "Schließen", yes: "Ja", no: "Nein",
@@ -949,6 +958,11 @@ export const translations = {
   },
 
   es: {
+    partiallyPaid: "Pagado parcialmente",
+    paidAmountLabel: "Pagado",
+    remainingLabel: "Restante",
+    amountReceived: "Importe recibido",
+    saveAmount: "Guardar",
     loading: "Cargando...",
     save: "Guardar", cancel: "Cancelar", delete: "Eliminar", edit: "Editar",
     add: "Añadir", confirm: "Confirmar", close: "Cerrar", yes: "Sí", no: "No",
@@ -1339,6 +1353,11 @@ export const translations = {
   },
 
   fr: {
+    partiallyPaid: "Partiellement payé",
+    paidAmountLabel: "Payé",
+    remainingLabel: "Restant",
+    amountReceived: "Montant reçu",
+    saveAmount: "Enregistrer",
     loading: "Chargement...",
     save: "Enregistrer", cancel: "Annuler", delete: "Supprimer", edit: "Modifier",
     add: "Ajouter", confirm: "Confirmer", close: "Fermer", yes: "Oui", no: "Non",
@@ -1925,6 +1944,10 @@ export const translations = {
     paymentStatus: "გადახდის სტატუსი",
     fullyPaid: "სრულად გადახდილი",
     partiallyPaid: "ნაწილობრივ გადახდილი",
+    paidAmountLabel: "გადახდილია",
+    remainingLabel: "დარჩენილია",
+    amountReceived: "შეტანილი თანხა",
+    saveAmount: "შენახვა",
     notPaid: "გადაუხდელი",
     create: "შექმნა",
 
@@ -2172,6 +2195,11 @@ export const translations = {
   },
 
   ru: {
+    partiallyPaid: "Частично оплачено",
+    paidAmountLabel: "Оплачено",
+    remainingLabel: "Осталось",
+    amountReceived: "Полученная сумма",
+    saveAmount: "Сохранить",
     loading: "Загрузка...",
     save: "Сохранить", cancel: "Отмена", delete: "Удалить", edit: "Редактировать",
     add: "Добавить", confirm: "Подтвердить", close: "Закрыть", yes: "Да", no: "Нет",

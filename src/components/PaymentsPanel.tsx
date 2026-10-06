@@ -1,5 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { DollarSign, Check, Clock, AlertTriangle } from "lucide-react";
+import { useState } from "react";
+import { DollarSign, Check, Clock, AlertTriangle, Pencil, X } from "lucide-react";
+import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import type { Database } from "@/integrations/supabase/types";
 import { useI18n } from "@/hooks/use-i18n";
@@ -8,7 +10,7 @@ import { useAppSettings } from "@/hooks/use-app-settings";
 import { useAuth } from "@/hooks/use-auth";
 import { useSport } from "@/hooks/use-sport";
 import { sendEventSms } from "@/lib/notifications";
-import { getPaymentDueDate } from "@/lib/payment-due";
+import { getPaymentDueDate, paidOf, remainingOf } from "@/lib/payment-due";
 
 type Payment = Database["public"]["Tables"]["payments"]["Row"];
 type Player = Database["public"]["Tables"]["players"]["Row"];
@@ -25,11 +27,12 @@ interface PaymentsPanelProps {
 
 function StatusBadge({ status, t }: { status: string; t: ReturnType<typeof useI18n>["t"] }) {
   const styles: Record<string, string> = {
+    partial: "bg-warning/25 text-warning border border-warning/50 border-dashed",
     paid: "bg-success/15 text-success",
     pending: "bg-warning/15 text-warning",
     overdue: "bg-destructive/15 text-destructive",
   };
-  const label = status === "paid" ? t("paid") : status === "pending" ? t("pending") : status === "overdue" ? t("overdue") : status;
+  const label = status === "partial" ? t("partiallyPaid") : status === "paid" ? t("paid") : status === "pending" ? t("pending") : status === "overdue" ? t("overdue") : status;
   return (
     <span className={`px-2.5 py-0.5 rounded-full text-xs font-semibold ${styles[status] || styles.pending}`}>
       {label}
@@ -49,7 +52,6 @@ export function PaymentsPanel({ player, players = [], payments, loading, onUpdat
     .filter((p) => p.player_id === player.id)
     .sort((a, b) => a.year - b.year || a.month - b.month);
 
-  const overdueCount = playerPayments.filter((p) => p.status === "overdue").length;
 
   // Siblings (family) summary: amounts due up to the current month
   const familyId = (player as Player & { family_id?: string | null }).family_id;
@@ -61,41 +63,96 @@ export function PaymentsPanel({ player, players = [], payments, loading, onUpdat
   const familyRows = family.map((m) => {
     const due = payments.filter((p) => p.player_id === m.id && p.year * 12 + p.month <= curKey);
     const total = due.reduce((s, p) => s + Number(p.amount), 0);
-    const paid = due.filter((p) => p.status === "paid").reduce((s, p) => s + Number(p.amount), 0);
-    const overdue = due.filter((p) => p.status === "overdue").reduce((s, p) => s + Number(p.amount), 0);
+    const paid = due.reduce((s, p) => s + paidOf(p), 0);
+    const overdue = due.filter((p) => p.status === "overdue").reduce((s, p) => s + remainingOf(p), 0);
     return { m, total, paid, overdue };
   });
   const famTotal = familyRows.reduce((s, r) => s + r.total, 0);
   const famPaid = familyRows.reduce((s, r) => s + r.paid, 0);
   const famOverdue = familyRows.reduce((s, r) => s + r.overdue, 0);
 
-  const dueDateFor = (payment: Payment) => {
-    return getPaymentDueDate(payment, playerPayments, player.start_day).toLocaleDateString();
+  // Combined schedule: one row per month (whole family when siblings exist)
+  const members = family.length > 1
+    ? [...family].sort((a, b) => a.created_at.localeCompare(b.created_at))
+    : [player];
+  const memberOrder = new Map(members.map((m, i) => [m.id, i]));
+  const scheduleSource = payments.filter((p) => memberOrder.has(p.player_id));
+  const monthMap = new Map<number, Payment[]>();
+  scheduleSource.forEach((p) => {
+    const k = p.year * 12 + p.month;
+    monthMap.set(k, [...(monthMap.get(k) ?? []), p]);
+  });
+  type ScheduleRow = { key: string; year: number; month: number; amount: number; paid: number; remaining: number; status: string; partial: boolean; rows: Payment[]; payment_date: string | null };
+  const schedule: ScheduleRow[] = [...monthMap.entries()]
+    .sort((a, b) => a[0] - b[0])
+    .map(([, rows]) => {
+      rows.sort((a, b) => (memberOrder.get(a.player_id) ?? 0) - (memberOrder.get(b.player_id) ?? 0));
+      const amount = rows.reduce((s, p) => s + Number(p.amount), 0);
+      const paid = rows.reduce((s, p) => s + paidOf(p), 0);
+      const remaining = rows.reduce((s, p) => s + remainingOf(p), 0);
+      const allPaid = rows.every((p) => p.status === "paid");
+      const status = allPaid ? "paid" : rows.some((p) => p.status === "overdue" && remainingOf(p) > 0) ? "overdue" : "pending";
+      const dates = rows.map((p) => p.payment_date).filter(Boolean) as string[];
+      return { key: rows.map((r) => r.id).join("-"), year: rows[0].year, month: rows[0].month, amount, paid, remaining, status, partial: !allPaid && paid > 0, rows, payment_date: dates.sort().pop() ?? null };
+    });
+  const overdueMonths = schedule.filter((r) => r.status === "overdue").length;
+
+  const [editing, setEditing] = useState<string | null>(null);
+  const [editValue, setEditValue] = useState("");
+  const today = () => new Date().toISOString().slice(0, 10);
+
+  const dueDateFor = (row: ScheduleRow) => {
+    const first = row.rows.find((p) => p.status !== "paid") ?? row.rows[0];
+    const owner = members.find((m) => m.id === first.player_id) ?? player;
+    const own = payments.filter((p) => p.player_id === first.player_id);
+    return getPaymentDueDate(first, own, owner.start_day).toLocaleDateString();
   };
 
-  const togglePaid = async (payment: Payment) => {
-    if (payment.status === "paid") {
+  const notifyPaid = (payment: Payment) => {
+    if (!user) return;
+    void sendEventSms({
+      userId: user.id,
+      playerId: payment.player_id,
+      paymentId: payment.id,
+      kind: "payment_paid",
+      clubName: schoolName,
+      sportName: sport.name,
+      lang: language,
+    });
+  };
+
+  const togglePaid = async (row: ScheduleRow) => {
+    if (row.status === "paid") {
       play("click");
-      await onUpdate(payment.id, { status: "pending", payment_date: null });
+      for (const p of row.rows) await onUpdate(p.id, { status: "pending", paid_amount: 0, payment_date: null });
     } else {
-      // Cash register sound when marking as paid 💰
       play("cash");
-      await onUpdate(payment.id, {
-        status: "paid",
-        payment_date: new Date().toISOString().slice(0, 10),
-      });
-      // Fire-and-forget payment confirmation SMS
-      if (user) {
-        void sendEventSms({
-          userId: user.id,
-          playerId: player.id,
-          paymentId: payment.id,
-          kind: "payment_paid",
-          clubName: schoolName,
-          sportName: sport.name,
-          lang: language,
-        });
+      for (const p of row.rows) {
+        if (p.status === "paid") continue;
+        await onUpdate(p.id, { status: "paid", paid_amount: Number(p.amount), payment_date: p.payment_date ?? today() });
+        notifyPaid(p);
       }
+    }
+  };
+
+  const saveAmount = async (row: ScheduleRow) => {
+    const total = Math.max(0, Number(editValue) || 0);
+    let left = total;
+    const plan = row.rows.map((p, i) => {
+      const isLast = i === row.rows.length - 1;
+      const give = isLast ? left : Math.min(left, Number(p.amount));
+      left -= give;
+      return { p, give };
+    });
+    setEditing(null);
+    play(total >= row.amount ? "cash" : "click");
+    for (const { p, give } of plan) {
+      if (give === paidOf(p) && (give > 0 || p.status !== "paid")) continue;
+      const updates: Partial<Payment> = { paid_amount: give };
+      if (give > 0 && !p.payment_date) updates.payment_date = today();
+      if (give <= 0 && p.status === "paid") { updates.status = "pending"; updates.payment_date = null; }
+      await onUpdate(p.id, updates);
+      if (p.status !== "paid" && give >= Number(p.amount)) notifyPaid(p);
     }
   };
 
@@ -109,10 +166,10 @@ export function PaymentsPanel({ player, players = [], payments, loading, onUpdat
             {player.monthly_fee > 0 && <> · {formatMoney(player.monthly_fee)} / {t("month").toLowerCase()}</>}
           </p>
         </div>
-        {overdueCount > 0 && (
+        {overdueMonths > 0 && (
           <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-destructive/10 text-destructive text-xs font-semibold">
             <AlertTriangle className="w-3.5 h-3.5" />
-            {t("monthsOverdue", { count: overdueCount })}
+            {t("monthsOverdue", { count: overdueMonths })}
           </div>
         )}
       </div>
@@ -142,7 +199,7 @@ export function PaymentsPanel({ player, players = [], payments, loading, onUpdat
             <div key={i} className="h-14 rounded-xl bg-muted animate-pulse" />
           ))}
         </div>
-      ) : playerPayments.length === 0 ? (
+      ) : schedule.length === 0 ? (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -154,12 +211,13 @@ export function PaymentsPanel({ player, players = [], payments, loading, onUpdat
       ) : (
         <div className="space-y-2">
           <AnimatePresence>
-            {playerPayments.map((payment, i) => {
+            {schedule.map((payment, i) => {
               const isPaid = payment.status === "paid";
               const isOverdue = payment.status === "overdue";
+              const isPartialRow = payment.partial;
               return (
                 <motion.div
-                  key={payment.id}
+                  key={payment.key}
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -8 }}
@@ -168,6 +226,8 @@ export function PaymentsPanel({ player, players = [], payments, loading, onUpdat
                   className={`flex items-center justify-between gap-3 p-3 rounded-xl border transition-colors ${
                     isPaid
                       ? "border-success/30 bg-success/5 hover:bg-success/10"
+                      : isPartialRow
+                      ? "border-warning/40 bg-warning/5 hover:bg-warning/10"
                       : isOverdue
                       ? "border-destructive/30 bg-destructive/5 hover:bg-destructive/10"
                       : "border-border bg-card hover:border-primary/30 hover:bg-primary/5"
@@ -190,24 +250,58 @@ export function PaymentsPanel({ player, players = [], payments, loading, onUpdat
                         <span className="font-semibold text-card-foreground">
                           {monthShort(payment.month)} {payment.year}
                         </span>
-                        <StatusBadge status={payment.status} t={t} />
+                        <StatusBadge status={isPartialRow ? "partial" : payment.status} t={t} />
+                        {isPartialRow && isOverdue && <StatusBadge status="overdue" t={t} />}
                       </div>
                       <p className="text-xs text-muted-foreground truncate">
-                        {formatMoney(payment.amount)} ·{" "}
+                        {formatMoney(payment.amount)} · {t("paidAmountLabel")} {formatMoney(payment.paid)} · {t("remainingLabel")} {formatMoney(payment.remaining)} ·{" "}
                         {isPaid && payment.payment_date
                           ? t("paidOn", { date: payment.payment_date })
                           : t("dueOn", { date: dueDateFor(payment) })}
                       </p>
                     </div>
                   </div>
-                  <Button
-                    size="sm"
-                    variant={isPaid ? "outline" : "default"}
-                    onClick={() => togglePaid(payment)}
-                    className="shrink-0"
-                  >
-                    {isPaid ? t("markPending") : t("markPaid")}
-                  </Button>
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    {editing === payment.key ? (
+                      <form
+                        className="flex items-center gap-1"
+                        onSubmit={(e) => { e.preventDefault(); void saveAmount(payment); }}
+                      >
+                        <Input
+                          type="number"
+                          min={0}
+                          step="0.01"
+                          autoFocus
+                          aria-label={t("amountReceived")}
+                          placeholder={t("amountReceived")}
+                          value={editValue}
+                          onChange={(e) => setEditValue(e.target.value)}
+                          className="h-8 w-24"
+                        />
+                        <Button type="submit" size="icon" className="h-8 w-8" aria-label={t("saveAmount")}><Check className="w-4 h-4" /></Button>
+                        <Button type="button" size="icon" variant="ghost" className="h-8 w-8" onClick={() => setEditing(null)}><X className="w-4 h-4" /></Button>
+                      </form>
+                    ) : (
+                      <Button
+                        type="button"
+                        size="icon"
+                        variant="ghost"
+                        className="h-8 w-8"
+                        aria-label={t("amountReceived")}
+                        title={t("amountReceived")}
+                        onClick={() => { setEditing(payment.key); setEditValue(String(payment.paid)); }}
+                      >
+                        <Pencil className="w-4 h-4" />
+                      </Button>
+                    )}
+                    <Button
+                      size="sm"
+                      variant={isPaid ? "outline" : "default"}
+                      onClick={() => togglePaid(payment)}
+                    >
+                      {isPaid ? t("markPending") : t("markPaid")}
+                    </Button>
+                  </div>
                 </motion.div>
               );
             })}

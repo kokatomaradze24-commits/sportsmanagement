@@ -150,7 +150,7 @@ export const Route = createFileRoute("/hooks/send-payment-sms")({
         // 2) Fetch all payment history so due dates can follow the latest earlier paid month
         const { data: allPaymentsRows } = await supabaseAdmin
           .from("payments")
-          .select("id, player_id, user_id, amount, month, year, status, payment_date")
+          .select("id, player_id, user_id, amount, paid_amount, month, year, status, payment_date")
           .in("user_id", userIds);
 
         const allPayments = (allPaymentsRows ?? []) as PaymentLite[];
