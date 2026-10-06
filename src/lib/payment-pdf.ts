@@ -5,6 +5,7 @@ import boldFontUrl from "../assets/fonts/NotoSansGeorgian-Bold.ttf?url";
 import latinRegularFontUrl from "@fontsource/noto-sans/files/noto-sans-latin-400-normal.woff?url";
 import latinBoldFontUrl from "@fontsource/noto-sans/files/noto-sans-latin-700-normal.woff?url";
 import type { Database } from "@/integrations/supabase/types";
+import { getPaymentDueDate } from "@/lib/payment-due";
 
 type Player = Database["public"]["Tables"]["players"]["Row"];
 type Payment = Database["public"]["Tables"]["payments"]["Row"];
@@ -107,14 +108,6 @@ function download(bytes: Uint8Array, filename: string) {
   a.download = filename;
   a.click();
   URL.revokeObjectURL(url);
-}
-
-function dueDate(payment: Payment, player: Player) {
-  return new Date(payment.year, payment.month - 1, Math.min(player.start_day || 1, 28));
-}
-
-function isDebt(payment: Payment, player: Player) {
-  return payment.status === "overdue" || (payment.status !== "paid" && dueDate(payment, player) <= new Date());
 }
 
 const BOTTOM_LIMIT = 118;
@@ -255,14 +248,13 @@ export async function downloadPlayersListPdf({
   const cm = now.getMonth() + 1;
   const cy = now.getFullYear();
 
-  type MonthStatus = "paid" | "debt" | "none";
+  type MonthStatus = "paid" | "debt" | "pending" | "none";
   const monthStatus = (player: Player): MonthStatus => {
     if (!payments) return "none";
     const rows = payments.filter((p) => p.player_id === player.id && p.month === cm && p.year === cy);
     if (rows.some((p) => p.status === "paid")) return "paid";
     if (rows.some((p) => p.status === "overdue")) return "debt";
-    if (rows.some((p) => p.status !== "paid" && dueDate(p, player) <= now)) return "debt";
-    if (rows.length > 0) return "none";
+    if (rows.some((p) => p.status === "pending")) return "pending";
     return "none";
   };
 
@@ -288,7 +280,7 @@ export async function downloadPlayersListPdf({
     const ms = monthStatus(player);
     if (ms === "paid") paidCount++;
     if (ms === "debt") debtCount++;
-    const msLabel = ms === "paid" ? list.monthPaid : ms === "debt" ? list.monthDebt : list.monthNone;
+    const msLabel = ms === "paid" ? list.monthPaid : ms === "debt" ? list.monthDebt : ms === "pending" ? labels.pendingStatus : list.monthNone;
     const msColor = ms === "paid" ? success : ms === "debt" ? danger : muted;
 
     text(page, fit(`${player.first_name} ${player.last_name}`, bodyFont, 10, 112), cols[0], y, bodyFont, 10, player.is_active ? ink : muted);
@@ -346,7 +338,7 @@ export async function downloadAllDebtsPdf({
 
   let total = 0;
   players.forEach((player) => {
-    const debts = payments.filter((p) => p.player_id === player.id && isDebt(p, player));
+    const debts = payments.filter((p) => p.player_id === player.id && p.status === "overdue");
     if (debts.length === 0) return;
     const amount = debts.reduce((s, p) => s + p.amount, 0);
     total += amount;
