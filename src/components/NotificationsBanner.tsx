@@ -17,15 +17,10 @@ export function NotificationsBanner({ players, payments }: NotificationsBannerPr
   const [expanded, setExpanded] = useState(false);
   const now = new Date();
   const currentMonth = now.getMonth() + 1;
-  const currentYear = now.getFullYear();
 
-  const playersNeedingPayment = players.filter((player) => {
-    if (!player.is_active) return false;
-    const hasCurrentMonthPayment = payments.some(
-      (p) => p.player_id === player.id && p.month === currentMonth && p.year === currentYear && p.status === "paid"
-    );
-    return !hasCurrentMonthPayment;
-  });
+  const playersNeedingPayment = players.filter(
+    (player) => player.is_active && payments.some((payment) => payment.player_id === player.id && payment.status === "overdue")
+  );
 
   if (playersNeedingPayment.length === 0) return null;
 

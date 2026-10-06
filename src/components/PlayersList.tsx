@@ -25,7 +25,7 @@ import { downloadAllDebtsPdf, downloadPlayerPaymentsPdf, downloadPlayersListPdf 
 
 type Player = Database["public"]["Tables"]["players"]["Row"];
 type Payment = Database["public"]["Tables"]["payments"]["Row"];
-type PlayerInsert = Database["public"]["Tables"]["players"]["Insert"] & { firstMonthPaid?: boolean; siblings?: { firstName: string; tNumber: number }[]; family_id?: string | null };
+type PlayerInsert = Database["public"]["Tables"]["players"]["Insert"] & { firstMonthPaid?: boolean; siblings?: { firstName: string; tNumber: number; birthDate: string }[]; family_id?: string | null };
 
 type PaymentFilter = "all" | "paid" | "pending" | "overdue";
 
@@ -98,7 +98,7 @@ function PlayerForm({ initial, sport, onSubmit, onCancel }: {
   const [months, setMonths] = useState((initial?.subscription_months || seasonDefaults.subscriptionMonths).toString());
   const [startMonth, setStartMonth] = useState((initial?.start_month || seasonDefaults.startMonth).toString());
   const [firstMonthPaid, setFirstMonthPaid] = useState(false);
-  const [siblings, setSiblings] = useState<{ firstName: string; tNumber: string }[]>([]);
+  const [siblings, setSiblings] = useState<{ firstName: string; tNumber: string; birthYear: string; birthMonth: string; birthDay: string }[]>([]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -124,9 +124,13 @@ function PlayerForm({ initial, sport, onSubmit, onCancel }: {
       base.start_year = getSeasonYearForMonth(parseInt(startMonth), now);
       base.start_day = 1;
       base.firstMonthPaid = firstMonthPaid;
-      const validSiblings = siblings.filter((s) => s.firstName.trim());
+      const validSiblings = siblings.filter((s) => s.firstName.trim() && s.birthYear && s.birthMonth && s.birthDay);
       if (validSiblings.length) {
-        base.siblings = validSiblings.map((s) => ({ firstName: s.firstName.trim(), tNumber: parseInt(s.tNumber) || 0 }));
+        base.siblings = validSiblings.map((s) => ({
+          firstName: s.firstName.trim(),
+          tNumber: parseInt(s.tNumber) || 0,
+          birthDate: `${s.birthYear}-${s.birthMonth.padStart(2, "0")}-${s.birthDay.padStart(2, "0")}`,
+        }));
       }
     }
     onSubmit(base);
@@ -141,7 +145,7 @@ function PlayerForm({ initial, sport, onSubmit, onCancel }: {
             <Input value={firstName} onChange={(e) => setFirstName(e.target.value)} required className="flex-1" />
             {!isEdit && (
               <Button type="button" variant="outline" size="icon" className="shrink-0" title="+"
-                onClick={() => setSiblings((s) => [...s, { firstName: "", tNumber: "" }])}>
+                onClick={() => setSiblings((s) => [...s, { firstName: "", tNumber: "", birthYear: "", birthMonth: "", birthDay: "" }])}>
                 <Plus className="w-4 h-4" />
               </Button>
             )}
@@ -165,6 +169,23 @@ function PlayerForm({ initial, sport, onSubmit, onCancel }: {
           <Button type="button" variant="ghost" size="icon" onClick={() => setSiblings((arr) => arr.filter((_, j) => j !== i))}>
             <X className="w-4 h-4" />
           </Button>
+          <div className="col-span-3">
+            <label className="text-xs text-muted-foreground mb-1 block">{t("birthDate")} *</label>
+            <div className="grid grid-cols-3 gap-2">
+              <select value={s.birthDay} onChange={(e) => setSiblings((arr) => arr.map((x, j) => j === i ? { ...x, birthDay: e.target.value } : x))} required className={selectClass} aria-label={t("regDay")}>
+                <option value="">{t("regDay")}</option>
+                {Array.from({ length: (() => { const m = Number(s.birthMonth); const y = Number(s.birthYear); return m ? (y ? new Date(y, m, 0).getDate() : m === 2 ? 29 : [4, 6, 9, 11].includes(m) ? 30 : 31) : 31; })() }, (_, day) => day + 1).map((day) => <option key={day} value={day}>{day}</option>)}
+              </select>
+              <select value={s.birthMonth} onChange={(e) => setSiblings((arr) => arr.map((x, j) => j === i ? { ...x, birthMonth: e.target.value } : x))} required className={selectClass} aria-label={t("regMonth")}>
+                <option value="">{t("regMonth")}</option>
+                {Array.from({ length: 12 }, (_, month) => month + 1).map((month) => <option key={month} value={month}>{monthShort(month)}</option>)}
+              </select>
+              <select value={s.birthYear} onChange={(e) => setSiblings((arr) => arr.map((x, j) => j === i ? { ...x, birthYear: e.target.value } : x))} required className={selectClass} aria-label={t("regYear")}>
+                <option value="">{t("regYear")}</option>
+                {birthYears.map((year) => <option key={year} value={year}>{year}</option>)}
+              </select>
+            </div>
+          </div>
         </div>
       ))}
       <div>
@@ -352,7 +373,7 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
         );
         if (paymentFilter === "paid") return playerPayment?.status === "paid";
         if (paymentFilter === "pending") return playerPayment?.status === "pending";
-        if (paymentFilter === "overdue") return !playerPayment || playerPayment.status === "pending";
+        if (paymentFilter === "overdue") return payments.some((pay) => pay.player_id === p.id && pay.status === "overdue");
         return true;
       });
     }
@@ -470,7 +491,7 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
                 const familyId = sibs?.length ? crypto.randomUUID() : null;
                 const entries: PlayerInsert[] = [
                   { ...main, family_id: familyId },
-                  ...(sibs ?? []).map((s) => ({ ...main, first_name: s.firstName, t_number: s.tNumber, family_id: familyId })),
+                  ...(sibs ?? []).map((s) => ({ ...main, first_name: s.firstName, t_number: s.tNumber, birth_date: s.birthDate, family_id: familyId })),
                 ];
                 for (const data of entries) {
                 const { created } = await onAdd(data);

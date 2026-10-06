@@ -15,7 +15,7 @@ export function StatsCards({ players, payments }: StatsCardsProps) {
   const { t, formatMoney } = useI18n();
   const activePlayers = players.filter((p) => p.is_active).length;
   const totalPaid = payments.filter((p) => p.status === "paid").reduce((sum, p) => sum + p.amount, 0);
-  const pendingCount = payments.filter((p) => p.status === "pending" || p.status === "overdue").length;
+  const pendingCount = payments.filter((p) => p.status === "pending").length;
   const overdueCount = payments.filter((p) => p.status === "overdue").length;
 
   const stats = [

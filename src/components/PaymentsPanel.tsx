@@ -8,6 +8,7 @@ import { useAppSettings } from "@/hooks/use-app-settings";
 import { useAuth } from "@/hooks/use-auth";
 import { useSport } from "@/hooks/use-sport";
 import { sendEventSms } from "@/lib/notifications";
+import { getPaymentDueDate } from "@/lib/payment-due";
 
 type Payment = Database["public"]["Tables"]["payments"]["Row"];
 type Player = Database["public"]["Tables"]["players"]["Row"];
@@ -61,15 +62,15 @@ export function PaymentsPanel({ player, players = [], payments, loading, onUpdat
     const due = payments.filter((p) => p.player_id === m.id && p.year * 12 + p.month <= curKey);
     const total = due.reduce((s, p) => s + Number(p.amount), 0);
     const paid = due.filter((p) => p.status === "paid").reduce((s, p) => s + Number(p.amount), 0);
-    return { m, total, paid, remaining: total - paid };
+    const overdue = due.filter((p) => p.status === "overdue").reduce((s, p) => s + Number(p.amount), 0);
+    return { m, total, paid, overdue };
   });
   const famTotal = familyRows.reduce((s, r) => s + r.total, 0);
   const famPaid = familyRows.reduce((s, r) => s + r.paid, 0);
+  const famOverdue = familyRows.reduce((s, r) => s + r.overdue, 0);
 
   const dueDateFor = (payment: Payment) => {
-    const day = Math.min(player.start_day || 1, 28);
-    const d = new Date(payment.year, payment.month - 1, day);
-    return d.toLocaleDateString();
+    return getPaymentDueDate(payment, playerPayments, player.start_day).toLocaleDateString();
   };
 
   const togglePaid = async (payment: Payment) => {
@@ -122,7 +123,7 @@ export function PaymentsPanel({ player, players = [], payments, loading, onUpdat
           {familyRows.map((r) => (
             <div key={r.m.id} className="flex justify-between text-xs">
               <span className="text-muted-foreground">{r.m.first_name} #{r.m.t_number}</span>
-              <span className={r.remaining > 0 ? "text-destructive font-semibold" : "text-success font-semibold"}>
+              <span className={r.overdue > 0 ? "text-destructive font-semibold" : "text-success font-semibold"}>
                 {formatMoney(r.paid)} / {formatMoney(r.total)}
               </span>
             </div>
@@ -130,7 +131,7 @@ export function PaymentsPanel({ player, players = [], payments, loading, onUpdat
           <div className="grid grid-cols-3 gap-2 pt-2 border-t border-border text-center text-xs">
             <div><div className="text-muted-foreground">Σ</div><div className="font-bold text-foreground">{formatMoney(famTotal)}</div></div>
             <div><div className="text-muted-foreground">{t("paid")}</div><div className="font-bold text-success">{formatMoney(famPaid)}</div></div>
-            <div><div className="text-muted-foreground">{t("overdue")}</div><div className="font-bold text-destructive">{formatMoney(famTotal - famPaid)}</div></div>
+            <div><div className="text-muted-foreground">{t("overdue")}</div><div className="font-bold text-destructive">{formatMoney(famOverdue)}</div></div>
           </div>
         </div>
       )}

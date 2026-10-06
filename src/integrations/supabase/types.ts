@@ -1070,6 +1070,10 @@ export type Database = {
       }
       is_subscription_active: { Args: { _user_id: string }; Returns: boolean }
       mark_overdue_payments: { Args: never; Returns: number }
+      recompute_payment_statuses: {
+        Args: { _player_id?: string }
+        Returns: number
+      }
       refund_ai_credits: {
         Args: { _amount: number; _user_id: string }
         Returns: undefined

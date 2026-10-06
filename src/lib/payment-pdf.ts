@@ -109,14 +109,6 @@ function download(bytes: Uint8Array, filename: string) {
   URL.revokeObjectURL(url);
 }
 
-function dueDate(payment: Payment, player: Player) {
-  return new Date(payment.year, payment.month - 1, Math.min(player.start_day || 1, 28));
-}
-
-function isDebt(payment: Payment, player: Player) {
-  return payment.status === "overdue" || (payment.status !== "paid" && dueDate(payment, player) <= new Date());
-}
-
 const BOTTOM_LIMIT = 118;
 
 function startPage(
@@ -251,18 +243,17 @@ export async function downloadPlayersListPdf({
   const cols = [42, 160, 200, 286, 348, 408, 488];
   const headers = [labels.fullName, list.jersey, labels.phone, labels.contactType, list.fee, list.currentMonth, list.birthDate];
 
-  const now = new Date();
-  const cm = now.getMonth() + 1;
-  const cy = now.getFullYear();
+  const today = new Date();
+  const cm = today.getMonth() + 1;
+  const cy = today.getFullYear();
 
-  type MonthStatus = "paid" | "debt" | "none";
+  type MonthStatus = "paid" | "debt" | "pending" | "none";
   const monthStatus = (player: Player): MonthStatus => {
     if (!payments) return "none";
     const rows = payments.filter((p) => p.player_id === player.id && p.month === cm && p.year === cy);
     if (rows.some((p) => p.status === "paid")) return "paid";
     if (rows.some((p) => p.status === "overdue")) return "debt";
-    if (rows.some((p) => p.status !== "paid" && dueDate(p, player) <= now)) return "debt";
-    if (rows.length > 0) return "none";
+    if (rows.some((p) => p.status === "pending")) return "pending";
     return "none";
   };
 
@@ -288,7 +279,7 @@ export async function downloadPlayersListPdf({
     const ms = monthStatus(player);
     if (ms === "paid") paidCount++;
     if (ms === "debt") debtCount++;
-    const msLabel = ms === "paid" ? list.monthPaid : ms === "debt" ? list.monthDebt : list.monthNone;
+    const msLabel = ms === "paid" ? list.monthPaid : ms === "debt" ? list.monthDebt : ms === "pending" ? labels.pendingStatus : list.monthNone;
     const msColor = ms === "paid" ? success : ms === "debt" ? danger : muted;
 
     text(page, fit(`${player.first_name} ${player.last_name}`, bodyFont, 10, 112), cols[0], y, bodyFont, 10, player.is_active ? ink : muted);
@@ -346,7 +337,7 @@ export async function downloadAllDebtsPdf({
 
   let total = 0;
   players.forEach((player) => {
-    const debts = payments.filter((p) => p.player_id === player.id && isDebt(p, player));
+    const debts = payments.filter((p) => p.player_id === player.id && p.status === "overdue");
     if (debts.length === 0) return;
     const amount = debts.reduce((s, p) => s + p.amount, 0);
     total += amount;
