@@ -1,0 +1,2 @@
+- [ ] Add sibling birth date below sibling name in registration form
+- [ ] Align frontend and payment SMS due dates/debt indicators with database overdue rule; no database changes
