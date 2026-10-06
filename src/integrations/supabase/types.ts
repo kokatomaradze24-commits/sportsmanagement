@@ -228,6 +228,7 @@ export type Database = {
           id: string
           month: number
           notes: string | null
+          paid_amount: number
           payment_date: string | null
           player_id: string
           sport: string
@@ -242,6 +243,7 @@ export type Database = {
           id?: string
           month: number
           notes?: string | null
+          paid_amount?: number
           payment_date?: string | null
           player_id: string
           sport?: string
@@ -256,6 +258,7 @@ export type Database = {
           id?: string
           month?: number
           notes?: string | null
+          paid_amount?: number
           payment_date?: string | null
           player_id?: string
           sport?: string
