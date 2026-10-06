@@ -10,6 +10,7 @@ import { useAppSettings } from "@/hooks/use-app-settings";
 import { useAuth } from "@/hooks/use-auth";
 import { useSport } from "@/hooks/use-sport";
 import { sendEventSms } from "@/lib/notifications";
+import { WhatsAppDialog, WhatsAppIcon, type WaContext } from "@/components/WhatsAppDialog";
 import { getPaymentDueDate, paidOf, remainingOf } from "@/lib/payment-due";
 
 type Payment = Database["public"]["Tables"]["payments"]["Row"];
@@ -100,6 +101,18 @@ export function PaymentsPanel({ player, players = [], payments, loading, onUpdat
   const [editing, setEditing] = useState<string | null>(null);
   const [editValue, setEditValue] = useState("");
   const today = () => new Date().toISOString().slice(0, 10);
+  const [waContext, setWaContext] = useState<WaContext | null>(null);
+  const overdueRemaining = schedule.filter((r) => r.status === "overdue").reduce((s, r) => s + r.remaining, 0);
+  const openWhatsApp = (row?: ScheduleRow) => {
+    const target = row && row.status !== "paid" ? row : schedule.find((r) => r.status !== "paid");
+    const lastPaid = row?.status === "paid" ? row : [...schedule].reverse().find((r) => r.paid > 0);
+    setWaContext({
+      kind: row?.status === "paid" ? "paid" : overdueRemaining > 0 ? "overdue" : "reminder",
+      reminder: target ? { month: target.month, amount: target.remaining } : null,
+      overdueAmount: overdueRemaining,
+      paid: lastPaid ? { month: lastPaid.month, amount: lastPaid.paid } : null,
+    });
+  };
 
   const dueDateFor = (row: ScheduleRow) => {
     const first = row.rows.find((p) => p.status !== "paid") ?? row.rows[0];
@@ -165,6 +178,9 @@ export function PaymentsPanel({ player, players = [], payments, loading, onUpdat
             {player.first_name} {player.last_name} #{player.t_number}
             {player.monthly_fee > 0 && <> · {formatMoney(player.monthly_fee)} / {t("month").toLowerCase()}</>}
           </p>
+          <Button type="button" size="sm" onClick={() => openWhatsApp()} className="mt-2 bg-success text-success-foreground hover:bg-success/90">
+            <WhatsAppIcon className="w-4 h-4" /> {t("waButton")}
+          </Button>
         </div>
         {overdueMonths > 0 && (
           <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-destructive/10 text-destructive text-xs font-semibold">
@@ -295,6 +311,17 @@ export function PaymentsPanel({ player, players = [], payments, loading, onUpdat
                       </Button>
                     )}
                     <Button
+                      type="button"
+                      size="icon"
+                      variant="ghost"
+                      className="h-8 w-8 text-success"
+                      aria-label={t("waButton")}
+                      title={t("waButton")}
+                      onClick={() => openWhatsApp(payment)}
+                    >
+                      <WhatsAppIcon className="w-4 h-4" />
+                    </Button>
+                    <Button
                       size="sm"
                       variant={isPaid ? "outline" : "default"}
                       onClick={() => togglePaid(payment)}
@@ -307,6 +334,14 @@ export function PaymentsPanel({ player, players = [], payments, loading, onUpdat
             })}
           </AnimatePresence>
         </div>
+      )}
+      {waContext && (
+        <WhatsAppDialog
+          open={!!waContext}
+          onOpenChange={(o) => { if (!o) setWaContext(null); }}
+          player={player}
+          context={waContext}
+        />
       )}
     </div>
   );
