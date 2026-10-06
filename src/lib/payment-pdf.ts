@@ -5,7 +5,6 @@ import boldFontUrl from "../assets/fonts/NotoSansGeorgian-Bold.ttf?url";
 import latinRegularFontUrl from "@fontsource/noto-sans/files/noto-sans-latin-400-normal.woff?url";
 import latinBoldFontUrl from "@fontsource/noto-sans/files/noto-sans-latin-700-normal.woff?url";
 import type { Database } from "@/integrations/supabase/types";
-import { getPaymentDueDate } from "@/lib/payment-due";
 
 type Player = Database["public"]["Tables"]["players"]["Row"];
 type Payment = Database["public"]["Tables"]["payments"]["Row"];
@@ -244,9 +243,9 @@ export async function downloadPlayersListPdf({
   const cols = [42, 160, 200, 286, 348, 408, 488];
   const headers = [labels.fullName, list.jersey, labels.phone, labels.contactType, list.fee, list.currentMonth, list.birthDate];
 
-  const now = new Date();
-  const cm = now.getMonth() + 1;
-  const cy = now.getFullYear();
+  const today = new Date();
+  const cm = today.getMonth() + 1;
+  const cy = today.getFullYear();
 
   type MonthStatus = "paid" | "debt" | "pending" | "none";
   const monthStatus = (player: Player): MonthStatus => {
