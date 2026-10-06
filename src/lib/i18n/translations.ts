@@ -294,6 +294,10 @@ export const translations = {
     paymentStatus: "Payment status",
     fullyPaid: "Fully paid",
     partiallyPaid: "Partially paid",
+    paidAmountLabel: "Paid",
+    remainingLabel: "Remaining",
+    amountReceived: "Amount received",
+    saveAmount: "Save",
     notPaid: "Not paid",
     create: "Create",
 
@@ -1940,6 +1944,10 @@ export const translations = {
     paymentStatus: "გადახდის სტატუსი",
     fullyPaid: "სრულად გადახდილი",
     partiallyPaid: "ნაწილობრივ გადახდილი",
+    paidAmountLabel: "გადახდილია",
+    remainingLabel: "დარჩენილია",
+    amountReceived: "შეტანილი თანხა",
+    saveAmount: "შენახვა",
     notPaid: "გადაუხდელი",
     create: "შექმნა",
 
