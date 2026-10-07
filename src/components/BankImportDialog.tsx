@@ -1,5 +1,15 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Check, FileUp, LoaderCircle, Trash2, Users } from "lucide-react";
+import { AlertTriangle, Check, FileUp, History, LoaderCircle, Trash2, Undo2, Users } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import {
   Dialog,
   DialogContent,
@@ -32,6 +42,10 @@ import { sendEventSms } from "@/lib/notifications";
 import {
   detectColumns,
   EMPTY_MAPPING,
+  isAlreadyRecorded,
+  monthChanges,
+  rowHandled,
+  rowIncluded,
   matchTransaction,
   normalizeName,
   previewBatch,
@@ -47,6 +61,9 @@ import {
   deletePayerAlias,
   loadBankImportData,
   loadBankBalances,
+  loadImportHistory,
+  undoBankImport,
+  type ImportBatch,
   type ImportResult,
 } from "@/lib/bank-import-client";
 import { readBankFile, transactionsFromGrid } from "@/lib/bank-import-file";
@@ -147,19 +164,33 @@ export function BankImportDialog({
   const [doneLeftover, setDoneLeftover] = useState(0);
   const [balances, setBalances] = useState<BankPayment[]>(payments);
   const previews = useMemo(() => previewBatch(rows, players, balances), [rows, players, balances]);
-  const counts = {
-    matched: rows.filter((r) => !r.skip && !r.duplicate && r.playerId && r.confirmed).length,
-    check: rows.filter((r) => !r.skip && !r.duplicate && r.playerId && !r.confirmed).length,
-    unmatched: rows.filter((r) => !r.skip && !r.duplicate && !r.playerId).length,
+  const [history, setHistory] = useState<ImportBatch[]>([]);
+  const [showHistory, setShowHistory] = useState(false);
+  const [undoTarget, setUndoTarget] = useState<ImportBatch | null>(null);
+  const open_ = (r: ReviewTransaction) => !r.skip && !r.duplicate && !r.futureDate;
+  const group = (r: ReviewTransaction) => {
+    if (r.duplicate) return "duplicate";
+    if (r.futureDate) return "futureDate";
+    if (r.skip) return "skipped";
+    if (r.recorded && !r.include) return "recorded";
+    if (!r.playerId) return "unmatched";
+    if (!r.confirmed || (previews.get(r.key)?.futureMonth && !r.include)) return "check";
+    return "matched";
   };
-  const ready = rows.filter(
-    (r) =>
-      !r.skip &&
-      !r.duplicate &&
-      r.playerId &&
-      r.confirmed &&
-      (previews.get(r.key)?.allocations.length ?? 0) > 0,
-  );
+  const counts = {
+    matched: rows.filter((r) => group(r) === "matched").length,
+    check: rows.filter((r) => group(r) === "check").length,
+    unmatched: rows.filter((r) => group(r) === "unmatched").length,
+    recorded: rows.filter((r) => group(r) === "recorded").length,
+  };
+  const ready = rows.filter((r) => rowIncluded(r, previews.get(r.key)));
+  const handledRows = rows.filter(rowHandled);
+  const changes = useMemo(() => monthChanges(rows, previews), [rows, previews]);
+  const period = rows.length ? `${rows[0].date} – ${rows[rows.length - 1].date}` : "";
+  const futureCount = rows.filter((r) => r.futureDate).length;
+  async function refreshHistory() {
+    try { setHistory(await loadImportHistory(sport)); } catch { /* history is optional */ }
+  }
   const total = ready.reduce(
     (sum, row) => sum + (previews.get(row.key)?.allocations.reduce((n, p) => n + p.amount, 0) ?? 0),
     0,
@@ -178,6 +209,8 @@ export function BankImportDialog({
     setFilter("all");
     setBusy(false);
     setShowPayers(false);
+    setShowHistory(false);
+    void refreshHistory();
     let active = true;
     loadBankImportData(sport, [])
       .then((data) => {
@@ -220,6 +253,7 @@ export function BankImportDialog({
       setBalances(freshBalances);
       setAliases(data.aliases);
       const seen = new Set<string>();
+      const today = new Date().toLocaleDateString("sv-SE");
       setRows(
         parsed.transactions
           .sort((a, b) => a.date.localeCompare(b.date))
@@ -227,6 +261,8 @@ export function BankImportDialog({
             const match = matchTransaction(tx, players, data.aliases);
             const duplicate = data.imported.has(tx.key) || seen.has(tx.key);
             seen.add(tx.key);
+            const recorded =
+              !!match.playerId && isAlreadyRecorded(tx, match.playerId, players, freshBalances);
             return {
               ...tx,
               ...match,
@@ -235,6 +271,10 @@ export function BankImportDialog({
               skip: false,
               duplicate,
               targetMonth: "",
+              recorded,
+              include: false,
+              handled: recorded,
+              futureDate: tx.date > today,
             };
           }),
       );
@@ -291,20 +331,48 @@ export function BankImportDialog({
       confirmed: true,
       skip: false,
       remember: !!row.sender && !!player && !senderIsPlayer(row.sender, player),
+      recorded: !!id && isAlreadyRecorded(row, id, players, balances),
+      include: false,
+      handled: !!id && isAlreadyRecorded(row, id, players, balances),
     });
   }
+  async function undo(batch: ImportBatch) {
+    setBusy(true);
+    setError("");
+    try {
+      await undoBankImport(batch.batchId);
+      await onRefresh();
+      await refreshHistory();
+      setUndoTarget(null);
+    } catch (e) {
+      const changed = String((e as { message?: string })?.message ?? "").includes("BANK_UNDO_CHANGED");
+      setError(t(changed ? "bankUndoChanged" : "bankApplyError"));
+      setUndoTarget(null);
+    } finally {
+      setBusy(false);
+    }
+  }
   async function apply() {
-    if (!ready.length || busy) return;
+    if ((!ready.length && !handledRows.length) || busy) return;
     setBusy(true);
     setError("");
     try {
       const applied = await applyBankImport(
         sport,
-        ready.map((row) => ({
-          ...row,
-          payerName: normalizeName(row.sender),
-          allocations: previews.get(row.key)?.allocations ?? [],
-        })),
+        [
+          ...ready.map((row) => ({
+            ...row,
+            handled: false,
+            payerName: normalizeName(row.sender),
+            allocations: previews.get(row.key)?.allocations ?? [],
+          })),
+          ...handledRows.map((row) => ({
+            ...row,
+            handled: true,
+            payerName: normalizeName(row.sender),
+            allocations: [],
+          })),
+        ],
       );
       setDoneLeftover(
         ready
@@ -313,6 +381,7 @@ export function BankImportDialog({
       );
       setResult(applied);
       setStep("done");
+      void refreshHistory();
       if (sms && user)
         for (const confirmation of applied.confirmations)
           void sendEventSms({
@@ -327,10 +396,16 @@ export function BankImportDialog({
       await onRefresh();
       try { const fresh = await loadBankImportData(sport, []); setAliases(fresh.aliases); } catch { /* Applied transfers remain committed. */ }
     } catch (e) {
-      const stale = String((e as { message?: string })?.message ?? "").includes(
-        "BANK_IMPORT_STALE",
+      const message = String((e as { message?: string })?.message ?? "");
+      setError(
+        t(
+          message.includes("BANK_IMPORT_STALE")
+            ? "bankStale"
+            : message.includes("BANK_IMPORT_FUTURE_DATE")
+              ? "bankFutureDate"
+              : "bankApplyError",
+        ),
       );
-      setError(t(stale ? "bankStale" : "bankApplyError"));
       try {
         await onRefresh();
         const [data, freshBalances] = await Promise.all([
@@ -343,13 +418,7 @@ export function BankImportDialog({
       setBusy(false);
     }
   }
-  const visible = rows.filter(
-    (r) =>
-      filter === "all" ||
-      (filter === "matched" && !r.skip && !r.duplicate && r.playerId && r.confirmed) ||
-      (filter === "check" && !r.skip && !r.duplicate && r.playerId && !r.confirmed) ||
-      (filter === "unmatched" && !r.skip && !r.duplicate && !r.playerId),
-  );
+  const visible = rows.filter((r) => filter === "all" || group(r) === filter);
   const columns: [keyof ColumnMapping, TranslationKey][] = [
     ["date", "bankDate"],
     ["amount", "bankImportAmount"],
@@ -531,8 +600,9 @@ export function BankImportDialog({
           {step === "review" && (
             <div className="space-y-4">
               <div className="flex flex-wrap items-center gap-x-5 gap-y-2 border-b border-border pb-3 text-sm">
-                <span>
-                  {t("bankTransactions")}: <strong>{rows.length}</strong>
+                <span className="w-full font-medium">
+                  {t("bankPeriod")}: <strong>{period}</strong> · {t("bankIncomingCount")}:{" "}
+                  <strong>{rows.length}</strong>
                 </span>
                 <span className="text-success">
                   {t("bankMatched")}: {counts.matched}
@@ -543,9 +613,37 @@ export function BankImportDialog({
                 <span>
                   {t("bankUnmatched")}: {counts.unmatched}
                 </span>
-                <span className="font-semibold">
-                  {t("bankAppliedAmount")}: {money(total)}
+                <span className="text-muted-foreground">
+                  {t("bankAlreadyRecorded")}: {counts.recorded}
                 </span>
+              </div>
+              <div className="rounded-md border border-primary/30 bg-primary/5 p-3 text-sm">
+                <div className="flex flex-wrap gap-x-5 gap-y-1">
+                  <span>
+                    {t("bankWillApply")}: <strong>{ready.length}</strong>
+                  </span>
+                  <span className="font-semibold">
+                    {t("bankAppliedAmount")}: {money(total)}
+                  </span>
+                  {handledRows.length > 0 && (
+                    <span>
+                      {t("bankHandledCount")}: {handledRows.length}
+                    </span>
+                  )}
+                </div>
+                {changes.length > 0 && (
+                  <p className="mt-1 text-xs">
+                    {t("bankMonthsChanged")}:{" "}
+                    {changes
+                      .map((c) => `${monthLong(Number(c.month.slice(5)))} ${c.month.slice(0, 4)} — ${c.count}`)
+                      .join(" · ")}
+                  </p>
+                )}
+                {futureCount > 0 && (
+                  <p className="mt-1 text-xs text-destructive">
+                    {t("bankFutureDate")} ({futureCount})
+                  </p>
+                )}
               </div>
               <Tabs value={filter} onValueChange={setFilter}>
                 <TabsList className="flex h-auto flex-wrap justify-start">
@@ -554,9 +652,11 @@ export function BankImportDialog({
                     ["matched", "bankMatched"],
                     ["check", "bankNeedsCheck"],
                     ["unmatched", "bankUnmatched"],
+                    ["recorded", "bankAlreadyRecorded"],
                   ].map(([value, key]) => (
                     <TabsTrigger key={value} value={value}>
                       {t(key as TranslationKey)}
+                      {value === "recorded" ? ` (${counts.recorded})` : ""}
                     </TabsTrigger>
                   ))}
                 </TabsList>
@@ -589,7 +689,7 @@ export function BankImportDialog({
                   <article
                     data-bank-row
                     key={`${row.key}-${index}`}
-                    className={`rounded-lg border border-border p-3 ${row.duplicate ? "bg-muted/40 opacity-50" : row.skip ? "opacity-50" : "bg-card"}`}
+                    className={`rounded-lg border border-border p-3 ${row.duplicate || row.futureDate ? "bg-muted/40 opacity-50" : row.skip || (row.recorded && !row.include) ? "opacity-60" : "bg-card"}`}
                   >
                     <div className="grid gap-3 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)]">
                       <div className="min-w-0 space-y-1">
@@ -625,6 +725,14 @@ export function BankImportDialog({
                                     : "bankUnmatched",
                             )}
                           </span>
+                          {row.recorded && !row.duplicate && (
+                            <span className="rounded bg-muted px-1.5 py-0.5 text-xs">
+                              {t("bankAlreadyRecorded")}
+                            </span>
+                          )}
+                          {row.futureDate && (
+                            <span className="text-xs text-destructive">{t("bankFutureDate")}</span>
+                          )}
                           {row.playerId && !row.confirmed && !row.duplicate && (
                             <Button
                               size="sm"
@@ -659,6 +767,26 @@ export function BankImportDialog({
                               onCheckedChange={(v) => changeRow(row.key, { remember: !!v })}
                             />
                             {t("bankRemember")}
+                          </label>
+                        )}
+                        {open_(row) && row.playerId && (row.recorded || preview?.futureMonth) && (
+                          <label className="flex items-center gap-2 text-xs">
+                            <Checkbox
+                              disabled={busy}
+                              checked={row.include}
+                              onCheckedChange={(v) => changeRow(row.key, { include: !!v })}
+                            />
+                            {t("bankIncludeAnyway")}
+                          </label>
+                        )}
+                        {open_(row) && row.playerId && row.recorded && !row.include && (
+                          <label className="flex items-center gap-2 text-xs">
+                            <Checkbox
+                              disabled={busy}
+                              checked={row.handled}
+                              onCheckedChange={(v) => changeRow(row.key, { handled: !!v })}
+                            />
+                            {t("bankMarkHandled")}
                           </label>
                         )}
                       </div>
@@ -704,6 +832,12 @@ export function BankImportDialog({
                                 );
                               })}
                             </ul>
+                            {preview?.futureMonth && (
+                              <p className="flex items-center gap-1 text-xs font-medium text-warning">
+                                <AlertTriangle className="size-3" />
+                                {t("bankFutureMonth")}
+                              </p>
+                            )}
                             {(preview?.leftover ?? 0) > 0 && (
                               <p className="text-xs text-warning">
                                 {t("bankUnallocated")}: {money(preview?.leftover ?? 0)}
@@ -741,6 +875,38 @@ export function BankImportDialog({
             </div>
           )}
           <div className="mt-5 border-t border-border pt-4">
+            <Button variant="ghost" size="sm" onClick={() => setShowHistory((v) => !v)}>
+              <History className="size-4" />
+              {t("bankHistory")} ({history.length})
+            </Button>
+            {showHistory && (
+              <div className="mb-3 mt-3 space-y-2">
+                {history.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">{t("bankNoHistory")}</p>
+                ) : (
+                  history.map((batch) => (
+                    <div
+                      key={batch.batchId}
+                      className="flex flex-wrap items-center justify-between gap-3 border-b border-border py-2 text-sm"
+                    >
+                      <span>
+                        {new Date(batch.createdAt).toLocaleString()} · {t("bankTransactions")}:{" "}
+                        {batch.count} · {money(batch.total)}
+                      </span>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        disabled={busy}
+                        onClick={() => setUndoTarget(batch)}
+                      >
+                        <Undo2 className="size-4" />
+                        {t("bankUndo")}
+                      </Button>
+                    </div>
+                  ))
+                )}
+              </div>
+            )}
             <Button variant="ghost" size="sm" onClick={() => setShowPayers((v) => !v)}>
               <Users className="size-4" />
               {t("bankSavedPayers")} ({aliases.length})
@@ -804,7 +970,7 @@ export function BankImportDialog({
                 >
                   {t("back")}
                 </Button>
-                <Button disabled={busy || !ready.length} onClick={() => void apply()}>
+                <Button disabled={busy || (!ready.length && !handledRows.length)} onClick={() => void apply()}>
                   {busy ? (
                     <LoaderCircle className="size-4 animate-spin" />
                   ) : (
@@ -826,6 +992,29 @@ export function BankImportDialog({
           )}
         </div>
       </DialogContent>
+      <AlertDialog open={!!undoTarget} onOpenChange={(v) => !v && !busy && setUndoTarget(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t("bankUndoTitle")}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {undoTarget &&
+                t("bankUndoConfirm", { count: undoTarget.count, total: money(undoTarget.total) })}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={busy}>{t("cancel")}</AlertDialogCancel>
+            <AlertDialogAction
+              disabled={busy}
+              onClick={(e) => {
+                e.preventDefault();
+                if (undoTarget) void undo(undoTarget);
+              }}
+            >
+              {t("bankUndo")}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Dialog>
   );
 }
