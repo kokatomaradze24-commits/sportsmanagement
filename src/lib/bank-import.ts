@@ -332,6 +332,8 @@ export type ColumnMapping = {
   amount: number;
   sender: number;
   purpose: number;
+  /** Other purpose-like columns used as per-row fallback / joined for matching. */
+  purposeAlt: number[];
   id: number;
   debit: number;
   direction: number;
@@ -341,6 +343,7 @@ export const EMPTY_MAPPING: ColumnMapping = {
   amount: -1,
   sender: -1,
   purpose: -1,
+  purposeAlt: [],
   id: -1,
   debit: -1,
   direction: -1,
