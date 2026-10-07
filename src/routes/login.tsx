@@ -159,6 +159,8 @@ const FEATURE_ICONS = [Users, Wallet, CalendarDays, Sparkles, UserCog, Link2, Be
 export const Route = createFileRoute("/login")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: "Sign In — My Club" },
       { name: "description", content: "Sign in to My Club to manage your sports club: players, payments, practices, teams and coaches." },
       { property: "og:title", content: "Sign In — My Club" },

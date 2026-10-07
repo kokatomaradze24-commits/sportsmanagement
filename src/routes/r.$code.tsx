@@ -4,6 +4,8 @@ import { PublicPlayerRegistration } from "@/components/PublicPlayerRegistration"
 export const Route = createFileRoute("/r/$code")({
   head: ({ params }) => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: "Player Registration — My Club" },
       { name: "description", content: "Register as a player with your sports club through My Club's secure online registration form." },
       { property: "og:title", content: "Player Registration — My Club" },

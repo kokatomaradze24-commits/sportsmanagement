@@ -25,6 +25,10 @@ import { SubscriptionRevenuePanel } from "@/components/SubscriptionRevenuePanel"
 export const Route = createFileRoute("/admin")({
   head: () => ({
     meta: [
+      { property: "og:title", content: "Admin Panel — My Club" },
+      { property: "og:description", content: "My Club admin panel for managing users and workspace settings." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: "Admin Panel — My Club" },
       { name: "description", content: "My Club admin panel for managing users and workspace settings." },
       { name: "robots", content: "noindex, nofollow" },
