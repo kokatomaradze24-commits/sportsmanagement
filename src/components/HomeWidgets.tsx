@@ -28,7 +28,7 @@ export function HomeWidgets({ players, payments, loading, practices, games, sche
     ...games.map((g) => ({ id: `g-${g.id}`, date: g.game_date, time: g.start_time, end: g.end_time, title: g.title, location: g.location, kind: t("dashGame") })),
   ].filter((e) => e.date > today || (e.date === today && (!e.end || e.end.slice(0, 5) >= time)))
     .sort((a, b) => a.date.localeCompare(b.date) || (a.time ?? "").localeCompare(b.time ?? "")).slice(0, 4);
-  const config = { collected: { label: t("dashCollected"), color: "var(--color-success)" }, expected: { label: t("dashExpected"), color: "var(--color-primary)" } };
+  const config = { collected: { label: t("dashCollected"), color: "var(--color-primary)" }, expected: { label: t("dashExpected"), color: "var(--color-muted-foreground)" } };
   return (
     <div className="grid min-w-0 grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1.65fr)_minmax(0,1fr)]">
       <section className="min-w-0 border-t border-border pt-4" aria-label={t("dashMonthlyIncome")}>

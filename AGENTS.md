@@ -9,3 +9,5 @@
 - Apply bank imports through an owner-scoped atomic SQL RPC with payment row locks and expected-paid checks; ledger, allocations and optional aliases commit together to prevent duplicate or stale reconciliation.
 - Keep bank import table types in a feature-owned client module rather than editing generated integration files; generated types remain platform-managed.
 - Fetch complete paginated payment balances at bank review time, independent of dashboard hook row limits; every unpaid historical month must participate in allocations.- Bank imports are undoable per batch: the apply RPC records server-built allocations with previous payment dates and a batch id; undo runs in one SQL transaction and refuses if a payment changed since.
+
+- Scope workspace tokens and shared-control refinements through html[data-app-ui], restored on unmount, so public pages keep their existing presentation.

@@ -1,7 +1,7 @@
 import { useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { Link } from "@tanstack/react-router";
-import { Upload, Pencil, Check, X, LogOut, Trophy, Languages, RotateCcw, Shield, Volume2, VolumeX, Sparkles, Settings } from "lucide-react";
+import { Upload, Pencil, Check, X, LogOut, Trophy, Languages, RotateCcw, Shield, Volume2, VolumeX, Sparkles, Settings, Moon, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuSub, DropdownMenuSubTrigger, DropdownMenuSubContent, DropdownMenuRadioGroup, DropdownMenuRadioItem } from "@/components/ui/dropdown-menu";
@@ -69,7 +69,7 @@ export function AppHeader({ schoolName, logoUrl, sport, isDark, onToggleTheme, o
       animate={{ opacity: 1 }}
       className="sticky top-0 z-30 h-16 border-b border-border bg-header/95 text-header-foreground backdrop-blur-xl"
     >
-      <div className="mx-auto grid h-full max-w-[1600px] grid-cols-[minmax(0,1fr)_auto] items-center gap-2 px-3 sm:gap-4 sm:px-6">
+      <div className="mx-auto grid h-full max-w-[1600px] grid-cols-[minmax(0,1fr)_auto] items-center gap-2 px-4 sm:gap-4 sm:px-6">
         <div className="flex min-w-0 items-center gap-2 sm:gap-3">
           <Button variant="ghost" size="icon" className="relative size-9 shrink-0 overflow-hidden rounded-md border border-border p-0 group sm:size-10" onClick={() => fileRef.current?.click()} title={t("uploadLogo")} aria-label={t("uploadLogo")}>
             {logoUrl ? <img src={logoUrl} alt={schoolName} className="h-full w-full object-cover" /> : <span className="font-display text-lg text-primary">{initials}</span>}
@@ -88,7 +88,7 @@ export function AppHeader({ schoolName, logoUrl, sport, isDark, onToggleTheme, o
           ) : (
             <div className="min-w-0">
               <h1 className="truncate text-base sm:text-xl">{schoolName}</h1>
-              <p className="truncate text-[10px] text-muted-foreground sm:text-xs">{sport.emoji} {sport.name}</p>
+              <p className="truncate text-[10px] text-muted-foreground sm:text-xs">{sport.name}</p>
             </div>
           )}
         </div>
@@ -108,7 +108,7 @@ export function AppHeader({ schoolName, logoUrl, sport, isDark, onToggleTheme, o
                 <DropdownMenuSubTrigger><Trophy />{t("sportDiscipline")}</DropdownMenuSubTrigger>
                 <DropdownMenuSubContent>
                   <DropdownMenuRadioGroup value={sport.id} onValueChange={(id) => { const choice = SPORT_LIST.find((s) => s.id === id); if (choice) onChangeSport(choice.id); }}>
-                    {SPORT_LIST.map((s) => <DropdownMenuRadioItem key={s.id} value={s.id}><span>{s.emoji}</span>{s.name}</DropdownMenuRadioItem>)}
+                    {SPORT_LIST.map((s) => <DropdownMenuRadioItem key={s.id} value={s.id}>{s.name}</DropdownMenuRadioItem>)}
                   </DropdownMenuRadioGroup>
                 </DropdownMenuSubContent>
               </DropdownMenuSub>
@@ -116,7 +116,7 @@ export function AppHeader({ schoolName, logoUrl, sport, isDark, onToggleTheme, o
                 <DropdownMenuSubTrigger><Languages />{t("language")}</DropdownMenuSubTrigger>
                 <DropdownMenuSubContent>
                   <DropdownMenuRadioGroup value={language} onValueChange={(code) => { const choice = LANGUAGES.find((l) => l.code === code); if (choice) setLanguage(choice.code); }}>
-                    {LANGUAGES.map((lang) => <DropdownMenuRadioItem key={lang.code} value={lang.code}><span>{lang.flag}</span>{lang.nativeName}</DropdownMenuRadioItem>)}
+                    {LANGUAGES.map((lang) => <DropdownMenuRadioItem key={lang.code} value={lang.code}>{lang.nativeName}</DropdownMenuRadioItem>)}
                   </DropdownMenuRadioGroup>
                 </DropdownMenuSubContent>
               </DropdownMenuSub>

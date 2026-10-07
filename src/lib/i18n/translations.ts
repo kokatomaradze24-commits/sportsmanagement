@@ -24,6 +24,8 @@ export type TranslationKey = keyof typeof translations.en;
 
 export const translations = {
   en: {
+    appearanceLight: "Light mode",
+    appearanceDark: "Dark mode",
     bankImport: "Import bank statement",
     bankUpload: "Upload",
     bankReview: "Review",
@@ -687,6 +689,8 @@ export const translations = {
   },
 
   de: {
+    appearanceLight: "Heller Modus",
+    appearanceDark: "Dunkler Modus",
     bankImport: "Kontoauszug importieren",
     bankUpload: "Hochladen",
     bankReview: "Prüfen",
@@ -1206,6 +1210,8 @@ export const translations = {
   },
 
   es: {
+    appearanceLight: "Modo claro",
+    appearanceDark: "Modo oscuro",
     bankImport: "Importar extracto bancario",
     bankUpload: "Subir",
     bankReview: "Revisar",
@@ -1725,6 +1731,8 @@ export const translations = {
   },
 
   fr: {
+    appearanceLight: "Mode clair",
+    appearanceDark: "Mode sombre",
     bankImport: "Importer un relevé bancaire",
     bankUpload: "Importer",
     bankReview: "Vérifier",
@@ -2244,6 +2252,8 @@ export const translations = {
   },
 
   ka: {
+    appearanceLight: "ღია რეჟიმი",
+    appearanceDark: "მუქი რეჟიმი",
     bankImport: "ამონაწერის იმპორტი",
     bankUpload: "ატვირთვა",
     bankReview: "შემოწმება",
@@ -2815,6 +2825,8 @@ export const translations = {
   },
 
   ru: {
+    appearanceLight: "Светлая тема",
+    appearanceDark: "Тёмная тема",
     bankImport: "Импорт выписки",
     bankUpload: "Загрузка",
     bankReview: "Проверка",

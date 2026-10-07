@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
-import { DollarSign, Check, Clock, AlertTriangle, Pencil, X } from "lucide-react";
+import { DollarSign, Check, Clock, AlertTriangle, Pencil, Users, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import type { Database } from "@/integrations/supabase/types";
@@ -192,7 +192,7 @@ export function PaymentsPanel({ player, players = [], payments, loading, onUpdat
 
       {family.length > 1 && (
         <div className="rounded-xl border border-primary/30 bg-primary/5 p-3 space-y-2">
-          <div className="text-sm font-semibold text-foreground">👨‍👦 {family.length} × {player.last_name}</div>
+          <div className="text-sm font-semibold text-foreground"><Users className="inline size-4 mr-2" />{family.length} × {player.last_name}</div>
           {familyRows.map((r) => (
             <div key={r.m.id} className="flex justify-between text-xs">
               <span className="text-muted-foreground">{r.m.first_name} #{r.m.t_number}</span>
@@ -227,27 +227,19 @@ export function PaymentsPanel({ player, players = [], payments, loading, onUpdat
       ) : (
         <div className="space-y-2">
           <AnimatePresence>
-            {schedule.map((payment, i) => {
+            {schedule.map((payment) => {
               const isPaid = payment.status === "paid";
               const isOverdue = payment.status === "overdue";
               const isPartialRow = payment.partial;
               return (
                 <motion.div
                   key={payment.key}
-                  initial={{ opacity: 0, y: 8 }}
+                  initial={false}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -8 }}
-                  transition={{ delay: Math.min(i * 0.03, 0.3) }}
+                  transition={{ duration: 0.12 }}
                   whileHover={{ scale: 1.015 }}
-                  className={`grid grid-cols-1 items-center gap-3 p-3 rounded-xl border transition-colors sm:grid-cols-[minmax(0,1fr)_auto] ${
-                    isPaid
-                      ? "border-success/30 bg-success/5 hover:bg-success/10"
-                      : isPartialRow
-                      ? "border-warning/40 bg-warning/5 hover:bg-warning/10"
-                      : isOverdue
-                      ? "border-destructive/30 bg-destructive/5 hover:bg-destructive/10"
-                      : "border-border bg-card hover:border-primary/30 hover:bg-primary/5"
-                  }`}
+                  className="grid grid-cols-1 items-center gap-3 py-4 border-b border-border sm:grid-cols-[minmax(0,1fr)_auto]"
                 >
                   <div className="flex items-center gap-3 min-w-0">
                     <div

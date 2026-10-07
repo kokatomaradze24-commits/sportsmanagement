@@ -1,8 +1,9 @@
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, Pencil, Trash2, User, Archive, ArchiveRestore, ListChecks, Search, Filter, ChevronDown, Link as LinkIcon, ExternalLink, Check, Eye, FileText, FileUp, X } from "lucide-react";
+import { Plus, Pencil, Trash2, User, Archive, ArchiveRestore, ListChecks, Search, Filter, ChevronDown, Link as LinkIcon, ExternalLink, Check, Eye, FileText, FileUp, MoreHorizontal, X } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -483,13 +484,14 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h2 className="text-2xl tracking-wider text-foreground">{sport.members}</h2>
         <div className="flex items-center gap-2 flex-wrap">
-        <Button size="sm" variant="outline" onClick={onImportBank} disabled={loading}><FileUp className="size-4" />{t("bankImport")}</Button>
-        <Button size="sm" variant="outline" className="shadow-sm hover:shadow-md" onClick={handlePlayersListPdf}>
-          <FileText className="w-4 h-4" /> {t("playersListPdf")}
-        </Button>
-        <Button size="sm" variant="outline" className="shadow-sm hover:shadow-md" onClick={handleAllDebtsPdf}>
-          <FileText className="w-4 h-4" /> {t("debtsPdf")}
-        </Button>
+         <DropdownMenu>
+           <DropdownMenuTrigger asChild><Button variant="outline" size="icon" aria-label={t("sectionMore")} title={t("sectionMore")}><MoreHorizontal /></Button></DropdownMenuTrigger>
+           <DropdownMenuContent align="end">
+             <DropdownMenuItem onSelect={onImportBank} disabled={loading}><FileUp />{t("bankImport")}</DropdownMenuItem>
+             <DropdownMenuItem onSelect={() => void handlePlayersListPdf()}><FileText />{t("playersListPdf")}</DropdownMenuItem>
+             <DropdownMenuItem onSelect={() => void handleAllDebtsPdf()}><FileText />{t("debtsPdf")}</DropdownMenuItem>
+           </DropdownMenuContent>
+         </DropdownMenu>
         <Dialog open={addOpen} onOpenChange={(o) => { if (o) play("click"); setAddOpen(o); }}>
           <DialogTrigger asChild>
             <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90 font-semibold shadow-md">
@@ -723,16 +725,17 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
             : t("noMembersMatch", { members: sport.members.toLowerCase() })}</p>
         </motion.div>
       ) : (
-                <div className="space-y-2 max-h-[62vh] overflow-y-auto pr-1">
+                <div className="max-h-[62vh] overflow-y-auto pr-1">
           <AnimatePresence>
             {filteredPlayers.map((player) => (
               <motion.div
                 key={player.id}
                 data-player-row
                 data-player-id={player.id}
-                initial={{ opacity: 0, x: -20 }}
+                 data-selected={selectedId === player.id}
+                initial={false}
                 animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
+                exit={{ opacity: 0 }}
                 transition={{ duration: 0.12 }}
                         onClick={() => { play("click"); onSelect(player); }}
                         className={`px-3 py-2.5 rounded-xl border cursor-pointer ${

@@ -9,3 +9,6 @@
 - [x] Add private payer aliases and atomic duplicate-safe bank import ledger without altering existing payment/SMS rules
 - [x] Add client-side spreadsheet parsing, transliterated matching, family allocations and import review/alias manager in six languages
 - [x] Verify parsing/allocation tests and authenticated desktop/mobile import, application and duplicate protection; do not publish
+
+- [ ] Restyle signed-in owner/coach screens and dialogs with scoped two-mode surfaces and typography
+- [ ] Verify read-only desktop/mobile; preserve public pages and all production data
