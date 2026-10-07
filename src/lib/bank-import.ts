@@ -71,6 +71,7 @@ export function previewBatch(rows: ReviewTransaction[], players: BankPlayer[], p
  const working = payments.map(p => ({ ...p }));
  const previews = new Map<string, AllocationPreview>();
  for (const row of rows) {
+  if (row.duplicate && previews.has(row.key)) continue;
   const preview = row.skip || row.duplicate ? { allocations: [], leftover: row.amount } : allocateTransaction(row.amount, row.playerId, players, working, row.targetMonth);
   previews.set(row.key, preview);
   if (!row.confirmed || !row.playerId) continue;
@@ -100,11 +101,12 @@ export function detectColumns(grid: unknown[][]): { headerRow: number; mapping: 
   const mapping = { ...EMPTY_MAPPING };
   (Object.keys(HEADERS) as (keyof ColumnMapping)[]).forEach(field => {
    const aliases = HEADERS[field].map(headerText);
-   mapping[field] = row.findIndex(value => aliases.includes(headerText(value)));
+   for (const alias of aliases) { const index = row.findIndex(value => headerText(value) === alias); if (index >= 0) { mapping[field] = index; break; } }
    if (mapping[field] < 0) mapping[field] = row.findIndex(value => { const text = headerText(value); return text.length > 2 && aliases.some(alias => alias.length > 5 && text.startsWith(alias + ' (')); });
   });
   const score = Object.values(mapping).filter(v => v >= 0).length;
-  if (score > bestScore) { bestScore = score; best = { headerRow, mapping, confident: mapping.date >= 0 && mapping.amount >= 0 && mapping.sender >= 0 }; }
+  const signedOnly = ['amount','თანხა'].includes(headerText(row[mapping.amount])) && mapping.debit < 0 && mapping.direction < 0;
+  if (score > bestScore) { bestScore = score; best = { headerRow, mapping, confident: mapping.date >= 0 && mapping.amount >= 0 && mapping.sender >= 0 && !signedOnly }; }
  });
  return best;
 }
@@ -139,7 +141,7 @@ export function parseMappedRows(grid: unknown[][], headerRow: number, mapping: C
   const purpose = String(row[mapping.purpose] ?? '').trim();
   const direction = String(row[mapping.direction] ?? '').toLowerCase();
   const meta = `${sender} ${purpose}`.toLowerCase();
-  if (amount <= 0 || (mapping.debit >= 0 && parseBankAmount(row[mapping.debit]) > 0) || /debit|outgoing|paid out|გასავალი|ჩამოჭრა/.test(direction) || /^(opening balance|closing balance|balance|total|ნაშთი|საწყისი ნაშთი|საბოლოო ნაშთი|ჯამი)\b/i.test(meta.trim()) || /^(fee|commission|საკომისიო)(?:\s|$)/i.test(meta.trim())) { ignored++; continue; }
+  if (amount <= 0 || (mapping.debit >= 0 && parseBankAmount(row[mapping.debit]) > 0) || /debit|outgoing|paid out|გასავალი|ჩამოჭრა|fee|commission|საკომისიო/.test(direction) || /^(opening balance|closing balance|balance|total|ნაშთი|საწყისი ნაშთი|საბოლოო ნაშთი|ჯამი)(?:\s|$)/i.test(meta.trim()) || /^(fee|commission|საკომისიო)(?:\s|$)/i.test(purpose.trim())) { ignored++; continue; }
   const date = parseBankDate(row[mapping.date]);
   if (!date) { invalid++; continue; }
   const rounded = Math.round(amount*100)/100;
