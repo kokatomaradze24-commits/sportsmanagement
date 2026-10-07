@@ -1,5 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
+import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { fetchAllPages } from "@/lib/fetch-all";
 import type { Database } from "@/integrations/supabase/types";
 
 type Payment = Database["public"]["Tables"]["payments"]["Row"];
@@ -16,13 +18,22 @@ export function usePayments(sport: string) {
       return;
     }
     setLoading(true);
-    const { data } = await supabase
-      .from("payments")
-      .select("*")
-      .eq("sport", sport)
-      .order("year", { ascending: false })
-      .order("month", { ascending: false });
-    if (data) setPayments(data);
+    try {
+      const data = await fetchAllPages<Payment>((from, to) =>
+        supabase
+          .from("payments")
+          .select("*")
+          .eq("sport", sport)
+          .order("year", { ascending: false })
+          .order("month", { ascending: false })
+          .order("id", { ascending: true })
+          .range(from, to),
+      );
+      setPayments(data);
+    } catch (error) {
+      console.error("Failed to load payments", error);
+      toast.error("Failed to load payments. Showing the previous list.");
+    }
     setLoading(false);
   }, [sport]);
 

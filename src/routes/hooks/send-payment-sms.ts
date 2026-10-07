@@ -1,3 +1,4 @@
+import { fetchAllPages } from "@/lib/fetch-all";
 import { createFileRoute } from "@tanstack/react-router";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { getPaymentDueDate } from "@/lib/payment-due";
@@ -148,10 +149,12 @@ export const Route = createFileRoute("/hooks/send-payment-sms")({
         const userIds = settingsList.map((s) => s.user_id);
 
         // 2) Fetch all payment history so due dates can follow the latest earlier paid month
-        const { data: allPaymentsRows } = await supabaseAdmin
+        const allPaymentsRows = await fetchAllPages((from, to) => supabaseAdmin
           .from("payments")
           .select("id, player_id, user_id, amount, paid_amount, month, year, status, payment_date")
-          .in("user_id", userIds);
+          .in("user_id", userIds)
+          .order("id")
+          .range(from, to));
 
         const allPayments = (allPaymentsRows ?? []) as PaymentLite[];
         const payments = allPayments.filter((payment) => payment.status === "pending" || payment.status === "overdue");
@@ -161,10 +164,15 @@ export const Route = createFileRoute("/hooks/send-payment-sms")({
 
         // 3) Fetch related players
         const playerIds = Array.from(new Set(payments.map((p) => p.player_id)));
-        const { data: playersRows } = await supabaseAdmin
-          .from("players")
-          .select("id, first_name, last_name, parent_phone, start_day")
-          .in("id", playerIds);
+        const playersRows: PlayerLite[] = [];
+        for (let i = 0; i < playerIds.length; i += 200) {
+          const { data, error } = await supabaseAdmin
+            .from("players")
+            .select("id, first_name, last_name, parent_phone, start_day")
+            .in("id", playerIds.slice(i, i + 200));
+          if (error) throw error;
+          playersRows.push(...((data ?? []) as PlayerLite[]));
+        }
 
         const playerMap = new Map<string, PlayerLite>();
         (playersRows ?? []).forEach((p) => playerMap.set(p.id, p as PlayerLite));
@@ -172,11 +180,13 @@ export const Route = createFileRoute("/hooks/send-payment-sms")({
         // 4) Fetch existing logs for today to dedupe (avoid double-sending same day)
         const startOfDay = new Date(today);
         startOfDay.setUTCHours(0, 0, 0, 0);
-        const { data: logsRows } = await supabaseAdmin
+        const logsRows = await fetchAllPages((from, to) => supabaseAdmin
           .from("sms_logs")
           .select("payment_id, kind, status")
           .in("user_id", userIds)
-          .gte("created_at", startOfDay.toISOString());
+          .gte("created_at", startOfDay.toISOString())
+          .order("id")
+          .range(from, to));
 
         const sentToday = new Set<string>();
         (logsRows ?? []).forEach((l) => {

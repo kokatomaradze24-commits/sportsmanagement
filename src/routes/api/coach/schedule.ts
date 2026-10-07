@@ -1,3 +1,4 @@
+import { fetchAllPages } from "@/lib/fetch-all";
 import { createFileRoute } from "@tanstack/react-router";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
@@ -22,17 +23,17 @@ export const Route = createFileRoute("/api/coach/schedule")({
         const coach = await resolveCoach(token);
         if (!coach) return Response.json({ error: "Unauthorized" }, { status: 401 });
 
-        const [{ data: practices }, { data: games }, { data: club }] = await Promise.all([
-          supabaseAdmin
+        const [practices, games, { data: club }] = await Promise.all([
+          fetchAllPages((from, to) => supabaseAdmin
             .from("practices")
             .select("*")
             .eq("user_id", coach.user_id)
-            .order("practice_date", { ascending: true }),
-          supabaseAdmin
+            .order("practice_date", { ascending: true }).order("id").range(from, to)),
+          fetchAllPages((from, to) => supabaseAdmin
             .from("games")
             .select("*")
             .eq("user_id", coach.user_id)
-            .order("game_date", { ascending: true }),
+            .order("game_date", { ascending: true }).order("id").range(from, to)),
           supabaseAdmin
             .from("app_settings")
             .select("value")

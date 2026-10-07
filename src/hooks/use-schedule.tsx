@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
+import { fetchAllPages } from "@/lib/fetch-all";
 import { supabase } from "@/integrations/supabase/client";
 
 export interface Practice {
@@ -42,12 +43,16 @@ export function useSchedule(sportId: string) {
 
   const refetch = useCallback(async () => {
     setLoading(true);
-    const [{ data: p }, { data: g }] = await Promise.all([
-      supabase.from("practices").select("*").eq("sport", sportId).order("practice_date"),
-      supabase.from("games").select("*").eq("sport", sportId).order("game_date"),
-    ]);
-    setPractices((p ?? []) as Practice[]);
-    setGames((g ?? []) as Game[]);
+    try {
+      const [p, g] = await Promise.all([
+        fetchAllPages((from, to) => supabase.from("practices").select("*").eq("sport", sportId).order("practice_date").order("id").range(from, to)),
+        fetchAllPages((from, to) => supabase.from("games").select("*").eq("sport", sportId).order("game_date").order("id").range(from, to)),
+      ]);
+      setPractices(p as Practice[]);
+      setGames(g as Game[]);
+    } catch (error) {
+      console.error("Failed to load schedule", error);
+    }
     setLoading(false);
   }, [sportId]);
 
