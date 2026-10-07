@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { fetchAllPages } from "@/lib/fetch-all";
 import { supabase } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
 
@@ -16,12 +17,15 @@ export function usePlayers(sport: string, onPlayersChanged?: () => void) {
       return;
     }
     setLoading(true);
-    const { data } = await supabase
-      .from("players")
-      .select("*")
-      .eq("sport", sport)
-      .order("created_at", { ascending: false });
-    if (data) setPlayers(data);
+    try {
+      const data = await fetchAllPages<Player>((from, to) =>
+        supabase.from("players").select("*").eq("sport", sport)
+          .order("created_at", { ascending: false }).order("id").range(from, to),
+      );
+      setPlayers(data);
+    } catch (error) {
+      console.error("Failed to load players", error);
+    }
     setLoading(false);
   }, [sport]);
 

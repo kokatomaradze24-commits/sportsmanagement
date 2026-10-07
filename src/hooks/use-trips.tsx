@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { fetchAllPages } from "@/lib/fetch-all";
 import { supabase } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
 
@@ -28,11 +29,9 @@ export function useTrips(sport: string) {
     const tripIds = (tripsData ?? []).map((t) => t.id);
     let partsData: TripParticipant[] = [];
     if (tripIds.length > 0) {
-      const { data } = await supabase
-        .from("trip_participants")
-        .select("*")
-        .in("trip_id", tripIds);
-      partsData = data ?? [];
+      partsData = await fetchAllPages<TripParticipant>((from, to) =>
+        supabase.from("trip_participants").select("*").in("trip_id", tripIds).order("id").range(from, to),
+      ).catch((error) => { console.error("Failed to load trip participants", error); return []; });
     }
     setTrips(tripsData ?? []);
     setParticipants(partsData);

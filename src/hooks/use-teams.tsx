@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { fetchAllPages } from "@/lib/fetch-all";
 import { supabase } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
 
@@ -28,11 +29,9 @@ export function useTeams(sport: string) {
     const teamIds = (teamsData ?? []).map((t) => t.id);
     let membersData: TeamMember[] = [];
     if (teamIds.length > 0) {
-      const { data } = await supabase
-        .from("team_members")
-        .select("*")
-        .in("team_id", teamIds);
-      membersData = data ?? [];
+      membersData = await fetchAllPages<TeamMember>((from, to) =>
+        supabase.from("team_members").select("*").in("team_id", teamIds).order("id").range(from, to),
+      ).catch((error) => { console.error("Failed to load team members", error); return []; });
     }
     setTeams(teamsData ?? []);
     setMembers(membersData);
