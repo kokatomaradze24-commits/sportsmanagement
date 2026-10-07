@@ -24,6 +24,7 @@ export type TranslationKey = keyof typeof translations.en;
 
 export const translations = {
   en: {
+    playerPaymentFilter: "Payment status",
     playerPartial: "Partial",
     dashThisMonth: "This month",
     dashCollected: "Collected",
@@ -621,6 +622,7 @@ export const translations = {
   },
 
   de: {
+    playerPaymentFilter: "Zahlungsstatus",
     playerPartial: "Teilweise",
     dashThisMonth: "Diesen Monat",
     dashCollected: "Eingegangen",
@@ -1074,6 +1076,7 @@ export const translations = {
   },
 
   es: {
+    playerPaymentFilter: "Estado del pago",
     playerPartial: "Parcial",
     dashThisMonth: "Este mes",
     dashCollected: "Cobrado",
@@ -1527,6 +1530,7 @@ export const translations = {
   },
 
   fr: {
+    playerPaymentFilter: "État du paiement",
     playerPartial: "Partiel",
     dashThisMonth: "Ce mois-ci",
     dashCollected: "Encaissé",
@@ -1980,6 +1984,7 @@ export const translations = {
   },
 
   ka: {
+    playerPaymentFilter: "გადახდის სტატუსი",
     playerPartial: "ნაწილობრივ",
     dashThisMonth: "მიმდინარე თვე",
     dashCollected: "შეგროვებული",
@@ -2485,6 +2490,7 @@ export const translations = {
   },
 
   ru: {
+    playerPaymentFilter: "Статус оплаты",
     playerPartial: "Частично",
     dashThisMonth: "Этот месяц",
     dashCollected: "Получено",

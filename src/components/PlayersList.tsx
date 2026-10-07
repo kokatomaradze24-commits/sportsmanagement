@@ -633,7 +633,7 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
         </div>
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
           <Select value={paymentFilter} onValueChange={(value) => { const choice = PLAYER_PAYMENT_FILTERS.find((f) => f === value); if (choice) onPaymentFilterChange(choice); }}>
-            <SelectTrigger className="h-9 min-w-0 text-xs" aria-label={t("paymentStatus")}><Filter className="mr-1 size-3.5 shrink-0" /><SelectValue /></SelectTrigger>
+            <SelectTrigger className="h-9 min-w-0 text-xs" aria-label={t("playerPaymentFilter")}><Filter className="mr-1 size-3.5 shrink-0" /><SelectValue /></SelectTrigger>
             <SelectContent>
               <SelectItem value="all">{t("all")}</SelectItem><SelectItem value="paid">{t("paid")}</SelectItem><SelectItem value="partial">{t("partiallyPaid")}</SelectItem><SelectItem value="pending">{t("pending")}</SelectItem><SelectItem value="overdue">{t("overdue")}</SelectItem><SelectItem value="archived">{t("archivedPlayers")}</SelectItem>
             </SelectContent>
@@ -726,6 +726,8 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
             {filteredPlayers.map((player) => (
               <motion.div
                 key={player.id}
+                data-player-row
+                data-player-id={player.id}
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
