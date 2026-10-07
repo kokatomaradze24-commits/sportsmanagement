@@ -547,7 +547,14 @@ export function parseMappedRows(
     const amount = parseBankAmount(row[mapping.amount]);
     const rawSender = String(row[mapping.sender] ?? "").trim();
     const sender = cleanPartnerName(rawSender);
-    const purpose = String(row[mapping.purpose] ?? "").trim();
+    const purposePrimary = String(row[mapping.purpose] ?? "").trim();
+    const purpose = [
+      purposePrimary,
+      ...mapping.purposeAlt.map((index) => String(row[index] ?? "").trim()),
+    ]
+      .filter(Boolean)
+      .filter((part, index, parts) => parts.indexOf(part) === index)
+      .join(" ");
     const direction = String(row[mapping.direction] ?? "").toLowerCase();
     const meta = `${sender} ${purpose}`.toLowerCase();
     if (
