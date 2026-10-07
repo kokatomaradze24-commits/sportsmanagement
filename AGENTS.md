@@ -8,3 +8,4 @@
 - Parse bank files only in the browser and keep matching/allocation in a pure module; source statements must never reach storage or the server.
 - Apply bank imports through an owner-scoped atomic SQL RPC with payment row locks and expected-paid checks; ledger, allocations and optional aliases commit together to prevent duplicate or stale reconciliation.
 - Keep bank import table types in a feature-owned client module rather than editing generated integration files; generated types remain platform-managed.
+- Fetch complete paginated payment balances at bank review time, independent of dashboard hook row limits; every unpaid historical month must participate in allocations.

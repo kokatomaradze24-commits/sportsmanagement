@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { createFileRoute, useNavigate, Link, type SearchSchemaInput } from "@tanstack/react-router";
-import { ArrowLeft, BarChart3, LoaderCircle, UserRound } from "lucide-react";
+import { ArrowLeft, BarChart3, FileUp, LoaderCircle, UserRound } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DashboardNavigation, DASHBOARD_TABS, type DashboardTab } from "@/components/DashboardNavigation";
 import { AppHeader } from "@/components/AppHeader";
@@ -171,7 +171,7 @@ function Index() {
           <section className={tab === "home" ? "space-y-6" : "hidden"} aria-label={t("sectionHome")}>
           <SubscriptionBanner />
           <StatsCards players={players} payments={payments} loading={playersLoading || paymentsLoading} onViewDebt={() => { setMobilePaymentOpen(false); void navigate({ to: "/", search: { tab: "players", filter: "overdue" } }); }} />
-          <Button variant="outline" onClick={() => setBankImportOpen(true)} disabled={playersLoading || paymentsLoading}>{t("bankImport")}</Button>
+          <Button variant="outline" onClick={() => setBankImportOpen(true)} disabled={playersLoading || paymentsLoading}><FileUp className="size-4" />{t("bankImport")}</Button>
           <HomeWidgets players={players} payments={payments} loading={playersLoading || paymentsLoading} practices={schedule.practices} games={schedule.games} scheduleLoading={schedule.loading} onSelectPlayer={(player) => { setSelectedPlayer(player); setMobilePaymentOpen(true); void navigate({ to: "/", search: { tab: "players", filter: player.is_active ? "all" : "archived" } }); }} />
           <NotificationsBanner players={players} payments={payments} />
 

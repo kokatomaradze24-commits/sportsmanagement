@@ -166,7 +166,7 @@ export function BankImportDialog({
   const sheet = sheets[sheetIndex];
   const money = (amount: number) => `${amount.toFixed(2)} GEL`;
   useEffect(() => {
-    if (!open) return;
+    if (!open) { setSheets([]); setRows([]); return; }
     setStep("upload");
     setSheets([]);
     setRows([]);
@@ -324,21 +324,20 @@ export function BankImportDialog({
             lang: language,
           });
       await onRefresh();
-      const fresh = await loadBankImportData(sport, []);
-      setAliases(fresh.aliases);
+      try { const fresh = await loadBankImportData(sport, []); setAliases(fresh.aliases); } catch { /* Applied transfers remain committed. */ }
     } catch (e) {
       const stale = String((e as { message?: string })?.message ?? "").includes(
         "BANK_IMPORT_STALE",
       );
       setError(t(stale ? "bankStale" : "bankApplyError"));
-      await onRefresh();
-      const [data, freshBalances] = await Promise.all([
-        loadBankImportData(sport, rows.map((r) => r.key)), loadBankBalances(sport),
-      ]);
-      setBalances(freshBalances);
-      setRows((old) =>
-        old.map((r) => ({ ...r, duplicate: r.duplicate || data.imported.has(r.key) })),
-      );
+      try {
+        await onRefresh();
+        const [data, freshBalances] = await Promise.all([
+          loadBankImportData(sport, rows.map((r) => r.key)), loadBankBalances(sport),
+        ]);
+        setBalances(freshBalances);
+        setRows((old) => old.map((r) => ({ ...r, duplicate: r.duplicate || data.imported.has(r.key) })));
+      } catch { /* Preserve the failed review for a retry. */ }
     } finally {
       setBusy(false);
     }
@@ -367,7 +366,7 @@ export function BankImportDialog({
       }}
     >
       <DialogContent
-        className="flex h-dvh max-h-dvh w-full max-w-none flex-col gap-3 overflow-hidden rounded-none p-4 sm:h-[90dvh] sm:max-h-[90dvh] sm:w-[calc(100%-2rem)] sm:max-w-6xl sm:rounded-lg sm:p-6"
+        className="flex h-dvh max-h-dvh w-full max-w-none flex-col gap-3 overflow-hidden rounded-none p-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:h-[90dvh] sm:max-h-[90dvh] sm:w-[calc(100%-2rem)] sm:max-w-6xl sm:rounded-lg sm:p-6"
         onEscapeKeyDown={(e) => {
           if (busy) e.preventDefault();
         }}
