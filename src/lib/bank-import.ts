@@ -455,7 +455,14 @@ export function detectColumns(grid: unknown[][]): {
           );
         });
     });
-    const score = Object.values(mapping).filter((v) => v >= 0).length;
+    const altAliases = PURPOSE_ALT_HEADERS.map(headerText);
+    mapping.purposeAlt = row
+      .map((value, index) => ({ text: headerText(value), index }))
+      .filter(({ text, index }) => index !== mapping.purpose && altAliases.includes(text))
+      .map(({ index }) => index);
+    const score = Object.entries(mapping).filter(([k, v]) =>
+      k === "purposeAlt" ? (v as number[]).length > 0 : (v as number) >= 0,
+    ).length;
     const signedOnly =
       ["amount", "თანხა"].includes(headerText(row[mapping.amount])) &&
       mapping.debit < 0 &&
