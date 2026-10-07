@@ -332,6 +332,8 @@ export type ColumnMapping = {
   amount: number;
   sender: number;
   purpose: number;
+  /** Other purpose-like columns used as per-row fallback / joined for matching. */
+  purposeAlt: number[];
   id: number;
   debit: number;
   direction: number;
@@ -341,11 +343,13 @@ export const EMPTY_MAPPING: ColumnMapping = {
   amount: -1,
   sender: -1,
   purpose: -1,
+  purposeAlt: [],
   id: -1,
   debit: -1,
   direction: -1,
 };
 const HEADERS: Record<keyof ColumnMapping, string[]> = {
+  purposeAlt: [],
   date: ["date", "transaction date", "value date", "თარიღი", "ოპერაციის თარიღი"],
   amount: [
     "paid in",
@@ -374,13 +378,14 @@ const HEADERS: Record<keyof ColumnMapping, string[]> = {
   purpose: [
     "purpose",
     "დანიშნულება",
-    "additional information",
-    "დამატებითი ინფორმაცია",
     "description",
     "აღწერა",
+    "additional information",
+    "დამატებითი ინფორმაცია",
   ],
   id: [
     "transaction id",
+    "ტრანზაქციის id",
     "document id",
     "document number",
     "document no",
@@ -398,8 +403,25 @@ const HEADERS: Record<keyof ColumnMapping, string[]> = {
     "გასავალი",
     "დებეტი",
   ],
-  direction: ["direction", "type", "transaction type", "ოპერაციის ტიპი", "მიმართულება"],
+  direction: [
+    "direction",
+    "type",
+    "transaction type",
+    "ოპერაციის ტიპი",
+    "ტრანზაქციის ტიპი",
+    "მიმართულება",
+  ],
 };
+/** Purpose-like headers beyond the primary one, used as per-row fallback and joined for matching. */
+const PURPOSE_ALT_HEADERS = [
+  "purpose",
+  "დანიშნულება",
+  "description",
+  "აღწერა",
+  "additional information",
+  "დამატებითი ინფორმაცია",
+  "additional description",
+];
 const headerText = (value: unknown) =>
   String(value ?? "")
     .replace(/^\ufeff/, "")
@@ -416,7 +438,9 @@ export function detectColumns(grid: unknown[][]): {
   let bestScore = 0;
   grid.slice(0, 40).forEach((row, headerRow) => {
     const mapping = { ...EMPTY_MAPPING };
-    (Object.keys(HEADERS) as (keyof ColumnMapping)[]).forEach((field) => {
+    (Object.keys(HEADERS) as (keyof ColumnMapping)[])
+      .filter((field) => field !== "purposeAlt")
+      .forEach((field) => {
       const aliases = HEADERS[field].map(headerText);
       for (const alias of aliases) {
         const index = row.findIndex((value) => headerText(value) === alias);
@@ -434,7 +458,14 @@ export function detectColumns(grid: unknown[][]): {
           );
         });
     });
-    const score = Object.values(mapping).filter((v) => v >= 0).length;
+    const altAliases = PURPOSE_ALT_HEADERS.map(headerText);
+    mapping.purposeAlt = row
+      .map((value, index) => ({ text: headerText(value), index }))
+      .filter(({ text, index }) => index !== mapping.purpose && altAliases.includes(text))
+      .map(({ index }) => index);
+    const score = Object.entries(mapping).filter(([k, v]) =>
+      k === "purposeAlt" ? (v as number[]).length > 0 : (v as number) >= 0,
+    ).length;
     const signedOnly =
       ["amount", "თანხა"].includes(headerText(row[mapping.amount])) &&
       mapping.debit < 0 &&
@@ -519,7 +550,14 @@ export function parseMappedRows(
     const amount = parseBankAmount(row[mapping.amount]);
     const rawSender = String(row[mapping.sender] ?? "").trim();
     const sender = cleanPartnerName(rawSender);
-    const purpose = String(row[mapping.purpose] ?? "").trim();
+    const purposePrimary = String(row[mapping.purpose] ?? "").trim();
+    const purpose = [
+      purposePrimary,
+      ...mapping.purposeAlt.map((index) => String(row[index] ?? "").trim()),
+    ]
+      .filter(Boolean)
+      .filter((part, index, parts) => parts.indexOf(part) === index)
+      .join(" ");
     const direction = String(row[mapping.direction] ?? "").toLowerCase();
     const meta = `${sender} ${purpose}`.toLowerCase();
     if (
@@ -549,7 +587,7 @@ export function parseMappedRows(
         date,
         rounded,
         rawSender,
-        purpose,
+        purposePrimary,
         mapping.id >= 0 ? String(row[mapping.id] ?? "") : undefined,
       ),
     });
