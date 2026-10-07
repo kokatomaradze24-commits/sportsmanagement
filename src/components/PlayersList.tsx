@@ -738,7 +738,7 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
                                 <span className="truncate">{player.first_name} {player.last_name}</span>
                         {isNewPlayer(player.created_at) && (
                           <span className="text-[10px] font-semibold uppercase tracking-wide px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-500 border border-emerald-500/30 shrink-0">
-                            New Player
+                            {t("newPlayer")}
                           </span>
                         )}
                         {player.birth_date ? (

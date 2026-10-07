@@ -24,6 +24,14 @@ export type TranslationKey = keyof typeof translations.en;
 
 export const translations = {
   en: {
+    sectionHome: "Home",
+    sectionPlayers: "Players",
+    sectionTeams: "Teams",
+    sectionSchedule: "Schedule",
+    sectionMore: "More",
+    newPlayer: "New Player",
+    clubSections: "Club sections",
+    uploadLogo: "Upload logo",
     waButton: "WhatsApp",
     waMessage: "Message",
     waTplReminder: "Payment reminder",
@@ -577,6 +585,14 @@ export const translations = {
   },
 
   de: {
+    sectionHome: "Start",
+    sectionPlayers: "Spieler",
+    sectionTeams: "Teams",
+    sectionSchedule: "Zeitplan",
+    sectionMore: "Mehr",
+    newPlayer: "Neuer Spieler",
+    clubSections: "Vereinsbereiche",
+    uploadLogo: "Logo hochladen",
     waButton: "WhatsApp",
     waMessage: "Nachricht",
     waTplReminder: "Zahlungserinnerung",
@@ -986,6 +1002,14 @@ export const translations = {
   },
 
   es: {
+    sectionHome: "Inicio",
+    sectionPlayers: "Jugadores",
+    sectionTeams: "Equipos",
+    sectionSchedule: "Horario",
+    sectionMore: "Más",
+    newPlayer: "Nuevo jugador",
+    clubSections: "Secciones del club",
+    uploadLogo: "Subir logo",
     waButton: "WhatsApp",
     waMessage: "Mensaje",
     waTplReminder: "Recordatorio de pago",
@@ -1395,6 +1419,14 @@ export const translations = {
   },
 
   fr: {
+    sectionHome: "Accueil",
+    sectionPlayers: "Joueurs",
+    sectionTeams: "Équipes",
+    sectionSchedule: "Planning",
+    sectionMore: "Plus",
+    newPlayer: "Nouveau joueur",
+    clubSections: "Rubriques du club",
+    uploadLogo: "Importer un logo",
     waButton: "WhatsApp",
     waMessage: "Message",
     waTplReminder: "Rappel de paiement",
@@ -1804,6 +1836,14 @@ export const translations = {
   },
 
   ka: {
+    sectionHome: "მთავარი",
+    sectionPlayers: "მოთამაშეები",
+    sectionTeams: "გუნდები",
+    sectionSchedule: "განრიგი",
+    sectionMore: "მეტი",
+    newPlayer: "ახალი მოთამაშე",
+    clubSections: "კლუბის სექციები",
+    uploadLogo: "ლოგოს ატვირთვა",
     waButton: "WhatsApp",
     waMessage: "შეტყობინება",
     waTplReminder: "გადახდის შეხსენება",
@@ -2265,6 +2305,14 @@ export const translations = {
   },
 
   ru: {
+    sectionHome: "Главная",
+    sectionPlayers: "Игроки",
+    sectionTeams: "Команды",
+    sectionSchedule: "Расписание",
+    sectionMore: "Ещё",
+    newPlayer: "Новый игрок",
+    clubSections: "Разделы клуба",
+    uploadLogo: "Загрузить логотип",
     waButton: "WhatsApp",
     waMessage: "Сообщение",
     waTplReminder: "Напоминание об оплате",
