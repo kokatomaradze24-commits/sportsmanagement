@@ -349,6 +349,7 @@ export const EMPTY_MAPPING: ColumnMapping = {
   direction: -1,
 };
 const HEADERS: Record<keyof ColumnMapping, string[]> = {
+  purposeAlt: [],
   date: ["date", "transaction date", "value date", "თარიღი", "ოპერაციის თარიღი"],
   amount: [
     "paid in",
