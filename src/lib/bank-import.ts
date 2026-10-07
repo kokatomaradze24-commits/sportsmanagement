@@ -438,7 +438,9 @@ export function detectColumns(grid: unknown[][]): {
   let bestScore = 0;
   grid.slice(0, 40).forEach((row, headerRow) => {
     const mapping = { ...EMPTY_MAPPING };
-    (Object.keys(HEADERS) as (keyof ColumnMapping)[]).forEach((field) => {
+    (Object.keys(HEADERS) as (keyof ColumnMapping)[])
+      .filter((field) => field !== "purposeAlt")
+      .forEach((field) => {
       const aliases = HEADERS[field].map(headerText);
       for (const alias of aliases) {
         const index = row.findIndex((value) => headerText(value) === alias);
