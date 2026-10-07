@@ -8,8 +8,11 @@ export async function readBankFile(file: File) {
   if (file.size > 20 * 1024 * 1024) throw new Error("BANK_FILE_TOO_LARGE");
   if (!/\.(xlsx|xls|csv)$/i.test(file.name)) throw new Error("BANK_FILE_INVALID");
   const XLSX = await import("@e965/xlsx");
+  const csv = /\.csv$/i.test(file.name);
   const book = XLSX.read(await file.arrayBuffer(), {
     type: "array",
+    // CSV text must stay raw: SheetJS would otherwise read 01/09/2026 month-first.
+    raw: csv,
     cellDates: true,
     codepage: 65001,
   });

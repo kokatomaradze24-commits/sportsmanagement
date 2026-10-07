@@ -16,6 +16,7 @@ export type BankPayment = {
   amount: number | string;
   paid_amount?: number | string | null;
   status: string;
+  payment_date?: string | null;
 };
 export type PayerAlias = { id: string; payer_name: string; player_id: string };
 export type BankTransaction = {
@@ -34,6 +35,14 @@ export type ReviewTransaction = BankTransaction & {
   skip: boolean;
   duplicate: boolean;
   targetMonth: string;
+  /** Matched player's schedule already shows this transfer (entered by hand). */
+  recorded: boolean;
+  /** User explicitly included a recorded / future-month row. */
+  include: boolean;
+  /** Remember a recorded row as handled (ledger only, no payment change). */
+  handled: boolean;
+  /** Transaction date is after today; never applied. */
+  futureDate: boolean;
 };
 export type Allocation = {
   paymentId: string;
@@ -45,7 +54,7 @@ export type Allocation = {
   resultingPaid: number;
   fullyPaid: boolean;
 };
-export type AllocationPreview = { allocations: Allocation[]; leftover: number };
+export type AllocationPreview = { allocations: Allocation[]; leftover: number; futureMonth: boolean };
 const GEORGIAN = "აბგდევზთიკლმნოპჟრსტუფქღყშჩცძწჭხჯჰ";
 const LATIN = [
   "a",
@@ -170,7 +179,7 @@ export function allocateTransaction(
   targetMonth = "",
 ): AllocationPreview {
   const player = players.find((p) => p.id === playerId);
-  if (!player) return { allocations: [], leftover: amount };
+  if (!player) return { allocations: [], leftover: amount, futureMonth: false };
   const members = players
     .filter((p) => p.id === playerId || (player.family_id && p.family_id === player.family_id))
     .sort((a, b) => a.created_at.localeCompare(b.created_at) || a.id.localeCompare(b.id));
@@ -207,7 +216,59 @@ export function allocateTransaction(
     });
     left -= applied;
   }
-  return { allocations, leftover: Math.max(0, left) / 100 };
+  return { allocations, leftover: Math.max(0, left) / 100, futureMonth: false };
+}
+const monthKey = (year: number, month: number) => `${year}-${String(month).padStart(2, "0")}`;
+/** True when an allocation month starts more than one month after the transfer date. */
+export function paysFutureMonth(date: string, allocations: Pick<Allocation, "month" | "year">[]) {
+  const [y, m, d] = date.split("-").map(Number);
+  const limit = new Date(y, m, Math.min(d, new Date(y, m + 1, 0).getDate()));
+  const limitKey = `${monthKey(limit.getFullYear(), limit.getMonth() + 1)}-${String(limit.getDate()).padStart(2, "0")}`;
+  return allocations.some((a) => `${monthKey(a.year, a.month)}-01` > limitKey);
+}
+const dayNumber = (date: string) => {
+  const [y, m, d] = date.split("-").map(Number);
+  return Date.UTC(y, m - 1, d) / 86400000;
+};
+/** Detects a transfer that was already entered by hand on the matched player/family schedule. */
+export function isAlreadyRecorded(
+  tx: Pick<BankTransaction, "date" | "amount">,
+  playerId: string,
+  players: BankPlayer[],
+  payments: BankPayment[],
+): boolean {
+  const player = players.find((p) => p.id === playerId);
+  if (!player) return false;
+  const family = new Set(
+    players
+      .filter((p) => p.id === playerId || (player.family_id && p.family_id === player.family_id))
+      .map((p) => p.id),
+  );
+  const day = dayNumber(tx.date);
+  const near = payments.filter(
+    (p) =>
+      family.has(p.player_id) &&
+      p.payment_date &&
+      Math.abs(dayNumber(String(p.payment_date).slice(0, 10)) - day) <= 3 &&
+      paidOf(p) > 0,
+  );
+  if (cents(near.reduce((sum, p) => sum + paidOf(p), 0)) >= cents(tx.amount)) return true;
+  const [y, m] = tx.date.split("-").map(Number);
+  const own = payments.filter((p) => p.player_id === playerId && p.year === y && p.month === m);
+  return own.length > 0 && own.every((p) => remainingOf(p) <= 0);
+}
+/** Whether a reviewed row is part of the Apply batch (with payment changes). */
+export function rowIncluded(row: ReviewTransaction, preview?: AllocationPreview): boolean {
+  if (row.skip || row.duplicate || row.futureDate || !row.playerId || !row.confirmed) return false;
+  if ((row.recorded || preview?.futureMonth) && !row.include) return false;
+  return (preview?.allocations.length ?? 0) > 0;
+}
+/** Recorded rows remembered as handled without payment changes. */
+export function rowHandled(row: ReviewTransaction): boolean {
+  return (
+    row.recorded && row.handled && !row.include && !row.skip && !row.duplicate &&
+    !row.futureDate && !!row.playerId && row.confirmed
+  );
 }
 export function previewBatch(
   rows: ReviewTransaction[],
@@ -218,12 +279,13 @@ export function previewBatch(
   const previews = new Map<string, AllocationPreview>();
   for (const row of rows) {
     if (row.duplicate && previews.has(row.key)) continue;
-    const preview =
-      row.skip || row.duplicate
-        ? { allocations: [], leftover: row.amount }
+    const base =
+      row.skip || row.duplicate || row.futureDate
+        ? { allocations: [], leftover: row.amount, futureMonth: false }
         : allocateTransaction(row.amount, row.playerId, players, working, row.targetMonth);
+    const preview = { ...base, futureMonth: paysFutureMonth(row.date, base.allocations) };
     previews.set(row.key, preview);
-    if (!row.confirmed || !row.playerId) continue;
+    if (!rowIncluded(row, preview)) continue;
     for (const part of preview.allocations) {
       const payment = working.find((p) => p.id === part.paymentId);
       if (payment) {
@@ -233,6 +295,36 @@ export function previewBatch(
     }
   }
   return previews;
+}
+/** Per calendar month: number of payment rows changed by the included rows. */
+export function monthChanges(rows: ReviewTransaction[], previews: Map<string, AllocationPreview>) {
+  const months = new Map<string, Set<string>>();
+  for (const row of rows) {
+    const preview = previews.get(row.key);
+    if (!rowIncluded(row, preview)) continue;
+    for (const a of preview!.allocations) {
+      const key = monthKey(a.year, a.month);
+      if (!months.has(key)) months.set(key, new Set());
+      months.get(key)!.add(a.paymentId);
+    }
+  }
+  return [...months].sort(([a], [b]) => a.localeCompare(b)).map(([month, ids]) => ({ month, count: ids.size }));
+}
+/** Removes the trailing ", <personal id>" TBC appends to partner names. */
+export function cleanPartnerName(value: string): string {
+  return value.replace(/[,;]\s*\d{6,}\s*$/, "").trim();
+}
+/** Day-first unless the whole column proves month-first (second part > 12, no first part > 12). */
+export function detectDateOrder(values: unknown[]): "dmy" | "mdy" {
+  let firstOver = false, secondOver = false;
+  for (const value of values) {
+    if (value instanceof Date || typeof value === "number") continue;
+    const m = String(value ?? "").trim().match(/^(\d{1,2})[-/.](\d{1,2})[-/.]\d{4}(?:\s|$)/);
+    if (!m) continue;
+    if (Number(m[1]) > 12) firstOver = true;
+    if (Number(m[2]) > 12) secondOver = true;
+  }
+  return secondOver && !firstOver ? "mdy" : "dmy";
 }
 
 export type ColumnMapping = {
@@ -281,10 +373,10 @@ const HEADERS: Record<keyof ColumnMapping, string[]> = {
   ],
   purpose: [
     "purpose",
-    "description",
-    "additional information",
     "დანიშნულება",
+    "additional information",
     "დამატებითი ინფორმაცია",
+    "description",
     "აღწერა",
   ],
   id: [
@@ -310,6 +402,7 @@ const HEADERS: Record<keyof ColumnMapping, string[]> = {
 };
 const headerText = (value: unknown) =>
   String(value ?? "")
+    .replace(/^\ufeff/, "")
     .toLowerCase()
     .replace(/[’']/g, "")
     .replace(/[\s_\-:]+/g, " ")
@@ -374,7 +467,7 @@ export function parseBankAmount(value: unknown): number {
   const number = Number(text);
   return Number.isFinite(number) ? number * (negative ? -1 : 1) : 0;
 }
-export function parseBankDate(value: unknown): string | null {
+export function parseBankDate(value: unknown, order: "dmy" | "mdy" = "dmy"): string | null {
   let year = 0,
     month = 0,
     day = 0;
@@ -393,8 +486,8 @@ export function parseBankDate(value: unknown): string | null {
     const dmy = text.match(/^(\d{1,2})[-/.](\d{1,2})[-/.](\d{4})(?:\s|$)/);
     if (iso) [, year, month, day] = iso.map(Number);
     else if (dmy) {
-      day = Number(dmy[1]);
-      month = Number(dmy[2]);
+      day = Number(dmy[order === "dmy" ? 1 : 2]);
+      month = Number(dmy[order === "dmy" ? 2 : 1]);
       year = Number(dmy[3]);
     }
   }
@@ -415,14 +508,17 @@ export function parseMappedRows(
   transactions: (Omit<BankTransaction, "key"> & { identity: string })[];
   ignored: number;
   invalid: number;
+  dateOrder: "dmy" | "mdy";
 } {
+  const dateOrder = detectDateOrder(grid.slice(headerRow + 1).map((row) => row[mapping.date]));
   const transactions: (Omit<BankTransaction, "key"> & { identity: string })[] = [];
   let ignored = 0,
     invalid = 0;
   for (const row of grid.slice(headerRow + 1)) {
     if (!row.some((v) => String(v ?? "").trim())) continue;
     const amount = parseBankAmount(row[mapping.amount]);
-    const sender = String(row[mapping.sender] ?? "").trim();
+    const rawSender = String(row[mapping.sender] ?? "").trim();
+    const sender = cleanPartnerName(rawSender);
     const purpose = String(row[mapping.purpose] ?? "").trim();
     const direction = String(row[mapping.direction] ?? "").toLowerCase();
     const meta = `${sender} ${purpose}`.toLowerCase();
@@ -438,7 +534,7 @@ export function parseMappedRows(
       ignored++;
       continue;
     }
-    const date = parseBankDate(row[mapping.date]);
+    const date = parseBankDate(row[mapping.date], dateOrder);
     if (!date) {
       invalid++;
       continue;
@@ -452,11 +548,11 @@ export function parseMappedRows(
       identity: canonicalTransaction(
         date,
         rounded,
-        sender,
+        rawSender,
         purpose,
         mapping.id >= 0 ? String(row[mapping.id] ?? "") : undefined,
       ),
     });
   }
-  return { transactions, ignored, invalid };
+  return { transactions, ignored, invalid, dateOrder };
 }

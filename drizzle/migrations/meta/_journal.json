@@ -8,6 +8,13 @@
       "when": 1791396582040,
       "tag": "0000_bank_statement_import",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1791399532375,
+      "tag": "0001_bank_import_batches_undo",
+      "breakpoints": true
     }
   ]
 }
