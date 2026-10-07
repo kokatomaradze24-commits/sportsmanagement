@@ -19,12 +19,12 @@ describe('TBC CSV fixes',()=>{
  test('future month flag, exclusion and month summary',()=>{expect(paysFutureMonth('2026-09-15',[{year:2026,month:10}])).toBe(false);expect(paysFutureMonth('2026-09-15',[{year:2026,month:11}])).toBe(true);const pays:BankPayment[]=[{id:'n',player_id:'c',year:2026,month:11,amount:170,paid_amount:0,status:'pending'}];const row:ReviewTransaction={...tx,date:'2026-09-15',amount:170,playerId:'c',confidence:'high',confirmed:true,remember:false,skip:false,duplicate:false,targetMonth:'',recorded:false,include:false,handled:false,futureDate:false};const pv=previewBatch([row],players,pays);expect(pv.get('tx')?.futureMonth).toBe(true);expect(rowIncluded(row,pv.get('tx'))).toBe(false);const inc={...row,include:true};expect(monthChanges([inc],previewBatch([inc],players,pays))).toEqual([{month:'2026-11',count:1}]);expect(rowIncluded({...row,recorded:true},{allocations:[pv.get('tx')!.allocations[0]],leftover:0,futureMonth:false})).toBe(false);});
 });
 test('real TBC CSV: purpose from Description, not empty Additional Information',()=>{
- const geo=['თარიღი','აღწერა','ტრანზაქციის ტიპი','თანხა','ვალუტა','ანგარიშის ნომერი','ანგარიშის სახელი','დამატებითი ინფორმაცია','საბუთის თარიღი','საბუთის №','პარტნიორის ანგარიში','პარტნიორის დასახელება','ტრანზაქციის id'];
+ const geo=['თარიღი','აღწერა','ტრანზაქციის ტიპი','თანხა','ვალუტა','ანგარიშის ნომერი','ანგარიშის სახელი','დამატებითი ინფორმაცია','საბუთის თარიღი','საბუთის №','პარტნიორის ანგარიში','პარტნიორის დასახელება','პარტნიორის საგადასახადო კოდი','პარტნიორის ბანკის კოდი','პარტნიორის ბანკი','შუამავალი ბანკის კოდი','შუამავალი ბანკი','საკომისიოს დეტალები','გადასახადის გადამხდელის კოდი','გადასახადის გადამხდელის სახელი','ხაზინის კოდი','ოპ.კოდი','დამატებითი აღწერა','ტრანზაქციის id'];
  const eng=['Date','Description','Transaction Type','Amount','Currency','Account Number','Account Name','Additional Information','Document Date','Document Number',"Partner's Account","Partner's Name","Partner's Tax Code","Partner's Bank Code","Partner's Bank",'Intermediary Bank Code','Intermediary Bank','Charge Details','Taxpayer Code','Taxpayer Name','Treasury Code','Op.Code','Additional Description','Transaction ID'];
  const row=['02/09/2026','გაბრიელ შალამბერიძე','შემოსავალი','170.0','GEL','GE56TB7945736080100010','შპს მართვე','','02/09/2026','1788367908','GE33TB7988945068100028','ლელა ჭოხონელიძე, 01005027608','01005027608','TBCBGE22','სს "თიბისი ბანკი"','','','','01005027608','ლელა ჭოხონელიძე, 01005027608','','GMB','','21072229271.20'];
  const d=detectColumns([geo,eng,row]);
  expect(d.confident).toBe(true);
- expect(d.headerRow).toBe(1);
+ expect(d.headerRow).toBe(0);
  const p=parseMappedRows([geo,eng,row],d.headerRow,d.mapping);
  expect(p.transactions.length).toBe(1);
  expect(p.transactions[0].date).toBe('2026-09-02');
