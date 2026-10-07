@@ -1,16 +1,16 @@
 import { useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { Link } from "@tanstack/react-router";
-import { Upload, Pencil, Check, X, LogOut, Trophy, RotateCcw, Shield, Volume2, VolumeX, Sparkles, Settings } from "lucide-react";
+import { Upload, Pencil, Check, X, LogOut, Trophy, Languages, RotateCcw, Shield, Volume2, VolumeX, Sparkles, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuLabel, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuSub, DropdownMenuSubTrigger, DropdownMenuSubContent, DropdownMenuRadioGroup, DropdownMenuRadioItem } from "@/components/ui/dropdown-menu";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { getInitials, SPORT_LIST, type SportConfig, type SportId } from "@/lib/sports";
 import { useIsAdmin } from "@/hooks/use-is-admin";
 import { useI18n } from "@/hooks/use-i18n";
 import { useSounds } from "@/hooks/use-sounds";
-import { LanguageSwitcher } from "./LanguageSwitcher";
+import { LANGUAGES } from "@/lib/i18n/translations";
 import { LogoAdjustDialog } from "./LogoAdjustDialog";
 import { AIImageGenerator } from "./AIImageGenerator";
 import { RegistrationNotificationsBell } from "./RegistrationNotificationsBell";
@@ -31,9 +31,10 @@ interface AppHeaderProps {
   themes?: { id: AppTheme; labelKey: "themeMidnight" }[];
   onSelectTheme?: (theme: AppTheme) => void;
   userId?: string;
+  onGoToPlayers?: () => void;
 }
 
-export function AppHeader({ schoolName, logoUrl, sport, isDark, onToggleTheme, onUpdateName, onUploadLogo, onChangeSport, onResetBranding, onSignOut, currentTheme, themes = [], onSelectTheme, userId }: AppHeaderProps) {
+export function AppHeader({ schoolName, logoUrl, sport, isDark, onToggleTheme, onUpdateName, onUploadLogo, onChangeSport, onResetBranding, onSignOut, currentTheme, themes = [], onSelectTheme, userId, onGoToPlayers }: AppHeaderProps) {
   const [editing, setEditing] = useState(false);
   const [nameValue, setNameValue] = useState(schoolName);
   const [logoFile, setLogoFile] = useState<File | null>(null);
@@ -41,7 +42,7 @@ export function AppHeader({ schoolName, logoUrl, sport, isDark, onToggleTheme, o
   const [resetOpen, setResetOpen] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
   const { isAdmin } = useIsAdmin();
-  const { t } = useI18n();
+  const { t, language, setLanguage } = useI18n();
   const { muted, toggleMuted, play } = useSounds();
 
   const handleSave = () => {
@@ -64,168 +65,70 @@ export function AppHeader({ schoolName, logoUrl, sport, isDark, onToggleTheme, o
 
   return (
     <motion.header
-      initial={{ y: -20, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      className="theme-header border-b border-border/60 px-6 py-4"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="sticky top-0 z-30 h-16 border-b border-border bg-header/95 text-header-foreground backdrop-blur-xl"
     >
-      <div className="max-w-7xl mx-auto flex flex-col gap-4">
-        <div className="flex items-center gap-4 min-w-0 justify-center">
-          <div
-            className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-xl bg-gradient-to-br from-primary-foreground/30 to-primary/10 flex items-center justify-center overflow-hidden cursor-pointer group flex-shrink-0 ring-1 ring-primary-foreground/25 shadow-lg"
-            onClick={() => fileRef.current?.click()}
-          >
-            {logoUrl ? (
-              <img src={logoUrl} alt="Logo" className="w-full h-full object-cover" />
-            ) : (
-              <span className="font-display tracking-wider text-2xl sm:text-3xl text-primary">{initials}</span>
-            )}
-            <div className="absolute inset-0 bg-primary/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-              <Upload className="w-5 h-5 text-primary-foreground" />
-            </div>
-            <input
-              ref={fileRef}
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-                if (file) {
-                  setLogoFile(file);
-                  setAdjustOpen(true);
-                  e.target.value = "";
-                }
-              }}
-            />
-          </div>
-
+      <div className="mx-auto grid h-full max-w-[1600px] grid-cols-[minmax(0,1fr)_auto] items-center gap-2 px-3 sm:gap-4 sm:px-6">
+        <div className="flex min-w-0 items-center gap-2 sm:gap-3">
+          <Button variant="ghost" size="icon" className="relative size-9 shrink-0 overflow-hidden rounded-md border border-border p-0 group sm:size-10" onClick={() => fileRef.current?.click()} title={t("uploadLogo")} aria-label={t("uploadLogo")}>
+            {logoUrl ? <img src={logoUrl} alt={schoolName} className="h-full w-full object-cover" /> : <span className="font-display text-lg text-primary">{initials}</span>}
+            <span className="absolute inset-0 flex items-center justify-center bg-primary/60 opacity-0 transition-opacity group-hover:opacity-100"><Upload className="size-4 text-primary-foreground" /></span>
+          </Button>
+          <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={(e) => {
+            const file = e.target.files?.[0];
+            if (file) { setLogoFile(file); setAdjustOpen(true); e.target.value = ""; }
+          }} />
           {editing ? (
-            <div className="flex items-center gap-2 min-w-0">
-              <Input
-                value={nameValue}
-                onChange={(e) => setNameValue(e.target.value)}
-                className="text-xl font-display tracking-wider h-10"
-                autoFocus
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") handleSave();
-                  if (e.key === "Escape") handleCancel();
-                }}
-              />
-              <Button size="icon" variant="ghost" onClick={handleSave}>
-                <Check className="w-4 h-4" />
-              </Button>
-              <Button size="icon" variant="ghost" onClick={handleCancel}>
-                <X className="w-4 h-4" />
-              </Button>
+            <div className="grid min-w-0 flex-1 grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-1">
+              <Input value={nameValue} onChange={(e) => setNameValue(e.target.value)} className="h-9 min-w-0 font-display" aria-label={t("lblRenameClub")} autoFocus onKeyDown={(e) => { if (e.key === "Enter") handleSave(); if (e.key === "Escape") handleCancel(); }} />
+              <Button size="icon" variant="ghost" className="size-7 shrink-0" onClick={handleSave} aria-label={t("save")} title={t("save")}><Check className="size-4" /></Button>
+              <Button size="icon" variant="ghost" className="size-7 shrink-0" onClick={handleCancel} aria-label={t("cancel")} title={t("cancel")}><X className="size-4" /></Button>
             </div>
           ) : (
-            <div className="flex items-center gap-2 min-w-0">
-              <div className="min-w-0">
-                <h1 className="text-2xl sm:text-3xl tracking-wider text-current truncate">{schoolName}</h1>
-                <p className="text-xs text-current/75 flex items-center gap-1">
-                  <span>{sport.emoji}</span> {sport.name}
-                </p>
-              </div>
+            <div className="min-w-0">
+              <h1 className="truncate text-base sm:text-xl">{schoolName}</h1>
+              <p className="truncate text-[10px] text-muted-foreground sm:text-xs">{sport.emoji} {sport.name}</p>
             </div>
           )}
         </div>
-
-        <div className="flex items-start gap-2 flex-wrap justify-center border-t border-primary-foreground/20 pt-3">
-          <div className="flex flex-col items-center gap-1">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="rounded-full w-12 h-12 sm:w-14 sm:h-14" title={t("changeSport")}>
-                  <Trophy className="w-6 h-6 sm:w-7 sm:h-7" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuLabel>{t("sportDiscipline")}</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                {SPORT_LIST.map((s) => (
-                  <DropdownMenuItem
-                    key={s.id}
-                    onClick={() => onChangeSport(s.id)}
-                    className={s.id === sport.id ? "bg-primary/10 font-semibold" : ""}
-                  >
-                    <span className="mr-2">{s.emoji}</span>
-                    {s.name}
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
-            <span className="text-[11px] sm:text-xs text-muted-foreground leading-none">{t("lblSport")}</span>
-          </div>
-
-          <div className="flex flex-col items-center gap-1">
-            <LanguageSwitcher />
-            <span className="text-[11px] sm:text-xs text-muted-foreground leading-none">{t("lblLanguage")}</span>
-          </div>
-
-          <RegistrationNotificationsBell sportId={sport.id} userId={userId} label={t("notificationLabel")} />
-
-
-          <div className="flex flex-col items-center gap-1">
-            <AIImageGenerator
-              title={t("aiGenStudioTitle")}
-              presetPrompts={aiPresets}
-              defaultPrompt={aiPresets[0].prompt}
-              onUseImage={(file) => {
-                setLogoFile(file);
-                setAdjustOpen(true);
-              }}
-              trigger={
-                <Button variant="ghost" size="icon" className="rounded-full w-12 h-12 sm:w-14 sm:h-14 text-primary" title={t("aiGenButton")}>
-                  <Sparkles className="w-6 h-6 sm:w-7 sm:h-7" />
-                </Button>
-              }
-            />
-            <span className="text-[11px] sm:text-xs text-muted-foreground leading-none">{t("aiGenButton")}</span>
-          </div>
-
-          <div className="flex flex-col items-center gap-1">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="rounded-full w-12 h-12 sm:w-14 sm:h-14" title={t("lblSettings")}>
-                  <Settings className="w-6 h-6 sm:w-7 sm:h-7" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuLabel>{t("lblSettings")}</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => setResetOpen(true)}>
-                  <RotateCcw className="mr-2 w-4 h-4" />
-                  {t("lblResetLogo")}
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => { setNameValue(schoolName); setEditing(true); }}>
-                  <Pencil className="mr-2 w-4 h-4" />
-                  {t("lblRenameClub")}
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => { play("click"); toggleMuted(); }}>
-                  {muted ? <VolumeX className="mr-2 w-4 h-4" /> : <Volume2 className="mr-2 w-4 h-4" />}
-                  {muted ? t("soundOff") : t("soundOn")}
-                </DropdownMenuItem>
-                {isAdmin && (
-                  <DropdownMenuItem asChild>
-                    <Link to="/admin">
-                      <Shield className="mr-2 w-4 h-4 text-warning" />
-                      {t("adminPanel")}
-                    </Link>
-                  </DropdownMenuItem>
-                )}
-                {onSignOut && (
-                  <>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={onSignOut} className="text-destructive focus:text-destructive">
-                      <LogOut className="mr-2 w-4 h-4" />
-                      {t("signOut")}
-                    </DropdownMenuItem>
-                  </>
-                )}
-              </DropdownMenuContent>
-            </DropdownMenu>
-            <span className="text-[11px] sm:text-xs text-muted-foreground leading-none">{t("lblSettings")}</span>
-          </div>
+        <div className="flex shrink-0 items-center gap-1 sm:gap-2">
+          <RegistrationNotificationsBell sportId={sport.id} userId={userId} label={t("notificationLabel")} compact onGoToPlayers={onGoToPlayers} />
+          <AIImageGenerator title={t("aiGenStudioTitle")} presetPrompts={aiPresets} defaultPrompt={aiPresets[0].prompt} onUseImage={(file) => { setLogoFile(file); setAdjustOpen(true); }} trigger={
+            <Button variant="ghost" size="icon" className="size-9 text-primary sm:size-10" title={t("aiGenButton")} aria-label={t("aiGenButton")}><Sparkles className="size-5" /></Button>
+          } />
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" className="size-9 sm:size-10" title={t("lblSettings")} aria-label={t("lblSettings")}><Settings className="size-5" /></Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-60">
+              <DropdownMenuLabel>{t("lblSettings")}</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuSub>
+                <DropdownMenuSubTrigger><Trophy />{t("sportDiscipline")}</DropdownMenuSubTrigger>
+                <DropdownMenuSubContent>
+                  <DropdownMenuRadioGroup value={sport.id} onValueChange={(id) => { const choice = SPORT_LIST.find((s) => s.id === id); if (choice) onChangeSport(choice.id); }}>
+                    {SPORT_LIST.map((s) => <DropdownMenuRadioItem key={s.id} value={s.id}><span>{s.emoji}</span>{s.name}</DropdownMenuRadioItem>)}
+                  </DropdownMenuRadioGroup>
+                </DropdownMenuSubContent>
+              </DropdownMenuSub>
+              <DropdownMenuSub>
+                <DropdownMenuSubTrigger><Languages />{t("language")}</DropdownMenuSubTrigger>
+                <DropdownMenuSubContent>
+                  <DropdownMenuRadioGroup value={language} onValueChange={(code) => { const choice = LANGUAGES.find((l) => l.code === code); if (choice) setLanguage(choice.code); }}>
+                    {LANGUAGES.map((lang) => <DropdownMenuRadioItem key={lang.code} value={lang.code}><span>{lang.flag}</span>{lang.nativeName}</DropdownMenuRadioItem>)}
+                  </DropdownMenuRadioGroup>
+                </DropdownMenuSubContent>
+              </DropdownMenuSub>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => setResetOpen(true)}><RotateCcw />{t("lblResetLogo")}</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => { setNameValue(schoolName); setEditing(true); }}><Pencil />{t("lblRenameClub")}</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => { play("click"); toggleMuted(); }}>{muted ? <VolumeX /> : <Volume2 />}{muted ? t("soundOff") : t("soundOn")}</DropdownMenuItem>
+              {isAdmin && <DropdownMenuItem asChild><Link to="/admin"><Shield className="text-warning" />{t("adminPanel")}</Link></DropdownMenuItem>}
+              {onSignOut && <><DropdownMenuSeparator /><DropdownMenuItem onClick={onSignOut} className="text-destructive focus:text-destructive"><LogOut />{t("signOut")}</DropdownMenuItem></>}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
-
         <AlertDialog open={resetOpen} onOpenChange={setResetOpen}>
           <AlertDialogContent>
             <AlertDialogHeader>

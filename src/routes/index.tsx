@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
-import { BarChart3 } from "lucide-react";
+import { ArrowLeft, BarChart3 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { DashboardNavigation, DASHBOARD_TABS, type DashboardTab } from "@/components/DashboardNavigation";
 import { AppHeader } from "@/components/AppHeader";
 import { PlayersList } from "@/components/PlayersList";
 import { PaymentsPanel } from "@/components/PaymentsPanel";
@@ -35,12 +37,16 @@ type Player = Database["public"]["Tables"]["players"]["Row"];
 const OG_IMAGE_URL = new URL(ogImage, "https://my-club.live").href;
 
 export const Route = createFileRoute("/")({
+  validateSearch: (search: Record<string, unknown>): { tab: DashboardTab } => ({
+    tab: DASHBOARD_TABS.find((tab) => tab === search.tab) ?? "home",
+  }),
   head: () => ({
     meta: [
       { title: "Club Management Software for Sports Academies — My Club" },
       { name: "description", content: "Sports club management software to run players, teams, payments, schedules, coaches and AI training plans — all in one place. 8 sports, 6 languages." },
       { property: "og:title", content: "Club Management Software for Sports Academies — My Club" },
       { property: "og:description", content: "Sports club management software to run players, teams, payments, schedules, coaches and AI training plans — all in one place." },
+      { property: "og:type", content: "website" },
       { property: "og:url", content: "https://my-club.live/" },
       { property: "og:image", content: OG_IMAGE_URL },
       { property: "og:image:width", content: "1200" },
@@ -55,6 +61,7 @@ export const Route = createFileRoute("/")({
 
 function Index() {
   const navigate = useNavigate();
+  const { tab } = Route.useSearch();
   const { isAuthenticated, loading: authLoading, signOut, user } = useAuth();
   const { isDark, theme, themes, setTheme, toggle } = useTheme();
   const { schoolName, logoUrl, loading: settingsLoading, updateSchoolName, updateLogo, resetBranding } = useAppSettings();
@@ -68,10 +75,19 @@ function Index() {
   const { isActive: subActive, loading: subLoading } = useSubscription();
   const { loading: onboardingLoading, onboarded, tutorialDone, markOnboarded, markTutorialDone } = useOnboarding();
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
+  const [mobilePaymentOpen, setMobilePaymentOpen] = useState(false);
+
+  useEffect(() => {
+    if (!mobilePaymentOpen || tab !== "players" || !window.matchMedia("(max-width: 1023px)").matches) return;
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = previous; };
+  }, [mobilePaymentOpen, tab]);
 
   // Clear selected player when switching sports so we don't show data from a different sport
   useEffect(() => {
     setSelectedPlayer(null);
+    setMobilePaymentOpen(false);
   }, [sportId]);
 
   // Mark users as onboarded once settings load (default sport = basketball).
@@ -90,7 +106,7 @@ function Index() {
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <span className="text-5xl block mb-4 animate-bounce">🏆</span>
-          <p className="text-muted-foreground">Loading...</p>
+          <p className="text-muted-foreground">{t("loading")}</p>
         </div>
       </div>
     );
@@ -109,7 +125,7 @@ function Index() {
 
   return (
     <div
-      className={`min-h-screen bg-background relative overflow-hidden ${sportBg ? "no-ambient-lines" : "theme-ambient-bg"}`}
+      className={`min-h-screen bg-background relative ${sportBg ? "no-ambient-lines" : "theme-ambient-bg"}`}
       style={sportBg ? {
         backgroundImage: `linear-gradient(180deg, rgba(2,6,23,0.72), rgba(2,6,23,0.85)), url(${sportBg})`,
         backgroundSize: "cover",
@@ -139,9 +155,13 @@ function Index() {
           themes={themes}
           onSelectTheme={setTheme}
           userId={user?.id}
+          onGoToPlayers={() => { setMobilePaymentOpen(false); void navigate({ to: "/", search: { tab: "players" } }); }}
         />
 
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6">
+        <div className="mx-auto max-w-[1600px] lg:flex lg:items-start">
+        <DashboardNavigation activeTab={tab} />
+        <main className="dashboard-main min-w-0 flex-1 px-4 py-6 sm:px-6">
+          <section className={tab === "home" ? "space-y-6" : "hidden"} aria-label={t("sectionHome")}>
           <SubscriptionBanner />
           <StatsCards players={players} payments={payments} />
           <NotificationsBanner players={players} payments={payments} />
@@ -162,7 +182,8 @@ function Index() {
             </div>
           </Link>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          </section>
+          <section className={tab === "players" ? "grid grid-cols-1 lg:grid-cols-2 gap-6" : "hidden"} aria-label={t("sectionPlayers")}>
             <div className="theme-panel backdrop-blur-sm rounded-2xl border border-border p-5 shadow-sm hover:shadow-md transition-shadow">
               <PlayersList
                 players={players}
@@ -172,13 +193,18 @@ function Index() {
                 onAdd={addPlayer}
                 onUpdate={updatePlayer}
                 onDelete={deletePlayer}
-                onSelect={setSelectedPlayer}
+                onSelect={(player) => { setSelectedPlayer(player); setMobilePaymentOpen(true); }}
                 onApprovedRegistration={refetchPlayers}
                 selectedId={selectedPlayer?.id}
               />
             </div>
 
-            <div className="theme-panel backdrop-blur-sm rounded-2xl border border-border p-5 shadow-sm hover:shadow-md transition-shadow">
+            <div className={selectedPlayer && mobilePaymentOpen
+              ? "dashboard-payment-view fixed inset-0 z-40 overflow-y-auto bg-background p-4 lg:static lg:z-auto lg:overflow-visible lg:rounded-2xl lg:border lg:border-border lg:bg-panel lg:p-5"
+              : "theme-panel hidden rounded-2xl border border-border p-5 backdrop-blur-sm lg:block"}>
+              {selectedPlayer && <div className="sticky top-0 z-10 -mx-4 -mt-4 mb-4 border-b border-border bg-background/95 px-4 py-3 backdrop-blur-xl lg:hidden">
+                <Button variant="ghost" size="sm" className="gap-2" onClick={() => setMobilePaymentOpen(false)}><ArrowLeft className="size-4" />{t("back")}</Button>
+              </div>}
               {selectedPlayer ? (
                 <PaymentsPanel
                   player={selectedPlayer}
@@ -208,8 +234,9 @@ function Index() {
                 </div>
               )}
             </div>
-          </div>
+          </section>
 
+          <section className={tab === "teams" ? "min-w-0" : "hidden"} aria-label={t("sectionTeams")}>
           <TeamsPanel
             teams={teamsHook.teams}
             members={teamsHook.members}
@@ -221,7 +248,11 @@ function Index() {
             onSetRoster={teamsHook.setTeamRoster}
           />
 
+          </section>
+          <section className={tab === "schedule" ? "min-w-0" : "hidden"} aria-label={t("sectionSchedule")}>
           <SchedulePanel sportId={sportId} />
+          </section>
+          <section className={tab === "more" ? "space-y-6" : "hidden"} aria-label={t("sectionMore")}>
 
           <CoachesPanel sportId={sportId} clubName={schoolName} />
 
@@ -237,7 +268,9 @@ function Index() {
             onUpdateParticipant={trips.updateParticipant}
             onRemoveParticipant={trips.removeParticipant}
           />
+          </section>
         </main>
+        </div>
       </div>
     </div>
   );
