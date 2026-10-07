@@ -218,7 +218,7 @@ export function PublicPlayerRegistration({ linkId }: { linkId: string }) {
                   <label className="registration-segment"><input type="radio" name="primaryContact" checked={primaryContact === "player"} onChange={() => setPrimaryContact("player")} />{primaryContact === "player" && <motion.span className="registration-segment-thumb" layoutId="primary-contact-thumb" transition={{ type: "spring", bounce: reduceMotion ? 0 : .15, duration: .25 }} />}<span>{t("regPlayerPhone")}</span></label>
                   <label className="registration-segment"><input type="radio" name="primaryContact" checked={primaryContact === "parent"} onChange={() => setPrimaryContact("parent")} />{primaryContact === "parent" && <motion.span className="registration-segment-thumb" layoutId="primary-contact-thumb" transition={{ type: "spring", bounce: reduceMotion ? 0 : .15, duration: .25 }} />}<span>{t("regParentPhone")}</span></label>
                 </div>
-                {primaryContact === "player" ? <PhoneInput value={phone} onChange={setPhone} placeholder={dial.sample} /> : <PhoneInput value={parentPhone} onChange={setParentPhone} placeholder={dial.sample} />}
+                {primaryContact === "player" ? <PhoneInput showFlags={false} value={phone} onChange={setPhone} placeholder={dial.sample} /> : <PhoneInput showFlags={false} value={parentPhone} onChange={setParentPhone} placeholder={dial.sample} />}
               </PublicReveal>
               <PublicReveal scroll className="registration-group">
                 <label className="text-sm text-muted-foreground block">{t("regExperience")} *</label>
