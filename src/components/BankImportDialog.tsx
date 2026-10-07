@@ -46,6 +46,7 @@ import {
   applyBankImport,
   deletePayerAlias,
   loadBankImportData,
+  loadBankBalances,
   type ImportResult,
 } from "@/lib/bank-import-client";
 import { readBankFile, transactionsFromGrid } from "@/lib/bank-import-file";
@@ -143,7 +144,8 @@ export function BankImportDialog({
   const [invalid, setInvalid] = useState(0);
   const [result, setResult] = useState<ImportResult | null>(null);
   const [doneLeftover, setDoneLeftover] = useState(0);
-  const previews = useMemo(() => previewBatch(rows, players, payments), [rows, players, payments]);
+  const [balances, setBalances] = useState<BankPayment[]>(payments);
+  const previews = useMemo(() => previewBatch(rows, players, balances), [rows, players, balances]);
   const counts = {
     matched: rows.filter((r) => !r.skip && !r.duplicate && r.playerId && r.confirmed).length,
     check: rows.filter((r) => !r.skip && !r.duplicate && r.playerId && !r.confirmed).length,
@@ -210,10 +212,11 @@ export function BankImportDialog({
         setError(t("bankFileError"));
         return;
       }
-      const data = await loadBankImportData(
-        sport,
-        parsed.transactions.map((tx) => tx.key),
-      );
+      const [data, freshBalances] = await Promise.all([
+        loadBankImportData(sport, parsed.transactions.map((tx) => tx.key)),
+        loadBankBalances(sport),
+      ]);
+      setBalances(freshBalances);
       setAliases(data.aliases);
       const seen = new Set<string>();
       setRows(
@@ -321,16 +324,18 @@ export function BankImportDialog({
             lang: language,
           });
       await onRefresh();
+      const fresh = await loadBankImportData(sport, []);
+      setAliases(fresh.aliases);
     } catch (e) {
       const stale = String((e as { message?: string })?.message ?? "").includes(
         "BANK_IMPORT_STALE",
       );
       setError(t(stale ? "bankStale" : "bankApplyError"));
       await onRefresh();
-      const data = await loadBankImportData(
-        sport,
-        rows.map((r) => r.key),
-      );
+      const [data, freshBalances] = await Promise.all([
+        loadBankImportData(sport, rows.map((r) => r.key)), loadBankBalances(sport),
+      ]);
+      setBalances(freshBalances);
       setRows((old) =>
         old.map((r) => ({ ...r, duplicate: r.duplicate || data.imported.has(r.key) })),
       );

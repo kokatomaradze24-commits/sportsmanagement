@@ -1,6 +1,6 @@
 import { supabase } from "@/integrations/supabase/client";
 import type { SupabaseClient } from "@supabase/supabase-js";
-import type { BankTransaction, PayerAlias, Allocation } from "./bank-import";
+import type { BankTransaction, PayerAlias, Allocation, BankPayment } from "./bank-import";
 
 type AliasRow = PayerAlias & { user_id: string; sport: string; created_at: string };
 type ImportRow = BankTransaction & {
@@ -72,4 +72,16 @@ export async function applyBankImport(sport: string, rows: ApplyRow[]): Promise<
   if (error) throw error;
   if (!data) throw new Error("Empty import response");
   return data;
+}
+export async function loadBankBalances(sport: string): Promise<BankPayment[]> {
+  const rows: BankPayment[] = [];
+  for (let offset = 0; ; offset += 500) {
+    const { data, error } = await supabase.from("payments")
+      .select("id,player_id,month,year,amount,paid_amount,status")
+      .eq("sport", sport).order("id").range(offset, offset + 499);
+    if (error) throw error;
+    rows.push(...(data ?? []));
+    if (!data || data.length < 500) break;
+  }
+  return rows;
 }
