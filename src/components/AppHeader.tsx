@@ -121,7 +121,8 @@ export function AppHeader({ schoolName, logoUrl, sport, isDark, onToggleTheme, o
                 </DropdownMenuSubContent>
               </DropdownMenuSub>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => setResetOpen(true)}><RotateCcw />{t("lblResetLogo")}</DropdownMenuItem>
+               <DropdownMenuItem onClick={onToggleTheme}>{isDark ? <Sun /> : <Moon />}{t(isDark ? "appearanceLight" : "appearanceDark")}</DropdownMenuItem>
+               <DropdownMenuItem onClick={() => setResetOpen(true)}><RotateCcw />{t("lblResetLogo")}</DropdownMenuItem>
               <DropdownMenuItem onClick={() => { setNameValue(schoolName); setEditing(true); }}><Pencil />{t("lblRenameClub")}</DropdownMenuItem>
               <DropdownMenuItem onClick={() => { play("click"); toggleMuted(); }}>{muted ? <VolumeX /> : <Volume2 />}{muted ? t("soundOff") : t("soundOn")}</DropdownMenuItem>
               {isAdmin && <DropdownMenuItem asChild><Link to="/admin"><Shield className="text-warning" />{t("adminPanel")}</Link></DropdownMenuItem>}

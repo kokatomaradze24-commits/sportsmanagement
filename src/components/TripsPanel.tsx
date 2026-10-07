@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Plus, Bus, Map, MapPin, Calendar, Clock, DollarSign, Pencil, Trash2,
+  Plus, Bus, Map as MapIcon, MapPin, Calendar, Clock, DollarSign, Pencil, Trash2,
   Search, UserPlus, Users, X, Check, Wallet, ChevronDown, ChevronUp,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -620,7 +620,7 @@ export function TripsPanel({
         </div>
       ) : trips.length === 0 ? (
         <div className="text-center py-10 text-muted-foreground">
-          <Map className="size-10 mx-auto mb-3 text-muted-foreground" />
+          <MapIcon className="size-10 mx-auto mb-3 text-muted-foreground" />
           <p>{t("tripsEmpty")}</p>
         </div>
       ) : (
