@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, Pencil, Trash2, User, Archive, ArchiveRestore, ListChecks, Search, Filter, ChevronDown, Link as LinkIcon, ExternalLink, Check, Eye, FileText, X } from "lucide-react";
+import { Plus, Pencil, Trash2, User, Archive, ArchiveRestore, ListChecks, Search, Filter, ChevronDown, Link as LinkIcon, ExternalLink, Check, Eye, FileText, FileUp, X } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -53,6 +53,7 @@ interface PlayersListProps {
   selectedId?: string;
   paymentFilter: PlayerPaymentFilter;
   onPaymentFilterChange: (filter: PlayerPaymentFilter) => void;
+  onImportBank: () => void;
 }
 
 function PlayerForm({ initial, sport, onSubmit, onCancel }: {
@@ -335,7 +336,7 @@ function PlayerForm({ initial, sport, onSubmit, onCancel }: {
   );
 }
 
-export function PlayersList({ players, payments = [], loading, sport, onAdd, onUpdate, onDelete, onSelect, onApprovedRegistration, selectedId, paymentFilter, onPaymentFilterChange }: PlayersListProps) {
+export function PlayersList({ players, payments = [], loading, sport, onAdd, onUpdate, onDelete, onSelect, onApprovedRegistration, selectedId, paymentFilter, onPaymentFilterChange, onImportBank }: PlayersListProps) {
   const { t, language, monthShort, formatMoney } = useI18n();
   const { play } = useSounds();
   const { schoolName } = useAppSettings();
@@ -482,6 +483,7 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h2 className="text-2xl tracking-wider text-foreground">{sport.members}</h2>
         <div className="flex items-center gap-2 flex-wrap">
+        <Button size="sm" variant="outline" onClick={onImportBank} disabled={loading}><FileUp className="size-4" />{t("bankImport")}</Button>
         <Button size="sm" variant="outline" className="shadow-sm hover:shadow-md" onClick={handlePlayersListPdf}>
           <FileText className="w-4 h-4" /> {t("playersListPdf")}
         </Button>

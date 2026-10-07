@@ -8,6 +8,7 @@ import { PlayersList } from "@/components/PlayersList";
 import { PaymentsPanel } from "@/components/PaymentsPanel";
 import { NotificationsBanner } from "@/components/NotificationsBanner";
 import { HomeWidgets } from "@/components/HomeWidgets";
+import { BankImportDialog } from "@/components/BankImportDialog";
 import { useSchedule } from "@/hooks/use-schedule";
 import { PLAYER_PAYMENT_FILTERS, type PlayerPaymentFilter } from "@/lib/dashboard-summary";
 import { StatsCards } from "@/components/StatsCards";
@@ -81,6 +82,7 @@ function Index() {
   const { loading: onboardingLoading, onboarded, tutorialDone, markOnboarded, markTutorialDone } = useOnboarding();
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
   const [mobilePaymentOpen, setMobilePaymentOpen] = useState(false);
+  const [bankImportOpen, setBankImportOpen] = useState(false);
 
   useEffect(() => {
     if (!mobilePaymentOpen || tab !== "players" || !window.matchMedia("(max-width: 1023px)").matches) return;
@@ -169,6 +171,7 @@ function Index() {
           <section className={tab === "home" ? "space-y-6" : "hidden"} aria-label={t("sectionHome")}>
           <SubscriptionBanner />
           <StatsCards players={players} payments={payments} loading={playersLoading || paymentsLoading} onViewDebt={() => { setMobilePaymentOpen(false); void navigate({ to: "/", search: { tab: "players", filter: "overdue" } }); }} />
+          <Button variant="outline" onClick={() => setBankImportOpen(true)} disabled={playersLoading || paymentsLoading}>{t("bankImport")}</Button>
           <HomeWidgets players={players} payments={payments} loading={playersLoading || paymentsLoading} practices={schedule.practices} games={schedule.games} scheduleLoading={schedule.loading} onSelectPlayer={(player) => { setSelectedPlayer(player); setMobilePaymentOpen(true); void navigate({ to: "/", search: { tab: "players", filter: player.is_active ? "all" : "archived" } }); }} />
           <NotificationsBanner players={players} payments={payments} />
 
@@ -204,6 +207,7 @@ function Index() {
                 selectedId={selectedPlayer?.id}
                 paymentFilter={filter ?? "all"}
                 onPaymentFilterChange={(value) => { void navigate({ to: "/", search: (prev) => ({ ...prev, filter: value }) }); }}
+                onImportBank={() => setBankImportOpen(true)}
               />
             </div>
 
@@ -274,6 +278,7 @@ function Index() {
           </section>
         </main>
         </div>
+        <BankImportDialog open={bankImportOpen} onOpenChange={setBankImportOpen} sport={sportId} sportName={sport.name} clubName={schoolName} players={players} payments={payments} onRefresh={async () => { await Promise.all([refetchPlayers(), refetchPayments()]); }} />
       </div>
     </div>
   );

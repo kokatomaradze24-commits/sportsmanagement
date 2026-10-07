@@ -11,7 +11,7 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useI18n } from '@/hooks/use-i18n';
 import { useAuth } from '@/hooks/use-auth';
 import { sendEventSms } from '@/lib/notifications';
-import { allocateTransaction, detectColumns, EMPTY_MAPPING, matchTransaction, normalizeName, previewBatch, senderIsPlayer, type BankPlayer, type BankPayment, type ColumnMapping, type PayerAlias, type ReviewTransaction } from '@/lib/bank-import';
+import { detectColumns, EMPTY_MAPPING, matchTransaction, normalizeName, previewBatch, senderIsPlayer, type BankPlayer, type BankPayment, type ColumnMapping, type PayerAlias, type ReviewTransaction } from '@/lib/bank-import';
 import { applyBankImport, deletePayerAlias, loadBankImportData, type ImportResult } from '@/lib/bank-import-client';
 import { readBankFile, transactionsFromGrid } from '@/lib/bank-import-file';
 import type { TranslationKey } from '@/lib/i18n/translations';
@@ -23,7 +23,7 @@ function PlayerPicker({ players, value, onChange, disabled }: { players: BankPla
 }
 
 export function BankImportDialog({ open, onOpenChange, sport, sportName, clubName, players, payments, onRefresh }: { open:boolean; onOpenChange:(open:boolean)=>void; sport:string; sportName:string; clubName:string; players:BankPlayer[]; payments:BankPayment[]; onRefresh:()=>Promise<void> }) {
- const { t, monthLong } = useI18n(); const { user } = useAuth();
+ const { t, monthLong, language } = useI18n(); const { user } = useAuth();
  const [step,setStep] = useState<'upload'|'review'|'done'>('upload');
  const [sheets,setSheets] = useState<Awaited<ReturnType<typeof readBankFile>>>([]);
  const [sheetIndex,setSheetIndex] = useState(0); const [headerRow,setHeaderRow] = useState(0); const [mapping,setMapping] = useState<ColumnMapping>({...EMPTY_MAPPING});
@@ -31,6 +31,7 @@ export function BankImportDialog({ open, onOpenChange, sport, sportName, clubNam
  const [busy,setBusy] = useState(false); const [error,setError] = useState(''); const [filename,setFilename] = useState('');
  const [filter,setFilter] = useState('all'); const [showPayers,setShowPayers] = useState(false); const [sms,setSms] = useState(false);
  const [ignored,setIgnored] = useState(0); const [invalid,setInvalid] = useState(0); const [result,setResult] = useState<ImportResult|null>(null);
+ const [doneLeftover,setDoneLeftover] = useState(0);
  const previews = useMemo(()=>previewBatch(rows,players,payments),[rows,players,payments]);
  const counts = { matched:rows.filter(r=>!r.skip&&!r.duplicate&&r.playerId&&r.confirmed).length, check:rows.filter(r=>!r.skip&&!r.duplicate&&r.playerId&&!r.confirmed).length, unmatched:rows.filter(r=>!r.skip&&!r.duplicate&&!r.playerId).length };
  const ready = rows.filter(r=>!r.skip&&!r.duplicate&&r.playerId&&r.confirmed&&(previews.get(r.key)?.allocations.length??0)>0);
@@ -70,8 +71,9 @@ export function BankImportDialog({ open, onOpenChange, sport, sportName, clubNam
   if(!ready.length||busy)return;setBusy(true);setError('');
   try {
    const applied=await applyBankImport(sport,ready.map(row=>({...row,payerName:normalizeName(row.sender),allocations:previews.get(row.key)?.allocations??[]})));
+   setDoneLeftover(ready.filter(row=>applied.applied.includes(row.key)).reduce((sum,row)=>sum+(previews.get(row.key)?.leftover??0),0));
    setResult(applied);setStep('done');
-   if(sms&&user)for(const confirmation of applied.confirmations)void sendEventSms({userId:user.id,playerId:confirmation.playerId,paymentId:confirmation.paymentId,kind:'payment_paid',clubName,sportName});
+   if(sms&&user)for(const confirmation of applied.confirmations)void sendEventSms({userId:user.id,playerId:confirmation.playerId,paymentId:confirmation.paymentId,kind:'payment_paid',clubName,sportName,lang:language});
    await onRefresh();
   }catch(e){const stale=String((e as {message?:string})?.message??'').includes('BANK_IMPORT_STALE');setError(t(stale?'bankStale':'bankApplyError'));await onRefresh();
    const data=await loadBankImportData(sport,rows.map(r=>r.key));setRows(old=>old.map(r=>({...r,duplicate:r.duplicate||data.imported.has(r.key)})));
