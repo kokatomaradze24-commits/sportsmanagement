@@ -584,7 +584,7 @@ export function parseMappedRows(
         date,
         rounded,
         rawSender,
-        purpose,
+        purposePrimary,
         mapping.id >= 0 ? String(row[mapping.id] ?? "") : undefined,
       ),
     });
