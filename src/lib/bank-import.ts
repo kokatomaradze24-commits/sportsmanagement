@@ -402,8 +402,25 @@ const HEADERS: Record<keyof ColumnMapping, string[]> = {
     "გასავალი",
     "დებეტი",
   ],
-  direction: ["direction", "type", "transaction type", "ოპერაციის ტიპი", "მიმართულება"],
+  direction: [
+    "direction",
+    "type",
+    "transaction type",
+    "ოპერაციის ტიპი",
+    "ტრანზაქციის ტიპი",
+    "მიმართულება",
+  ],
 };
+/** Purpose-like headers beyond the primary one, used as per-row fallback and joined for matching. */
+const PURPOSE_ALT_HEADERS = [
+  "purpose",
+  "დანიშნულება",
+  "description",
+  "აღწერა",
+  "additional information",
+  "დამატებითი ინფორმაცია",
+  "additional description",
+];
 const headerText = (value: unknown) =>
   String(value ?? "")
     .replace(/^\ufeff/, "")
