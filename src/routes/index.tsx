@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, Link, type SearchSchemaInput } from "@tanstack/react-router";
 import { ArrowLeft, BarChart3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DashboardNavigation, DASHBOARD_TABS, type DashboardTab } from "@/components/DashboardNavigation";
@@ -37,7 +37,7 @@ type Player = Database["public"]["Tables"]["players"]["Row"];
 const OG_IMAGE_URL = new URL(ogImage, "https://my-club.live").href;
 
 export const Route = createFileRoute("/")({
-  validateSearch: (search: Record<string, unknown>): { tab: DashboardTab } => ({
+  validateSearch: (search: SearchSchemaInput & { tab?: unknown }): { tab: DashboardTab } => ({
     tab: DASHBOARD_TABS.find((tab) => tab === search.tab) ?? "home",
   }),
   head: () => ({
