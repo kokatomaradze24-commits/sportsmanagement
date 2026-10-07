@@ -116,6 +116,56 @@ export type Database = {
         }
         Relationships: []
       }
+      bank_import_transactions: {
+        Row: {
+          allocation_details: Json
+          amount: number
+          created_at: string
+          id: string
+          player_id: string | null
+          purpose: string
+          sender: string
+          sport: string
+          transaction_date: string
+          transaction_key: string
+          user_id: string
+        }
+        Insert: {
+          allocation_details?: Json
+          amount: number
+          created_at?: string
+          id?: string
+          player_id?: string | null
+          purpose?: string
+          sender?: string
+          sport: string
+          transaction_date: string
+          transaction_key: string
+          user_id?: string
+        }
+        Update: {
+          allocation_details?: Json
+          amount?: number
+          created_at?: string
+          id?: string
+          player_id?: string | null
+          purpose?: string
+          sender?: string
+          sport?: string
+          transaction_date?: string
+          transaction_key?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bank_import_transactions_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       coaches: {
         Row: {
           created_at: string
@@ -217,6 +267,41 @@ export type Database = {
             columns: ["team_id"]
             isOneToOne: false
             referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payer_aliases: {
+        Row: {
+          created_at: string
+          id: string
+          payer_name: string
+          player_id: string
+          sport: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          payer_name: string
+          player_id: string
+          sport: string
+          user_id?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          payer_name?: string
+          player_id?: string
+          sport?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payer_aliases_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "players"
             referencedColumns: ["id"]
           },
         ]
@@ -1056,6 +1141,10 @@ export type Database = {
         }[]
       }
       admin_toggle_admin: { Args: { _user_id: string }; Returns: undefined }
+      apply_bank_import: {
+        Args: { _rows: Json; _sport: string }
+        Returns: Json
+      }
       deduct_ai_credits: {
         Args: { _amount: number; _user_id: string }
         Returns: boolean
