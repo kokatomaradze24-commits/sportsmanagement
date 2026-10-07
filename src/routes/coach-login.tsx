@@ -1,10 +1,12 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
-import { ShieldCheck } from "lucide-react";
+import { ShieldCheck, LoaderCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { SignInScene, PublicReveal } from "@/components/PublicPresentation";
+import myClubLogo from "@/assets/my-club-logo.png";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { setCoachSession, getCoachSession } from "@/lib/coach-session";
 
 export const Route = createFileRoute("/coach-login")({
@@ -59,79 +61,63 @@ function CoachLoginPage() {
   };
 
   return (
-    <div className="relative min-h-screen overflow-hidden flex items-center justify-center px-4 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
-      <motion.div
-        animate={{ x: [0, 80, 0], y: [0, -50, 0] }}
-        transition={{ duration: 22, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute -top-40 -right-40 w-[500px] h-[500px] rounded-full bg-emerald-500/20 blur-[120px]"
-      />
-      <motion.div
-        animate={{ x: [0, -60, 0], y: [0, 40, 0] }}
-        transition={{ duration: 25, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute -bottom-40 -left-40 w-[500px] h-[500px] rounded-full bg-blue-500/20 blur-[120px]"
-      />
-
-      <motion.div
-        initial={{ opacity: 0, y: 20, scale: 0.97 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
-        transition={{ duration: 0.4 }}
-        className="relative w-full max-w-md z-10"
-      >
-        <div className="text-center mb-6">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-400 to-teal-600 shadow-lg shadow-emerald-500/30 mb-4">
-            <ShieldCheck className="w-8 h-8 text-white" strokeWidth={2.5} />
-          </div>
-          <h1 className="text-3xl font-display tracking-wide text-white">მწვრთნელის შესვლა</h1>
-          <p className="text-sm text-slate-400 mt-1">შედით კლუბისგან მიღებული username-ით და პაროლით</p>
-        </div>
-
+    <SignInScene>
+      <PublicReveal className="signin-topbar"><img src={myClubLogo} alt="My Club" width={160} height={64} /><LanguageSwitcher variant="header" /></PublicReveal>
+      <div className="coach-signin-layout">
+      <PublicReveal className="signin-card-entrance" delay={.18}>
+        <div className="signin-card">
+          <ShieldCheck className="size-8 text-primary mb-4" />
+          <h1>მწვრთნელის შესვლა</h1>
+          <p className="signin-card-subtitle">შედით კლუბისგან მიღებული username-ით და პაროლით</p>
         <form
           onSubmit={handleSubmit}
-          className="bg-white/[0.04] backdrop-blur-xl rounded-2xl border border-white/10 p-6 shadow-2xl space-y-4"
+          className="space-y-4"
         >
           {error && (
-            <div className="text-sm text-red-300 bg-red-500/10 border border-red-500/20 rounded-lg p-3 text-center">
+            <div className="public-error">
               {error}
             </div>
           )}
 
           <div className="space-y-1.5">
-            <Label className="text-slate-200">Username</Label>
+            <Label className="text-foreground">Username</Label>
             <Input
               autoFocus
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               autoComplete="username"
               required
-              className="bg-white/5 border-white/10 text-white placeholder:text-slate-500"
+              className="coach-input"
               placeholder="e.g. lakers_coach1"
             />
           </div>
 
           <div className="space-y-1.5">
-            <Label className="text-slate-200">Password</Label>
+            <Label className="text-foreground">Password</Label>
             <Input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               autoComplete="current-password"
               required
-              className="bg-white/5 border-white/10 text-white"
+              className="coach-input"
             />
           </div>
 
-          <Button type="submit" disabled={loading} className="w-full h-11">
-            {loading ? "Signing in..." : "Sign In"}
+          <Button type="submit" disabled={loading} className="signin-primary public-press">
+            {loading && <LoaderCircle className="size-5 animate-spin" />}<span className="public-label-swap" key={String(loading)}>{loading ? "Signing in..." : "Sign In"}</span>
           </Button>
 
-          <div className="text-center text-xs text-slate-400 pt-2">
+          <div className="signin-legal">
             Are you the club admin?{" "}
-            <Link to="/login" className="text-emerald-300 hover:underline">
+            <Link to="/login" className="text-primary hover:underline">
               კლუბის შესვლა
             </Link>
           </div>
         </form>
-      </motion.div>
-    </div>
+        </div>
+      </PublicReveal>
+      </div>
+    </SignInScene>
   );
 }
