@@ -418,7 +418,7 @@ function TripCard({
   return (
     <motion.div
       layout
-      initial={{ opacity: 0, y: 10 }}
+      initial={false}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0 }}
       className="rounded-xl border border-border bg-card/60 backdrop-blur-sm overflow-hidden"

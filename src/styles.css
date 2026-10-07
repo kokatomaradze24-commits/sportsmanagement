@@ -485,3 +485,10 @@ html[data-app-ui] label:has([role="checkbox"]), html[data-app-ui] label:has(inpu
 html[data-app-ui] [data-ui-button] { border-radius:10px; }
 html[data-app-ui] .dashboard-navigation a { border-radius:10px; }
 html[data-app-ui] [data-ui-dialog] [data-ui-dialog-title] { background:transparent; }
+
+@media (max-width:639px) {
+ html[data-app-ui] :is([role="dialog"],[role="alertdialog"]) { translate:none; left:0; top:0; right:0; bottom:0; }
+ html[data-app-ui] [data-ui-dialog] { border-radius:0; }
+ html[data-app-ui] .dashboard-payment-view { border-radius:0; }
+}
+html[data-app-ui] .dashboard-navigation a[data-ui-button] { border-radius:10px; }
