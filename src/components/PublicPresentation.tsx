@@ -1,5 +1,5 @@
 import { useEffect, useRef, type ReactNode } from "react";
-import { motion, useMotionValue, useSpring, useReducedMotion, useScroll, useTransform } from "framer-motion";
+import { motion, useMotionValue, useSpring, useReducedMotion, useScroll, useTransform, useAnimation, type MotionStyle, type MotionValue } from "framer-motion";
 import { AtmosphereBackground } from "./AtmosphereBackground";
 
 export function usePublicPresentation(mode: "signin" | "registration") {
@@ -12,9 +12,10 @@ export function usePublicPresentation(mode: "signin" | "registration") {
 const ease = [0.23, 1, 0.32, 1] as const;
 export function PublicReveal({ children, className, delay = 0, scroll = false }: { children: ReactNode; className?: string; delay?: number; scroll?: boolean }) {
   const reduce = useReducedMotion();
+  const controls = useAnimation();
   const initial = { opacity: 0, y: reduce ? 0 : scroll ? 16 : 12, filter: reduce ? "blur(0px)" : "blur(4px)" };
   const final = { opacity: 1, y: 0, filter: "blur(0px)" };
-  return <motion.div className={className} initial={initial} animate={scroll ? undefined : final} whileInView={scroll ? final : undefined} viewport={{ once: true, amount: 0.12 }} transition={{ duration: scroll ? .45 : .5, delay, ease }}>{children}</motion.div>;
+  return <motion.div className={className} initial={initial} animate={scroll ? controls : final} onViewportEnter={scroll ? () => { void controls.start(final); } : undefined} onFocusCapture={scroll ? () => controls.set(final) : undefined} viewport={{ once: true, amount: 0.12 }} transition={{ duration: scroll ? .4 : .5, delay, ease }}>{children}</motion.div>;
 }
 export function SignInScene({ children }: { children: ReactNode }) {
   usePublicPresentation("signin");
@@ -25,6 +26,14 @@ export function SignInScene({ children }: { children: ReactNode }) {
   const root = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const node = root.current;
+    const hero = node?.querySelector(".signin-hero");
+    if (!node || !hero) return;
+    const observer = new IntersectionObserver(([entry]) => { node.toggleAttribute("data-hero-past", !entry.isIntersecting); });
+    observer.observe(hero);
+    return () => observer.disconnect();
+  }, []);
+  useEffect(() => {
+    const node = root.current;
     if (!node || reduce || !window.matchMedia("(hover:hover) and (pointer:fine)").matches) return;
     const move = (event: PointerEvent) => { x.set((event.clientX / window.innerWidth - .5) * 20); y.set((event.clientY / window.innerHeight - .5) * 20); };
     const reset = () => { x.set(0); y.set(0); };
@@ -33,7 +42,7 @@ export function SignInScene({ children }: { children: ReactNode }) {
   }, [reduce, x, y]);
   return <div ref={root} className="signin-page public-page">
     <motion.div className="signin-background" style={{ x: sx, y: sy }}><AtmosphereBackground /></motion.div>
-    <motion.div className="signin-content" style={{ "--card-rotate-x": rx, "--card-rotate-y": ry } as never}>{children}</motion.div>
+    <motion.div className="signin-content" style={{ "--card-rotate-x": rx, "--card-rotate-y": ry } as MotionStyle & Record<"--card-rotate-x" | "--card-rotate-y", MotionValue<number>>}>{children}</motion.div>
   </div>;
 }
 export function RegistrationHeader({ logo, club, title, subtitle }: { logo: ReactNode; club: string; title: string; subtitle: string }) {
@@ -41,7 +50,7 @@ export function RegistrationHeader({ logo, club, title, subtitle }: { logo: Reac
   const reduce = useReducedMotion();
   const { scrollY } = useScroll();
   const opacity = useTransform(scrollY, [30, 140], [0, 1]);
-  const titleOpacity = useTransform(scrollY, [0, 140], [1, reduce ? 1 : 0]);
+  const titleOpacity = useTransform(scrollY, [0, 140], [1, 0]);
   const scale = useTransform(scrollY, [0, 140], [1, reduce ? 1 : .88]);
   return <><motion.div className="registration-nav" style={{ opacity }}><span>{title}</span></motion.div>
     <motion.header ref={ref} className="registration-header" style={{ opacity: titleOpacity, scale }}>
