@@ -222,7 +222,7 @@ function LoginPage() {
           <PublicReveal delay={.12}><p>{cleanCopy(copy.socialProof)}</p></PublicReveal>
         </div>
         <PublicReveal className="signin-card-entrance" delay={.18}>
-          <motion.div className="signin-card" initial={{ scale: .97 }} animate={{ scale: 1 }} transition={{ duration: .5, ease: [.23, 1, .32, 1] }}>
+          <motion.div className="signin-card" transformTemplate={(_, transform) => `${transform} rotateX(calc(var(--card-rotate-x, 0) * 1deg)) rotateY(calc(var(--card-rotate-y, 0) * 1deg))`} initial={{ scale: .97 }} animate={{ scale: 1 }} transition={{ duration: .5, ease: [.23, 1, .32, 1] }}>
             <h2>{cleanCopy(copy.ctaTitle)}</h2>
             <p className="signin-card-subtitle">{cleanCopy(copy.ctaSubtitle)}</p>
             {error && <div className="public-error" role="alert">{error}</div>}

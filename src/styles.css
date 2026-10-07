@@ -683,3 +683,13 @@ html[data-public-ui] [role="menuitem"]>span.text-base { display:none; }
  .signin-card { transform:none !important; }
  .signin-primary::after { display:none; }
 }
+
+.signin-page[data-hero-past] .signin-topbar { background:var(--hero-glass); backdrop-filter:blur(16px); border-bottom:1px solid var(--hero-hairline); }
+.registration-group input.border-destructive { border-color:var(--destructive); }
+.registration-birth-row { grid-template-columns:.95fr 1.3fr 1fr; }
+.registration-select { scroll-margin-top:80px; scroll-margin-bottom:100px; }
+@media (prefers-reduced-motion:reduce) {
+ .signin-card { transform:none !important; }
+ .registration-segment-thumb { transform:none !important; }
+ .registration-experience-fields { height:auto !important; }
+}
