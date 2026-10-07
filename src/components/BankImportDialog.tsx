@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Check, FileUp, LoaderCircle, Trash2, Users } from "lucide-react";
 import {
   Dialog,
@@ -127,6 +127,7 @@ export function BankImportDialog({
 }) {
   const { t, monthLong, language } = useI18n();
   const { user } = useAuth();
+  const fileInput = useRef<HTMLInputElement>(null);
   const [step, setStep] = useState<"upload" | "review" | "done">("upload");
   const [sheets, setSheets] = useState<Awaited<ReturnType<typeof readBankFile>>>([]);
   const [sheetIndex, setSheetIndex] = useState(0);
@@ -413,7 +414,8 @@ export function BankImportDialog({
                   type="file"
                   accept=".xlsx,.xls,.csv"
                   disabled={busy}
-                  className="max-w-md"
+                    ref={fileInput}
+                    className="sr-only"
                   onChange={(e) => {
                     const file = e.target.files?.[0];
                     if (file) void upload(file);
