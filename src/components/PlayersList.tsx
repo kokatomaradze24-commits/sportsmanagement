@@ -733,7 +733,7 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
                             <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center font-display text-lg text-primary shrink-0">
                       #{player.t_number}
                     </div>
-                            <div className="min-w-0">
+                            <div className="min-w-0 flex-1">
                               <p className="font-semibold text-card-foreground flex min-w-0 flex-wrap items-center gap-1.5">
                                 <span className="w-full truncate">{player.first_name} {player.last_name}</span>
                         {isNewPlayer(player.created_at) && (
