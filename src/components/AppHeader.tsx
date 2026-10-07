@@ -67,7 +67,7 @@ export function AppHeader({ schoolName, logoUrl, sport, isDark, onToggleTheme, o
     <motion.header
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="sticky top-0 z-30 h-16 border-b border-border bg-header/95 text-header-foreground backdrop-blur-xl"
+      className="sticky top-0 z-30 h-16 border-b border-border bg-header text-header-foreground"
     >
       <div className="mx-auto grid h-full max-w-[1600px] grid-cols-[minmax(0,1fr)_auto] items-center gap-2 px-4 sm:gap-4 sm:px-6">
         <div className="flex min-w-0 items-center gap-2 sm:gap-3">

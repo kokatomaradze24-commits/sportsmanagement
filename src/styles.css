@@ -492,3 +492,8 @@ html[data-app-ui] [data-ui-dialog] [data-ui-dialog-title] { background:transpare
  html[data-app-ui] .dashboard-payment-view { border-radius:0; }
 }
 html[data-app-ui] .dashboard-navigation a[data-ui-button] { border-radius:10px; }
+
+html[data-app-ui] [data-ui-dialog] { align-content:start; }
+html[data-app-ui] [data-ui-dialog-header] { align-self:start; }
+html[data-app-ui] [data-ui-dialog-close] { border-radius:10px; }
+html[data-app-ui] [data-ui-button][class*="bg-success"] { border-radius:10px; }

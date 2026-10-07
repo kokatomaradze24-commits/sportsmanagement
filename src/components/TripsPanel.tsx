@@ -421,7 +421,7 @@ function TripCard({
       initial={false}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0 }}
-      className="rounded-xl border border-border bg-card/60 backdrop-blur-sm overflow-hidden"
+      className="rounded-xl border border-border bg-card overflow-hidden"
     >
       <div className="p-4">
         <div className="flex items-start justify-between gap-3 mb-2">

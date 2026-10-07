@@ -10,5 +10,6 @@
 - [x] Add client-side spreadsheet parsing, transliterated matching, family allocations and import review/alias manager in six languages
 - [x] Verify parsing/allocation tests and authenticated desktop/mobile import, application and duplicate protection; do not publish
 
-- [ ] Restyle signed-in owner/coach screens and dialogs with scoped two-mode surfaces and typography
-- [ ] Verify read-only desktop/mobile; preserve public pages and all production data
+- [x] Restyle signed-in owner/coach screens and dialogs with scoped two-mode surfaces and typography
+- [x] Verify owner dashboard read-only on desktop/360px mobile; preserve public pages and all production data
+- [ ] Verify coach screen with a real coach session — blocked: no coach session available
