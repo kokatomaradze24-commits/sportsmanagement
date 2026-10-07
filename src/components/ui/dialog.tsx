@@ -75,7 +75,6 @@ const DialogTitle = React.forwardRef<
   <DialogPrimitive.Title
     data-ui-dialog-title
     ref={ref}
-    data-ui-overlay
     className={cn("text-lg font-semibold leading-none tracking-tight", className)}
     {...props}
   />
@@ -88,7 +87,6 @@ const DialogDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DialogPrimitive.Description
     ref={ref}
-    data-ui-overlay
     className={cn("text-sm text-muted-foreground", className)}
     {...props}
   />

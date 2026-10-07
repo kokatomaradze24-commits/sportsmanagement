@@ -473,3 +473,9 @@ html[data-app-ui] header { position:sticky; top:0; z-index:30; }
  html[data-app-ui] [role="dialog"] [class*="grid-cols-2"] { min-width:0; }
  html[data-app-ui] [role="dialog"] button { white-space:normal; }
 }
+
+/* Surfaces remain opaque even when legacy feature classes are present. */
+html[data-app-ui] [data-ui-dialog] { background:var(--popover); }
+html[data-app-ui] [data-ui-button][class*="rounded"] { border-radius:10px; }
+html[data-app-ui] [data-ui-button][class*="w-"], html[data-app-ui] [data-ui-button][class*="size-"] { min-width:44px; }
+html[data-app-ui] [class*="rounded"][class*="text-xs"]:not(button):not(input):not([role]) { border-radius:9999px; }
