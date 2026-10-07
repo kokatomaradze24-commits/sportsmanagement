@@ -120,6 +120,8 @@ export type Database = {
         Row: {
           allocation_details: Json
           amount: number
+          batch_id: string | null
+          batch_seq: number | null
           created_at: string
           id: string
           player_id: string | null
@@ -133,6 +135,8 @@ export type Database = {
         Insert: {
           allocation_details?: Json
           amount: number
+          batch_id?: string | null
+          batch_seq?: number | null
           created_at?: string
           id?: string
           player_id?: string | null
@@ -146,6 +150,8 @@ export type Database = {
         Update: {
           allocation_details?: Json
           amount?: number
+          batch_id?: string | null
+          batch_seq?: number | null
           created_at?: string
           id?: string
           player_id?: string | null
@@ -1170,6 +1176,7 @@ export type Database = {
         Args: { _amount: number; _user_id: string }
         Returns: undefined
       }
+      undo_bank_import: { Args: { _batch_id: string }; Returns: number }
     }
     Enums: {
       app_role: "admin" | "user"
