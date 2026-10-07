@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from "react";
  * Sound effects via Web Audio API. No external assets, no dependencies.
  * - click: short crisp tick (UI feedback)
  * - cash: layered "ka-ching" coin/register sound for marking payment as paid
- * - hover: very subtle high-pitched tick
+ * - hover requests are intentionally silent
  * - success: rising chime
  *
  * Respects a per-user mute toggle persisted in localStorage and shared across
@@ -20,11 +20,11 @@ let sharedCtx: Ctx | null = null;
 let armed = false;
 
 function readMuted(): boolean {
-  if (typeof window === "undefined") return false;
+  if (typeof window === "undefined") return true;
   try {
-    return localStorage.getItem(STORAGE_KEY) === "1";
+    return localStorage.getItem(STORAGE_KEY) !== "0";
   } catch {
-    return false;
+    return true;
   }
 }
 
@@ -111,11 +111,6 @@ function playClick(ctx: Ctx, master: GainNode) {
   tone(ctx, master, 900, t + 0.005, 0.04, "sine", 0.12, 0.002);
 }
 
-function playHover(ctx: Ctx, master: GainNode) {
-  const t = ctx.currentTime;
-  tone(ctx, master, 2400, t, 0.02, "sine", 0.04, 0.001);
-}
-
 function playSuccess(ctx: Ctx, master: GainNode) {
   const t = ctx.currentTime;
   tone(ctx, master, 660, t, 0.12, "triangle", 0.15);
@@ -157,7 +152,7 @@ function playCash(ctx: Ctx, master: GainNode) {
 export type SoundName = "click" | "hover" | "success" | "cash";
 
 function playSound(name: SoundName) {
-  if (globalMuted) return;
+  if (globalMuted || name === "hover") return;
   const ctx = getCtx();
   if (!ctx) return;
   // Resume on first user gesture (browsers suspend audio until interaction)
@@ -173,9 +168,6 @@ function playSound(name: SoundName) {
     switch (name) {
       case "click":
         playClick(ctx, master);
-        break;
-      case "hover":
-        playHover(ctx, master);
         break;
       case "success":
         playSuccess(ctx, master);
