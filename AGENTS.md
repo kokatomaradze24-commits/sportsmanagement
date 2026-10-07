@@ -5,3 +5,6 @@
 - Apply UI-language typography through a presentation-only document language bridge so Georgian headings, including portaled dialogs, use the bundled Georgian font.
 - Derive dashboard financial summaries in a pure presentation module using paidOf/remainingOf and database statuses, never recomputing overdue status.
 - Share one Index-owned useSchedule instance between Home and SchedulePanel so schedule edits refresh both views without changing hook write logic.
+- Parse bank files only in the browser and keep matching/allocation in a pure module; source statements must never reach storage or the server.
+- Apply bank imports through an owner-scoped atomic SQL RPC with payment row locks and expected-paid checks; ledger, allocations and optional aliases commit together to prevent duplicate or stale reconciliation.
+- Keep bank import table types in a feature-owned client module rather than editing generated integration files; generated types remain platform-managed.
