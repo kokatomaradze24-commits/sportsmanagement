@@ -1,51 +1,22 @@
+# Generated backgrounds and public-page redesign
 
+## Visual changes
+- Generate three cinematic images: a sport-neutral arena, basketball court and football pitch. Export compressed desktop/mobile WebP versions and tiny blurred placeholders.
+- Restore subtle fixed dashboard atmosphere behind the existing solid panels, with theme-aware scrims and one load fade. No dashboard parallax.
+- Redesign owner and coach sign-in screens using the existing logo, blue accent and local Noto fonts. Move all existing feature/trust copy below the owner sign-in hero, retain both sign-in actions, and add reduced-motion-aware entrances, background drift and fine-pointer motion.
+- Restyle both public registration URLs through their shared form into system-themed iPhone-style grouped sections, segmented choices, a compact scroll-linked header and sticky submit bar.
 
-## პრობლემა
-- იუზერი მოითხოვს ავტომატურ მეილებს (რეგისტრაცია + გადახდა)
-- Domain არ აქვს და არ სურს ყიდვა
-- Lovable Email **მოითხოვს** verified domain-ს — შარედ sender არ არსებობს
+## Preservation decisions
+- Keep all routes, URLs, head/SEO metadata, fields, field order, validation, submit rules, API calls, authentication and database unchanged. Do not publish.
+- The current public form has no sibling controls. Do not introduce new sibling fields or actions under the hard field/functionality freeze.
+- Keep existing validation and submit eligibility rather than introducing new disabled-until-valid rules. Restyle existing errors without changing when they appear.
+- Preserve all existing six-language copy. Replace visible em-dashes with hyphens; relocate lengthy supporting copy below the hero and use existing short copy in the hero.
 
-## 3 ალტერნატივა
+## Technical approach
+- Add reusable presentation-only background, public appearance and motion helpers. Reuse installed Motion and shared Button/Input components.
+- Scope public tokens to these pages; leave dashboard surfaces unchanged. Dynamically preload only the current image variant without editing route head metadata.
+- Remove old assets only after confirming no remaining references.
 
-### **ვარიანტი A: SMS-ით ჩავანაცვლოთ მეილი** ⭐ (რეკომენდებული)
-- იუზერს უკვე აქვს SMS infrastructure (Magti/Twilio) `useSmsSettings` hook-ით
-- რეგისტრაციის და გადახდის შეტყობინებები SMS-ით გაიგზავნება მშობლის ტელეფონზე
-- **ღირებულება**: SMS-ის ერთეული (≈$0.02-0.05 თითო), მაგრამ ისედაც გაქვს Magti/Twilio ანგარიში
-- **სამუშაო**: შაბლონების შექმნა + trigger-ები `players` insert-სა და `payments` "paid" update-ზე
-
-### **ვარიანტი B: Resend.com-ის უფასო Tier**
-- 3,000 მეილი თვეში სრულიად უფასოდ, **მხოლოდ test domain-ით** (`onboarding@resend.dev`)
-- **მინუსი**: From email = `onboarding@resend.dev` (არა კლუბის სახელი)
-- From Name კლუბის სახელით ჩანს, მაგრამ მისამართი generic-ია
-- **სამუშაო**: Resend API key + edge function-ები
-
-### **ვარიანტი C: მოგვიანებით დავამატოთ მეილი როცა domain-ს იშოვი**
-- ახლა მხოლოდ SMS-ით გავაკეთოთ
-- მერე როცა domain გექნება, მეილიც დავამატოთ paralel-ად
-
-## ჩემი რეკომენდაცია: **ვარიანტი A (SMS-ით)**
-
-**მიზეზი**:
-- უკვე გაქვს SMS settings UI და hook
-- მშობლები უფრო ხშირად კითხულობენ SMS-ს ვიდრე მეილს
-- არ სჭირდება domain, DNS, ვერიფიკაცია
-- შენი სამიზნე აუდიტორია (ქართული კლუბები) უკვე იყენებს SMS-ს
-
-## მხოლოდ თუ ვარიანტი A აირჩევ, შემდეგი ნაბიჯები:
-
-1. **SMS შაბლონების შექმნა** ქართულად 3 event-ისთვის:
-   - **რეგისტრაცია**: "გამარჯობა! თქვენი შვილი {playerName} წარმატებით დარეგისტრირდა {clubName}-ში ({sportName})."
-   - **გადახდის გრაფიკი**: "{playerName}-ის გადახდის გრაფიკი {clubName}-ში: {months} თვე, ყოველთვიური თანხა {amount}₾. პირველი გადახდის ვადა: {firstDueDate}."
-   - **გადახდის დადასტურება**: "მადლობა! {playerName}-ის გადახდა {amount}₾ ({monthLabel}) წარმატებით ჩაირიცხა {clubName}-ში."
-
-2. **Trigger logic**:
-   - `usePlayers.addPlayer()` → ორივე მესიჯის გაგზავნა (რეგისტრაცია + გრაფიკი)
-   - `usePayments.markAsPaid()` → დადასტურების მესიჯი
-
-3. **გაგზავნა existing edge function-ით** (`send-payment-sms`-ის ანალოგიური):
-   - წავიკითხოთ `user_sms_settings` (provider: magti/twilio)
-   - გამოვიყენოთ `email_from_name` ან ცალკე `club_name` field როგორც `{clubName}`
-   - მშობლის ტელეფონი — `players.parent_phone` ან მსგავსი ველი
-
-4. **UI dashboard**: "გაგზავნილი შეტყობინებები" log table-ით (status, timestamp, recipient)
-
+## Checks
+- Read-only desktop/mobile checks, including 360px and 390×844, system light/dark and reduced motion. Block write requests and never submit either form.
+- Check asset sizes, overflow, image loading, Georgian buttons, preview errors and unchanged metadata/logic.
