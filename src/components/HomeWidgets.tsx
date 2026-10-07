@@ -30,7 +30,7 @@ export function HomeWidgets({ players, payments, loading, practices, games, sche
     .sort((a, b) => a.date.localeCompare(b.date) || (a.time ?? "").localeCompare(b.time ?? "")).slice(0, 4);
   const config = { collected: { label: t("dashCollected"), color: "var(--color-success)" }, expected: { label: t("dashExpected"), color: "var(--color-primary)" } };
   return (
-    <div className="grid min-w-0 grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1.65fr)_minmax(0,1fr)]">
+    <div className="grid min-w-0 grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1.65fr)_minmax(0,1fr)]">
       <section className="min-w-0 border-t border-border pt-4" aria-label={t("dashMonthlyIncome")}>
         <h2 className="mb-4 text-xl">{t("dashMonthlyIncome")}</h2>
         {loading ? <Skeleton className="h-80 w-full rounded-lg" /> : <ChartContainer config={config} className="h-80 w-full aspect-auto">

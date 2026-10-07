@@ -768,7 +768,7 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
                       </p>
                       <div className="mt-1 flex flex-wrap items-center gap-1.5 text-[11px] text-muted-foreground">
                         <span className="inline-flex items-center gap-1.5"><span className={`size-1.5 shrink-0 rounded-full ${paymentSummaries.get(player.id)?.state === "paid" ? "bg-success" : paymentSummaries.get(player.id)?.state === "exempt" ? "bg-muted-foreground" : "bg-warning"}`} />
-                          {t(paymentSummaries.get(player.id)?.state === "exempt" ? "playerExempt" : paymentSummaries.get(player.id)?.state === "paid" ? "paid" : paymentSummaries.get(player.id)?.state === "partial" ? "monthPartial" : "pending")}
+                          {t(paymentSummaries.get(player.id)?.state === "exempt" ? "playerExempt" : paymentSummaries.get(player.id)?.state === "paid" ? "paid" : paymentSummaries.get(player.id)?.state === "partial" ? "playerPartial" : "pending")}
                         </span>
                         {(paymentSummaries.get(player.id)?.overdueMonths ?? 0) > 0 && <span className="rounded border border-destructive/30 bg-destructive/10 px-1.5 py-0.5 text-destructive">{formatMoney(paymentSummaries.get(player.id)?.debt ?? 0)}</span>}
                       </div>

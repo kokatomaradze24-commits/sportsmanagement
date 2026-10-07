@@ -24,6 +24,7 @@ export type TranslationKey = keyof typeof translations.en;
 
 export const translations = {
   en: {
+    playerPartial: "Partial",
     dashThisMonth: "This month",
     dashCollected: "Collected",
     dashExpected: "Expected",
@@ -620,6 +621,7 @@ export const translations = {
   },
 
   de: {
+    playerPartial: "Teilweise",
     dashThisMonth: "Diesen Monat",
     dashCollected: "Eingegangen",
     dashExpected: "Erwartet",
@@ -1072,6 +1074,7 @@ export const translations = {
   },
 
   es: {
+    playerPartial: "Parcial",
     dashThisMonth: "Este mes",
     dashCollected: "Cobrado",
     dashExpected: "Esperado",
@@ -1524,6 +1527,7 @@ export const translations = {
   },
 
   fr: {
+    playerPartial: "Partiel",
     dashThisMonth: "Ce mois-ci",
     dashCollected: "Encaissé",
     dashExpected: "Attendu",
@@ -1976,6 +1980,7 @@ export const translations = {
   },
 
   ka: {
+    playerPartial: "ნაწილობრივ",
     dashThisMonth: "მიმდინარე თვე",
     dashCollected: "შეგროვებული",
     dashExpected: "მოსალოდნელი",
@@ -2480,6 +2485,7 @@ export const translations = {
   },
 
   ru: {
+    playerPartial: "Частично",
     dashThisMonth: "Этот месяц",
     dashCollected: "Получено",
     dashExpected: "Ожидается",
