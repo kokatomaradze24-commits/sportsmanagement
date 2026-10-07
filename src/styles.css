@@ -66,6 +66,37 @@
   src: url('https://fonts.gstatic.com/s/bebasneue/v14/JTUSjIg69CK48gW7PXooxW5rygbi49c.woff2') format('woff2');
 }
 
+@font-face {
+  font-family: 'Noto Sans Georgian';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('./assets/fonts/NotoSansGeorgian-Bold.ttf') format('truetype');
+}
+
+html[lang="ka"] :is(h1, h2, h3, h4, h5, h6, .font-display) {
+  font-family: 'Noto Sans Georgian', sans-serif;
+  font-weight: 700;
+  letter-spacing: normal;
+}
+
+.dashboard-navigation {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.dashboard-main {
+  padding-bottom: calc(5.5rem + env(safe-area-inset-bottom, 0px));
+}
+
+.dashboard-payment-view {
+  padding-bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px));
+}
+
+@media (min-width: 1024px) {
+  .dashboard-navigation { padding-bottom: 0.75rem; }
+  .dashboard-main, .dashboard-payment-view { padding-bottom: 1.5rem; }
+}
+
 :root {
   --radius: 0.75rem;
   --font-display: 'Bebas Neue', sans-serif;
