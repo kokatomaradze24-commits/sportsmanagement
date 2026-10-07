@@ -84,6 +84,11 @@ html[lang="ka"] :is(h1, h2, h3, h4, h5, h6, .font-display) {
   padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
+.dashboard-progress { appearance: none; border: 0; border-radius: 4px; background: var(--color-muted); overflow: hidden; }
+.dashboard-progress::-webkit-progress-bar { background: var(--color-muted); }
+.dashboard-progress::-webkit-progress-value { background: var(--color-success); }
+.dashboard-progress::-moz-progress-bar { background: var(--color-success); }
+
 .dashboard-main {
   padding-bottom: calc(5.5rem + env(safe-area-inset-bottom, 0px));
 }
