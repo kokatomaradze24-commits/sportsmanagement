@@ -98,7 +98,7 @@ export function SchedulePanel({ sportId, schedule: sched }: Props) {
   const filteredPractices = practicesByAge[activeAge] ?? [];
 
   return (
-    <section className="bg-card/80 backdrop-blur-sm rounded-2xl border border-border p-5 shadow-sm">
+    <section className="workspace-panel min-w-0">
       <div className="flex items-center gap-2 mb-4">
         <Calendar className="w-5 h-5 text-primary" />
         <h2 className="font-display text-xl tracking-wider">Schedule</h2>

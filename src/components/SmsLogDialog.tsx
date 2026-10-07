@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import { Bell, Loader2, CheckCircle2, XCircle, Inbox } from "lucide-react";
+import { Bell, Loader2, CheckCircle2, XCircle, Inbox, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { supabase } from "@/integrations/supabase/client";
@@ -102,7 +102,7 @@ export function SmsLogDialog() {
                   <p className="text-xs text-muted-foreground mb-1">{log.phone}</p>
                   <p className="text-sm text-foreground whitespace-pre-wrap break-words">{log.message}</p>
                   {log.error && (
-                    <p className="text-xs text-destructive mt-1.5">⚠ {log.error}</p>
+                    <p className="text-xs text-destructive mt-1.5"><AlertTriangle className="inline size-3 mr-1" />{log.error}</p>
                   )}
                 </div>
               );

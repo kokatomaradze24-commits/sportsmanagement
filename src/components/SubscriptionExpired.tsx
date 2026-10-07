@@ -17,27 +17,20 @@ export function SubscriptionExpired() {
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4 sm:p-6 relative overflow-hidden">
-      {/* Ambient background */}
-      <div className="pointer-events-none absolute inset-0">
-        <div className="absolute -top-32 -left-32 w-96 h-96 rounded-full bg-primary/10 blur-3xl" />
-        <div className="absolute -bottom-32 -right-32 w-96 h-96 rounded-full bg-primary/10 blur-3xl" />
-      </div>
-
       <div className="absolute top-4 right-4 z-10">
         <LanguageSwitcher variant="floating" />
       </div>
 
       <motion.div
-        initial={{ opacity: 0, y: 16, scale: 0.98 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
+        initial={false}
+        animate={{ opacity: 1 }}
         transition={{ duration: 0.4, ease: "easeOut" }}
         className="relative max-w-lg w-full bg-card/95 backdrop-blur border border-border rounded-3xl p-6 sm:p-8 shadow-2xl"
       >
         <div className="flex flex-col items-center text-center">
           <div className="relative mb-4">
-            <div className="absolute inset-0 rounded-full bg-red-500/20 blur-xl" />
-            <div className="relative w-14 h-14 rounded-2xl bg-gradient-to-br from-red-500/20 to-red-500/5 border border-red-500/30 flex items-center justify-center">
-              <Lock className="h-6 w-6 text-red-500" />
+            <div className="relative w-14 h-14 rounded-2xl bg-destructive/10 border border-destructive/30 flex items-center justify-center">
+              <Lock className="h-6 w-6 text-destructive" />
             </div>
           </div>
           <h1 className="text-2xl sm:text-3xl font-display tracking-wider mb-2">
@@ -53,11 +46,11 @@ export function SubscriptionExpired() {
           {SUBSCRIPTION_PLANS.map((p) => {
             const isYear = p.days >= 365;
             return (
-              <button
+              <Button variant="outline"
                 key={p.id}
                 type="button"
                 onClick={() => setOpen(true)}
-                className={`group relative text-left rounded-2xl border p-4 transition-all hover:-translate-y-0.5 hover:shadow-lg ${
+                className={`group relative h-auto whitespace-normal flex-col items-start text-left rounded-2xl border p-4 transition-all  hover:shadow-lg ${
                   isYear
                     ? "border-primary/60 bg-gradient-to-br from-primary/15 to-primary/5 hover:border-primary"
                     : "border-border bg-muted/30 hover:border-primary/40"
@@ -78,7 +71,7 @@ export function SubscriptionExpired() {
                 <div className="mt-1 inline-flex items-center text-[10px] font-bold text-destructive bg-destructive/10 rounded-full px-2 py-0.5">
                   -{p.discountPct}% {t("subExpDiscountSuffix")}
                 </div>
-              </button>
+              </Button>
             );
           })}
         </div>

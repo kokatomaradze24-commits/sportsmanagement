@@ -33,8 +33,6 @@ import { useOnboarding } from "@/hooks/use-onboarding";
 import { useI18n } from "@/hooks/use-i18n";
 import type { Database } from "@/integrations/supabase/types";
 import ogImage from "@/assets/og-home.jpg";
-import basketballBg from "@/assets/basketball-court-bg.png";
-import footballBg from "@/assets/football-stadium-bg.png";
 
 type Player = Database["public"]["Tables"]["players"]["Row"];
 
@@ -128,18 +126,9 @@ function Index() {
   // Tutorial: shows once for new users
   const showTutorial = !settingsLoading && !onboardingLoading && !tutorialDone;
 
-  const sportBg = sportId === "basketball" ? basketballBg : sportId === "football" ? footballBg : null;
 
   return (
-    <div
-      className={`min-h-screen bg-background relative ${sportBg ? "no-ambient-lines" : "theme-ambient-bg"}`}
-      style={sportBg ? {
-        backgroundImage: `linear-gradient(180deg, rgba(2,6,23,0.72), rgba(2,6,23,0.85)), url(${sportBg})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundAttachment: "fixed",
-      } : undefined}
-    >
+    <div className="min-h-screen bg-background">
 
       <div className="relative z-10">
         <OnboardingTutorial
@@ -177,14 +166,14 @@ function Index() {
 
           <Link
             to="/stats-analysis"
-            className="block rounded-2xl border border-primary/40 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent p-4 sm:p-5 hover:border-primary hover:shadow-md transition-all group"
+            className="block rounded-2xl border border-primary/40 bg-card p-4 sm:p-5 hover:border-primary hover:shadow-md transition-all group"
           >
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-primary/15 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+              <div className="w-12 h-12 rounded-xl bg-primary/15 flex items-center justify-center flex-shrink-0  transition-transform">
                 <BarChart3 className="w-6 h-6 text-primary" />
               </div>
               <div className="min-w-0 flex-1">
-                <p className="font-display tracking-wider text-base sm:text-lg">{t("statsTitle")} ✨</p>
+                <p className="font-display tracking-wider text-base sm:text-lg">{t("statsTitle")}</p>
                 <p className="text-xs sm:text-sm text-muted-foreground">{`${t("statsDescPrefix")} ${t("statsYourClub")} ${t("statsDescSuffix")}`}</p>
               </div>
               <span className="text-primary text-xl group-hover:translate-x-1 transition-transform hidden sm:inline">→</span>
@@ -193,7 +182,7 @@ function Index() {
 
           </section>
           <section className={tab === "players" ? "grid grid-cols-1 lg:grid-cols-2 gap-6" : "hidden"} aria-label={t("sectionPlayers")}>
-            <div className="theme-panel backdrop-blur-sm rounded-2xl border border-border p-5 shadow-sm hover:shadow-md transition-shadow">
+            <div className="workspace-panel min-w-0">
               <PlayersList
                 players={players}
                 payments={payments}
@@ -213,8 +202,8 @@ function Index() {
 
             <div className={selectedPlayer && mobilePaymentOpen
               ? "dashboard-payment-view fixed inset-0 z-40 overflow-y-auto bg-background p-4 lg:static lg:z-auto lg:overflow-visible lg:rounded-2xl lg:border lg:border-border lg:bg-panel lg:p-5"
-              : "theme-panel hidden rounded-2xl border border-border p-5 backdrop-blur-sm lg:block"}>
-              {selectedPlayer && <div className="sticky top-0 z-10 -mx-4 -mt-4 mb-4 border-b border-border bg-background/95 px-4 py-3 backdrop-blur-xl lg:hidden">
+              : "workspace-payments hidden rounded-xl border border-border p-4 lg:block"}>
+              {selectedPlayer && <div className="sticky top-0 z-10 -mx-4 -mt-4 mb-4 border-b border-border bg-header px-4 py-3 backdrop-blur-xl lg:hidden">
                 <Button variant="ghost" size="sm" className="gap-2" onClick={() => setMobilePaymentOpen(false)}><ArrowLeft className="size-4" />{t("back")}</Button>
               </div>}
               {selectedPlayer ? (
@@ -231,7 +220,7 @@ function Index() {
                 <div className="flex items-center justify-center h-full min-h-[300px] text-muted-foreground">
                   <div className="text-center">
                     <UserRound className="mx-auto mb-4 size-12 opacity-50" />
-                    <p className="text-xl font-display tracking-wider gradient-text">
+                    <p className="text-xl font-display">
                       {t("selectMember", { member: sport.member })}
                     </p>
                     <p className="text-sm mt-2 text-muted-foreground/80">

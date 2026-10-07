@@ -84,9 +84,9 @@ export function RegistrationNotificationsBell({ sportId, userId, label, compact 
               {count > 0 && (
                 <motion.span
                   key="badge"
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  exit={{ scale: 0 }}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
                   className="absolute -top-1 -right-1 min-w-[20px] h-[20px] px-1.5 rounded-full bg-destructive text-destructive-foreground text-[11px] font-bold flex items-center justify-center leading-none ring-2 ring-background"
                 >
                   {count > 99 ? "99+" : count}

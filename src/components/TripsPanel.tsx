@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Plus, MapPin, Calendar, Clock, DollarSign, Pencil, Trash2,
+  Plus, Bus, Map as MapIcon, MapPin, Calendar, Clock, DollarSign, Pencil, Trash2,
   Search, UserPlus, Users, X, Check, Wallet, ChevronDown, ChevronUp,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -153,7 +153,7 @@ function TripForm({
       </div>
       <DialogFooter>
         <Button type="button" variant="outline" onClick={onCancel}>{t("cancel")}</Button>
-        <Button type="submit" variant="success">
+        <Button type="submit" variant="default">
           {initial?.id ? t("save") : t("create")}
         </Button>
       </DialogFooter>
@@ -298,7 +298,7 @@ function ParticipantRow({
   return (
     <motion.div
       layout
-      initial={{ opacity: 0, y: 8 }}
+      initial={false}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, x: -20 }}
       className="rounded-xl border border-border bg-background/50 p-3 space-y-2.5"
@@ -418,10 +418,10 @@ function TripCard({
   return (
     <motion.div
       layout
-      initial={{ opacity: 0, y: 10 }}
+      initial={false}
       animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, scale: 0.95 }}
-      className="rounded-xl border border-border bg-card/60 backdrop-blur-sm overflow-hidden"
+      exit={{ opacity: 0 }}
+      className="rounded-xl border border-border bg-card overflow-hidden"
     >
       <div className="p-4">
         <div className="flex items-start justify-between gap-3 mb-2">
@@ -451,7 +451,7 @@ function TripCard({
               size="icon"
               variant="ghost"
               className="h-8 w-8"
-              onMouseEnter={() => play("hover")}
+              
               onClick={() => { play("click"); setEditOpen(true); }}
             >
               <Pencil className="h-4 w-4" />
@@ -460,7 +460,7 @@ function TripCard({
               size="icon"
               variant="ghost"
               className="h-8 w-8 text-destructive hover:text-destructive"
-              onMouseEnter={() => play("hover")}
+              
               onClick={() => { play("click"); setDeleteOpen(true); }}
             >
               <Trash2 className="h-4 w-4" />
@@ -578,18 +578,18 @@ export function TripsPanel({
   const [createOpen, setCreateOpen] = useState(false);
 
   return (
-    <section className="bg-card/80 backdrop-blur-sm rounded-2xl border border-border p-5 shadow-sm hover:shadow-md transition-shadow">
+    <section className="workspace-panel min-w-0">
       <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
         <div className="flex items-center gap-2">
-          <span className="text-2xl">🚌</span>
+          <Bus className="size-5 text-primary" />
           <h2 className="text-xl font-display font-bold gradient-text">{t("tripsTitle")}</h2>
         </div>
         <Dialog open={createOpen} onOpenChange={setCreateOpen}>
           <DialogTrigger asChild>
             <Button
-              variant="success"
+              variant="default"
               size="sm"
-              onMouseEnter={() => play("hover")}
+              
               onClick={() => play("click")}
             >
               <Plus className="h-4 w-4" />
@@ -620,7 +620,7 @@ export function TripsPanel({
         </div>
       ) : trips.length === 0 ? (
         <div className="text-center py-10 text-muted-foreground">
-          <div className="text-5xl mb-3">🗺️</div>
+          <MapIcon className="size-10 mx-auto mb-3 text-muted-foreground" />
           <p>{t("tripsEmpty")}</p>
         </div>
       ) : (
