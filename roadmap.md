@@ -13,7 +13,7 @@
 - [x] Restyle signed-in owner/coach screens and dialogs with scoped two-mode surfaces and typography
 - [x] Verify owner dashboard read-only on desktop/360px mobile; preserve public pages and all production data
 - [ ] Verify coach screen with a real coach session — blocked: no coach session available
-- [ ] Generate three backgrounds with desktop/mobile WebP and blurred placeholders
-- [ ] Restyle owner/coach sign-in with public tokens and accessible motion
-- [ ] Restyle shared public registration without changing fields or behaviour
-- [ ] Verify public screens and dashboard atmosphere strictly read-only; do not publish
+- [x] Generate three backgrounds with desktop/mobile WebP and blurred placeholders
+- [x] Restyle owner/coach sign-in with public tokens and accessible motion
+- [x] Restyle shared public registration without changing fields or behaviour
+- [x] Verify public screens and dashboard atmosphere strictly read-only; do not publish
