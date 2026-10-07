@@ -11,3 +11,5 @@
 - Fetch complete paginated payment balances at bank review time, independent of dashboard hook row limits; every unpaid historical month must participate in allocations.- Bank imports are undoable per batch: the apply RPC records server-built allocations with previous payment dates and a batch id; undo runs in one SQL transaction and refuses if a payment changed since.
 
 - Scope workspace tokens and shared-control refinements through html[data-app-ui], restored on unmount, so public pages keep their existing presentation.
+- Scope sign-in and registration appearance through a restored data-public-ui document boundary; reusable presentation helpers own image loading and motion so routes keep their auth, fields and metadata unchanged.
+- Use responsive generated WebP atmosphere with local blurred placeholders and current-variant preload; dashboard imagery stays fixed behind opaque workspace surfaces to preserve readability.

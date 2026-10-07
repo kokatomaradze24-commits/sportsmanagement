@@ -3,6 +3,7 @@ import { createFileRoute, useNavigate, Link, type SearchSchemaInput } from "@tan
 import { ArrowLeft, BarChart3, FileUp, LoaderCircle, UserRound } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DashboardNavigation, DASHBOARD_TABS, type DashboardTab } from "@/components/DashboardNavigation";
+import { AtmosphereBackground } from "@/components/AtmosphereBackground";
 import { AppHeader } from "@/components/AppHeader";
 import { PlayersList } from "@/components/PlayersList";
 import { PaymentsPanel } from "@/components/PaymentsPanel";
@@ -129,6 +130,7 @@ function Index() {
 
   return (
     <div className="min-h-screen bg-background">
+      <AtmosphereBackground sport={sportId} variant="dashboard" />
 
       <div className="relative z-10">
         <OnboardingTutorial

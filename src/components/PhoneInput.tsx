@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Check, ChevronDown } from "lucide-react";
+import { Check, ChevronDown, Globe2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
@@ -16,6 +16,7 @@ interface PhoneInputProps {
   onChange: (value: string) => void;
   placeholder?: string;
   className?: string;
+  showFlags?: boolean;
 }
 
 /**
@@ -23,7 +24,7 @@ interface PhoneInputProps {
  * Selecting a country swaps the leading dial code in the value while
  * preserving whatever digits the user has already typed.
  */
-export function PhoneInput({ value, onChange, placeholder, className }: PhoneInputProps) {
+export function PhoneInput({ value, onChange, placeholder, className, showFlags = true }: PhoneInputProps) {
   const { language } = useI18n();
   const [open, setOpen] = useState(false);
 
@@ -56,7 +57,7 @@ export function PhoneInput({ value, onChange, placeholder, className }: PhoneInp
             className="flex h-9 items-center gap-1 rounded-md border border-input bg-transparent px-2 text-sm shadow-sm transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
             aria-label="Select country code"
           >
-            <span className="text-base leading-none">{selected.flag}</span>
+            {showFlags ? <span className="text-base leading-none">{selected.flag}</span> : <Globe2 className="size-4 text-muted-foreground" />}
             <span className="text-xs text-muted-foreground tabular-nums">{selected.code}</span>
             <ChevronDown className="h-3 w-3 text-muted-foreground" />
           </button>
@@ -75,7 +76,7 @@ export function PhoneInput({ value, onChange, placeholder, className }: PhoneInp
                     active && "bg-accent/60"
                   )}
                 >
-                  <span className="text-lg leading-none">{c.flag}</span>
+                  {showFlags && <span className="text-lg leading-none">{c.flag}</span>}
                   <span className="flex-1 text-left">{c.country}</span>
                   <span className="text-xs text-muted-foreground tabular-nums">{c.code}</span>
                   {active && <Check className="h-3.5 w-3.5 text-primary" />}
