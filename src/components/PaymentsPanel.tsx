@@ -238,7 +238,6 @@ export function PaymentsPanel({ player, players = [], payments, loading, onUpdat
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -8 }}
                   transition={{ duration: 0.12 }}
-                  whileHover={{ scale: 1.015 }}
                   className="grid grid-cols-1 items-center gap-3 py-4 border-b border-border sm:grid-cols-[minmax(0,1fr)_auto]"
                 >
                   <div className="flex items-center gap-3 min-w-0">
