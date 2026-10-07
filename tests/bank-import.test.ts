@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test';
-import { allocateTransaction, canonicalTransaction, detectColumns, matchTransaction, normalizeName, parseBankAmount, parseBankDate, parseMappedRows, previewBatch, type BankPlayer, type BankPayment, type ReviewTransaction } from './bank-import';
+import { allocateTransaction, canonicalTransaction, detectColumns, matchTransaction, normalizeName, parseBankAmount, parseBankDate, parseMappedRows, previewBatch, type BankPlayer, type BankPayment, type ReviewTransaction } from '../src/lib/bank-import';
 const players:BankPlayer[]=[{id:'a',first_name:'საბა',last_name:'გიორგაძე',is_active:true,family_id:'family',created_at:'2026-01-01'},{id:'b',first_name:'ნიკა',last_name:'გიორგაძე',is_active:true,family_id:'family',created_at:'2026-01-02'},{id:'c',first_name:'ანა',last_name:'ბერიძე',is_active:true,created_at:'2026-01-03'}];
 const payments:BankPayment[]=[{id:'a9',player_id:'a',year:2026,month:9,amount:170,paid_amount:70,status:'overdue'},{id:'b9',player_id:'b',year:2026,month:9,amount:170,paid_amount:0,status:'overdue'},{id:'a10',player_id:'a',year:2026,month:10,amount:170,paid_amount:0,status:'pending'}];
 const tx={key:'tx',date:'2026-10-07',amount:300,sender:'Parent Giorgadze',purpose:'Training SABA, GIORGADZE payment'};

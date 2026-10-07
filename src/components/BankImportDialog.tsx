@@ -570,7 +570,7 @@ export function BankImportDialog({
                 const preview = previews.get(row.key);
                 const player = players.find((p) => p.id === row.playerId);
                 const familyPayments = player
-                  ? payments.filter((p) =>
+                  ? balances.filter((p) =>
                       players.some(
                         (member) =>
                           (member.id === player.id ||
@@ -698,7 +698,7 @@ export function BankImportDialog({
                                       {t(part.fullyPaid ? "paid" : "playerPartial")}
                                     </span>
                                     {!part.fullyPaid &&
-                                      ` · ${t("bankRemaining")}: ${money(Math.max(0, Number(payments.find((p) => p.id === part.paymentId)?.amount ?? 0) - part.resultingPaid))}`}
+                                      ` · ${t("bankRemaining")}: ${money(Math.max(0, Number(balances.find((p) => p.id === part.paymentId)?.amount ?? 0) - part.resultingPaid))}`}
                                   </li>
                                 );
                               })}
