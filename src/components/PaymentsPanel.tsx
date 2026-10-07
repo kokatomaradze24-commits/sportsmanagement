@@ -239,7 +239,7 @@ export function PaymentsPanel({ player, players = [], payments, loading, onUpdat
                   exit={{ opacity: 0, y: -8 }}
                   transition={{ delay: Math.min(i * 0.03, 0.3) }}
                   whileHover={{ scale: 1.015 }}
-                  className={`flex items-center justify-between gap-3 p-3 rounded-xl border transition-colors ${
+                  className={`grid grid-cols-1 items-center gap-3 p-3 rounded-xl border transition-colors sm:grid-cols-[minmax(0,1fr)_auto] ${
                     isPaid
                       ? "border-success/30 bg-success/5 hover:bg-success/10"
                       : isPartialRow
@@ -262,14 +262,14 @@ export function PaymentsPanel({ player, players = [], payments, loading, onUpdat
                       {isPaid ? <Check className="w-4 h-4" /> : isOverdue ? <AlertTriangle className="w-4 h-4" /> : <Clock className="w-4 h-4" />}
                     </div>
                     <div className="min-w-0">
-                      <div className="flex items-center gap-2">
+                      <div className="flex flex-wrap items-center gap-2">
                         <span className="font-semibold text-card-foreground">
                           {monthShort(payment.month)} {payment.year}
                         </span>
                         <StatusBadge status={isPartialRow ? "partial" : payment.status} t={t} />
                         {isPartialRow && isOverdue && <StatusBadge status="overdue" t={t} />}
                       </div>
-                      <p className="text-xs text-muted-foreground truncate">
+                      <p className="text-xs text-muted-foreground break-words">
                         {formatMoney(payment.amount)} · {t("paidAmountLabel")} {formatMoney(payment.paid)} · {t("remainingLabel")} {formatMoney(payment.remaining)} ·{" "}
                         {isPaid && payment.payment_date
                           ? t("paidOn", { date: payment.payment_date })
@@ -277,7 +277,7 @@ export function PaymentsPanel({ player, players = [], payments, loading, onUpdat
                       </p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-1.5 shrink-0">
+                  <div className="flex flex-wrap items-center justify-end gap-1.5 shrink-0">
                     {editing === payment.key ? (
                       <form
                         className="flex items-center gap-1"

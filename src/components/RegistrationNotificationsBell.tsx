@@ -13,9 +13,11 @@ interface Props {
   sportId: string;
   userId?: string;
   label: string;
+  compact?: boolean;
+  onGoToPlayers?: () => void;
 }
 
-export function RegistrationNotificationsBell({ sportId, userId, label }: Props) {
+export function RegistrationNotificationsBell({ sportId, userId, label, compact = false, onGoToPlayers }: Props) {
   const { requests, refetch } = usePlayerRegistrationRequests(sportId);
   const { play } = useSounds();
   const { t } = useI18n();
@@ -65,16 +67,19 @@ export function RegistrationNotificationsBell({ sportId, userId, label }: Props)
     } else {
       setSeenIds(new Set(requests.map((r) => r.id)));
     }
-    const el = document.querySelector<HTMLElement>("[data-players-list]");
-    el?.scrollIntoView({ behavior: "smooth", block: "start" });
+    onGoToPlayers?.();
+    requestAnimationFrame(() => {
+      const el = document.querySelector<HTMLElement>("[data-players-list]");
+      el?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
   };
 
   return (
     <div className="flex flex-col items-center gap-1">
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
-          <Button variant="ghost" size="icon" className="rounded-full w-12 h-12 sm:w-14 sm:h-14 relative" title={label}>
-            <Bell className="w-6 h-6 sm:w-7 sm:h-7" />
+          <Button variant="ghost" size="icon" className={compact ? "relative size-9 sm:size-10" : "rounded-full w-12 h-12 sm:w-14 sm:h-14 relative"} title={label} aria-label={label}>
+            <Bell className={compact ? "size-5" : "w-6 h-6 sm:w-7 sm:h-7"} />
             <AnimatePresence>
               {count > 0 && (
                 <motion.span
@@ -135,7 +140,7 @@ export function RegistrationNotificationsBell({ sportId, userId, label }: Props)
           )}
         </PopoverContent>
       </Popover>
-      <span className="text-[11px] sm:text-xs text-muted-foreground leading-none">{label}</span>
+      {!compact && <span className="text-[11px] sm:text-xs text-muted-foreground leading-none">{label}</span>}
     </div>
   );
 }

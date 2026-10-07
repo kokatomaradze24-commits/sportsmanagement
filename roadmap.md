@@ -1,2 +1,5 @@
 - [x] Add sibling birth date below sibling name in registration form
 - [x] Align frontend and payment SMS due dates/debt indicators with database overdue rule; no database changes
+- [x] Restructure dashboard into URL-backed sections with desktop/sidebar and mobile tabs/payment view
+- [x] Compact header, translate new labels, and correct Georgian heading typography
+- [x] Verify dashboard navigation and selection on desktop/mobile without changing data

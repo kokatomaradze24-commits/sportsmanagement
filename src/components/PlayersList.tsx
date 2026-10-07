@@ -721,7 +721,7 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
                     : "border-border bg-card hover:border-primary/40 hover:bg-primary/5"
                 }`}
               >
-                        <div className="flex items-center justify-between gap-3">
+                        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2">
                           <div className="flex items-center gap-3 min-w-0">
                     <div onClick={(e) => e.stopPropagation()}>
                       <Checkbox
@@ -733,12 +733,12 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
                             <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center font-display text-lg text-primary shrink-0">
                       #{player.t_number}
                     </div>
-                            <div className="min-w-0">
-                              <p className="font-semibold text-card-foreground flex items-center gap-2">
-                                <span className="truncate">{player.first_name} {player.last_name}</span>
+                            <div className="min-w-0 flex-1">
+                              <p className="font-semibold text-card-foreground flex min-w-0 flex-wrap items-center gap-1.5">
+                                <span className="w-full truncate">{player.first_name} {player.last_name}</span>
                         {isNewPlayer(player.created_at) && (
-                          <span className="text-[10px] font-semibold uppercase tracking-wide px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-500 border border-emerald-500/30 shrink-0">
-                            New Player
+                          <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-success/15 text-success border border-success/30 shrink-0">
+                            {t("newPlayer")}
                           </span>
                         )}
                         {player.birth_date ? (
