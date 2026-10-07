@@ -410,7 +410,7 @@ html[data-app-ui] button:has(>svg):not(:has(>span)):empty { min-width:44px; }
 html[data-app-ui] button[class*="w-8"], html[data-app-ui] button[class*="size-9"], html[data-app-ui] button[class*="size-10"] { min-width:44px; }
 html[data-app-ui] :is(button,a):focus-visible { outline:2px solid var(--primary); outline-offset:3px; }
 html[data-app-ui] :is(input,textarea,[role="combobox"]) { background:var(--card); box-shadow:none; }
-html[data-app-ui] :is([role="dialog"],[role="alertdialog"]) { background:var(--popover); border-radius:14px; max-width:calc(100vw - 32px); max-height:calc(100dvh - 32px); overflow-y:auto; box-shadow:0 16px 48px var(--overlay); }
+html[data-app-ui] :is([role="dialog"],[role="alertdialog"]) { background:var(--popover); border-radius:14px; max-width:min(var(--dialog-width,512px),calc(100vw - 32px)); max-height:calc(100dvh - 32px); overflow-y:auto; box-shadow:0 16px 48px var(--overlay); }
 html[data-app-ui] [data-ui-overlay] { background:var(--overlay); }
 html[data-app-ui] [data-ui-dialog-close] { width:44px; height:44px; display:flex; align-items:center; justify-content:center; right:8px; top:8px; }
 html[data-app-ui] [data-ui-dialog-header] { padding-right:32px; text-align:left; }
@@ -449,4 +449,27 @@ html[data-app-ui] .dashboard-navigation a { min-height:48px; }
 }
 @media (prefers-reduced-motion:reduce) {
  html[data-app-ui] *,html[data-app-ui] *::before,html[data-app-ui] *::after { animation:none !important; transition:none !important; scroll-behavior:auto !important; }
+}
+
+html[data-app-ui] [role="dialog"][class*="max-w-md"] { --dialog-width:448px; }
+html[data-app-ui] [role="dialog"][class*="max-w-2xl"] { --dialog-width:672px; }
+html[data-app-ui] [role="dialog"][class*="max-w-3xl"] { --dialog-width:768px; }
+html[data-app-ui] [role="dialog"][class*="max-w-4xl"] { --dialog-width:896px; }
+html[data-app-ui] [role="dialog"][class*="max-w-6xl"] { --dialog-width:1152px; }
+html[data-app-ui] [data-ui-button][class*="size-icon"], html[data-app-ui] [data-ui-button][class*="w-9"] { min-width:44px; }
+html[data-app-ui] [class*="text-red-"] { color:var(--destructive); }
+html[data-app-ui] [class*="text-green-"] { color:var(--success); }
+html[data-app-ui] [class*="bg-red-"] { background:color-mix(in oklab,var(--destructive) 12%,var(--card)); }
+html[data-app-ui] [class*="border-red-"] { border-color:color-mix(in oklab,var(--destructive) 35%,var(--border)); }
+html[data-app-ui] [class*="blur-"]:not([class*="backdrop-"]) { display:none; }
+html[data-app-ui] [data-ui-button] { transition:background-color 120ms ease,color 120ms ease; }
+html[data-app-ui] :is([role="tab"],[data-ui-button]) { border-radius:10px; }
+html[data-app-ui] [class*="rounded-full"] { border-radius:9999px; }
+html[data-app-ui] h2 { font-size:22px; }
+html[data-app-ui] header { position:sticky; top:0; z-index:30; }
+@media (max-width:639px) {
+ html[data-app-ui] :is([role="dialog"],[role="alertdialog"]) { max-width:100%; }
+ html[data-app-ui] header h1 { font-size:16px; }
+ html[data-app-ui] [role="dialog"] [class*="grid-cols-2"] { min-width:0; }
+ html[data-app-ui] [role="dialog"] button { white-space:normal; }
 }

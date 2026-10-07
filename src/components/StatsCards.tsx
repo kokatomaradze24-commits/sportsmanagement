@@ -18,11 +18,11 @@ export function StatsCards({ players, payments, loading, onViewDebt }: StatsCard
   return (
     <div className="space-y-2">
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        <div className="rounded-lg border border-border bg-card/80 p-4 backdrop-blur-sm">
+        <div className="rounded-xl border border-border bg-card p-4">
           <div className="flex items-center gap-2 text-muted-foreground"><Users className="size-4 text-primary" /><span className="text-sm">{t("activePlayers")}</span></div>
           <p className="mt-3 font-display text-3xl">{stats.active}</p>
         </div>
-        <div className="min-w-0 rounded-lg border border-border bg-card/80 p-4 backdrop-blur-sm">
+        <div className="min-w-0 rounded-xl border border-border bg-card p-4">
           <div className="flex items-center gap-2 text-muted-foreground"><TrendingUp className="size-4 shrink-0 text-success" /><span className="text-sm">{t("dashThisMonth")}</span></div>
           <p className="mt-3 break-words font-display text-xl">{formatMoney(stats.collected)} <span className="text-sm text-muted-foreground">/ {formatMoney(stats.expected)}</span></p>
           <div className="mt-2 flex items-center gap-2">
@@ -30,12 +30,12 @@ export function StatsCards({ players, payments, loading, onViewDebt }: StatsCard
             <span className="shrink-0 text-xs text-success">{stats.percentage}%</span>
           </div>
         </div>
-        <Button variant="ghost" onClick={onViewDebt} className="h-auto min-w-0 flex-col items-start justify-start gap-0 whitespace-normal rounded-lg border border-border bg-card/80 p-4 text-left backdrop-blur-sm hover:bg-destructive/10">
+        <Button variant="ghost" onClick={onViewDebt} className="h-auto min-w-0 flex-col items-start justify-start gap-0 whitespace-normal rounded-xl border border-border bg-card p-4 text-left hover:bg-destructive/10">
           <span className="flex items-center gap-2 text-sm text-muted-foreground"><AlertTriangle className="size-4 shrink-0 text-destructive" />{t("dashTotalDebt")}</span>
           <span className="mt-3 break-words font-display text-3xl text-destructive">{formatMoney(stats.debt)}</span>
           <span className="mt-1 text-xs text-muted-foreground">{t("dashDebtorCount", { count: stats.debtorCount })}</span>
         </Button>
-        <div className="rounded-lg border border-border bg-card/80 p-4 backdrop-blur-sm">
+        <div className="rounded-xl border border-border bg-card p-4">
           <div className="flex items-center gap-2 text-sm text-muted-foreground"><Clock className="size-4 shrink-0 text-warning" />{t("dashUnpaidMonth")}</div>
           <p className="mt-3 font-display text-3xl">{stats.unpaidCount}</p>
         </div>

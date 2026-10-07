@@ -271,7 +271,7 @@ export function TeamsPanel({
   };
 
   return (
-    <div className="bg-card/80 backdrop-blur-sm rounded-2xl border border-border p-5 shadow-sm">
+    <div className="workspace-panel min-w-0">
       <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
         <div className="flex items-center gap-2">
           <Users className="w-5 h-5 text-primary" />
@@ -313,7 +313,7 @@ export function TeamsPanel({
               return (
                 <motion.div
                   key={team.id}
-                  initial={{ opacity: 0, y: 4 }}
+                  initial={false}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -4 }}
                   className="rounded-xl border border-border bg-card overflow-hidden"
