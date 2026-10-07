@@ -1,12 +1,15 @@
 import { useState, useEffect } from "react";
 import { createFileRoute, useNavigate, Link, type SearchSchemaInput } from "@tanstack/react-router";
-import { ArrowLeft, BarChart3 } from "lucide-react";
+import { ArrowLeft, BarChart3, LoaderCircle, UserRound } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DashboardNavigation, DASHBOARD_TABS, type DashboardTab } from "@/components/DashboardNavigation";
 import { AppHeader } from "@/components/AppHeader";
 import { PlayersList } from "@/components/PlayersList";
 import { PaymentsPanel } from "@/components/PaymentsPanel";
 import { NotificationsBanner } from "@/components/NotificationsBanner";
+import { HomeWidgets } from "@/components/HomeWidgets";
+import { useSchedule } from "@/hooks/use-schedule";
+import { PLAYER_PAYMENT_FILTERS, type PlayerPaymentFilter } from "@/lib/dashboard-summary";
 import { StatsCards } from "@/components/StatsCards";
 import { SubscriptionBanner } from "@/components/SubscriptionBanner";
 import { SubscriptionExpired } from "@/components/SubscriptionExpired";
@@ -37,8 +40,9 @@ type Player = Database["public"]["Tables"]["players"]["Row"];
 const OG_IMAGE_URL = new URL(ogImage, "https://my-club.live").href;
 
 export const Route = createFileRoute("/")({
-  validateSearch: (search: SearchSchemaInput & { tab?: unknown }): { tab: DashboardTab } => ({
+  validateSearch: (search: SearchSchemaInput & { tab?: unknown; filter?: unknown }): { tab: DashboardTab; filter?: PlayerPaymentFilter } => ({
     tab: DASHBOARD_TABS.find((tab) => tab === search.tab) ?? "home",
+    filter: PLAYER_PAYMENT_FILTERS.find((filter) => filter === search.filter),
   }),
   head: () => ({
     meta: [
@@ -61,7 +65,7 @@ export const Route = createFileRoute("/")({
 
 function Index() {
   const navigate = useNavigate();
-  const { tab } = Route.useSearch();
+  const { tab, filter } = Route.useSearch();
   const { isAuthenticated, loading: authLoading, signOut, user } = useAuth();
   const { isDark, theme, themes, setTheme, toggle } = useTheme();
   const { schoolName, logoUrl, loading: settingsLoading, updateSchoolName, updateLogo, resetBranding } = useAppSettings();
@@ -72,6 +76,7 @@ function Index() {
   const { players, loading: playersLoading, addPlayer, updatePlayer, deletePlayer, refetch: refetchPlayers } = usePlayers(sportId, refetchPayments);
   const trips = useTrips(sportId);
   const teamsHook = useTeams(sportId);
+  const schedule = useSchedule(sportId);
   const { isActive: subActive, loading: subLoading } = useSubscription();
   const { loading: onboardingLoading, onboarded, tutorialDone, markOnboarded, markTutorialDone } = useOnboarding();
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
@@ -105,7 +110,7 @@ function Index() {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
-          <span className="text-5xl block mb-4 animate-bounce">🏆</span>
+          <LoaderCircle className="mx-auto mb-4 size-8 animate-spin motion-reduce:animate-none text-primary" aria-hidden="true" />
           <p className="text-muted-foreground">{t("loading")}</p>
         </div>
       </div>
@@ -163,7 +168,8 @@ function Index() {
         <main className="dashboard-main min-w-0 flex-1 px-4 py-6 sm:px-6">
           <section className={tab === "home" ? "space-y-6" : "hidden"} aria-label={t("sectionHome")}>
           <SubscriptionBanner />
-          <StatsCards players={players} payments={payments} />
+          <StatsCards players={players} payments={payments} loading={playersLoading || paymentsLoading} onViewDebt={() => { setMobilePaymentOpen(false); void navigate({ to: "/", search: { tab: "players", filter: "overdue" } }); }} />
+          <HomeWidgets players={players} payments={payments} loading={playersLoading || paymentsLoading} practices={schedule.practices} games={schedule.games} scheduleLoading={schedule.loading} onSelectPlayer={(player) => { setSelectedPlayer(player); setMobilePaymentOpen(true); void navigate({ to: "/", search: { tab: "players", filter: player.is_active ? "all" : "archived" } }); }} />
           <NotificationsBanner players={players} payments={payments} />
 
           <Link
@@ -196,6 +202,8 @@ function Index() {
                 onSelect={(player) => { setSelectedPlayer(player); setMobilePaymentOpen(true); }}
                 onApprovedRegistration={refetchPlayers}
                 selectedId={selectedPlayer?.id}
+                paymentFilter={filter ?? "all"}
+                onPaymentFilterChange={(value) => { void navigate({ to: "/", search: (prev) => ({ ...prev, filter: value }) }); }}
               />
             </div>
 
@@ -218,12 +226,7 @@ function Index() {
               ) : (
                 <div className="flex items-center justify-center h-full min-h-[300px] text-muted-foreground">
                   <div className="text-center">
-                    <div className="relative inline-block mb-4">
-                      <span className="text-6xl block animate-bounce" style={{ animationDuration: "2s" }}>
-                        {sport.emoji}
-                      </span>
-                      <div className="absolute inset-0 blur-2xl opacity-30 bg-primary rounded-full -z-10" />
-                    </div>
+                    <UserRound className="mx-auto mb-4 size-12 opacity-50" />
                     <p className="text-xl font-display tracking-wider gradient-text">
                       {t("selectMember", { member: sport.member })}
                     </p>
@@ -250,7 +253,7 @@ function Index() {
 
           </section>
           <section className={tab === "schedule" ? "min-w-0" : "hidden"} aria-label={t("sectionSchedule")}>
-          <SchedulePanel sportId={sportId} />
+          <SchedulePanel sportId={sportId} schedule={schedule} />
           </section>
           <section className={tab === "more" ? "space-y-6" : "hidden"} aria-label={t("sectionMore")}>
 

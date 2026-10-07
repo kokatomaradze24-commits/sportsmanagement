@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, Pencil, Trash2, User, Phone, Search, Filter, ChevronDown, Link as LinkIcon, ExternalLink, Check, Eye, FileText, X } from "lucide-react";
+import { Plus, Pencil, Trash2, User, Archive, ArchiveRestore, ListChecks, Search, Filter, ChevronDown, Link as LinkIcon, ExternalLink, Check, Eye, FileText, X } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,13 +21,14 @@ import { sendEventSms } from "@/lib/notifications";
 import { getDialCodeForLanguage, prefillPhone } from "@/lib/phone-codes";
 import { getRemainingSeasonMonths, getSeasonRegistrationDefaults, getSeasonYearForMonth } from "@/lib/season";
 import { PhoneInput } from "@/components/PhoneInput";
+import { summarizePlayerPayments, PLAYER_PAYMENT_FILTERS, type PlayerPaymentFilter } from "@/lib/dashboard-summary";
 import { downloadAllDebtsPdf, downloadPlayerPaymentsPdf, downloadPlayersListPdf } from "@/lib/payment-pdf";
 
 type Player = Database["public"]["Tables"]["players"]["Row"];
 type Payment = Database["public"]["Tables"]["payments"]["Row"];
 type PlayerInsert = Database["public"]["Tables"]["players"]["Insert"] & { firstMonthPaid?: boolean; siblings?: { firstName: string; tNumber: number; birthDate: string }[]; family_id?: string | null };
 
-type PaymentFilter = "all" | "paid" | "pending" | "overdue";
+type PlayerSort = "newest" | "lastName" | "age" | "debt";
 
 function calcAge(birthDate: string): number {
   const b = new Date(birthDate);
@@ -50,6 +51,8 @@ interface PlayersListProps {
   onSelect: (player: Player) => void;
   onApprovedRegistration?: () => void;
   selectedId?: string;
+  paymentFilter: PlayerPaymentFilter;
+  onPaymentFilterChange: (filter: PlayerPaymentFilter) => void;
 }
 
 function PlayerForm({ initial, sport, onSubmit, onCancel }: {
@@ -332,7 +335,7 @@ function PlayerForm({ initial, sport, onSubmit, onCancel }: {
   );
 }
 
-export function PlayersList({ players, payments = [], loading, sport, onAdd, onUpdate, onDelete, onSelect, onApprovedRegistration, selectedId }: PlayersListProps) {
+export function PlayersList({ players, payments = [], loading, sport, onAdd, onUpdate, onDelete, onSelect, onApprovedRegistration, selectedId, paymentFilter, onPaymentFilterChange }: PlayersListProps) {
   const { t, language, monthShort, formatMoney } = useI18n();
   const { play } = useSounds();
   const { schoolName } = useAppSettings();
@@ -344,7 +347,10 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
   const [viewRequest, setViewRequest] = useState<PlayerRegistrationRequest | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [search, setSearch] = useState("");
-  const [paymentFilter, setPaymentFilter] = useState<PaymentFilter>("all");
+  const [sort, setSort] = useState<PlayerSort>("newest");
+  const [birthYear, setBirthYear] = useState("all");
+  const [selectionMode, setSelectionMode] = useState(false);
+  const [archivingId, setArchivingId] = useState<string | null>(null);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [bulkDeleting, setBulkDeleting] = useState(false);
 
@@ -352,36 +358,45 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
   const currentMonth = now.getMonth() + 1;
   const currentYear = now.getFullYear();
 
+  const paymentSummaries = useMemo(() => summarizePlayerPayments(players, payments, now), [players, payments, currentMonth, currentYear]);
+  const birthYears = useMemo(() => [...new Set(players.map((p) => p.birth_date?.slice(0, 4)).filter((year): year is string => Boolean(year)))].sort().reverse(), [players]);
   const filteredPlayers = useMemo(() => {
-    let result = players;
-
+    let result = players.filter((p) => paymentFilter === "archived" ? !p.is_active : p.is_active);
     if (search.trim()) {
       const q = search.trim().toLowerCase();
-      result = result.filter(
-        (p) =>
-          p.first_name.toLowerCase().includes(q) ||
-          p.last_name.toLowerCase().includes(q) ||
-          `${p.first_name} ${p.last_name}`.toLowerCase().includes(q) ||
-          p.t_number.toString().includes(q)
+      const digits = q.replace(/\D/g, "");
+      result = result.filter((p) =>
+        `${p.first_name} ${p.last_name}`.toLowerCase().includes(q) ||
+        p.t_number.toString().includes(q) ||
+        [p.phone, p.parent_phone].some((phone) => phone && (phone.toLowerCase().includes(q) || (digits.length > 0 && phone.replace(/\D/g, "").includes(digits))))
       );
     }
+    if (birthYear !== "all") result = result.filter((p) => p.birth_date?.slice(0, 4) === birthYear);
+    if (paymentFilter !== "all" && paymentFilter !== "archived") result = result.filter((p) => {
+      const summary = paymentSummaries.get(p.id);
+      return paymentFilter === "overdue" ? (summary?.overdueMonths ?? 0) > 0 : summary?.state === paymentFilter;
+    });
+    return [...result].sort((a, b) => {
+      if (sort === "lastName") return a.last_name.localeCompare(b.last_name, language) || a.first_name.localeCompare(b.first_name, language);
+      if (sort === "age") {
+        if (!a.birth_date) return b.birth_date ? 1 : 0;
+        if (!b.birth_date) return -1;
+        return b.birth_date.localeCompare(a.birth_date);
+      }
+      if (sort === "debt") return (paymentSummaries.get(b.id)?.debt ?? 0) - (paymentSummaries.get(a.id)?.debt ?? 0) || b.created_at.localeCompare(a.created_at);
+      return b.created_at.localeCompare(a.created_at);
+    });
+  }, [players, search, paymentFilter, birthYear, sort, language, paymentSummaries]);
 
-    if (paymentFilter !== "all") {
-      result = result.filter((p) => {
-        const playerPayment = payments.find(
-          (pay) => pay.player_id === p.id && pay.month === currentMonth && pay.year === currentYear
-        );
-        if (paymentFilter === "paid") return playerPayment?.status === "paid";
-        if (paymentFilter === "pending") return playerPayment?.status === "pending";
-        if (paymentFilter === "overdue") return payments.some((pay) => pay.player_id === p.id && pay.status === "overdue");
-        return true;
-      });
-    }
-
-    return [...result].sort(
-      (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-    );
-  }, [players, payments, search, paymentFilter, currentMonth, currentYear]);
+  const archivePlayer = async (player: Player) => {
+    setArchivingId(player.id);
+    try {
+      const { error } = await onUpdate(player.id, { is_active: !player.is_active });
+      if (error) toast.error(t("archiveFailed"));
+      else { toast.success(t(player.is_active ? "archiveSuccess" : "restoreSuccess")); setSelectedIds((ids) => { const next = new Set(ids); next.delete(player.id); return next; }); }
+    } catch { toast.error(t("archiveFailed")); }
+    finally { setArchivingId(null); }
+  };
 
   const isNewPlayer = (createdAt: string) =>
     Date.now() - new Date(createdAt).getTime() < 2 * 24 * 60 * 60 * 1000;
@@ -467,10 +482,10 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h2 className="text-2xl tracking-wider text-foreground">{sport.members}</h2>
         <div className="flex items-center gap-2 flex-wrap">
-        <Button size="sm" variant="outline" className="shadow-sm hover:shadow-md" onClick={handlePlayersListPdf} onMouseEnter={() => play("hover")}>
+        <Button size="sm" variant="outline" className="shadow-sm hover:shadow-md" onClick={handlePlayersListPdf}>
           <FileText className="w-4 h-4" /> {t("playersListPdf")}
         </Button>
-        <Button size="sm" variant="outline" className="shadow-sm hover:shadow-md" onClick={handleAllDebtsPdf} onMouseEnter={() => play("hover")}>
+        <Button size="sm" variant="outline" className="shadow-sm hover:shadow-md" onClick={handleAllDebtsPdf}>
           <FileText className="w-4 h-4" /> {t("debtsPdf")}
         </Button>
         <Dialog open={addOpen} onOpenChange={(o) => { if (o) play("click"); setAddOpen(o); }}>
@@ -611,31 +626,34 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
         </DialogContent>
       </Dialog>
 
-      <div className="flex items-center gap-2">
-        <div className="relative flex-1">
-          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <Input
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder={t("searchPlaceholder")}
-            className="pl-9 h-8 text-sm"
-          />
+      <div className="space-y-2">
+        <div className="relative">
+          <Search className="absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+          <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder={t("playerSearch")} aria-label={t("playerSearch")} className="h-9 pl-9 text-sm" />
         </div>
-        <Select value={paymentFilter} onValueChange={(v) => setPaymentFilter(v as PaymentFilter)}>
-          <SelectTrigger className="w-[130px] h-8 text-sm">
-            <Filter className="w-3.5 h-3.5 mr-1.5" />
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">{t("all")}</SelectItem>
-            <SelectItem value="paid">{t("paid")}</SelectItem>
-            <SelectItem value="pending">{t("pending")}</SelectItem>
-            <SelectItem value="overdue">{t("overdue")}</SelectItem>
-          </SelectContent>
-        </Select>
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+          <Select value={paymentFilter} onValueChange={(value) => { const choice = PLAYER_PAYMENT_FILTERS.find((f) => f === value); if (choice) onPaymentFilterChange(choice); }}>
+            <SelectTrigger className="h-9 min-w-0 text-xs" aria-label={t("paymentStatus")}><Filter className="mr-1 size-3.5 shrink-0" /><SelectValue /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">{t("all")}</SelectItem><SelectItem value="paid">{t("paid")}</SelectItem><SelectItem value="partial">{t("partiallyPaid")}</SelectItem><SelectItem value="pending">{t("pending")}</SelectItem><SelectItem value="overdue">{t("overdue")}</SelectItem><SelectItem value="archived">{t("archivedPlayers")}</SelectItem>
+            </SelectContent>
+          </Select>
+          <Select value={birthYear} onValueChange={setBirthYear}>
+            <SelectTrigger className="h-9 min-w-0 text-xs" aria-label={t("birthYearFilter")}><SelectValue /></SelectTrigger>
+            <SelectContent><SelectItem value="all">{t("allBirthYears")}</SelectItem>{birthYears.map((year) => <SelectItem key={year} value={year}>{year}</SelectItem>)}</SelectContent>
+          </Select>
+          <Select value={sort} onValueChange={(value) => { if (value === "newest" || value === "lastName" || value === "age" || value === "debt") setSort(value); }}>
+            <SelectTrigger className="h-9 min-w-0 text-xs" aria-label={t("playerSort")}><SelectValue /></SelectTrigger>
+            <SelectContent><SelectItem value="newest">{t("sortNewest")}</SelectItem><SelectItem value="lastName">{t("sortLastName")}</SelectItem><SelectItem value="age">{t("sortAge")}</SelectItem><SelectItem value="debt">{t("sortDebt")}</SelectItem></SelectContent>
+          </Select>
+        </div>
+        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2">
+          <p className="text-xs text-muted-foreground">{t("playerResults", { count: filteredPlayers.length, total: players.length })}</p>
+          <Button size="sm" variant={selectionMode ? "secondary" : "ghost"} aria-pressed={selectionMode} onClick={() => { setSelectionMode(!selectionMode); setSelectedIds(new Set()); }}><ListChecks className="size-4" />{t("selectionMode")}</Button>
+        </div>
       </div>
 
-      {filteredPlayers.length > 0 && (
+      {selectionMode && filteredPlayers.length > 0 && (
         <div className="flex items-center justify-between gap-2 px-1">
           <label className="flex items-center gap-2 text-xs text-muted-foreground cursor-pointer select-none">
             <Checkbox
@@ -666,7 +684,7 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
                       {t("deleteMembersTitle", { count: selectedIds.size, label: selectedIds.size === 1 ? sport.member.toLowerCase() : sport.members.toLowerCase() })}
                     </AlertDialogTitle>
                     <AlertDialogDescription>
-                      {t("deleteMembersDesc", { label: sport.members.toLowerCase() })}
+                      {t("deleteMembersDesc", { label: sport.members.toLowerCase() })} {t("archiveRecommend")}
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
@@ -705,17 +723,15 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
       ) : (
                 <div className="space-y-2 max-h-[62vh] overflow-y-auto pr-1">
           <AnimatePresence>
-            {filteredPlayers.map((player, i) => (
+            {filteredPlayers.map((player) => (
               <motion.div
                 key={player.id}
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
-                transition={{ delay: i * 0.05 }}
-                whileHover={{ scale: 1.01 }}
-                whileTap={{ scale: 0.99 }}
+                transition={{ duration: 0.12 }}
                         onClick={() => { play("click"); onSelect(player); }}
-                        className={`px-3 py-2.5 rounded-xl border cursor-pointer card-hover ${
+                        className={`px-3 py-2.5 rounded-xl border cursor-pointer ${
                   selectedId === player.id
                     ? "border-primary bg-primary/5 shadow-md ring-1 ring-primary/30"
                     : "border-border bg-card hover:border-primary/40 hover:bg-primary/5"
@@ -723,13 +739,13 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
               >
                         <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2">
                           <div className="flex items-center gap-3 min-w-0">
-                    <div onClick={(e) => e.stopPropagation()}>
+                    {selectionMode && <div onClick={(e) => e.stopPropagation()}>
                       <Checkbox
                         checked={selectedIds.has(player.id)}
                         onCheckedChange={() => toggleOne(player.id)}
-                        aria-label={`Select ${player.first_name} ${player.last_name}`}
+                        aria-label={t("selectPlayer", { name: `${player.first_name} ${player.last_name}` })}
                       />
-                    </div>
+                    </div>}
                             <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center font-display text-lg text-primary shrink-0">
                       #{player.t_number}
                     </div>
@@ -750,21 +766,22 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
                           <span className="text-xs font-normal text-muted-foreground/60">—</span>
                         )}
                       </p>
-                              <div className="flex items-center gap-3 text-xs text-muted-foreground mt-0.5 min-w-0">
-                        {player.phone && (
-                                  <span className="flex items-center gap-1 truncate"><Phone className="w-3 h-3 shrink-0" />{player.phone}</span>
-                        )}
+                      <div className="mt-1 flex flex-wrap items-center gap-1.5 text-[11px] text-muted-foreground">
+                        <span className="inline-flex items-center gap-1.5"><span className={`size-1.5 shrink-0 rounded-full ${paymentSummaries.get(player.id)?.state === "paid" ? "bg-success" : paymentSummaries.get(player.id)?.state === "exempt" ? "bg-muted-foreground" : "bg-warning"}`} />
+                          {t(paymentSummaries.get(player.id)?.state === "exempt" ? "playerExempt" : paymentSummaries.get(player.id)?.state === "paid" ? "paid" : paymentSummaries.get(player.id)?.state === "partial" ? "monthPartial" : "pending")}
+                        </span>
+                        {(paymentSummaries.get(player.id)?.overdueMonths ?? 0) > 0 && <span className="rounded border border-destructive/30 bg-destructive/10 px-1.5 py-0.5 text-destructive">{formatMoney(paymentSummaries.get(player.id)?.debt ?? 0)}</span>}
                       </div>
                     </div>
                   </div>
-                  <div className="flex items-center gap-1">
+                  <div className="grid grid-cols-2 gap-0.5 sm:flex sm:items-center">
                     <Dialog open={editPlayer?.id === player.id} onOpenChange={(open) => !open && setEditPlayer(null)}>
                       <Button
                         size="icon"
                         variant="ghost"
                         className="h-8 w-8 text-muted-foreground hover:text-primary"
                         title={t("paymentsPdf")}
-                        onMouseEnter={() => play("hover")}
+                       
                         onClick={(e) => { e.stopPropagation(); void handlePlayerPdf(player); }}
                       >
                         <FileText className="w-3.5 h-3.5" />
@@ -773,7 +790,7 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
                         size="icon"
                         variant="ghost"
                         className="h-8 w-8"
-                        onMouseEnter={() => play("hover")}
+                       
                         onClick={(e) => { e.stopPropagation(); play("click"); setEditPlayer(player); }}
                       >
                         <Pencil className="w-3.5 h-3.5" />
@@ -797,26 +814,16 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
                       </DialogContent>
                     </Dialog>
 
-                    {deleteConfirm === player.id ? (
-                      <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
-                        <Button size="sm" variant="destructive" onClick={() => { play("success"); onDelete(player.id); setDeleteConfirm(null); }}>
-                          {t("delete")}
-                        </Button>
-                        <Button size="sm" variant="ghost" onClick={() => { play("click"); setDeleteConfirm(null); }}>
-                          {t("no")}
-                        </Button>
-                      </div>
-                    ) : (
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        className="h-8 w-8 text-muted-foreground hover:text-destructive"
-                        onMouseEnter={() => play("hover")}
-                        onClick={(e) => { e.stopPropagation(); play("click"); setDeleteConfirm(player.id); }}
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </Button>
-                    )}
+                    <Button size="icon" variant="ghost" className="h-8 w-8 text-muted-foreground" disabled={archivingId === player.id} aria-label={t(player.is_active ? "archivePlayer" : "restorePlayer")} title={t(player.is_active ? "archivePlayer" : "restorePlayer")} onClick={(e) => { e.stopPropagation(); void archivePlayer(player); }}>
+                      {player.is_active ? <Archive className="size-3.5" /> : <ArchiveRestore className="size-3.5" />}
+                    </Button>
+                    <AlertDialog open={deleteConfirm === player.id} onOpenChange={(open) => { if (!open) setDeleteConfirm(null); }}>
+                      <Button size="icon" variant="ghost" className="h-8 w-8 text-muted-foreground hover:text-destructive" aria-label={t("delete")} title={t("delete")} onClick={(e) => { e.stopPropagation(); setDeleteConfirm(player.id); }}><Trash2 className="size-3.5" /></Button>
+                      <AlertDialogContent onClick={(e) => e.stopPropagation()}>
+                        <AlertDialogHeader><AlertDialogTitle>{t("deleteMembersTitle", { count: 1, label: sport.member.toLowerCase() })}</AlertDialogTitle><AlertDialogDescription>{t("archiveRecommend")}</AlertDialogDescription></AlertDialogHeader>
+                        <AlertDialogFooter><AlertDialogCancel>{t("cancel")}</AlertDialogCancel>{player.is_active && <Button variant="outline" onClick={() => { void archivePlayer(player); setDeleteConfirm(null); }}><Archive className="size-4" />{t("archivePlayer")}</Button>}<AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90" onClick={() => { void onDelete(player.id); setDeleteConfirm(null); }}>{t("delete")}</AlertDialogAction></AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                   </div>
                 </div>
               </motion.div>
