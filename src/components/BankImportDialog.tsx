@@ -367,7 +367,7 @@ export function BankImportDialog({
       }}
     >
       <DialogContent
-        className="flex h-dvh max-h-dvh w-full max-w-none flex-col gap-3 overflow-hidden rounded-none p-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:h-[90dvh] sm:max-h-[90dvh] sm:w-[calc(100%-2rem)] sm:max-w-6xl sm:rounded-lg sm:p-6"
+        className="flex h-dvh max-h-dvh w-full max-w-none flex-col gap-3 overflow-hidden rounded-none p-4 pb-[max(1rem,env(safe-area-inset-bottom))] max-sm:inset-0 max-sm:translate-x-0 max-sm:translate-y-0 sm:h-[90dvh] sm:max-h-[90dvh] sm:w-[calc(100%-2rem)] sm:max-w-6xl sm:rounded-lg sm:p-6"
         onEscapeKeyDown={(e) => {
           if (busy) e.preventDefault();
         }}
@@ -408,7 +408,7 @@ export function BankImportDialog({
             <div className="space-y-5">
               <label className="flex min-h-40 cursor-pointer flex-col items-center justify-center gap-3 rounded-lg border border-dashed border-primary/50 bg-primary/5 p-6 text-center">
                 <FileUp className="size-8 text-primary" />
-                <span className="font-semibold">{t("bankChooseFile")}</span>
+                <Button type="button" variant="outline" disabled={busy} className="h-auto max-w-full whitespace-normal text-center" onClick={() => fileInput.current?.click()}>{t("bankChooseFile")}</Button>
                 <Input
                   aria-label={t("bankChooseFile")}
                   type="file"
