@@ -42,6 +42,7 @@ import {
 
 interface Props {
   sportId: string;
+  schedule: ReturnType<typeof useSchedule>;
 }
 
 type ListView = "practices" | "games" | null;
@@ -49,8 +50,7 @@ type ListView = "practices" | "games" | null;
 export const AGE_GROUPS = ["U12", "U14", "U16", "U18", "U22", "PRO"] as const;
 export type AgeGroup = (typeof AGE_GROUPS)[number];
 
-export function SchedulePanel({ sportId }: Props) {
-  const sched = useSchedule(sportId);
+export function SchedulePanel({ sportId, schedule: sched }: Props) {
   const tpl = usePracticeTemplates(sportId);
   const [view, setView] = useState<ListView>(null);
   const [activeAge, setActiveAge] = useState<AgeGroup>("U12");

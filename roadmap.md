@@ -3,3 +3,6 @@
 - [x] Restructure dashboard into URL-backed sections with desktop/sidebar and mobile tabs/payment view
 - [x] Compact header, translate new labels, and correct Georgian heading typography
 - [x] Verify dashboard navigation and selection on desktop/mobile without changing data
+- [x] Replace Home metrics and add season income, top debtors, and upcoming schedule widgets
+- [x] Add player payment states, sorting/search/year filters, selection mode, archive/restore and safer delete confirmation
+- [x] Default sounds off, disable hover sound, simplify empty states, translate and verify all new flows
