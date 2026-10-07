@@ -6,3 +6,6 @@
 - [x] Replace Home metrics and add season income, top debtors, and upcoming schedule widgets
 - [x] Add player payment states, sorting/search/year filters, selection mode, archive/restore and safer delete confirmation
 - [x] Default sounds off, disable hover sound, simplify empty states, translate and verify all new flows
+- [ ] Add private payer aliases and atomic duplicate-safe bank import ledger without altering existing payment/SMS rules
+- [ ] Add client-side spreadsheet parsing, transliterated matching, family allocations and import review/alias manager in six languages
+- [ ] Verify parsing/allocation tests and authenticated desktop/mobile import, application and duplicate protection; do not publish
