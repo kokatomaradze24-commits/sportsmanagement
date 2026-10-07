@@ -377,13 +377,14 @@ const HEADERS: Record<keyof ColumnMapping, string[]> = {
   purpose: [
     "purpose",
     "დანიშნულება",
-    "additional information",
-    "დამატებითი ინფორმაცია",
     "description",
     "აღწერა",
+    "additional information",
+    "დამატებითი ინფორმაცია",
   ],
   id: [
     "transaction id",
+    "ტრანზაქციის id",
     "document id",
     "document number",
     "document no",
