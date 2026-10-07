@@ -13,6 +13,10 @@ import { getCoachSession, clearCoachSession, type CoachSession } from "@/lib/coa
 export const Route = createFileRoute("/coach")({
   head: () => ({
     meta: [
+      { property: "og:title", content: "Coach Dashboard — My Club" },
+      { property: "og:description", content: "My Club coach dashboard: practice and game schedule, assigned players and team activity." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: "Coach Dashboard — My Club" },
       { name: "description", content: "My Club coach dashboard: practice and game schedule, assigned players and team activity." },
       { name: "robots", content: "noindex, nofollow" },

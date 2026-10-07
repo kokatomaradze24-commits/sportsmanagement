@@ -10,6 +10,8 @@ import { setCoachSession, getCoachSession } from "@/lib/coach-session";
 export const Route = createFileRoute("/coach-login")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: "Coach Sign In — My Club" },
       { name: "description", content: "Coach sign-in to My Club to view your training schedule, players and assignments." },
       { property: "og:title", content: "Coach Sign In — My Club" },

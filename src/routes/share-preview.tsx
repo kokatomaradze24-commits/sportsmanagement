@@ -36,6 +36,10 @@ const HISTORY_MAX = 8;
 export const Route = createFileRoute("/share-preview")({
   head: () => ({
     meta: [
+      { property: "og:title", content: "Share Preview Tester — My Club" },
+      { property: "og:description", content: "Preview how a URL renders on Twitter, LinkedIn, Facebook and Slack link cards." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: "Share Preview Tester — My Club" },
       {
         name: "description",

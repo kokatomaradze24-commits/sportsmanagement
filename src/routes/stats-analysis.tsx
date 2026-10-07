@@ -17,6 +17,10 @@ import { useAICredits } from "@/hooks/use-ai-credits";
 export const Route = createFileRoute("/stats-analysis")({
   head: () => ({
     meta: [
+      { property: "og:title", content: "Stats Analysis — My Club" },
+      { property: "og:description", content: "Upload match statistics and let AI generate a deep analysis and training recommendations for your team." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: "Stats Analysis — My Club" },
       { name: "description", content: "Upload match statistics and let AI generate a deep analysis and training recommendations for your team." },
       { name: "robots", content: "noindex" },
