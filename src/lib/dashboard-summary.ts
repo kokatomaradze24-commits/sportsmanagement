@@ -1,5 +1,5 @@
 import type { Database } from "@/integrations/supabase/types";
-import { paidOf, remainingOf } from "@/lib/payment-due";
+import { getNextPaymentDue, paidOf, remainingOf, type NextPaymentDue } from "@/lib/payment-due";
 import { getSeasonStartYear, SEASON_DURATION_MONTHS, SEASON_START_MONTH } from "@/lib/season";
 
 export type DashboardPlayer = Database["public"]["Tables"]["players"]["Row"];
@@ -20,13 +20,31 @@ export function summarizePlayerPayments(players: DashboardPlayer[], payments: Da
       summary.overdueMonths.add(`${payment.year}-${payment.month}`);
     }
   }
+
+  // Siblings share one combined payment row, so their next due date is the family's.
+  const families = new Map<string, DashboardPlayer[]>();
+  for (const player of players) {
+    if (!player.family_id) continue;
+    families.set(player.family_id, [...(families.get(player.family_id) ?? []), player]);
+  }
+  const nextDue = new Map<string, NextPaymentDue | null>();
+  const seen = new Set<string>();
+  for (const player of players) {
+    if (seen.has(player.id)) continue;
+    const family = (player.family_id ? families.get(player.family_id) ?? [] : []).filter((m) => !seen.has(m.id));
+    const unit = family.length > 1 ? family : [player];
+    unit.forEach((m) => seen.add(m.id));
+    const due = getNextPaymentDue(unit.map((m) => ({ id: m.id, start_day: m.start_day })), payments, now);
+    unit.forEach((m) => nextDue.set(m.id, due));
+  }
+
   return new Map(players.map((player) => {
     const summary = byPlayer.get(player.id);
     const current = summary?.current ?? [];
     const state = Number(player.monthly_fee) === 0 ? "exempt"
       : current.length > 0 && current.every((p) => p.status === "paid") ? "paid"
       : current.some((p) => p.status !== "paid" && paidOf(p) > 0) ? "partial" : "pending";
-    return [player.id, { state, debt: summary?.debt ?? 0, overdueMonths: summary?.overdueMonths.size ?? 0, current }];
+    return [player.id, { state, debt: summary?.debt ?? 0, overdueMonths: summary?.overdueMonths.size ?? 0, current, nextDue: nextDue.get(player.id) ?? null }];
   }));
 }
 

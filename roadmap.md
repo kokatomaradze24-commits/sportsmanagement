@@ -17,3 +17,4 @@
 - [x] Restyle owner/coach sign-in with public tokens and accessible motion
 - [x] Restyle shared public registration without changing fields or behaviour
 - [x] Verify public screens and dashboard atmosphere strictly read-only; do not publish
+- [x] Show days until each player's next payment in the players list, in six languages
