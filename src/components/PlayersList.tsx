@@ -338,7 +338,7 @@ function PlayerForm({ initial, sport, onSubmit, onCancel }: {
 }
 
 export function PlayersList({ players, payments = [], loading, sport, onAdd, onUpdate, onDelete, onSelect, onApprovedRegistration, selectedId, paymentFilter, onPaymentFilterChange, onImportBank }: PlayersListProps) {
-  const { t, language, monthShort, formatMoney } = useI18n();
+  const { t, language, monthShort, monthLong, formatMoney } = useI18n();
   const { play } = useSounds();
   const { schoolName } = useAppSettings();
   const { user } = useAuth();
@@ -572,6 +572,7 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
                 <button type="button" onClick={() => setViewRequest(request)} className="min-w-0 text-left flex-1">
                   <p className="text-sm font-medium text-foreground truncate">{request.first_name} {request.last_name}</p>
                   <p className="text-xs text-muted-foreground truncate">{request.primary_contact === "parent" ? request.parent_phone : request.phone}</p>
+                  <p className="text-xs text-muted-foreground">{formatArrivalDateTime(request.created_at, monthLong)}</p>
                 </button>
                 <div className="flex items-center gap-1 shrink-0">
                   <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => setViewRequest(request)} title={t("viewFull")}>
@@ -601,6 +602,7 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
                 <div><p className="text-muted-foreground">{t("firstName")}</p><p className="font-medium">{viewRequest.first_name}</p></div>
                 <div><p className="text-muted-foreground">{t("lastName")}</p><p className="font-medium">{viewRequest.last_name}</p></div>
                 <div><p className="text-muted-foreground">{t("birthDate")}</p><p className="font-medium">{viewRequest.birth_date}</p></div>
+                <div><p className="text-muted-foreground">{t("arrivalTime")}</p><p className="font-medium">{formatArrivalDateTime(viewRequest.created_at, monthLong)}</p></div>
                 <div><p className="text-muted-foreground">{t("contactLabel")}</p><p className="font-medium">{viewRequest.primary_contact === "parent" ? t("parentLabel") : t("playerLabel")}</p></div>
                 <div><p className="text-muted-foreground">{t("personalPhoneLabel")}</p><p className="font-medium">{viewRequest.phone ?? "—"}</p></div>
                 <div><p className="text-muted-foreground">{t("parentPhoneLabel")}</p><p className="font-medium">{viewRequest.parent_phone ?? "—"}</p></div>
