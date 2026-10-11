@@ -8,6 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { usePlayerRegistrationRequests } from "@/hooks/use-player-registration-requests";
 import { useSounds } from "@/hooks/use-sounds";
 import { useI18n } from "@/hooks/use-i18n";
+import { formatArrivalDateTime } from "@/lib/arrival-date";
 
 interface Props {
   sportId: string;
@@ -20,7 +21,7 @@ interface Props {
 export function RegistrationNotificationsBell({ sportId, userId, label, compact = false, onGoToPlayers }: Props) {
   const { requests, refetch } = usePlayerRegistrationRequests(sportId);
   const { play } = useSounds();
-  const { t } = useI18n();
+  const { t, monthLong } = useI18n();
   const [open, setOpen] = useState(false);
   const [seenIds, setSeenIds] = useState<Set<string>>(new Set());
   const visibleRequests = requests.filter((r) => !seenIds.has(r.id));
@@ -122,7 +123,7 @@ export function RegistrationNotificationsBell({ sportId, userId, label, compact 
                           {r.first_name} {r.last_name}
                         </p>
                         <p className="text-xs text-muted-foreground truncate">
-                          {t("notifRegisteredViaLink")} • {new Date(r.created_at).toLocaleDateString()}
+                          {t("notifRegisteredViaLink")} • {formatArrivalDateTime(r.created_at, monthLong)}
                         </p>
                       </div>
                     </button>
