@@ -309,19 +309,32 @@ function PlayerForm({ initial, sport, onSubmit, onCancel }: {
           </div>
           {!isEdit && (
             <>
-          <div>
-            <label className="text-sm text-muted-foreground mb-1 block">{t("startMonth")}</label>
-            <Select value={startMonth} onValueChange={(value) => {
-              setStartMonth(value);
-              setMonths(getRemainingSeasonMonths(parseInt(value)).toString());
-            }}>
-              <SelectTrigger><SelectValue /></SelectTrigger>
-              <SelectContent>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="text-sm text-muted-foreground mb-1 block">{t("startMonth")}</label>
+              <Select value={startMonth} onValueChange={(value) => {
+                setStartMonth(value);
+                setMonths(getRemainingSeasonMonths(parseInt(value)).toString());
+              }}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
                   {Array.from({ length: 12 }, (_, i) => (
                     <SelectItem key={i} value={(i + 1).toString()}>{monthShort(i + 1)} {getSeasonYearForMonth(i + 1, now)}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <label className="text-sm text-muted-foreground mb-1 block">{t("startDay")}</label>
+              <Select value={startDay} onValueChange={setStartDay}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {Array.from({ length: 28 }, (_, i) => (
+                    <SelectItem key={i + 1} value={(i + 1).toString()}>{i + 1}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
           <label className="flex items-center gap-2 cursor-pointer select-none pt-1">
             <Checkbox checked={firstMonthPaid} onCheckedChange={(v) => setFirstMonthPaid(!!v)} />
