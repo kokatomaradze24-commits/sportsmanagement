@@ -29,6 +29,7 @@ export function getSeasonRegistrationDefaults(date = new Date()) {
   return {
     startMonth,
     startYear: getSeasonYearForMonth(startMonth, date),
-    subscriptionMonths: getRemainingSeasonMonths(startMonth),
+    // Stable full-season duration; does not shrink as calendar months pass.
+    subscriptionMonths: SEASON_DURATION_MONTHS,
   };
 }
