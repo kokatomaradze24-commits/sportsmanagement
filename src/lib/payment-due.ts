@@ -62,3 +62,62 @@ export function getPaymentDueDate(
   const scheduledDay = Math.min(Math.max(startDay || 1, 1), 28);
   return new Date(payment.year, payment.month - 1, scheduledDay);
 }
+
+export interface NextDuePayment extends PaymentDueInput, PaymentMoneyInput {
+  player_id: string;
+}
+
+export interface NextDueMember {
+  id: string;
+  start_day: number;
+}
+
+export interface NextPaymentDue {
+  month: number;
+  year: number;
+  dueDate: Date;
+  days: number;
+}
+
+/** Whole days from local midnight today until the given date; negative once it has passed. */
+export function daysUntilDate(target: Date, now = new Date()): number {
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+  const due = new Date(target.getFullYear(), target.getMonth(), target.getDate()).getTime();
+  return Math.round((due - today) / 86400000);
+}
+
+/**
+ * The earliest month a member still owes something in, together with its due date
+ * and how many days away that is. Siblings share one combined payment row, so the
+ * whole family is passed as `members` and gets the same answer.
+ * Database statuses stay the source of truth: only status / paid_amount decide
+ * whether a month is still open, and the due date follows getPaymentDueDate.
+ */
+export function getNextPaymentDue(
+  members: NextDueMember[],
+  payments: NextDuePayment[],
+  now = new Date(),
+): NextPaymentDue | null {
+  const owners = new Map(members.map((m) => [m.id, m]));
+  const rows = payments.filter((p) => owners.has(p.player_id));
+  if (rows.length === 0) return null;
+
+  const byMonth = new Map<number, NextDuePayment[]>();
+  for (const row of rows) {
+    const key = monthIndex(row);
+    byMonth.set(key, [...(byMonth.get(key) ?? []), row]);
+  }
+
+  for (const key of [...byMonth.keys()].sort((a, b) => a - b)) {
+    const group = byMonth.get(key) ?? [];
+    if (group.reduce((sum, p) => sum + remainingOf(p), 0) <= 0) continue;
+    const first = group.find((p) => remainingOf(p) > 0) ?? group[0];
+    const owner = owners.get(first.player_id);
+    if (!owner) continue;
+    const own = rows.filter((p) => p.player_id === first.player_id);
+    const dueDate = getPaymentDueDate(first, own, owner.start_day);
+    return { month: first.month, year: first.year, dueDate, days: daysUntilDate(dueDate, now) };
+  }
+
+  return null;
+}

@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, Pencil, Trash2, User, Archive, ArchiveRestore, ListChecks, Search, Filter, ChevronDown, Link as LinkIcon, ExternalLink, Check, Eye, FileText, FileUp, MoreHorizontal, X } from "lucide-react";
+import { Plus, Pencil, Trash2, User, Archive, ArchiveRestore, ListChecks, Search, Filter, ChevronDown, Link as LinkIcon, ExternalLink, Check, Eye, FileText, FileUp, MoreHorizontal, Clock, X } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
@@ -415,6 +415,30 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
   const isNewPlayer = (createdAt: string) =>
     Date.now() - new Date(createdAt).getTime() < 2 * 24 * 60 * 60 * 1000;
 
+  const nextDueBadge = (playerId: string) => {
+    const due = paymentSummaries.get(playerId)?.nextDue;
+    if (!due) return null;
+    const late = due.days < 0;
+    const label = late
+      ? t("dueLateDays", { count: Math.abs(due.days) })
+      : due.days === 0
+        ? t("dueToday")
+        : due.days === 1
+          ? t("dueTomorrow")
+          : t("dueInDays", { count: due.days });
+    return (
+      <span
+        title={t("dueOn", { date: due.dueDate.toLocaleDateString() })}
+        className={`inline-flex items-center gap-1 rounded border px-1.5 py-0.5 ${
+          late ? "border-destructive/30 bg-destructive/10 text-destructive" : "border-border bg-muted/40 text-muted-foreground"
+        }`}
+      >
+        <Clock className="size-3 shrink-0" />
+        {label}
+      </span>
+    );
+  };
+
 
   const toggleOne = (id: string) => {
     setSelectedIds((prev) => {
@@ -792,6 +816,7 @@ export function PlayersList({ players, payments = [], loading, sport, onAdd, onU
                           {t(paymentSummaries.get(player.id)?.state === "exempt" ? "playerExempt" : paymentSummaries.get(player.id)?.state === "paid" ? "paid" : paymentSummaries.get(player.id)?.state === "partial" ? "playerPartial" : "pending")}
                         </span>
                         {(paymentSummaries.get(player.id)?.overdueMonths ?? 0) > 0 && <span className="rounded border border-destructive/30 bg-destructive/10 px-1.5 py-0.5 text-destructive">{formatMoney(paymentSummaries.get(player.id)?.debt ?? 0)}</span>}
+                        {nextDueBadge(player.id)}
                       </div>
                     </div>
                   </div>
