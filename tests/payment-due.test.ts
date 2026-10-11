@@ -44,6 +44,18 @@ test("follows the deposit anchor once an earlier month was paid", () => {
   expect(due?.days).toBe(-6); // anchored on 5 September + 1 month
 });
 
+test("a month marked paid after its scheduled day keeps the scheduled cycle", () => {
+  // Arrival 11 September, September marked paid on 11 October: October is due
+  // on 11 October (today), not 11 November.
+  const rows = [
+    pay("a", 2026, 9, 170, { status: "paid", paid_amount: 170, payment_date: "2026-10-11" }),
+    pay("a", 2026, 10, 170),
+  ];
+  const due = getNextPaymentDue([member("a", 11)], rows, now);
+  expect(due?.month).toBe(10);
+  expect(due?.days).toBe(0);
+});
+
 test("a partially paid month is still the next payment", () => {
   const rows = [
     pay("a", 2026, 9, 170, { status: "paid", paid_amount: 170, payment_date: "2026-09-05" }),

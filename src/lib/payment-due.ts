@@ -55,11 +55,18 @@ export function getPaymentDueDate(
     )
     .sort((a, b) => monthIndex(b) - monthIndex(a))[0];
 
+  const scheduledDay = Math.min(Math.max(startDay || 1, 1), 28);
+
   if (previousPaid?.payment_date) {
-    return addMonthsClamped(localDate(previousPaid.payment_date), paymentIndex - monthIndex(previousPaid));
+    const paidOn = localDate(previousPaid.payment_date);
+    // Payments are prepaid for the whole month on the scheduled (arrival) day.
+    // When a month was only marked paid later than its scheduled day, the
+    // recorded date is administrative, so the cycle stays on the scheduled day.
+    const scheduled = new Date(previousPaid.year, previousPaid.month - 1, scheduledDay);
+    const anchor = paidOn > scheduled ? scheduled : paidOn;
+    return addMonthsClamped(anchor, paymentIndex - monthIndex(previousPaid));
   }
 
-  const scheduledDay = Math.min(Math.max(startDay || 1, 1), 28);
   return new Date(payment.year, payment.month - 1, scheduledDay);
 }
 
