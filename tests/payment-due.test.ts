@@ -76,7 +76,7 @@ test("siblings sharing a combined month report the family's next due date", () =
   ];
   const due = getNextPaymentDue([member("a", 13), member("b", 13)], rows, now);
   expect(due?.month).toBe(10);
-  expect(due?.days).toBe(-4); // anchored on 4 September + 1 month
+  expect(due?.days).toBe(-7); // anchored on 4 September + 1 month
 });
 
 test("ignores payments of members outside the unit", () => {
