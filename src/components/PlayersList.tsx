@@ -19,6 +19,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { usePlayerRegistrationLink } from "@/hooks/use-player-registration-link";
 import { usePlayerRegistrationRequests, type PlayerRegistrationRequest } from "@/hooks/use-player-registration-requests";
 import { sendEventSms } from "@/lib/notifications";
+import { formatArrivalDateTime } from "@/lib/arrival-date";
 import { getDialCodeForLanguage, prefillPhone } from "@/lib/phone-codes";
 import { getRemainingSeasonMonths, getSeasonRegistrationDefaults, getSeasonYearForMonth } from "@/lib/season";
 import { PhoneInput } from "@/components/PhoneInput";

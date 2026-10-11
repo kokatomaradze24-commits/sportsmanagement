@@ -8,6 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { usePlayerRegistrationRequests } from "@/hooks/use-player-registration-requests";
 import { useSounds } from "@/hooks/use-sounds";
 import { useI18n } from "@/hooks/use-i18n";
+import { formatArrivalDateTime } from "@/lib/arrival-date";
 
 interface Props {
   sportId: string;
