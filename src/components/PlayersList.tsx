@@ -21,7 +21,7 @@ import { usePlayerRegistrationRequests, type PlayerRegistrationRequest } from "@
 import { sendEventSms } from "@/lib/notifications";
 import { formatArrivalDateTime } from "@/lib/arrival-date";
 import { getDialCodeForLanguage, prefillPhone } from "@/lib/phone-codes";
-import { getRemainingSeasonMonths, getSeasonRegistrationDefaults, getSeasonYearForMonth } from "@/lib/season";
+import { getSeasonRegistrationDefaults, getSeasonYearForMonth } from "@/lib/season";
 import { PhoneInput } from "@/components/PhoneInput";
 import { summarizePlayerPayments, PLAYER_PAYMENT_FILTERS, type PlayerPaymentFilter } from "@/lib/dashboard-summary";
 import { downloadAllDebtsPdf, downloadPlayerPaymentsPdf, downloadPlayersListPdf } from "@/lib/payment-pdf";
@@ -312,10 +312,7 @@ function PlayerForm({ initial, sport, onSubmit, onCancel }: {
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="text-sm text-muted-foreground mb-1 block">{t("startMonth")}</label>
-              <Select value={startMonth} onValueChange={(value) => {
-                setStartMonth(value);
-                setMonths(getRemainingSeasonMonths(parseInt(value)).toString());
-              }}>
+              <Select value={startMonth} onValueChange={(value) => setStartMonth(value)}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
                   {Array.from({ length: 12 }, (_, i) => (
