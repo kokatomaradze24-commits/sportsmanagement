@@ -266,6 +266,17 @@ export function PaymentsPanel({ player, players = [], payments, loading, onUpdat
                           ? t("paidOn", { date: payment.payment_date })
                           : t("dueOn", { date: dueDateFor(payment) })}
                       </p>
+                      {payment.paid > 0 && payment.payment_date && (() => {
+                        const [y, m, d] = payment.payment_date.slice(0, 10).split("-").map(Number);
+                        const now = new Date();
+                        const days = Math.round((Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()) - Date.UTC(y, m - 1, d)) / 86400000);
+                        if (days < 0) return null;
+                        return (
+                          <p className="text-[11px] text-muted-foreground/80">
+                            {days === 0 ? "დღეს" : days === 1 ? "გუშინ" : `${days} დღის წინ`}
+                          </p>
+                        );
+                      })()}
                     </div>
                   </div>
                   <div className="flex flex-wrap items-center justify-end gap-1.5 shrink-0">
